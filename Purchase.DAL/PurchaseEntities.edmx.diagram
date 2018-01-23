@@ -1,0 +1,156 @@
+<?xml version="1.0" encoding="utf-8"?>
+<edmx:Edmx Version="3.0" xmlns:edmx="http://schemas.microsoft.com/ado/2009/11/edmx">
+ <!-- EF Designer content (DO NOT EDIT MANUALLY BELOW HERE) -->
+  <edmx:Designer xmlns="http://schemas.microsoft.com/ado/2009/11/edmx">
+    <!-- Diagram content (shape and connector positions) -->
+    <edmx:Diagrams>
+      <Diagram DiagramId="c8088351ad614f0ba94d62f47a24a251" Name="Diagram1" ZoomLevel="54">
+        <EntityTypeShape EntityType="PurchaseModel.AccruedCharges" Width="1.5" PointX="7.75" PointY="0.75" IsExpanded="true" />
+        <EntityTypeShape EntityType="PurchaseModel.Apply" Width="1.5" PointX="9.75" PointY="0.75" IsExpanded="true" />
+        <EntityTypeShape EntityType="PurchaseModel.ApplyDtl" Width="1.5" PointX="7.75" PointY="9.75" IsExpanded="true" />
+        <EntityTypeShape EntityType="PurchaseModel.ApplyRecheckStatus" Width="1.5" PointX="9.75" PointY="9.75" IsExpanded="true" />
+        <EntityTypeShape EntityType="PurchaseModel.CapitalRequirement" Width="1.5" PointX="0.75" PointY="10.75" IsExpanded="true" />
+        <EntityTypeShape EntityType="PurchaseModel.ConstractAttachment" Width="1.5" PointX="10.75" PointY="4.75" IsExpanded="true" />
+        <EntityTypeShape EntityType="PurchaseModel.ConstractDtl" Width="1.5" PointX="11.75" PointY="7.75" IsExpanded="true" />
+        <EntityTypeShape EntityType="PurchaseModel.ConstractDtlCommonText" Width="1.5" PointX="11.75" PointY="0.75" IsExpanded="true" />
+        <EntityTypeShape EntityType="PurchaseModel.ConstractTemplate" Width="1.5" PointX="7.75" PointY="12.75" IsExpanded="true" />
+        <EntityTypeShape EntityType="PurchaseModel.ConstractTemplateDtl" Width="1.5" PointX="9.75" PointY="12.75" IsExpanded="true" />
+        <EntityTypeShape EntityType="PurchaseModel.Contingency" Width="1.5" PointX="12.75" PointY="4.75" IsExpanded="true" />
+        <EntityTypeShape EntityType="PurchaseModel.HiddenCode" Width="1.5" PointX="13.75" PointY="0.75" IsExpanded="true" />
+        <EntityTypeShape EntityType="PurchaseModel.HiddenCodeType" Width="1.5" PointX="13.75" PointY="7.75" IsExpanded="true" />
+        <EntityTypeShape EntityType="PurchaseModel.Mst_Department" Width="1.5" PointX="13.75" PointY="10.75" IsExpanded="true" />
+        <EntityTypeShape EntityType="PurchaseModel.Mst_Position" Width="1.5" PointX="13.75" PointY="13.75" IsExpanded="true" />
+        <EntityTypeShape EntityType="PurchaseModel.Quotation_QuotationMst" Width="1.5" PointX="19.75" PointY="0.75" IsExpanded="true" />
+        <EntityTypeShape EntityType="PurchaseModel.RecheckProcess" Width="1.5" PointX="21.75" PointY="11.75" IsExpanded="true" />
+        <EntityTypeShape EntityType="PurchaseModel.RecheckProcessExcept" Width="1.5" PointX="21.75" PointY="14.75" IsExpanded="true" />
+        <EntityTypeShape EntityType="PurchaseModel.Requirement_Anfang_RequirementDtl0" Width="1.5" PointX="16.75" PointY="21.75" IsExpanded="true" />
+        <EntityTypeShape EntityType="PurchaseModel.Requirement_Anfang_RequirementDtl1" Width="1.5" PointX="21.75" PointY="18.75" IsExpanded="true" />
+        <EntityTypeShape EntityType="PurchaseModel.Requirement_Anfang_RequirementDtl2" Width="1.5" PointX="2.75" PointY="22.75" IsExpanded="true" />
+        <EntityTypeShape EntityType="PurchaseModel.Requirement_Anfang_RequirementDtl3" Width="1.5" PointX="4.75" PointY="22.75" IsExpanded="true" />
+        <EntityTypeShape EntityType="PurchaseModel.Requirement_Anfang_RequirementDtl5" Width="1.5" PointX="18.75" PointY="22.75" IsExpanded="true" />
+        <EntityTypeShape EntityType="PurchaseModel.Requirement_Anfang_RequirementDtl6" Width="1.5" PointX="20.75" PointY="22.75" IsExpanded="true" />
+        <EntityTypeShape EntityType="PurchaseModel.Requirement_Anfang_RequirementDtl7" Width="1.5" PointX="22.75" PointY="22.75" IsExpanded="true" />
+        <EntityTypeShape EntityType="PurchaseModel.Requirement_Bianchengjibianji_RequirementDtl2" Width="1.5" PointX="23.75" PointY="5.75" IsExpanded="true" />
+        <EntityTypeShape EntityType="PurchaseModel.Requirement_Bianmajifuhe_RequirementDtl1" Width="1.5" PointX="23.75" PointY="10.75" IsExpanded="true" />
+        <EntityTypeShape EntityType="PurchaseModel.Requirement_Bianmajifuhe_RequirementDtl3" Width="1.5" PointX="8.75" PointY="24.75" IsExpanded="true" />
+        <EntityTypeShape EntityType="PurchaseModel.Requirement_Bianmajifuhe_RequirementDtl4" Width="1.5" PointX="10.75" PointY="24.75" IsExpanded="true" />
+        <EntityTypeShape EntityType="PurchaseModel.Requirement_Bianmajifuhe_RequirementDtl5" Width="1.5" PointX="12.75" PointY="24.75" IsExpanded="true" />
+        <EntityTypeShape EntityType="PurchaseModel.Requirement_Bianmajifuhe_RequirementDtl6" Width="1.5" PointX="14.75" PointY="24.75" IsExpanded="true" />
+        <EntityTypeShape EntityType="PurchaseModel.Requirement_Bianmajifuhe_RequirementDtl7" Width="1.5" PointX="24.75" PointY="21.75" IsExpanded="true" />
+        <EntityTypeShape EntityType="PurchaseModel.Requirement_Bianmajifuhe_RequirementDtl8" Width="1.5" PointX="25.75" PointY="0.75" IsExpanded="true" />
+        <EntityTypeShape EntityType="PurchaseModel.Requirement_Bianmajifuhe_RequirementDtl9" Width="1.5" PointX="25.75" PointY="4.75" IsExpanded="true" />
+        <EntityTypeShape EntityType="PurchaseModel.Requirement_Changdibuzhan_RequirementDtl2" Width="1.5" PointX="25.75" PointY="12.75" IsExpanded="true" />
+        <EntityTypeShape EntityType="PurchaseModel.Requirement_Cheliangzhanpinghui_RequirementDtl1" Width="1.5" PointX="25.75" PointY="16.75" IsExpanded="true" />
+        <EntityTypeShape EntityType="PurchaseModel.Requirement_Cheliangzhanpinghui_RequirementDtl10" Width="1.5" PointX="24.75" PointY="25.75" IsExpanded="true" />
+        <EntityTypeShape EntityType="PurchaseModel.Requirement_Cheliangzhanpinghui_RequirementDtl12" Width="1.5" PointX="18.75" PointY="26.75" IsExpanded="true" />
+        <EntityTypeShape EntityType="PurchaseModel.Requirement_Cheliangzhanpinghui_RequirementDtl13" Width="1.5" PointX="26.75" PointY="21.75" IsExpanded="true" />
+        <EntityTypeShape EntityType="PurchaseModel.Requirement_Cheliangzhanpinghui_RequirementDtl2" Width="1.5" PointX="26.75" PointY="25.75" IsExpanded="true" />
+        <EntityTypeShape EntityType="PurchaseModel.Requirement_Cheliangzhanpinghui_RequirementDtl31" Width="1.5" PointX="4.75" PointY="27.75" IsExpanded="true" />
+        <EntityTypeShape EntityType="PurchaseModel.Requirement_Cheliangzhanpinghui_RequirementDtl4" Width="1.5" PointX="27.75" PointY="6.75" IsExpanded="true" />
+        <EntityTypeShape EntityType="PurchaseModel.Requirement_Cheliangzhanpinghui_RequirementDtl5" Width="1.5" PointX="27.75" PointY="11.75" IsExpanded="true" />
+        <EntityTypeShape EntityType="PurchaseModel.Requirement_Cheliangzhanpinghui_RequirementDtl7" Width="1.5" PointX="27.75" PointY="15.75" IsExpanded="true" />
+        <EntityTypeShape EntityType="PurchaseModel.Requirement_Cheliangzhanpinghui_RequirementDtl8" Width="1.5" PointX="6.75" PointY="28.75" IsExpanded="true" />
+        <EntityTypeShape EntityType="PurchaseModel.Requirement_Cheliangzhanpinghui_RequirementDtl9" Width="1.5" PointX="8.75" PointY="28.75" IsExpanded="true" />
+        <EntityTypeShape EntityType="PurchaseModel.Requirement_Gongyingshangchailv_RequirementDtl1" Width="1.5" PointX="28.75" PointY="19.75" IsExpanded="true" />
+        <EntityTypeShape EntityType="PurchaseModel.Requirement_Group" Width="1.5" PointX="20.75" PointY="28.75" IsExpanded="true" />
+        <EntityTypeShape EntityType="PurchaseModel.Requirement_Guangkong_RequirementDtl1" Width="1.5" PointX="28.75" PointY="24.75" IsExpanded="true" />
+        <EntityTypeShape EntityType="PurchaseModel.Requirement_Guangkong_RequirementDtl2" Width="1.5" PointX="29.75" PointY="0.75" IsExpanded="true" />
+        <EntityTypeShape EntityType="PurchaseModel.Requirement_Guangkong_RequirementDtl3" Width="1.5" PointX="29.75" PointY="5.75" IsExpanded="true" />
+        <EntityTypeShape EntityType="PurchaseModel.Requirement_Mianfangjidianfang_RequirementDtl1" Width="1.5" PointX="12.75" PointY="29.75" IsExpanded="true" />
+        <EntityTypeShape EntityType="PurchaseModel.Requirement_Mianfangjidianfang_RequirementDtl4" Width="1.5" PointX="29.75" PointY="15.75" IsExpanded="true" />
+        <EntityTypeShape EntityType="PurchaseModel.Requirement_Mianfangjidianfang_RequirementDtl5" Width="1.5" PointX="30.75" PointY="19.75" IsExpanded="true" />
+        <EntityTypeShape EntityType="PurchaseModel.Requirement_Mingjian_RequirementDtl1" Width="1.5" PointX="30.75" PointY="23.75" IsExpanded="true" />
+        <EntityTypeShape EntityType="PurchaseModel.Requirement_Mingjian_RequirementDtl3" Width="1.5" PointX="31.75" PointY="0.75" IsExpanded="true" />
+        <EntityTypeShape EntityType="PurchaseModel.Requirement_Mingjian_RequirementDtl5" Width="1.5" PointX="31.75" PointY="4.75" IsExpanded="true" />
+        <EntityTypeShape EntityType="PurchaseModel.Requirement_Pankujijiagediaocha_RequirementDtl1" Width="1.5" PointX="31.75" PointY="8.75" IsExpanded="true" />
+        <EntityTypeShape EntityType="PurchaseModel.Requirement_Pankujijiagediaocha_RequirementDtl2" Width="1.5" PointX="31.75" PointY="13.75" IsExpanded="true" />
+        <EntityTypeShape EntityType="PurchaseModel.Requirement_Pankujijiagediaocha_RequirementDtl3" Width="1.5" PointX="18.75" PointY="31.75" IsExpanded="true" />
+        <EntityTypeShape EntityType="PurchaseModel.Requirement_Pankujijiagediaocha_RequirementDtl4" Width="1.5" PointX="20.75" PointY="31.75" IsExpanded="true" />
+        <EntityTypeShape EntityType="PurchaseModel.Requirement_Pankujijiagediaocha_RequirementDtl5" Width="1.5" PointX="22.75" PointY="31.75" IsExpanded="true" />
+        <EntityTypeShape EntityType="PurchaseModel.Requirement_RequirementDtlLast" Width="1.5" PointX="4.75" PointY="32.75" IsExpanded="true" />
+        <EntityTypeShape EntityType="PurchaseModel.Requirement_RequirementMst" Width="1.5" PointX="32.75" PointY="18.75" IsExpanded="true" />
+        <EntityTypeShape EntityType="PurchaseModel.Requirement_Shenfangjirijiliuzhi_RequirementDtl1" Width="1.5" PointX="32.75" PointY="22.75" IsExpanded="true" />
+        <EntityTypeShape EntityType="PurchaseModel.Requirement_Shenfangjirijiliuzhi_RequirementDtl4" Width="1.5" PointX="6.75" PointY="33.75" IsExpanded="true" />
+        <EntityTypeShape EntityType="PurchaseModel.Requirement_Shenfangjirijiliuzhi_RequirementDtl5" Width="1.5" PointX="33.75" PointY="7.75" IsExpanded="true" />
+        <EntityTypeShape EntityType="PurchaseModel.Requirement_Shenfangjirijiliuzhi_RequirementDtl6" Width="1.5" PointX="33.75" PointY="11.75" IsExpanded="true" />
+        <EntityTypeShape EntityType="PurchaseModel.Requirement_Wangluodiaoyan_RequirementDtl1" Width="1.5" PointX="14.75" PointY="33.75" IsExpanded="true" />
+        <EntityTypeShape EntityType="PurchaseModel.Requirement_Wangluodiaoyan_RequirementDtl2" Width="1.5" PointX="30.75" PointY="33.75" IsExpanded="true" />
+        <EntityTypeShape EntityType="PurchaseModel.Requirement_Wangluodiaoyan_RequirementDtl4" Width="1.5" PointX="8.75" PointY="34.75" IsExpanded="true" />
+        <EntityTypeShape EntityType="PurchaseModel.Requirement_Yanjiujishujufenxi_RequirementDtl2" Width="1.5" PointX="34.75" PointY="15.75" IsExpanded="true" />
+        <EntityTypeShape EntityType="PurchaseModel.Requirement_Yunshuzuche_RequirementDtl2" Width="1.5" PointX="24.75" PointY="34.75" IsExpanded="true" />
+        <EntityTypeShape EntityType="PurchaseModel.Requirement_Zuotanhui_RequirementDtl1" Width="1.5" PointX="34.75" PointY="25.75" IsExpanded="true" />
+        <EntityTypeShape EntityType="PurchaseModel.Requirement_Zuotanhui_RequirementDtl2" Width="1.5" PointX="34.75" PointY="30.75" IsExpanded="true" />
+        <EntityTypeShape EntityType="PurchaseModel.Requirement_Zuotanhui_RequirementDtl4" Width="1.5" PointX="35.75" PointY="0.75" IsExpanded="true" />
+        <EntityTypeShape EntityType="PurchaseModel.Requirement_Zuotanhui_RequirementDtl5" Width="1.5" PointX="0.75" PointY="35.75" IsExpanded="true" />
+        <EntityTypeShape EntityType="PurchaseModel.Requirement_Zuotanhui_RequirementDtl6" Width="1.5" PointX="2.75" PointY="35.75" IsExpanded="true" />
+        <EntityTypeShape EntityType="PurchaseModel.SettlementCommitGroupDtl" Width="1.5" PointX="35.75" PointY="7.75" IsExpanded="true" />
+        <EntityTypeShape EntityType="PurchaseModel.SettlementDtl" Width="1.5" PointX="35.75" PointY="10.75" IsExpanded="true" />
+        <EntityTypeShape EntityType="PurchaseModel.SettlementMst" Width="1.5" PointX="16.75" PointY="35.75" IsExpanded="true" />
+        <EntityTypeShape EntityType="PurchaseModel.SupplierMngAttachmentFile" Width="1.5" PointX="8" PointY="5.875" IsExpanded="true" />
+        <EntityTypeShape EntityType="PurchaseModel.SettlementCommitGroup" Width="1.5" PointX="36.375" PointY="4.75" />
+        <EntityTypeShape EntityType="PurchaseModel.Ana_HuizongbiaoRemak" Width="1.5" PointX="16.375" PointY="15.75" />
+        <EntityTypeShape EntityType="PurchaseModel.Quotation_Group" Width="1.5" PointX="29.375" PointY="38.75" />
+        <EntityTypeShape EntityType="PurchaseModel.SupplierEvaDepartment" Width="1.5" PointX="16.375" PointY="12.75" />
+        <EntityTypeShape EntityType="PurchaseModel.SupplierEvaMainSubjects" Width="1.5" PointX="9.375" PointY="21.75" />
+        <EntityTypeShape EntityType="PurchaseModel.SupplierEvaSubSubjects" Width="1.5" PointX="39.375" PointY="12.75" />
+        <EntityTypeShape EntityType="PurchaseModel.Quotation_Chezhan_Dtl" Width="1.5" PointX="37.375" PointY="37.75" />
+        <EntityTypeShape EntityType="PurchaseModel.Quotation_Qita1_Dtl" Width="1.5" PointX="37.375" PointY="18.75" />
+        <EntityTypeShape EntityType="PurchaseModel.Quotation_Qita2_Dtl" Width="1.5" PointX="13.375" PointY="38.75" />
+        <EntityTypeShape EntityType="PurchaseModel.Quotation_Yanjiu_Dtl" Width="1.5" PointX="39.375" PointY="15.75" />
+        <EntityTypeShape EntityType="PurchaseModel.Quotation_Zhichi_Dtl" Width="1.5" PointX="15.375" PointY="39.75" />
+        <EntityTypeShape EntityType="PurchaseModel.Requirement_Mingjian_RequirementDtl4" Width="1.5" PointX="38.375" PointY="7.75" />
+        <EntityTypeShape EntityType="PurchaseModel.SupplierRequirementEmail" Width="1.5" PointX="19.375" PointY="35.75" />
+        <EntityTypeShape EntityType="PurchaseModel.SupplierRequirementEmailFile" Width="1.5" PointX="21.375" PointY="35.75" />
+        <EntityTypeShape EntityType="PurchaseModel.Quotation_Fuhe_Dtl" Width="1.5" PointX="38.375" PointY="0.75" />
+        <EntityTypeShape EntityType="PurchaseModel.Requirement_Changdibuzhan_RequirementDtl1" Width="1.5" PointX="21.375" PointY="39.75" />
+        <EntityTypeShape EntityType="PurchaseModel.Requirement_Cheliangzhanpinghui_RequirementDtl71" Width="1.5" PointX="39.375" PointY="22.75" />
+        <EntityTypeShape EntityType="PurchaseModel.Requirement_Mianfangjidianfang_RequirementDtl2" Width="1.5" PointX="5.375" PointY="16.75" />
+        <EntityTypeShape EntityType="PurchaseModel.Requirement_Bianmajifuhe_RequirementDtl71" Width="1.5" PointX="0.75" PointY="14.75" />
+        <EntityTypeShape EntityType="PurchaseModel.ApplyDtl_SettlementDtl" Width="1.5" PointX="25.375" PointY="39.75" />
+        <EntityTypeShape EntityType="PurchaseModel.ApplyDtl_SettlementMst" Width="1.5" PointX="39.375" PointY="26.75" />
+        <EntityTypeShape EntityType="PurchaseModel.ApplyDtl_SupplierMng" Width="1.5" PointX="39.375" PointY="31.75" />
+        <EntityTypeShape EntityType="PurchaseModel.ApplyDtl_SupplierMngAttachmentFile" Width="1.5" PointX="31.375" PointY="39.75" />
+        <EntityTypeShape EntityType="PurchaseModel.ProjectPerson" Width="1.5" PointX="3" PointY="6.875" />
+        <EntityTypeShape EntityType="PurchaseModel.Projects" Width="1.5" PointX="0.75" PointY="2.875" />
+        <AssociationConnector Association="PurchaseModel.FK_ProjectPerson_Projects" />
+        <EntityTypeShape EntityType="PurchaseModel.ApplyDtl_SettlementDtl_zhuijia_shoudong" Width="1.5" PointX="15.375" PointY="28.75" />
+        <EntityTypeShape EntityType="PurchaseModel.SettlementDtl_zhuijia_shoudong" Width="1.5" PointX="41.375" PointY="12.75" />
+        <EntityTypeShape EntityType="PurchaseModel.SupplierEvaAnswer" Width="1.5" PointX="8.375" PointY="38.75" />
+        <EntityTypeShape EntityType="PurchaseModel.Mst_RoleType" Width="1.5" PointX="3.375" PointY="10.75" />
+        <EntityTypeShape EntityType="PurchaseModel.Requirement_Internal_Tangible_Qita1" Width="1.5" PointX="2.75" PointY="40.75" />
+        <EntityTypeShape EntityType="PurchaseModel.Requirement_Internal_Intangible_Qita2" Width="1.5" PointX="41.375" PointY="17.75" />
+        <EntityTypeShape EntityType="PurchaseModel.Constract" Width="1.5" PointX="10.375" PointY="39.75" />
+        <EntityTypeShape EntityType="PurchaseModel.Quotation_Zhixing_Dtl" Width="1.5" PointX="41.375" PointY="23.75" />
+        <EntityTypeShape EntityType="PurchaseModel.Requirement_Shenfangjirijiliuzhi_RequirementDtl2" Width="1.5" PointX="31.375" PointY="27.75" />
+        <EntityTypeShape EntityType="PurchaseModel.SupplierMng" Width="1.5" PointX="5.75" PointY="42.125" />
+        <AssociationConnector Association="PurchaseModel.FK_SupplierMngAttachmentFile_SupplierMng" />
+        <EntityTypeShape EntityType="PurchaseModel.SupplierAlter" Width="1.5" PointX="41.375" PointY="37.75" />
+        <EntityTypeShape EntityType="PurchaseModel.ApplyDtl_FlowOrder" Width="1.5" PointX="41.375" PointY="41.75" />
+        <EntityTypeShape EntityType="PurchaseModel.FlowOrder" Width="1.5" PointX="27.375" PointY="42.75" />
+        <EntityTypeShape EntityType="PurchaseModel.RemindCancel" Width="1.5" PointX="3.375" PointY="13.75" />
+        <EntityTypeShape EntityType="PurchaseModel.ApplyFile" Width="1.5" PointX="25.375" PointY="31.75" />
+        <EntityTypeShape EntityType="PurchaseModel.ProjectCity" Width="1.5" PointX="3" PointY="1" />
+        <AssociationConnector Association="PurchaseModel.FK_ProjectCity_ProjectCity" />
+        <EntityTypeShape EntityType="PurchaseModel.Quotation_Biancheng_Dtl" Width="1.5" PointX="43.375" PointY="0.75" />
+        <EntityTypeShape EntityType="PurchaseModel.Quotation_Group_Yusuan" Width="1.5" PointX="27.375" PointY="35.75" />
+        <EntityTypeShape EntityType="PurchaseModel.Quotation_Yusuan_Dtl" Width="1.5" PointX="16.375" PointY="4.75" />
+        <EntityTypeShape EntityType="PurchaseModel.Mst_UserInfoSetLog" Width="1.5" PointX="7.375" PointY="16.75" />
+        <EntityTypeShape EntityType="PurchaseModel.Requirement_Yunshuzuche_RequirementDtl1" Width="1.5" PointX="9.375" PointY="16.75" />
+        <EntityTypeShape EntityType="PurchaseModel.Mst_UserInfo" Width="1.5" PointX="18.375" PointY="5.75" />
+        <EntityTypeShape EntityType="PurchaseModel.Requirement_Anfang_RequirementDtl4" Width="1.5" PointX="18.375" PointY="10.75" />
+        <EntityTypeShape EntityType="PurchaseModel.Requirement_Bianmajifuhe_RequirementDtl2" Width="1.5" PointX="20.375" PointY="5.75" />
+        <EntityTypeShape EntityType="PurchaseModel.Requirement_Cheliangzhanpinghui_RequirementDtl11" Width="1.5" PointX="0.75" PointY="28.75" />
+        <EntityTypeShape EntityType="PurchaseModel.Requirement_Cheliangzhanpinghui_RequirementDtl3" Width="1.5" PointX="33.75" PointY="39.75" />
+        <EntityTypeShape EntityType="PurchaseModel.Requirement_Cheliangzhanpinghui_RequirementDtl6" Width="1.5" PointX="17.75" PointY="40.75" />
+        <EntityTypeShape EntityType="PurchaseModel.Requirement_Mingjian_RequirementDtl2" Width="1.5" PointX="13.375" PointY="16.75" />
+        <EntityTypeShape EntityType="PurchaseModel.Requirement_Shenfangjirijiliuzhi_RequirementDtl3" Width="1.5" PointX="43.375" PointY="7.75" />
+        <EntityTypeShape EntityType="PurchaseModel.Requirement_Mianfangjidianfang_RequirementDtl3" Width="1.5" PointX="40.375" PointY="0.75" />
+        <EntityTypeShape EntityType="PurchaseModel.Requirement_Wangluodiaoyan_RequirementDtl3" Width="1.5" PointX="41.375" PointY="30.75" />
+        <EntityTypeShape EntityType="PurchaseModel.Requirement_Zuotanhui_RequirementDtl3" Width="1.5" PointX="43.375" PointY="15.75" />
+        <EntityTypeShape EntityType="PurchaseModel.Requirement_Yanjiujishujufenxi_RequirementDtl1" Width="1.5" PointX="22.375" PointY="0.75" />
+        <EntityTypeShape EntityType="PurchaseModel.Requirement_Bianchengjibianji_RequirementDtl1" Width="1.5" PointX="18.375" PointY="16.75" />
+        <EntityTypeShape EntityType="PurchaseModel.CustomerColumn" Width="1.5" PointX="16.375" PointY="0.75" />
+      </Diagram>
+    </edmx:Diagrams>
+  </edmx:Designer>
+</edmx:Edmx>

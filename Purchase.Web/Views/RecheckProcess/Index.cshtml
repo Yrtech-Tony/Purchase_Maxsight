@@ -1,0 +1,207 @@
+﻿@{
+    ViewBag.Title = "流程管理";
+    Layout = "~/Views/Shared/_SystemLayout.cshtml";
+}
+<div class="count inline-block">
+    <form id="search-form" class="form">
+        <table>
+            <tr>
+                <td width="80">申请类型</td>
+                <td width="150">
+                    <select id="RecheckType" name="RecheckType" class="form-control">
+                        <option value="供应商">供应商</option>
+                        <option value="合同">合同</option>
+                        <option value="立项">立项</option>
+                        <option value="需求书">需求书</option>
+                        <option value="确认单">确认单</option>
+                        <option value="结算单">结算单</option>
+                        <option value="流转单">流转单</option>
+                    </select>
+                </td>  
+                <td style="text-align:right">
+                    <button id="btnAddRecheckProcess" type="button" class="btn btn-primary" style="width:100px">新 增</button>
+                </td>            
+            </tr>
+        </table>
+    </form>
+    <div id="search-result" class="table-responsive">
+        <table id="RecheckProcess-table" class="table table-bordered table-condensed table-hover">
+            <thead>
+                <tr>
+                    <th>详细</th>
+                    <th>序号</th>
+                    <th>
+                        申请类型
+                    </th>
+                    <th>
+                        职位
+                    </th>
+                    <th>
+                        使用是否
+                    </th>
+                </tr>
+            </thead>
+            <tbody></tbody>
+        </table>
+    </div>
+    <br />
+    <form id="search-form2" class="form">
+        <table>
+            <tr>
+                <td width="80">申请类型</td>
+                <td width="150">
+                    <select id="RecheckType" name="RecheckType" class="form-control">
+                        <option value="供应商">供应商</option>
+                        <option value="合同">合同</option>
+                        <option value="立项">立项</option>
+                        <option value="需求书">需求书</option>
+                        <option value="确认单">确认单</option>
+                        <option value="结算单">结算单</option>
+                        <option value="流转单">流转单</option>
+                    </select>
+                </td>
+                <td style="text-align:right">
+                    <button id="btnAddRecheckProcessExcept" type="button" class="btn btn-primary" style="width:100px">新 增</button>
+                </td>
+            </tr>
+        </table>
+    </form>
+    <div id="search-result2" class="table-responsive">
+        <table id="RecheckProcessExcept-table" class="table table-bordered table-condensed table-hover">
+            <thead>
+                <tr>
+                    <th>详细</th>
+                    <th>序号</th>
+                    <th>
+                        申请类型
+                    </th>
+                    <th>申请人/审核人</th>
+                    <th>导师</th>
+                    <th>
+                        使用是否
+                    </th>
+                </tr>
+            </thead>
+            <tbody></tbody>
+        </table>
+    </div>
+</div>
+<div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-hidden="false">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
+                <h4 class="modal-title"></h4>
+            </div>
+            <div class="modal-body">
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script src="~/Scripts/custom/form-serialize.js"></script>
+    <script>
+        var curPageRecheckProcess, curPageRecheckProcessExcept;
+        $(function () {
+            loadRecheckProcess();
+            loadRecheckProcessExcept();
+
+            $("#btnAddRecheckProcess").click(function(){
+                editRecheckProcess("","0");
+            })
+            $("#btnAddRecheckProcessExcept").click(function () {
+                editRecheckProcessExcept("", "0");
+            })
+
+            $("#search-form #RecheckType").change(function(){
+                loadRecheckProcess();
+            })
+
+            $("#search-form2 #RecheckType").change(function(){
+                loadRecheckProcessExcept();
+            })
+        })
+        function loadRecheckProcess(pageNum) {
+            var params = $("#search-form").serializeJson();
+            params = $.extend(params, { pageSize: 10, pageNum: pageNum ? pageNum : 1 });
+            $.post("/RecheckProcess/LoadRecheckProcess", params, function (data) {
+                if (data && data.List) {
+                    $("#RecheckProcess-table tbody").empty();
+                    $.each(data.List, function (index, item) {
+                        var tr = $("<tr>");
+                      
+                        var editBtn = $("<a>").html("详细");
+                        editBtn.css("cursor", "pointer");
+                        editBtn.click(function () {
+                            editRecheckProcess(item.RecheckType,item.SeqNO);
+                        })
+                        tr.append($("<td></td>").append(editBtn));
+
+                        tr.append($("<td></td>").html(item.SeqNO));
+                        tr.append($("<td></td>").html(item.RecheckType));
+                        tr.append($("<td></td>").html(item.PositionCode));
+                        tr.append($("<td></td>").append($("<input type='checkbox' disabled='disabled'>").prop("checked",item.UseChk)));
+
+                        $("#RecheckProcess-table tbody").append(tr);
+                    })
+
+                    if (data.CurPage) {
+                        curPageRecheckProcess=data.CurPage;
+                       createPageNav({ $container: $("#pagination"), pageCount: data.PageCount, currentNum: data.CurPage, afterFun: load });
+                    }
+                }
+            })
+        }
+        function loadRecheckProcessExcept(pageNum) {
+            var params = $("#search-form2").serializeJson();
+            params = $.extend(params, { pageSize: 10, pageNum: pageNum ? pageNum : 1 });
+            $.post("/RecheckProcess/LoadRecheckProcessExcept", params, function (data) {
+                if (data && data.List) {
+                    $("#RecheckProcessExcept-table tbody").empty();
+                    $.each(data.List, function (index, item) {
+                        var tr = $("<tr>");
+                      
+                        var editBtn = $("<a>").html("详细");
+                        editBtn.css("cursor", "pointer");
+                        editBtn.click(function () {
+                            editRecheckProcessExcept(item.RecheckType,item.SeqNO);
+                        })
+                        tr.append($("<td></td>").append(editBtn));
+
+                        tr.append($("<td></td>").html(item.SeqNO));
+                        tr.append($("<td></td>").html(item.RecheckType));
+                        tr.append($("<td></td>").html(item.ApplyUserName));
+                        tr.append($("<td></td>").html(item.RecheckUserName));
+                        tr.append($("<td></td>").append($("<input type='checkbox'>").prop("checked",item.UseChk)));
+
+                        $("#RecheckProcessExcept-table tbody").append(tr);
+                    })
+
+                    if (data.CurPage) {
+                        curPageRecheckProcessExcept = data.CurPage;
+                       createPageNav({ $container: $("#pagination"), pageCount: data.PageCount, currentNum: data.CurPage, afterFun: load });
+                    }
+                }
+            })
+        }
+
+        function editRecheckProcess(RecheckType,SeqNO){
+            $("#myModal").modal("show");
+            $("#myModal .modal-title").html("编辑流程");
+            $("#myModal .modal-body").empty();
+            $("#myModal .modal-body").load("/RecheckProcess/EditRecheckProcess",{RecheckType:RecheckType,SeqNO:SeqNO},function(){
+                    
+            })
+        }
+
+        function editRecheckProcessExcept(RecheckType,SeqNO){
+            $("#myModal").modal("show");
+            $("#myModal .modal-title").html("编辑导师流程");
+            $("#myModal .modal-body").empty();
+            $("#myModal .modal-body").load("/RecheckProcess/EditRecheckProcessExcept",{RecheckType:RecheckType,SeqNO:SeqNO},function(){
+                    
+            })
+        }
+    </script>
+}

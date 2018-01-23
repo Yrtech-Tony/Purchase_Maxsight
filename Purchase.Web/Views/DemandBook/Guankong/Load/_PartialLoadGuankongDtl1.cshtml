@@ -1,0 +1,194 @@
+﻿<div class="panel panel-default mt20">
+    <div class="panel-heading">
+        <strong style="line-height:35px;font-size:14px;">配额要求</strong>
+        <button class="btn btn-primary btn pull-right clearfix" onclick="addDtl1()">添加</button>
+        <button class="btn btn-primary btn pull-right" style="margin-right:5px;" onclick="delDemandBookPeiE('1')">删除</button>
+    </div>
+    <div class="panel-body">
+        <div class="table-responsive">
+            <table id="dtl1-table" class="table table-bordered table-condensed table-hover text-center">
+                <thead>
+                    <tr>
+                        <th width="50">选择</th>
+                        <th width="50">
+                            复制
+                        </th>
+                        <th width="50">
+                            详细
+                        </th>
+                        <th width="50">
+                            序号
+                        </th>
+                        <th>
+                            执行分类
+                        </th>
+                        <th>
+                            邀约车型级别
+                        </th>
+                        <th>
+                            邀约车主审核
+                        </th>
+                        <th>
+                            邀约车主甄别
+                        </th>
+                        <th>
+                            进度控制
+                        </th>
+                        <th>
+                            出差监控
+                        </th>
+                        <th>
+                            项目培训
+                        </th>
+                        <th>
+                            录音监听
+                        </th>
+                        <th>
+                            资料核查
+                        </th>
+                        <th>
+                            样本量
+                        </th>
+                        <th>
+                            其他说明
+                        </th>
+                    </tr>
+                </thead>
+                <tbody></tbody>
+            </table>
+        </div>
+    </div>
+    <input id="SeqNOForLocalCopy" name="SeqNOForLocalCopy" type="hidden">
+</div>
+
+<script>
+    var detailView1 = 'Guankong/Detail/_PartialGuankongDtl1';
+    var title1 = "配额要求";
+    function addDtl1() {
+        if (!CommitCheck()) {
+            alert("正在审核中或者非本人添加的项目");
+            return false;
+        }
+        $("#SeqNOForLocalCopy").val("0");
+        setModal(title1, detailView1,null,true);
+        $("#myModal").modal("show");
+    }
+    function SavePeie() {
+        debugger
+        if (!CommitCheck()) {
+            alert("正在审核中或者非本人添加的项目");
+            return false;
+        }
+        var peieshuliang = 0;
+        $("#dtl1-table tbody tr").each(function (i, tr) {
+            if (sourceData[i].yangbenliang)
+                peieshuliang = parseFloat(FloatAdd(parseFloat(sourceData[i].yangbenliang), parseFloat(peieshuliang))).toFixed(2);
+        })
+        if (parseFloat(peieshuliang) != parseFloat($("#Count").val())) {
+            debugger
+            alert("配额样本量和立项样本量不同");
+            return false;
+        }
+        if (sourceData) {
+            $.post("/DemandBook/SaveGuankongDtl1List", {
+                jsonArr: JSON.stringify(sourceData),
+                RequirementId: $("#RequirementId").val(),
+                ProjectId: $("#ProjectId").val(),
+                CitySeqNO: $("#CitySeqNo").val(),
+                RequirementGroupId: $("#GroupId").val(),
+                RequirementType: $("#RequirementType").val()
+            }, function (data) {
+                alert("保存成功！");
+                loadGuankongDtl1()
+
+            })
+        }
+    }
+    function loadpage() {
+        debugger
+        $("#dtl1-table tbody").empty();
+        $.each(sourceData, function (index, item) {
+            for (pro in item) {
+                if ($.isArray(item[pro])) {
+                    item[pro] = item[pro].join('&');
+                }
+            }
+            var tr = $("<tr>");
+            tr.append($("<td></td>").append($("<input type='checkbox'>")));
+            var copyBtn = $("<a class='btn btn-primary btn2'>").html("复制");
+            copyBtn.click(function () {
+                debugger
+                $("#SeqNOForLocalCopy").val("0");
+                setModal(title1, detailView1, item,true);
+                $("#myModal").modal("show");
+
+            })
+            tr.append($("<td></td>").append(copyBtn));
+            var editBtn = $("<a class='btn btn-primary btn2'>").html("详细");
+            editBtn.click(function () {
+                $("#SeqNOForLocalCopy").val(item.SeqNO);
+                setModal(title1, detailView1, item, true);
+                $("#myModal").modal("show");
+            })
+            tr.append($("<td></td>").append(editBtn));
+            tr.append($("<td></td>").html(item.SeqNO));
+            tr.append($("<td></td>").html(item.zhixingfenlei));//执行分类
+            tr.append($("<td></td>").html(item.yaoyuechexingjiebie));//邀约车型级别
+            tr.append($("<td></td>").html(item.yaoyuechezhushenhe));//邀约车主审核
+            tr.append($("<td></td>").html(item.yaoyuechezhuzhenbie));//邀约车主甄别
+            tr.append($("<td></td>").html(item.jindukongzhi));//进度控制
+            tr.append($("<td></td>").html(item.chuchaijiankong));//出差监控
+            tr.append($("<td></td>").html(item.xiangmupeixun));//项目培训
+            tr.append($("<td></td>").html(item.luyinjianting));//录音监听
+            tr.append($("<td></td>").html(item.ziliaohecha));//资料核查
+            tr.append($("<td></td>").html(item.yangbenliang));//样本量
+            //tr.append($("<td></td>").html(item.qitashuoming1));//其他说明
+            var qitashuoming1 = item.qitashuoming1 != null ? item.qitashuoming1.replace(/\n/g, '<br>') : "&nbsp;";
+            tr.append($("<td style='text-align: left;'></td>").html(qitashuoming1));//其他说明
+
+
+            $("#dtl1-table tbody").append(tr);
+        })
+    }
+    function loadGuankongDtl1() {
+        $.post("/DemandBook/LoadGuankongDtl1", { RequirementId: $("#RequirementId").val() }, function (data) {
+            if (data) {
+                debugger
+                sourceData = data;
+                loadpage();
+                //$("#dtl1-table tbody").empty();
+                //$.each(data, function (index, item) {
+                //    var tr = $("<tr>");
+                //    var copyBtn = $("<a class='btn btn-primary btn2'>").html("复制");
+                //    copyBtn.click(function () {
+                //        item.SeqNO = 0;
+                //        setModal(title1, detailView1, item);
+                //        $("#myModal").modal("show");
+                //    })
+                //    tr.append($("<td></td>").append(copyBtn));
+                //    var editBtn = $("<a class='btn btn-primary btn2'>").html("详细");
+                //    editBtn.click(function () {
+                //        setModal(title1, detailView1, item);
+                //        $("#myModal").modal("show");
+                //    })
+                //    tr.append($("<td></td>").append(editBtn));
+                //    tr.append($("<td></td>").html(item.SeqNO));
+                //    tr.append($("<td></td>").html(item.zhixingfenlei));//执行分类
+                //    tr.append($("<td></td>").html(item.yaoyuechexingjiebie));//邀约车型级别
+                //    tr.append($("<td></td>").html(item.yaoyuechezhushenhe));//邀约车主审核
+                //    tr.append($("<td></td>").html(item.yaoyuechezhuzhenbie));//邀约车主甄别
+                //    tr.append($("<td></td>").html(item.jindukongzhi));//进度控制
+                //    tr.append($("<td></td>").html(item.chuchaijiankong));//出差监控
+                //    tr.append($("<td></td>").html(item.xiangmupeixun));//项目培训
+                //    tr.append($("<td></td>").html(item.luyinjianting));//录音监听
+                //    tr.append($("<td></td>").html(item.ziliaohecha));//资料核查
+                //    tr.append($("<td></td>").html(item.yangbenliang));//样本量
+                //    tr.append($("<td></td>").html(item.qitashuoming1));//其他说明
+
+
+                //    $("#dtl1-table tbody").append(tr);
+                //})
+            }
+        })
+    }
+</script>

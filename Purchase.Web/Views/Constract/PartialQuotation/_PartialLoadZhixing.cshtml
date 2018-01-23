@@ -1,0 +1,85 @@
+﻿@using Purchase.DAL
+@using Purchase.Common
+@model IEnumerable<Quotation_Zhixing_Dtl>
+
+<table id="quotation-table" class="table table-bordered table-condensed table-hover">
+    <thead>
+        <tr>
+            <th style="width: 45px">
+                选择
+            </th>
+            <th style="width: 80px">
+                执行省份
+            </th>
+            <th style="width: 80px">
+                执行城市
+            </th>
+            <th style="width: 85px">
+                进店方式
+            </th>
+            <th style="width: 75px">
+                执行分类
+            </th>
+            <th style="width: 65px">
+                用户分类
+            </th>
+            <th style="width: 85px;">
+                现有或潜在
+            </th>
+            <th style="width: 65px">
+                客户分类
+            </th>
+            <th style="width: 65px">
+                核算单位
+            </th>
+            <th style="width: 50px">
+                单价
+            </th>
+            <th style="width: 40px">
+                数量
+            </th>
+            <th style="width: 50px">
+                小计
+            </th>
+            @*<th>
+                备注
+            </th>*@
+        </tr>
+    </thead>
+    <tbody>
+        @if (Model != null)
+        {
+            foreach (Quotation_Zhixing_Dtl item in Model)
+            {
+                if (!(Utils.Decimal2Double(item.UnitPrice) == 0 && Utils.Decimal2Double(item.Count) == 0))
+                {
+                    var xiaoji = Utils.Decimal2Double(item.UnitPrice) * Utils.Decimal2Double(item.Count);
+
+                    <tr>
+                        <td><input type="checkbox" value="@Json.Encode(item)"></td>
+                        <td>@item.Province</td>
+                        <td>@item.City</td>
+                        <td>@item.IntoShopType</td>
+                        <td>@item.ExcuteType</td>
+                        <td>@item.UserType</td>
+                        <td>@item.ExistingOrPotential</td>
+                        <td>@item.CustomerType</td>
+                        <td>@item.AccountUnit</td>
+                        <td>@item.UnitPrice</td>
+                        <td>@item.Count</td>
+                        <td>@Utils.DoubleFormat(Math.Round(xiaoji, 2))</td>
+                        @*<td>@item.Remark</td>*@
+                    </tr>
+                }
+            }
+            <tr>
+                <td></td>
+                <td colspan="8"></td>
+                <td>合计</td>
+                <td>@Model.Sum(x => x.Count)</td>
+                <td>@Utils.DoubleFormat(Model.Sum(x => Utils.Decimal2Double(x.UnitPrice) * Utils.Decimal2Double(x.Count)))</td>
+                @*<td></td>*@
+            </tr>
+        }
+    </tbody>
+</table>

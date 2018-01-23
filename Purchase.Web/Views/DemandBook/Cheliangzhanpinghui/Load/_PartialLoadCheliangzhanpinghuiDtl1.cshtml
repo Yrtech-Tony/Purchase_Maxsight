@@ -1,0 +1,105 @@
+﻿<div class="panel panel-default mt20">
+    <div class="panel-heading">
+        <strong style="line-height:35px;font-size:14px;">定量-样本定义</strong>
+        <button class="btn btn-primary btn pull-right clearfix" onclick="addDtl1()">添加</button>
+        <button class="btn btn-primary btn pull-right" style="margin-right:5px;" onclick="delDemandBookDtl('1')">删除</button>
+    </div>
+    <div class="panel-body">
+        <div class="table-responsive">
+            <table id="dtl1-table" class="table table-bordered table-condensed table-hover text-center">
+                <thead>
+                    <tr>
+                        <th width="50">选择</th>
+                        <th width="50">
+                            复制
+                        </th>
+                        <th width="50">
+                            详细
+                        </th>
+                        <th>
+                            序号
+                        </th>
+                        <th>
+                            性别
+                        </th>
+                        <th>
+                            性别比例
+                        </th>
+                        <th>
+                            学历
+                        </th>
+                        <th>
+                            年龄
+                        </th>
+                        <th>
+                            年龄比例
+                        </th>
+                        <th>
+                            家庭年收入
+                        </th>
+                        <th>
+                            家庭月收入
+                        </th>
+                        <th>
+                            其他说明
+                        </th>
+                    </tr>
+                </thead>
+                <tbody></tbody>
+            </table>
+        </div>
+        </div>
+</div>
+
+<script>
+    var detailView1 = 'Cheliangzhanpinghui/Detail/_PartialCheliangzhanpinghuiDtl1';
+    var title1 = "定量-样本定义";
+    function addDtl1() {
+        if (!CommitCheck()) {
+            alert("正在审核中或者非本人添加的项目");
+            return false;
+        }
+        setModal(title1, detailView1);
+        $("#myModal").modal("show");
+    }
+
+    function loadCheliangzhanpinghuiDtl1() {
+        $.post("/DemandBook/LoadCheliangzhanpinghuiDtl1", { RequirementId: $("#RequirementId").val() }, function (data) {
+            if (data) {
+                $("#dtl1-table tbody").empty();
+                $.each(data, function (index, item) {
+                    var tr = $("<tr>");
+
+                    tr.append($("<td></td>").append($("<input type='checkbox'>")));
+                    var copyBtn = $("<a class='btn btn-primary btn2'>").html("复制");
+                    copyBtn.click(function () {
+                        item.SeqNO = 0;
+                        setModal(title1, detailView1, item);
+                        $("#myModal").modal("show");
+                    })
+                    tr.append($("<td></td>").append(copyBtn));
+                    var editBtn = $("<a class='btn btn-primary btn2'>").html("详细");
+                    editBtn.click(function () {
+                        setModal(title1, detailView1, item);
+                        $("#myModal").modal("show");
+                    })                   
+                    tr.append($("<td></td>").append(editBtn));
+                    tr.append($("<td></td>").html(item.SeqNO));
+                    tr.append($("<td></td>").html(item.xingbie));//性别
+                    tr.append($("<td></td>").html(item.xingbiebili));//性别比例
+                    tr.append($("<td></td>").html(item.xueli));//学历
+                    tr.append($("<td></td>").html(item.nianling));//年龄
+                    tr.append($("<td></td>").html(item.nianlingbili));//年龄比例
+                    tr.append($("<td></td>").html(item.jiatingnianshouru));//家庭年收入
+                    tr.append($("<td></td>").html(item.jiatingyueshouru));//家庭月收入
+                    //tr.append($("<td></td>").html(item.qitashuoming1));//其他说明
+                    var qitashuoming1 = item.qitashuoming1 != null ? item.qitashuoming1.replace(/\n/g, '<br>') : "&nbsp;";
+                    tr.append($("<td style='text-align: left;'></td>").html(qitashuoming1));//其他说明
+
+
+                    $("#dtl1-table tbody").append(tr);
+                })
+            }
+        })
+    }
+</script>

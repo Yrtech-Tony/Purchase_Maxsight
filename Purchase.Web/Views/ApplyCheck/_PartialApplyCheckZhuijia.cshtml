@@ -1,0 +1,47 @@
+﻿<table id="zhuijia-table" class="table table-bordered table-condensed table-hover">
+    <thead>
+        <tr>
+            <th>供应商名称</th>
+            <th>执行省份</th>
+            <th>执行城市</th>
+            <th>费用内容</th>
+            <th>单价</th>
+            <th>数量</th>
+            <th>合计</th>
+            <th>备注</th>
+        </tr>
+    </thead>
+    <tbody></tbody>
+</table>
+<script>
+
+    $(function () {
+        debugger
+        //loadZhuijia();
+    })
+    function loadZhuijia() {
+      //  $("#btnQueryZhuijia").button("loading");
+        $.post("/ApplyCheck/ApplySettlementZhuijia", { ApplyId: $("#ApplyIdPopup").val() }, function (data) {
+            if (data) {
+                if (data.List) {
+                    $("#zhuijia-table tbody").empty();
+                    $.each(data.List, function (index, item) {
+                        var tr = $("<tr>");
+
+                        tr.append($("<td></td>").html(item.SupplierName));
+                        tr.append($("<td></td>").html(item.zhixingshengfen));
+                        tr.append($("<td></td>").html(item.zhixingchengshi));
+                        tr.append($("<td></td>").html(item.FeeContent));
+                        tr.append($("<td></td>").html(item.danjia));
+                        tr.append($("<td></td>").html(item.SettleCount));
+                        tr.append($("<td></td>").html(item.SettleAmt));
+                        tr.append($("<td></td>").html(item.Remark));
+
+                        $("#zhuijia-table tbody").append(tr);
+                    })
+                }
+            }
+        })
+    };
+
+</script>

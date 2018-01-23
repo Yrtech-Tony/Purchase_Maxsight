@@ -1,0 +1,78 @@
+﻿@model Purchase.DAL.Quotation_Group
+<form id="QuotationGroupForm">
+    <div class="form-horizontal">
+        <div class="form-group">
+            <table style="width:80%">
+                <tr>
+                    <td colspan="6" style="text-align:right">
+                        <a id="btnSave" class="btn btn-primary" data-loading-text="提交中..." style="width:100px;height:35px">保 存</a>
+                    </td>
+                </tr>
+                <tr>
+                    <td>确认单组名称</td>
+                    <td>@Html.TextBoxFor(m => Model.QuotationGroupName, new { @class = "form-control" })</td>
+                </tr>
+                <tr style="display:none">
+                    <td>结算单来源</td>
+                    <td> @Html.CheckBox("SettlementChk", new { @class = "checkbox-inline", style = "height:16px; margin-right:3px;" })</td>
+                </tr>
+                <tr>
+                    <td>需求书组</td>
+                    <td>
+                        <input id="RequirementGroupId" name="RequirementGroupId" class="form-control" type="hidden">
+                        <input id="RequirementGroupName" name="RequirementGroupName" class="form-control" readonly>
+                    </td>
+                    <td>
+                        <a id="btnRequirementGroupSelect" class="btn btn-primary" style="width:100px">选择需求书组</a>
+                    </td>
+                </tr>
+            </table>
+        </div>
+    </div>
+    <input type="hidden" id="ProjectId" name="ProjectId" />
+    <input type="hidden" id="Id" name="Id" />
+</form>
+<script>
+    $(function () {
+        $("#btnSave").click(function () {
+            debugger
+            if (!CommitCheck()) {
+                alert("正在审核中或者非本人添加的项目");
+                return false;
+            }
+            if ($("#QuotationGroupForm #RequirementGroupName").val() == "" || $("#QuotationGroupForm #RequirementGroupName").val() == "0")
+            {
+                alert("请选择需求书组");
+                return false;
+            }
+            $(this).button('loading');//禁用按钮并显示提交中
+            debugger
+            $.post("/QuotationGroup/Save", $("#QuotationGroupForm").serialize(), function () {
+                $("#myModal").modal('hide');
+                load();
+            });
+        });
+        $("#btnRequirementGroupSelect").click(function () {
+            GroupSelect();
+        })
+    })
+    function GroupSelect() {
+        //if (isEmpty($("#ProjectId").val())) {
+        //    alert("请选择项目");
+        //    return
+        //}
+        debugger
+        $("#supplierModal").modal("show");
+        $("#supplierModal .modal-title").html("选择需求书组");
+        $("#supplierModal .modal-body").empty();
+        $("#supplierModal .modal-body").load("/QuotationGroup/RequirementGroupSelect", { ProjectId: $("#ProjectId").val() }, function () {
+
+        });
+    }
+    function GroupSelectCallback(args) {
+        debugger
+        $("#QuotationGroupForm #RequirementGroupName").val(args[0]);
+        $("#QuotationGroupForm #RequirementGroupId").val(args[1]);
+        $("#supplierModal").modal("hide");
+    }
+</script>

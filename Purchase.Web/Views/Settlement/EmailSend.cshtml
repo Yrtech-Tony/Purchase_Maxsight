@@ -1,0 +1,184 @@
+﻿@{
+    ViewBag.Title = "发送邮件";
+    Layout = "~/Views/Shared/_PurchaseLayout.cshtml";
+    var subject = string.Format("项目结算单-{0}-{1}-{2}", ViewBag.ProjectShortName, ViewBag.SupplierShortName, DateTime.Now.ToString("yyyy-MM-dd"));
+}
+<div class="count inline-block">
+    <form id="sendemail-form">
+        <input id="ModelType" name="ModelType" type="hidden" value="@ViewBag.ModelType" />
+        <input id="ProjectName" name="ProjectName" type="hidden" value="@ViewBag.ProjectName" />
+        <input id="ProjectId" name="ProjectId" type="hidden" value="@ViewBag.ProjectId" />
+        <input id="ProjectCode" name="ProjectCode" type="hidden" value="@ViewBag.ProjectCode" />
+        <input id="ProjectShortName" name="ProjectShortName" type="hidden" value="@ViewBag.ProjectShortName" />
+        <input id="SupplierId" name="SupplierId" type="hidden" value="@ViewBag.SupplierId" />
+        <input id="SupplierName" name="SupplierName" type="hidden" value="@ViewBag.SupplierName" />
+        <input id="SupplierShortName" name="SupplierName" type="hidden" value="@ViewBag.SupplierShortName" />
+        <input id="SettlementId" name="SettlementId" type="hidden" value="@ViewBag.SettlementId" />
+        <input id="QuotationGroupId" name="QuotationGroupId" type="hidden" value="@ViewBag.QuotationGroupId" />
+
+        <div class="form-horizontal">
+            <div class="form-group">
+                <div class="col-md-offset-10 col-md-2">
+                    <input id="sendBtn" type="button" value="发送" class="btn btn-primary btn-check" data-loading-text="发送中..." style="width:100px;height:35px" disabled/>
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="control-label col-md-2" for="Recipients">收件人</label>
+                <div class="col-md-8">
+                    <input id="Recipients" name="Recipients" class="form-control" value="@ViewBag.Email" readonly="readonly"/>
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="control-label col-md-2" for="CCPerson">抄送</label>
+                <div class="col-md-8">
+                    <input id="CCPerson" name="CCPerson" class="form-control" />
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="control-label col-md-2" for="Title">主题</label>
+                <div class="col-md-8">
+                    <input id="Title" name="Title" class="form-control" value="@subject" />
+                </div>
+            </div>
+            <div class="form-group" style="margin-bottom:10px;">
+                <label class="control-label col-md-2" for="TemplateName">结算单附件</label>
+                <div id="attachs-div" class="col-md-6">
+                    <span class="attach-el">正在生成结算单附件...</span>                    
+                </div>
+            </div>
+
+            <div class="form-group" style="margin-bottom:10px">
+                <label class="control-label col-md-2">其他附件</label>
+                <div id="otherAttachs-div" class="col-md-6">
+                </div>
+                <div class="col-md-2" style="text-align: right;">
+                    <a id="filePicker" class="btn btn-primary" style=" width: 150px;">选择其他附件</a>
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="control-label col-md-2" for="TemplateName">邮件内容</label>
+                <div class="col-md-8">
+                    <textarea id="EmailContent" name="EmailContent" class="form-control" rows="10"></textarea>
+                </div>
+            </div>
+        </div>
+    </form>
+</div>
+<script src="~/Scripts/custom/form-serialize.js"></script>
+<link href="/Scripts/upload/webuploader.css" rel="stylesheet" />
+<script src="/Scripts/upload/webuploader.nolog.js"></script>
+<script>
+    $(function () {
+        // Web Uploader实例
+        var uploader = WebUploader.create({
+            // swf文件路径
+            swf: '/Scripts/upload/Uploader.swf',
+            // 文件接收服务端。
+            server: '/Settlement/SaveOtherAttachs',
+            // 选择文件的按钮。可选。
+            // 内部根据当前运行是创建，可能是input元素，也可能是flash.
+            pick: '#filePicker',
+            auto: true
+        });
+        // 文件上传成功，给item添加成功class, 用样式标记上传成功。
+        uploader.on('uploadSuccess', function (file, retData) {
+            $.each(retData, function (i, item) {
+                var attEl = $('<span class="attach-el"></span>');
+                attEl.append($("<input name='otherAttachs' type='hidden'>").val(item.fileName));
+                attEl.append($("<i class='glyphicon glyphicon-paperclip'></i>"));
+                var link = $("<a>").html(item.fileName);
+                link.attr("href", "/Settlement/DownloadFile?fileName=" + item.fileFullName);
+                attEl.append(link);
+                attEl.append($("<a onclick='delAttach(this);return false' class='btn att_del'>删除</a>"));
+
+                $("#otherAttachs-div").append(attEl);
+            })
+        });
+
+        $("#sendBtn").click(function () {
+            $(this).button('loading');
+            if ($("#Recipients").val() == "") {
+                alert("收件人不能为空！");
+                return false;
+            }
+
+            if ($("#attachs-div").html().trim() == "") {
+                alert("请生成结算单");
+                return false;
+            }
+            var params = $("#sendemail-form").serializeJson();
+            $.post("/Settlement/SaveEmail", params, function () {
+               
+                window.location.href = "/Settlement/SettlementMst?ModelType=" + getQueryString("ModelType");
+            }).complete(function () { $(this).button('reset'); })
+        })
+        
+        //$("#Title").val("项目结算单-" + $("#ProjectShortName").val() + "-" +$("#SupplierShortName").val()+"-"+ + "-结算单");
+        $("#SettlementId").val(getQueryString("SettlementId"));
+        
+        CreateSellementFile();
+    })
+    
+    function delAttach(el) {
+        $(el).parent().remove();
+    }
+
+    function CreateSellementFile() {        
+        $.post("/SettlementExport/ExportList", {
+            ProjectId: $("#ProjectId").val(),
+            ProjectName: $("#ProjectName").val(),
+            ProjectCode: $("#ProjectCode").val(),
+            ProjectShortName: $("#ProjectShortName").val(),
+            SupplierId: $("#SupplierId").val(),
+            SupplierName: $("#SupplierName").val(),          
+            ModelType: $("#ModelType").val(),
+            settlementId: $("#SettlementId").val(),
+            quotationGroupId: $("#QuotationGroupId").val()
+        }, function (data) {
+            $("#attachs-div").empty();
+            if (data && data.length > 0) {
+                var fileNameList = data.split(",");
+                var fileName = fileNameList[1];
+                var fileFullName =fileNameList[0];
+                var attEl = $('<span class="attach-el"></span>');
+                attEl.append($("<input name='attachs' type='hidden'>").val(fileName));
+
+                var link = $("<a>").html(fileName);
+                link.attr("href", "/SettlementExport/DownloadFile?fileName=" + fileFullName);
+                attEl.append(link);
+                attEl.append($("<a onclick='delAttach(this);return false' class='btn att_del'>删除</a>"));
+                $("#attachs-div").append(attEl);
+            }
+        }).complete(function () { $("#sendBtn").prop("disabled", false); })
+    }
+
+</script>
+<style>
+    .attach-el {
+        display: inline-block;
+        margin-right: 5px;
+        line-height: 30px;
+        cursor: pointer;
+    }
+
+    .att_del {
+        margin-left: 5px;
+        width: auto;
+        height: auto;
+        font-size: 12px;
+        background: #f5f5f5;
+        color: #1267ac;
+        border: 1px #337ab7 solid;
+        padding: 2px 5px;
+        color: #2a6496;
+    }
+
+        .att_del:hover {
+            color: #333;
+            text-decoration: none;
+        }
+
+    i {
+        padding-right: 3px;
+    }
+</style>

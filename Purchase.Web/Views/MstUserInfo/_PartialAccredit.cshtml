@@ -1,0 +1,120 @@
+﻿@using Purchase.Service.DTO
+@model IEnumerable<UserInfoDto>
+
+<div class="count2 inline-block" style="width:100%">
+    <input type="hidden" id="UserIdHidden" />
+    <input type="hidden" id="TypeHidden" />
+    <table style="width:100%">
+        <tr>
+            <td style="width:80px; text-align:right">被授权人：</td>
+            <td style="text-align:left">
+                @{
+                    @Html.DropDownList("SetUserIdDP", Purchase.Web.Common.SelectListTool.UserInfoList, "", htmlAttributes: new { @class = "form-control" })
+                }
+                <div id="loading" class="loading" style="display:none">Loading...</div>  
+            </td>
+            <td style="text-align:left;padding-left:10px">
+                <input id="filterChecked" type="checkbox" />&nbsp; 已勾选
+            </td>
+            <td style="text-align:right">
+                <a id="btnSave" class="btn btn-primary" data-loading-text="提交中...">保 存</a>
+            </td>
+        </tr>
+    </table>
+    <div id="search-result" class="table-responsive" style="overflow:auto;max-height:580px">
+        <table id="alloc-permiss-table" class="table table-bordered table-condensed table-hover">
+            <thead>
+                <tr>
+                    <th><input type="checkbox" id="AllSelectChk"></th>
+                    @if (ViewBag.Type == "P")
+                    {
+                        <th>项目编号</th>
+                        <th>项目简称</th>
+                         <th>被授权人</th>
+                    }
+                    else
+                    {
+                        <th>供应商编号</th>
+                        <th>供应商简称</th>
+                        <th>被授权人</th>
+                    }
+                </tr>
+            </thead>
+            <tbody>
+                @Html.Partial("_PartialAccreditResult", Model)
+            </tbody>
+        </table>
+    </div>
+</div>
+<script>
+    var bindChk = function(chkUserIdList){
+        $("#alloc-permiss-table tbody tr input[type=checkbox]").each(function () {
+            var chk = $(this);
+            var setId = tr.prev().val();
+            if ($.inArray(setId, chkUserIdList)) {
+                chk.prop("checked", true);
+            }
+        })
+    }
+    //显示已选择的记录
+    $("#filterChecked").change(function () {
+        var filter = $(this).is(":checked");
+        $("#alloc-permiss-table tbody tr").each(function () {
+            var chk = $(this).find("input[type=checkbox]");
+            if (chk.is(":checked") || !filter) {
+                $(this).show();
+            } else {
+                $(this).hide();
+            }
+        })
+    })
+
+    $("#AllSelectChk").change(function () {
+        var allChked = $("#AllSelectChk").is(":checked");
+        $("#alloc-permiss-table tbody tr input[type=checkbox]").each(function () {
+            $(this).prop("checked", allChked);
+        })
+    })
+    //被授权人选择事件
+    $("#SetUserIdDP").change(function () {
+        $(".loading").show();
+        $("#alloc-permiss-table tbody").empty();
+        reload(function () {
+            $("#AllSelectChk").prop("checked", false);
+            $("#filterChecked").change();
+            $(".loading").hide();
+        });
+    })
+    $("#btnSave").click(function () {
+        $(this).button("loading");
+
+        var userId = $("#UserIdHidden").val();
+        var type = $("#TypeHidden").val();
+        var setUserId = $("#SetUserIdDP").val();
+        var allSetIds = [];
+        var chkSetIds = [];
+        $("#alloc-permiss-table tbody tr").each(function () {
+            var tr = $(this);
+            var setId = tr.find("#SetId").val();
+            allSetIds.push(setId);
+            if (tr.find("input[type=checkbox]:checked").length > 0) {
+                chkSetIds.push(setId);
+            }
+        })
+        $.post("/MstUserInfo/UserProjectSave", { userId: userId,setUserId:setUserId, type: type, chkSetIds: JSON.stringify(chkSetIds), allSetIds: JSON.stringify(allSetIds) }, function () {
+            reload(function () { $("#filterChecked").change(); });
+        }).complete(function () { $("#btnSave").button("reset"); });
+    })
+
+    function reload(call) {
+        var userId = $("#UserIdHidden").val();
+        var type = $("#TypeHidden").val();
+        var setUserId = $("#SetUserIdDP").val();
+        $("#alloc-permiss-table tbody").load("/MstUserInfo/AccreditReload", { UserId: userId, setUserId: setUserId, type: type }, function () {
+            if (call) {
+                call();
+            }
+        });
+    }
+
+</script>

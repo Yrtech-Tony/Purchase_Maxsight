@@ -1,0 +1,127 @@
+﻿@using Purchase.Web.Common
+@model Purchase.DAL.Requirement_Bianmajifuhe_RequirementDtl1
+
+<form id="Bianmajifuhe-dtl1-form">
+    @Html.Hidden("SeqNO", 0)
+    <div class="form-horizontal">
+        <div class="form-group">
+            <label class="control-label col-md-2" for="">复核要求</label>
+            <div class="col-md-4">
+                @Html.DropDownListFor(m => m.fuheyaoqiu, SelectListTool.HiddenCodeList("需求书-编码及复核-样本复核-复核要求"),
+                        htmlAttributes: new { @class = "form-control", multiple = "" })
+            </div>
+            <label class="control-label col-md-2" for="DrivingLicense">复核要求样本量或比例</label>
+            <div class="col-md-4">
+                @Html.TextBoxFor(m => m.fuheyaoqiuyangbenlianghuobili, htmlAttributes: new { @class = "form-control", multiple="" })
+            </div>
+        </div>
+        @*<div class="form-group">
+            <label class="control-label col-md-2" for="">AB卷</label>
+            <div class="col-md-4">
+                @Html.DropDownListFor(m => m.abjuan, SelectListTool.HiddenCodeList("需求书-编码及复核-样本复核-AB卷"),
+                         htmlAttributes: new { @class = "form-control", multiple = "" })
+            </div>
+            <label class="control-label col-md-2" for="DrivingLicense">AB卷样本量或比例</label>
+            <div class="col-md-4">
+                @Html.TextBoxFor(m => m.abjuanyangbenlianghuobili, htmlAttributes: new { @class = "form-control", multiple="" })
+            </div>
+        </div>*@
+        <div class="form-group">
+            <label class="control-label col-md-2" for="">技术问卷复核</label>
+            <div class="col-md-4">
+                @Html.DropDownListFor(m => m.jishuwenjuanfuhe, SelectListTool.HiddenCodeList("需求书-编码及复核-样本复核-技术问卷复核"),
+                         htmlAttributes: new { @class = "form-control", multiple = "" })
+            </div>
+
+            <label class="control-label col-md-2" for="DrivingLicense">技术问卷复核样本量或比例</label>
+            <div class="col-md-4">
+                @Html.TextBoxFor(m => m.jishuwenjuanfuheyangbenlianghuobili, htmlAttributes: new { @class = "form-control", multiple="" })
+            </div>
+        </div>
+        @*<div class="form-group">
+            <label class="control-label col-md-2" for="">问卷作答录音复核</label>
+            <div class="col-md-4">
+                @Html.DropDownListFor(m => m.wenjuanzuodaluyinfuhe, SelectListTool.HiddenCodeList("需求书-编码及复核-样本复核-问卷作答录音复核"),
+                         htmlAttributes: new { @class = "form-control", multiple = "" })
+            </div>
+
+            <label class="control-label col-md-2" for="DrivingLicense">问卷作答录音复核样本量或比例</label>
+            <div class="col-md-4">
+                @Html.TextBoxFor(m => m.wenjuanzuodaluyinfuheyangbenlianghuobili, htmlAttributes: new { @class = "form-control", multiple="" })
+            </div>
+        </div>*@
+        <div class="form-group">
+            <label class="control-label col-md-2" for="">其他复核要求</label>
+            <div class="col-md-4">
+                @Html.DropDownListFor(m => m.fuheyaoqiu1, SelectListTool.HiddenCodeList("需求书-编码及复核-样本复核-其他复核要求"),
+                         htmlAttributes: new { @class = "form-control", multiple = "" })
+            </div>
+
+            <label class="control-label col-md-2" for="DrivingLicense">其他复核要求核样本量或比例</label>
+            <div class="col-md-4">
+                @Html.TextBoxFor(m => m.fuheyaoqiuyangbenlianghuobili1, htmlAttributes: new { @class = "form-control", multiple="" })
+            </div>
+        </div>
+        <div class="form-group">
+            <label class="control-label col-md-2" for="">复核内容</label>
+            <div class="col-md-4">
+                @Html.DropDownListFor(m => m.fuheneirong, SelectListTool.HiddenCodeList("需求书-编码及复核-样本复核-复核内容"),
+                         htmlAttributes: new { @class = "form-control", multiple = "" })
+            </div>
+
+            <label class="control-label col-md-2" for="DrivingLicense">复核内容样本量或比例</label>
+            <div class="col-md-4">
+                @Html.TextBoxFor(m => m.fuheneirongyangbenlianghuobili, htmlAttributes: new { @class = "form-control", multiple="" })
+            </div>
+        </div>
+        <div class="form-group">
+            <label class="control-label col-md-2" for="">复核时间</label>
+            <div class="col-md-4">
+                @Html.DropDownListFor(m => m.fuheshijian, SelectListTool.HiddenCodeList("需求书-编码及复核-样本复核-复核时间"),
+                         htmlAttributes: new { @class = "form-control", multiple = "" })
+            </div>
+            <label class="control-label col-md-2" for="">光盘刻录</label>
+            <div class="col-md-4">
+                @Html.DropDownListFor(m => m.guangpankelu, SelectListTool.HiddenCodeList("需求书-编码及复核-样本复核-光盘刻录"),
+                         htmlAttributes: new { @class = "form-control", multiple = "" })
+            </div>
+        </div>
+        <div class="form-group">
+            <label class="control-label col-md-2" for="DrivingLicense">光盘刻录样本量或比例</label>
+            <div class="col-md-4">
+                @Html.TextBoxFor(m => m.guangpankeluyangbenlianghuobili, htmlAttributes: new { @class = "form-control", multiple="" })
+            </div>
+        </div>
+        <div class="form-group">
+            <label class="control-label col-md-2" for="TemplateName">其他说明</label>
+            <div class="col-md-10">
+                @Html.TextAreaFor(m => m.qitashuoming1, htmlAttributes: new { @class = "form-control", multiple="" })
+            </div>
+        </div>
+        <div class="form-group">
+            <div class="col-md-offset-2 col-md-10">
+                <input id="saveBtn" type="button" value="保存" class="btn btn-primary btn-check" data-loading-text="提交中..." style="width:100px;height:35px" />
+            </div>
+        </div>
+    </div>
+</form>
+<script>
+    $(function () {
+        
+        $("#Bianmajifuhe-dtl1-form #saveBtn").click(function () {
+            if (!CommitCheck()) {
+                alert("正在审核中或者非本人添加的项目");
+                return false;
+            }
+            $(this).button("loading")
+            var params = $("#Bianmajifuhe-dtl1-form").serializeJson('&');
+            params = $.extend(params, getMstObject());
+
+            $.post("/DemandBook/SaveBianmajifuheDtl1", params, function (data) {
+                $("#RequirementId").val(data);
+                loadBianmajifuheDtl1();
+                closeModal();
+            });
+        })
+    })
+</script>

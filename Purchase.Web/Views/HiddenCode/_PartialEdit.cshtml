@@ -1,0 +1,44 @@
+﻿@using Purchase.Web.Common;
+@model Purchase.DAL.HiddenCode
+<form id="HiddenCodeForm">
+    <table style="width:90%">
+        @*<tr>
+            <td width="100">字典类型</td>
+            <td>
+                
+                @Html.DropDownListFor(m => m.Type, SelectListTool.HiddenCodeType, new { @class = "form-control", disabled = "disabled" })
+            </td>
+        </tr>*@
+        <tr>
+            <td>字典名称</td>
+            <td>
+                @Html.HiddenFor(m => m.Type)
+                @Html.HiddenFor(m => m.Code)
+                @Html.TextBoxFor(m => m.Code, new { @class = "form-control", disabled = "disabled" })
+            </td>
+        </tr>
+        <tr>
+            <td>是否使用</td>
+            <td style="text-align:left">
+                @Html.CheckBox("UseChkCheckbox", Model.UseChk.HasValue ? Model.UseChk.Value : false, new { @class = "form-control" })
+            </td>
+        </tr>
+        <tr>
+            <td></td>
+            <td>
+                <button id="saveBtn" type="button" class="btn btn-primary">保 存</button>
+            </td>
+        </tr>
+    </table>
+</form>
+<script>
+    $(function () {
+        $("#saveBtn").click(function () {
+            var params = $("#HiddenCodeForm").serializeJson();
+            params.UseChk = $("#UseChkCheckbox").is(":checked");
+            $.post("/HiddenCode/Save", params, function (data) {
+                saveCallback();
+            });
+        })
+    })
+</script>

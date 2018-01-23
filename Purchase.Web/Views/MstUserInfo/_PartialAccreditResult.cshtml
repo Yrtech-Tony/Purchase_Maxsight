@@ -1,0 +1,32 @@
+﻿@using Purchase.Service.DTO
+@model IEnumerable<UserInfoDto>
+
+@if (Model != null)
+{
+    foreach (UserInfoDto item in Model)
+    { 
+        string checkedStr = item.Selected?"checked":"";
+        <tr>
+        <td>
+            @Html.Hidden("SetId", item.SetId)
+            <input type="checkbox" id="SelectChk" @checkedStr>
+        </td>
+        @if (ViewBag.Type == "P")
+        {
+            <td>
+                @item.SetCode
+            </td>
+            <td>@item.SetShortName</td>
+            <td>@item.SetUserName</td>
+        }
+        else
+        {
+            <td>
+                @item.SetCode
+            </td>
+            <td>@item.SetShortName</td>
+            <td>@item.SetUserName</td>
+        }
+    </tr>
+    }
+}

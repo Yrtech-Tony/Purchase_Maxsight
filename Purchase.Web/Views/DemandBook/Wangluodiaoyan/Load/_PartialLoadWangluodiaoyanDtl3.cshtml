@@ -1,0 +1,226 @@
+﻿<div class="panel panel-default mt20">
+    <div class="panel-heading">
+        <strong style="line-height:35px;font-size:14px;">配额要求</strong>
+        <button class="btn btn-primary btn pull-right clearfix" onclick="addDtl3()">添加</button>
+        <button class="btn btn-primary btn pull-right" style="margin-right:5px;" onclick="delDemandBookPeiE('3')">删除</button>
+    </div>
+    <div class="panel-body">
+        <div class="table-responsive">
+            <table id="dtl3-table" class="table table-bordered table-condensed table-hover text-center">
+                <thead>
+                    <tr>
+                        <th width="50">选择</th>
+                        <th width="50">
+                            复制
+                        </th>
+                        <th width="50">
+                            详细
+                        </th>
+                        <th>
+                            序号
+                        </th>
+                        <th>
+                            执行分类
+                        </th>
+                        <th>
+                            访问时长
+                        </th>
+                        <th>
+                            用户分类
+                        </th>
+                        <th>
+                            现有或潜在
+                        </th>
+                        <th>
+                            客户分类
+                        </th>
+                        <th>
+                            购车（预购）时间段
+                        </th>
+                        <th>
+                            具体购车时间
+                        </th>
+                        <th>
+                            售后维修/保养时间
+                        </th>
+                        <th>
+                            车辆类别
+                        </th>
+                        <th>
+                            品牌分类
+                        </th>
+                        <th>
+                            车价范围
+                        </th>
+                        <th>
+                            配额分布
+                        </th>
+                        <th>
+                            配额说明
+                        </th>
+                        <th>
+                            样本量
+                        </th>
+                        <th>
+                            工作职责
+                        </th>
+                        <th>
+                            报酬方式
+                        </th>
+                        <th>
+                            报酬金额
+                        </th>
+                        <th>
+                            名单来源
+                        </th>
+                        <th>
+                            其他说明
+                        </th>
+                    </tr>
+                </thead>
+                <tbody></tbody>
+            </table>
+        </div>
+    </div>
+    <input id="SeqNOForLocalCopy" name="SeqNOForLocalCopy" type="hidden">
+</div>
+<script>
+    var detailView3 = 'Wangluodiaoyan/Detail/_PartialWangluodiaoyanDtl3';
+    function addDtl3() {
+        if (!CommitCheck()) {
+            alert("正在审核中或者非本人添加的项目");
+            return false;
+        }
+        $("#SeqNOForLocalCopy").val("0");
+        setModal("配额要求", detailView3,null,true);
+        $("#myModal").modal("show");
+    }
+    function SavePeie() {
+        debugger
+        if (!CommitCheck()) {
+            alert("正在审核中或者非本人添加的项目");
+            return false;
+        }
+        var peieshuliang = 0;
+        $("#dtl3-table tbody tr").each(function (i, tr) {
+            if (sourceData[i].yangbenliang)
+                peieshuliang = parseFloat(FloatAdd(parseFloat(sourceData[i].yangbenliang), parseFloat(peieshuliang))).toFixed(2);
+        })
+        if (parseFloat(peieshuliang) != parseFloat($("#Count").val())) {
+            debugger
+            alert("配额样本量和立项样本量不同");
+            return false;
+        }
+        if (sourceData) {
+            $.post("/DemandBook/SaveWangluodiaoyanDtl3List", {
+                jsonArr: JSON.stringify(sourceData),
+                RequirementId: $("#RequirementId").val(),
+                ProjectId: $("#ProjectId").val(),
+                CitySeqNO: $("#CitySeqNo").val(),
+                RequirementGroupId: $("#GroupId").val(),
+                RequirementType: $("#RequirementType").val()
+            }, function (data) {
+                alert("保存成功！");
+                loadWangluodiaoyanDtl3()
+
+            })
+        }
+    }
+    function loadpage() {
+        $("#dtl3-table tbody").empty();
+        $.each(sourceData, function (index, item) {
+            for (pro in item) {
+                if ($.isArray(item[pro])) {
+                    item[pro] = item[pro].join('&');
+                }
+            }
+            var tr = $("<tr>");
+            tr.append($("<td></td>").append($("<input type='checkbox'>")));
+            var copyBtn = $("<a class='btn btn-primary btn2'>").html("复制");
+            copyBtn.click(function () {
+                $("#SeqNOForLocalCopy").val("0");
+                setModal("配额要求", detailView3, item, true);
+                $("#myModal").modal("show");
+
+            })
+            tr.append($("<td></td>").append(copyBtn));
+            var editBtn = $("<a class='btn btn-primary btn2'>").html("详细");
+            editBtn.click(function () {
+                $("#SeqNOForLocalCopy").val(item.SeqNO);
+                setModal("配额要求", detailView3, item, true);
+                $("#myModal").modal("show");
+            })
+            tr.append($("<td></td>").append(editBtn));
+            tr.append($("<td></td>").html(item.SeqNO));
+            tr.append($("<td></td>").html(item.zhixingfenlei));//执行分类
+            tr.append($("<td></td>").html(item.fangwenshichang));//执行分类
+            tr.append($("<td></td>").html(item.yonghufenlei));//用户分类
+            tr.append($("<td></td>").html(item.xianyouhuoqianzai));//现有或潜在
+            tr.append($("<td></td>").html(item.kehufenlei));//客户分类
+            tr.append($("<td></td>").html(item.goucheyugoushijianduan));//购车预购时间段
+            tr.append($("<td></td>").html(item.jutigoucheshijian));//具体购车时间
+            tr.append($("<td></td>").html(item.shouhouweixiubaoyangshijian));//售后维修保养时间
+            tr.append($("<td></td>").html(item.cheliangleibie));//车辆类别
+            tr.append($("<td></td>").html(item.pinpaifenlei));//品牌分类
+            tr.append($("<td></td>").html(item.chejiafanwen));//车价范围
+            tr.append($("<td></td>").html(item.peiefenbu));//配额分布
+            tr.append($("<td></td>").html(item.peieshuoming));//配额说明
+            tr.append($("<td></td>").html(item.yangbenliang));//样本量
+            tr.append($("<td></td>").html(item.gongzuozhize));//工作职责
+            tr.append($("<td></td>").html(item.baochoufangshi));//报酬方式
+            tr.append($("<td></td>").html(item.baochoujine));//报酬金额
+            tr.append($("<td></td>").html(item.mingdanlaiyuan));//报酬金额
+            //tr.append($("<td></td>").html(item.qitashuoming3));//其他说明
+            var qitashuoming3 = item.qitashuoming3 != null ? item.qitashuoming3.replace(/\n/g, '<br>') : "&nbsp;";
+            tr.append($("<td style='text-align: left;'></td>").html(qitashuoming3));//其他说明
+
+
+            $("#dtl3-table tbody").append(tr);
+        })
+    }
+    function loadWangluodiaoyanDtl3() {
+        $.post("/DemandBook/LoadWangluodiaoyanDtl3", { RequirementId: $("#RequirementId").val() }, function (data) {
+            if (data) {
+                sourceData = data;
+                loadpage();
+                //$("#dtl3-table tbody").empty();
+                //$.each(data, function (index, item) {
+                //    var tr = $("<tr>");
+                //    var copyBtn = $("<a class='btn btn-primary btn2'>").html("复制");
+                //    copyBtn.click(function () {
+                //        item.SeqNO = 0;
+                //        setModal(title3, detailView3, item);
+                //        $("#myModal").modal("show");
+                //    })
+                //    tr.append($("<td></td>").append(copyBtn));
+                //    var editBtn = $("<a class='btn btn-primary btn2'>").html("详细");
+                //    editBtn.click(function () {
+                //        setModal("配额要求", detailView3, item);
+                //        $("#myModal").modal("show");
+                //    })
+                //    tr.append($("<td></td>").append(editBtn));
+                //    tr.append($("<td></td>").html(item.SeqNO));
+                //    tr.append($("<td></td>").html(item.zhixingfenlei));//执行分类
+                //    tr.append($("<td></td>").html(item.yonghufenlei));//用户分类
+                //    tr.append($("<td></td>").html(item.xianyouhuoqianzai));//现有或潜在
+                //    tr.append($("<td></td>").html(item.kehufenlei));//客户分类
+                //    tr.append($("<td></td>").html(item.goucheyugoushijianduan));//购车预购时间段
+                //    tr.append($("<td></td>").html(item.jutigoucheshijian));//具体购车时间
+                //    tr.append($("<td></td>").html(item.shouhouweixiubaoyangshijian));//售后维修保养时间
+                //    tr.append($("<td></td>").html(item.cheliangleibie));//车辆类别
+                //    tr.append($("<td></td>").html(item.pinpaifenlei));//品牌分类
+                //    tr.append($("<td></td>").html(item.chejiafanwen));//车价范围
+                //    tr.append($("<td></td>").html(item.peiefenbu));//配额分布
+                //    tr.append($("<td></td>").html(item.peieshuoming));//配额说明
+                //    tr.append($("<td></td>").html(item.yangbenliang));//样本量
+                //    tr.append($("<td></td>").html(item.gongzuozhize));//工作职责
+                //    tr.append($("<td></td>").html(item.baochoufangshi));//报酬方式
+                //    tr.append($("<td></td>").html(item.baochoujine));//报酬金额
+                //    tr.append($("<td></td>").html(item.qitashuoming3));//其他说明
+
+                //    $("#dtl3-table tbody").append(tr);
+                //})
+            }
+        })
+    }
+</script>

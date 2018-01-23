@@ -1,0 +1,267 @@
+﻿@model Purchase.DAL.Quotation_Zhixing_Dtl
+<table id="quotation-zhixing-table">
+    <tr>
+        <td width="80">执行省份</td>
+        <td>
+            <input id="Province" name="Province" class="form-control" />
+        </td>
+        <td width="80">执行城市</td>
+        <td>
+            <input id="City" name="City" class="form-control" />
+        </td>
+        <td width="70">项目</td>
+        <td width="130">
+            <input type="hidden" id="ProjectId" name="ProjectId" />
+            <input id="ProjectCode" name="ProjectCode" class="form-control" disabled />
+        </td>
+        <td width="130">
+            <input id="ProjectName" name="ProjectName" class="form-control" disabled />
+        </td>
+        <td width="130">
+            <input id="ProjectShortName" name="ProjectShortName" class="form-control" disabled />
+        </td>
+        <td>
+            <a id="btnProjectSelect" class="btn btn-primary" style="width:120px">选择项目</a>
+        </td>
+    </tr>
+    <tr>
+        <td width="80">进店方式</td>
+        <td>
+            @*<input id="IntoShopType" name="IntoShopType" class="form-control" />*@
+            @Html.DropDownListFor(m => m.IntoShopType, new List<SelectListItem> {new SelectListItem(){Text="",Value=""},
+                    new SelectListItem(){ Text="单人进店",Value="单人进店"},
+                    new SelectListItem(){ Text="双人进店",Value="双人进店"},
+                    new SelectListItem(){ Text="多人进店",Value="多人进店"},
+                    new SelectListItem(){ Text="AB卷",Value="AB卷"},
+                    new SelectListItem(){ Text="技师陪同",Value="技师陪同"},
+                    new SelectListItem(){ Text="其他进店方式",Value="其他进店方式"},
+                    new SelectListItem(){ Text="不涉及",Value="不涉及"},
+                    new SelectListItem(){ Text="不限制",Value="不限制"},
+               }, htmlAttributes: new { @class = "form-control" })
+        </td>
+        @*<td>
+                <select id="ExecuteMode" name="ExecuteMode" class="form-control">
+                    <option value="暗访">暗访</option>
+                    <option value="明检">明检</option>
+                    <option value="盘库">盘库</option>
+                    <option value="价格调查">价格调查</option>
+                    <option value="面访">面访</option>
+                    <option value="电访">电访</option>
+                    <option value="座谈会">座谈会</option>
+                    <option value="深访">深访</option>
+                    <option value="日记留置">日记留置</option>
+                    <option value="网络调研">网络调研</option>
+                    <option value="车展展评会">车展展评会</option>
+                    <option value="管控">管控</option>
+                    <option value="编码">编码</option>
+                    <option value="复核">复核</option>
+                    <option value="编程及编辑">编程及编辑</option>
+                    <option value="数据分析">数据分析</option>
+                    <option value="报告制作">报告制作</option>
+                    <option value="主持人">主持人</option>
+                    <option value="场地">场地</option>
+                    <option value="布展">布展</option>
+                    <option value="运输">运输</option>
+                    <option value="租车">租车</option>
+                    <option value="供应商差旅">供应商差旅</option>
+                    <option value="有形商品采购">有形商品采购</option>
+                    <option value="服务采购">服务采购</option>
+                    <option value="技术采购">技术采购</option>
+                    <option value="工程发包">工程发包</option>
+                    <option value="车展展评会">车展展评会</option>
+                </select>
+            </td>*@
+        <td width="80">客户分类</td>
+        <td>
+            <select id="CustomerType" name="CustomerType" class="form-control">
+                <option value="本品">本品</option>
+                <option value="竞品">竞品</option>
+                <option value="均有">均有</option>
+                <option value="不涉及">不涉及</option>
+                <option value="不限制">不限制</option>
+            </select>
+        </td>
+        @*<td><input id="CustomerType" name="CustomerType" class="form-control" /></td>*@
+        <td>供应商</td>
+        <td width="130">
+            <input id="SupplierId" name="SupplierId" type="hidden" />
+            <input id="SupplierCode" name="SupplierCode" class="form-control" disabled>
+        </td>
+        <td width="130"><input id="SupplierName" name="SupplierName" class="form-control" disabled></td>
+        <td width="130"><input id="SupplierShortName" name="SupplierShortName" class="form-control" disabled></td>
+        <td>
+            <a id="btnSupplierSelect" class="btn btn-primary" style="width:120px">选择供应商</a>
+        </td>
+    </tr>
+    <tr>
+        <td width="80">需求书类型</td>
+        <td>
+            @Html.DropDownList("RequirementType", new List<SelectListItem> {
+                    new SelectListItem(){Text="",Value=""},
+                    new SelectListItem(){ Text="暗访",Value="Anfang"},
+                    new SelectListItem(){ Text="明检",Value="Mingjian"},
+                    new SelectListItem(){ Text="盘库及价格调查",Value="Pankujijiagediaocha"},
+                    new SelectListItem(){ Text="面访及电访",Value="Mianfangjidianfang"},
+                    new SelectListItem(){ Text="座谈会",Value="Zuotanhui"},
+                    new SelectListItem(){ Text="深访及日记留置",Value="Shenfangjirijiliuzhi"},
+                    new SelectListItem(){ Text="网络调研",Value="Wangluodiaoyan"},
+                    new SelectListItem(){ Text="管控",Value="Guankong"},
+                }, new { @class = "form-control" })
+        </td>
+        <td width="80">执行分类</td>
+        <td>
+            <select id="ExcuteType" name="ExcuteType" class="form-control">
+                <option value=""></option>
+                <option value="不涉及">不涉及</option>
+                <option value="不限制">不限制</option>
+            </select>
+        </td>
+        @*<td><input id="ExcuteType" name="ExcuteType" class="form-control" /></td>*@
+        <td width="80">用户分类</td>
+        <td>
+                @Html.DropDownListFor(m => m.UserType, new List<SelectListItem> {new SelectListItem(){Text="",Value=""},
+                    new SelectListItem(){ Text="私人用户",Value="私人用户"},
+                    new SelectListItem(){ Text="企业用户",Value="企业用户"},
+                    new SelectListItem(){ Text="销售经理",Value="销售经理"},
+                    new SelectListItem(){ Text="销售经理及以上级别",Value="销售经理及以上级别"},
+                    new SelectListItem(){ Text="服务经理",Value="服务经理"},
+                    new SelectListItem(){ Text="服务经理及以上级别",Value="服务经理及以上级别"},
+                    new SelectListItem(){ Text="总经理",Value="总经理"},
+                    new SelectListItem(){ Text="专家",Value="专家"},
+                    new SelectListItem(){ Text="非授权经销商",Value="非授权经销商"},
+                    new SelectListItem(){ Text="媒体",Value="媒体"},
+                    new SelectListItem(){ Text="厂商",Value="厂商"},
+                    new SelectListItem(){ Text="不涉及",Value="不涉及"},
+                    new SelectListItem(){ Text="不限制",Value="不限制"}
+                }, htmlAttributes: new { @class = "form-control" })
+            </td>
+        @*<td><input id="UserType" name="UserType" class="form-control" /></td>*@
+        <td width="80">现有或潜在</td>
+        <td>
+                <select id="ExistingOrPotential" name="ExistingOrPotential" class="form-control">
+                    <option value="现有">现有</option>
+                    <option value="潜在">潜在</option>
+                    <option value="潜在（增/换购）">潜在（增/换购）</option>
+                    <option value="均可">均可</option>
+                    <option value="不涉及">不涉及</option>
+                    <option value="不限制">不限制</option>
+                </select>
+            </td>
+        @*<td><input id="ExistingOrPotential" name="ExistingOrPotential" class="form-control" /></td>*@
+
+        <td></td>
+    </tr>
+    <tr>
+        <td>参考价格</td>
+        <td><input id="ProposedPrice" name="ProposedPrice" class="form-control" type="number"></td>
+        <td width="80">单价</td>
+        <td>
+            <input id="UnitPrice" name="UnitPrice" class="form-control" type="number">
+        </td>
+        <td width="80">数量</td>
+        <td>
+            <input id="Count" name="Count" class="form-control" type="number">
+        </td>
+        <td width="80">核算单位</td>
+        <td>
+            <input id="AccountUnit" name="AccountUnit" class="form-control">
+        </td>
+        <td></td>
+    </tr>
+    <tr>
+        <td width="80">备注</td>
+        <td colspan="7">
+            <textarea id="Remark" name="Remark" class="form-control"></textarea>
+        </td>
+
+        <td></td>
+    </tr>
+</table>
+
+<script>
+    $(function () {
+        afterReady();
+    })
+
+    function afterReady() {
+        var anfang = ["", "暗访（销售）", "暗访（售后）", "暗访（销售&售后）", "不限制", "不涉及"];
+        var mingjian = ["", "明检（销售）", "明检（售后）", "明检（销售&售后）", "不涉及", "不限制"];
+        var pankujijiagediaocha = ["", "盘库（销售）", "盘库（售后）", "盘库（其他）", "价格调查", "不涉及", "不限制"];
+        var mianfangjidianfang = ["", "定点约访", " 不定点约访", "定点拦截", "不定点拦截", "电话满意度", "NPS", "个案电访", "电话回访", "数据清洗", "不涉及", "不限制"];
+        var zuotanhui = ["", "本地座谈会", "飞行座谈会", "混合座谈会", "不涉及", "不限制"];
+        var shenfangjirijiliuzhi = ["", "深访", "日记", "留置", "深访&日记", "深访&日记&留置", "不涉及", "不限制"];
+        var wangluodiaoyan = ["", "网络调研 ", " 不涉及 ", "不限制"];
+        var guankong = ["", "暗访（销售）", "暗访（售后）", "暗访（销售&售后）", "定点约访", " 不定点约访", "定点拦截", "不定点拦截", "电话满意度", "NPS", "个案电访", "电话回访", "数据清洗", "不涉及", "不限制"];
+
+        $("#quotation-zhixing-table #RequirementType").change(function () {
+            if ($(this).val() == "Anfang") {
+                zhixingfenlei(anfang);
+                //gongzuozhize(gongzuozhize1);
+                //kehufenlei(kehufenlei1);
+                //yonghufenlei(yonghufenlei1);
+                //xianyouhuoqianzai(xianyouhuoqianzai1);
+            } else if ($(this).val() == "Mingjian") {
+                zhixingfenlei(mingjian);
+                //gongzuozhize(gongzuozhize2);
+                //kehufenlei(kehufenlei2);
+                //yonghufenlei(yonghufenlei2);
+                //xianyouhuoqianzai(xianyouhuoqianzai1);
+            } else if ($(this).val() == "Pankujijiagediaocha") {
+                zhixingfenlei(pankujijiagediaocha);
+                //gongzuozhize(gongzuozhize3);
+                //kehufenlei(kehufenlei3);
+                //yonghufenlei(yonghufenlei3);
+                //xianyouhuoqianzai(xianyouhuoqianzai3);
+            } else if ($(this).val() == "Mianfangjidianfang")
+            { zhixingfenlei(mianfangjidianfang); }
+            else if ($(this).val() == "Zuotanhui")
+            { zhixingfenlei(zuotanhui); }
+            else if ($(this).val() == "Shenfangjirijiliuzhi")
+            { zhixingfenlei(shenfangjirijiliuzhi); }
+            else if ($(this).val() == "Wangluodiaoyan")
+            { zhixingfenlei(wangluodiaoyan); }
+            else if ($(this).val() == "Guankong")
+            { zhixingfenlei(guankong); }
+        });
+    }
+
+    function zhixingfenlei(array) {
+        var el = $("#quotation-zhixing-table #ExcuteType");
+        el.empty();
+        for (i in array) {
+            el.append($("<option>").html(array[i]).val(array[i]));
+        }
+    }
+
+    function gongzuozhize(array) {
+        var el = $("#quotation-chezhan-table #gongzuozhize");
+        el.empty();
+        for (i in array) {
+            el.append($("<option>").html(array[i]).val(array[i]));
+        }
+    }
+
+    function kehufenlei(array) {
+        var el = $("#quotation-chezhan-table #kehufenlei");
+        el.empty();
+        for (i in array) {
+            el.append($("<option>").html(array[i]).val(array[i]));
+        }
+    }
+
+    function yonghufenlei(array) {
+        var el = $("#quotation-chezhan-table #yonghufenlei");
+        el.empty();
+        for (i in array) {
+            el.append($("<option>").html(array[i]).val(array[i]));
+        }
+    }
+
+    function xianyouhuoqianzai(array) {
+        var el = $("#quotation-chezhan-table #xianyouhuoqianzai");
+        el.empty();
+        for (i in array) {
+            el.append($("<option>").html(array[i]).val(array[i]));
+        }
+    }
+</script>

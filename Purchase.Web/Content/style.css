@@ -1,0 +1,567 @@
+﻿@charset "utf-8";
+/* CSS Document */
+body {
+}
+
+hr {
+    margin: 0;
+    margin-bottom: 8px;
+}
+
+.tip {
+    color: #fff;
+    /*margin-top: 20px;*/
+}
+
+.copyright {
+    font-size: 12px;
+    color: #3b79ea;
+    margin-top: 10px;
+}
+
+.container {
+    width: 1280px;
+}
+
+.body-bg {
+    background: #0255a1;
+}
+
+.blok-bg {
+    background: #fff;
+}
+
+.p10 {
+    padding: 10px;
+}
+
+.p20 {
+    padding: 24px;
+    padding-bottom: 0;
+}
+
+.pl18 {
+    padding-left: 18px;
+}
+
+.plr0 {
+    padding-left: 0;
+    padding-right: 0;
+}
+
+.mt20 {
+    margin-top: 20px;
+}
+
+.mt10 {
+    margin-top: 10px;
+}
+
+.top-bg {
+    width: 100%;
+    height: 70px;
+    background: #0255a1 url(../images/top.jpg) no-repeat center top;
+}
+
+.top {
+    height: 70px;
+    position: relative;
+    margin: 0 auto;
+}
+
+    .top .logo {
+        width: 264px;
+        height: 70px;
+        background: url(../images/logo.png) no-repeat center top;
+        margin-left: 30px;
+    }
+
+    .top .i-link {
+        width: 96px;
+        height: 70px;
+        background: url(../images/ilink.png) no-repeat center top;
+        margin-left: 180px;
+    }
+
+    .top .info {
+        width: 466px;
+        height: 40px;
+        line-height: 40px;
+        background: url(../images/infobg.png) no-repeat center top;
+        position: absolute;
+        top: 33px;
+        right: 29px;
+        font-size: 12px;
+        color: #fff;
+    }
+
+        .top .info span {
+            width: 265px;
+            margin-left: 35px;
+        }
+
+        .top .info a {
+            width: 60px;
+            color: #fff;
+            padding-left: 20px;
+            padding-top: 2px;
+        }
+
+            .top .info a.changepassword {
+                width: 95px;
+            }
+
+            .top .info a.exit {
+                background: url(../images/exit.png) no-repeat center left;
+            }
+
+            .top .info a.help {
+                background: url(../images/help.png) no-repeat center left;
+            }
+
+/*inline-block布局父盒子*/
+.inline-block-father {
+    font-size: 0;
+}
+/*inline-block布局的盒子*/
+.inline-block {
+    vertical-align: top;
+    display: inline-block;
+    zoom: 1;
+    *display: inline; /*补充代码，兼容IE6，7*/
+}
+
+@media screen and (max-width: 1366px) {
+    .container-fluid,
+    .top-bg {
+        width: auto;
+    }
+}
+
+.body {
+    width: 98%;
+    margin: 0;
+    margin-left: 16px;
+}
+
+.nav-box {
+    border: 1px solid #bfcfd3;
+    -webkit-box-shadow: 0px 0px 1px #ccc;
+    box-shadow: 0px 0px 1px #ccc;
+    box-sizing: border-box;
+    margin: 20px auto;
+}
+
+    .nav-box a {
+        display: inline-table;
+        width: 12.49%;
+        height: 180px;
+        font-size: 16px;
+        font-weight: 700;
+        background: #f1fcff;
+        text-align: center;
+        padding-top: 40px;
+        border-left: 1px dashed #bfcfd3;
+        box-sizing: border-box;
+        margin-right: -4px;
+    }
+
+        .nav-box a:last-child {
+            width: 168px;
+        }
+
+        .nav-box a:hover {
+            background: #e4f9ff;
+            text-decoration: none;
+        }
+
+.panel-heading a {
+    font-size: 12px;
+    color: #6c6c6c;
+    margin-top: 4px;
+}
+
+.panel-body {
+    padding: 6px;
+}
+/**
+    .i-panel
+*/
+.i-panel .panel-heading a {
+    font-size: 12px;
+    color: #6c6c6c;
+    margin-top: 4px;
+}
+
+.i-panel .panel-body font {
+    /*color: #666;*/
+}
+
+.i-panel .panel-body span {
+    color: #333;
+    margin-left: 15px;
+}
+
+    .i-panel .panel-body span.no {
+        color: #1267ac;
+    }
+
+.i-panel .panel-default a:hover {
+    color: #1267ac;
+    text-decoration: none;
+}
+
+/**
+    .menu count
+*/
+.menu {
+    width: 195px;
+    font-size: 14px;
+}
+
+.count {
+    width: 1105px;
+    font-size: 12px;
+    color: #666;
+    margin-left: 17px;
+}
+
+.menu .panel-heading {
+    padding: 6px;
+}
+
+    .menu .panel-heading h4 {
+        margin: 0px 0;
+        font-weight: 600;
+        font-size: 15px;
+    }
+
+.menu .panel {
+    margin-bottom: 10px !important;
+}
+
+.menu .panel-body hr {
+    margin-top: 6px;
+    margin-bottom: 6px;
+}
+
+.menu .panel-body a.active {
+    color: #1267ac;
+    font-weight: 600;
+}
+
+.count {
+    position: relative;
+}
+
+    .count .panel-heading {
+        background: none;
+    }
+
+    .count table {
+        width: 100%;
+    }
+
+    .count .title {
+        font-weight: 600;
+        color: #1267ac;
+        text-align: left;
+        margin-top: 8px;
+        margin-bottom: 6px;
+    }
+
+    .count input.rido {
+        height: auto;
+        vertical-align: middle;
+        /*margin-top: -3px;*/
+        margin-left: 20px;
+    }
+
+    .count table td {
+        vertical-align: middle;
+        padding: 3px 5px;
+    }
+
+    .count .radio-group label {
+        margin-bottom: 0px;
+        font-weight: 100;
+    }
+
+    .count form table td {
+        /*vertical-align: top;*/
+        padding: 2px 3px;
+    }
+
+        .count form table td:nth-child(2n+1) {
+            text-align: right;
+            vertical-align: middle;
+        }
+
+        .count form table td input {
+            height: 28px;
+            padding: 4px 6px;
+        }
+
+        .count form table td select {
+            height: 28px;
+            padding: 4px 2px;
+        }
+
+
+    .count .table td input, .count .table td select {
+        height: 25px;
+    }
+
+    .count .table {
+        margin-bottom: 0px;
+    }
+
+        .count .table th, .count .table td {
+            text-align: center;
+            vertical-align: middle;
+            white-space: nowrap;
+        }
+
+        .count .table th {
+            background: #337ab7;
+            color: #fff;
+        }
+
+        .count .table td.input-td {
+            padding: 2px 3px;
+        }
+
+            .count .table td.input-td input {
+                padding: 2px 3px;
+                height: 23px;
+            }
+/**列冻结 （浮动）*/
+.table .piao {
+    left: -1px;
+    width: 82px;
+    overflow: hidden;
+    background-color: #EAF0F9;
+    position: absolute;
+    z-index: 99;
+}
+
+.table .pzhan {
+    width: 67px;
+}
+
+.table-responsive {
+    width: 100%;
+    margin-bottom: 15px;
+    overflow-y: auto;
+    -ms-overflow-style: -ms-autohiding-scrollbar;
+    border: 1px solid #ddd;
+}
+
+    .table-responsive .table {
+        margin-bottom: 0px;
+    }
+
+        .table-responsive .table th, .table-responsive .table td {
+            text-align: center;
+            vertical-align: middle;
+            white-space: nowrap;
+        }
+
+.count .vat {
+    vertical-align: top;
+}
+
+.count .p40 {
+}
+
+.count .bigbtn {
+    width: 100px;
+    height: 65px;
+}
+
+.btn2 {
+    width: auto;
+    height: auto;
+    font-size: 12px;
+    background: #f5f5f5;
+    color: #1267ac;
+    border: 1px #337ab7 solid;
+    padding: 2px 10px;
+    color: #2a6496 !important;
+}
+
+    .btn2:hover {
+        color: #fff !important;
+    }
+
+.panel-body a {
+    color: #333;
+}
+
+.panel-body font {
+    /*color: #666;*/
+}
+
+.panel-body span {
+    color: #333;
+    margin-left: 15px;
+}
+
+    .panel-body span.no {
+        color: #1267ac;
+    }
+
+.panel-default a:hover {
+    color: #1267ac;
+    text-decoration: none;
+}
+
+.bottom {
+    width: 100%;
+    background: #0255a1;
+    padding: 10px;
+    margin: 0;
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    z-index: 1001;
+}
+
+    .bottom .tip {
+        color: #fff;
+    }
+
+    .bottom .copyright {
+        color: #3b79ea;
+        margin-top: 10px;
+    }
+
+
+.table-bordered > thead > tr > th {
+    border-bottom-width: 1px;
+}
+
+.modal {
+    outline: none;
+}
+
+.modal-body {
+    font-size: 14px;
+    max-height: 650px;
+    /*overflow-y:auto;*/
+}
+
+    .modal-body form table td {
+        vertical-align: middle;
+        padding: 3px 5px;
+    }
+
+        .modal-body form table td:nth-child(2n+1) {
+            text-align: right;
+        }
+
+
+.modal-lg {
+    width: 1250px;
+}
+
+.table .btn2 + .btn2 {
+    margin-left: 5px;
+}
+
+.count2 table td {
+    vertical-align: middle;
+    padding: 3px 5px;
+}
+
+    .count2 table td:nth-child(2n+1) {
+        text-align: right;
+    }
+
+.count2 .table td input, .count2 .table td select {
+    height: 22px;
+}
+
+.count2 .table td {
+    text-align: center;
+    vertical-align: middle;
+}
+
+.count2 .table th {
+    text-align: center;
+    background: #337ab7;
+    color: #fff;
+}
+
+input[type='radio'], input[type=checkbox] {
+    width: 15px !important;
+    height: 15px !important;
+    text-align: center;
+    vertical-align: middle;
+    margin-bottom: 5px;
+    cursor: pointer;
+}
+
+/*验证提示*/
+.chkHint {
+    color: red;
+    display: none;
+}
+
+.modal-title {
+    line-height: 0.8;
+}
+
+.pagination {
+    margin: 0;
+}
+
+.btn {
+    padding: 3px 6px;
+}
+
+.table.table-bordered td {
+    padding: 4px;
+}
+
+.count2 .table.table-bordered.table-condensed td {
+    text-align: center !important;
+}
+
+.form-control {
+    padding: 4px 6px;
+    height: 28px;
+}
+
+.dropdown-menu > li > a {
+    padding: 3px 10px;
+}
+
+.table-set {
+    table-layout: fixed;
+}
+
+    .table-set td {
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+    }
+
+.loading {
+    width: 200px;
+    height: 56px;
+    position: absolute;
+    top: 30%;
+    left: 40%;
+    line-height: 56px;
+    color: #fff;
+    padding-left: 60px;
+    font-size: 15px;
+    background: #000 url(../images/loader.gif) no-repeat 10px 50%;
+    opacity: 0.7;
+    z-index: 9999;
+    -moz-border-radius: 20px;
+    -webkit-border-radius: 20px;
+    border-radius: 20px;
+    filter: progid:DXImageTransform.Microsoft.Alpha(opacity=70);
+}

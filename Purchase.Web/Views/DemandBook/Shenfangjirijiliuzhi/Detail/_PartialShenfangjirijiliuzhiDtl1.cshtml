@@ -1,0 +1,102 @@
+﻿@using Purchase.Web.Common
+@model Purchase.DAL.Requirement_Shenfangjirijiliuzhi_RequirementDtl1
+
+<form id="Shenfangjirijiliuzhi-dtl1-form">
+    @Html.Hidden("SeqNO", 0)
+    <div class="form-horizontal">
+        <div class="form-group">
+            <label class="control-label col-md-2" for="luyin">性别</label>
+            <div class="col-md-8">
+                @Html.DropDownListFor(m => m.xingbie, SelectListTool.HiddenCodeList("需求书-深访及日记留置-样本定义-性别"),
+                          htmlAttributes: new { @class = "form-control", multiple = "" })
+            </div>
+        </div>
+        <div class="form-group">
+            <label class="control-label col-md-2" for="luxiang">性别比例</label>
+            <div class="col-md-8">  
+                @{
+                    List<SelectListItem> IntoShopAgainRateList = new List<SelectListItem>();
+                    IntoShopAgainRateList.Add(new SelectListItem() { Text = "", Value = "" });
+                    for (int i = 1; i <= 100; i++)
+                    {
+                        IntoShopAgainRateList.Add(new SelectListItem() { Text = i.ToString()+'%', Value = i.ToString()+'%' });
+                    }
+                    IntoShopAgainRateList.Add(new SelectListItem() { Text = "不涉及", Value = "不涉及" });
+                    IntoShopAgainRateList.Add(new SelectListItem() { Text = "不限制", Value = "不限制" });
+                }
+                @Html.DropDownListFor(m => m.xingbiebili, IntoShopAgainRateList, htmlAttributes: new { @class = "form-control"})
+            </div>
+        </div>
+        <div class="form-group">
+            <label class="control-label col-md-2" for="">学历</label>
+            <div class="col-md-8">
+                @Html.DropDownListFor(m => m.xueli, SelectListTool.HiddenCodeList("需求书-深访及日记留置-样本定义-学历"),
+                          htmlAttributes: new { @class = "form-control", multiple = "" })
+            </div>
+        </div>
+        <div class="form-group">
+            <label class="control-label col-md-2" for="">年龄</label>
+            <div class="col-md-8">
+                @Html.TextBoxFor(m => m.nianling, htmlAttributes: new { @class = "form-control", multiple="" })
+            </div>
+        </div>
+        <div class="form-group">
+            <label class="control-label col-md-2" for="EducationGroup">年龄比例</label>
+            <div class="col-md-8">
+                @{
+                    List<SelectListItem> IntoShopAgainRateList1 = new List<SelectListItem>();
+                    for (int i = 1; i <= 100; i++)
+                    {
+                        IntoShopAgainRateList1.Add(new SelectListItem() { Text = i.ToString()+'%', Value = i.ToString()+'%' });
+                    }
+                    IntoShopAgainRateList1.Add(new SelectListItem() { Text = "不涉及", Value = "不涉及" });
+                    IntoShopAgainRateList1.Add(new SelectListItem() { Text = "不限制", Value = "不限制" });
+                }
+                @Html.DropDownListFor(m => m.nianlingbili, IntoShopAgainRateList1, htmlAttributes: new { @class = "form-control" })
+            </div>
+        </div>
+        <div class="form-group">
+            <label class="control-label col-md-2" for="">家庭年收入</label>
+            <div class="col-md-8">
+                @Html.TextBoxFor(m => m.jiatingnianshouru, htmlAttributes: new { @class = "form-control", multiple="" })
+            </div>
+        </div>
+        <div class="form-group">
+            <label class="control-label col-md-2" for="">家庭月收入</label>
+            <div class="col-md-8">
+                @Html.TextBoxFor(m => m.jiatingyueshouru, htmlAttributes: new { @class = "form-control", multiple="" })
+            </div>
+        </div>
+        <div class="form-group">
+            <label class="control-label col-md-2" for="TemplateName">其他说明</label>
+            <div class="col-md-8">
+                @Html.TextBoxFor(m => m.qitashuoming1, htmlAttributes: new { @class = "form-control", multiple = "" })
+            </div>
+        </div>
+        <div class="form-group">
+            <div class="col-md-offset-2 col-md-10">
+                <input id="saveBtn" type="button" value="保存" class="btn btn-primary btn-check" data-loading-text="提交中..." style="width:100px;height:35px" />
+            </div>
+        </div>
+    </div>
+</form>
+<script>
+    $(function () {
+       
+        $("#Shenfangjirijiliuzhi-dtl1-form #saveBtn").click(function () {
+            if (!CommitCheck()) {
+                alert("正在审核中或者非本人添加的项目");
+                return false;
+            }
+            $(this).button("loading");
+            var params = $("#Shenfangjirijiliuzhi-dtl1-form").serializeJson('&');
+            params = $.extend(params, getMstObject());
+
+            $.post("/DemandBook/SaveShenfangjirijiliuzhiDtl1", params, function (data) {
+                $("#RequirementId").val(data);
+                loadShenfangjirijiliuzhiDtl1();
+                closeModal();
+            });
+        })
+    })
+</script>

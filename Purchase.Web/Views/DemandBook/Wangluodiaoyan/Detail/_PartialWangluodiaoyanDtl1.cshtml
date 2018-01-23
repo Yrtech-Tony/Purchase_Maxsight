@@ -1,0 +1,154 @@
+﻿@using Purchase.Web.Common
+@model Purchase.DAL.Requirement_Wangluodiaoyan_RequirementDtl1
+
+<form id="Wangluodiaoyan-dtl1-form">
+    @Html.Hidden("SeqNO", 0)
+    <div class="form-horizontal">
+        <div class="form-group">
+            <label class="control-label col-md-3" for="luyin">性别</label>
+            <div class="col-md-8">
+                @Html.DropDownListFor(m => m.xingbie, SelectListTool.HiddenCodeList("需求书-网络调研-样本定义-性别")
+                , htmlAttributes: new { @class = "form-control", multiple = "" })
+            </div>
+        </div>
+        <div class="form-group">
+            <label class="control-label col-md-3" for="luxiang">性别比例</label>
+            <div class="col-md-8">
+                @{
+                    List<SelectListItem> IntoShopAgainRateList = new List<SelectListItem>();
+                    IntoShopAgainRateList.Add(new SelectListItem() { Text = "", Value = "" });
+                    for (int i = 1; i <= 100; i++)
+                    {
+                        IntoShopAgainRateList.Add(new SelectListItem() { Text = i.ToString()+'%', Value = i.ToString()+'%' });
+                    }
+                    IntoShopAgainRateList.Add(new SelectListItem() { Text = "不涉及", Value = "不涉及" });
+                    IntoShopAgainRateList.Add(new SelectListItem() { Text = "不限制", Value = "不限制" });
+                }
+                @Html.DropDownListFor(m => m.xingbiebili, IntoShopAgainRateList, htmlAttributes: new { @class = "form-control" })
+            </div>
+        </div>
+        <div class="form-group">
+            <label class="control-label col-md-3" for="">学历</label>
+            <div class="col-md-8">
+                @Html.DropDownListFor(m => m.xueli, SelectListTool.HiddenCodeList("需求书-网络调研-样本定义-学历")
+                , htmlAttributes: new { @class = "form-control", multiple = "" })
+            </div>
+        </div>
+        <div class="form-group">
+            <label class="control-label col-md-3" for="">年龄</label>
+            <div class="col-md-8">
+                @Html.TextBoxFor(m => m.nianling, htmlAttributes: new { @class = "form-control", multiple="" })
+            </div>
+
+        </div>
+        <div class="form-group">
+            <label class="control-label col-md-3" for="EducationGroup">年龄比例</label>
+            <div class="col-md-8">
+                @{
+                    List<SelectListItem> IntoShopAgainRateList1 = new List<SelectListItem>();
+                    IntoShopAgainRateList1.Add(new SelectListItem() { Text = "", Value = "" });
+                    for (int i = 1; i <= 100; i++)
+                    {
+                        IntoShopAgainRateList1.Add(new SelectListItem() { Text = i.ToString()+'%', Value = i.ToString()+'%' });
+                    }
+                    IntoShopAgainRateList1.Add(new SelectListItem() { Text = "不涉及", Value = "不涉及" });
+                    IntoShopAgainRateList1.Add(new SelectListItem() { Text = "不限制", Value = "不限制" });
+                }
+                @Html.DropDownListFor(m => m.nianlingbili, IntoShopAgainRateList1, htmlAttributes: new { @class = "form-control"})
+            </div>
+        </div>
+        <div class="form-group">
+            <label class="control-label col-md-3" for="">家庭年收入</label>
+            @*<div class="col-md-8">
+                @Html.DropDownListFor(m => m.jiatingnianshouru, new List<SelectListItem> {new SelectListItem(){Text="",Value=""},
+                    new SelectListItem(){ Text="5万",Value="5万"},
+                    new SelectListItem(){ Text="6万",Value="6万"},
+                    new SelectListItem(){ Text="7万",Value="7万"},
+                    new SelectListItem(){ Text="8万",Value="8万"},
+                    new SelectListItem(){ Text="9万",Value="9万"},
+                    new SelectListItem(){ Text="10万",Value="10万"},
+                    new SelectListItem(){ Text="15万",Value="15万"},
+                    new SelectListItem(){ Text="20万",Value="20万"},
+                    new SelectListItem(){ Text="25万",Value="25万"},
+                    new SelectListItem(){ Text="30万",Value="30万"},
+                    new SelectListItem(){ Text="35万",Value="35万"},
+                    new SelectListItem(){ Text="40万",Value="40万"},
+                    new SelectListItem(){ Text="45万",Value="45万"},
+                    new SelectListItem(){ Text="50万",Value="50万"},
+                    new SelectListItem(){ Text="60万",Value="60万"},
+                    new SelectListItem(){ Text="70万",Value="70万"},
+                    new SelectListItem(){ Text="80万",Value="80万"},
+                    new SelectListItem(){ Text="90万",Value="90万"},
+                    new SelectListItem(){ Text="100万",Value="100万"},
+                    new SelectListItem(){ Text="不限制",Value="不限制"},
+                    new SelectListItem(){ Text="不涉及",Value="不涉及"}
+                }, htmlAttributes: new { @class = "form-control", multiple="" })
+            </div>*@
+            <div class="col-md-8">
+                @Html.TextBoxFor(m => m.jiatingnianshouru, htmlAttributes: new { @class = "form-control", multiple="" })
+            </div>
+        </div>
+        <div class="form-group">
+            <label class="control-label col-md-3" for="">家庭月收入</label>
+            @*<div class="col-md-8">
+                @Html.DropDownListFor(m => m.jiatingyueshouru, new List<SelectListItem> {new SelectListItem(){Text="",Value=""},
+                    new SelectListItem(){ Text="5万",Value="5万"},
+                    new SelectListItem(){ Text="6万",Value="6万"},
+                    new SelectListItem(){ Text="7万",Value="7万"},
+                    new SelectListItem(){ Text="8万",Value="8万"},
+                    new SelectListItem(){ Text="9万",Value="9万"},
+                    new SelectListItem(){ Text="10万",Value="10万"},
+                    new SelectListItem(){ Text="15万",Value="15万"},
+                    new SelectListItem(){ Text="20万",Value="20万"},
+                    new SelectListItem(){ Text="25万",Value="25万"},
+                    new SelectListItem(){ Text="30万",Value="30万"},
+                    new SelectListItem(){ Text="35万",Value="35万"},
+                    new SelectListItem(){ Text="40万",Value="40万"},
+                    new SelectListItem(){ Text="45万",Value="45万"},
+                    new SelectListItem(){ Text="50万",Value="50万"},
+                    new SelectListItem(){ Text="60万",Value="60万"},
+                    new SelectListItem(){ Text="70万",Value="70万"},
+                    new SelectListItem(){ Text="80万",Value="80万"},
+                    new SelectListItem(){ Text="90万",Value="90万"},
+                    new SelectListItem(){ Text="100万",Value="100万"},
+                    new SelectListItem(){ Text="不限制",Value="不限制"},
+                    new SelectListItem(){ Text="不涉及",Value="不涉及"}
+                }, htmlAttributes: new { @class = "form-control", multiple="" })
+            </div>*@
+            <div class="col-md-8">
+                @Html.TextBoxFor(m => m.jiatingyueshouru, htmlAttributes: new { @class = "form-control", multiple="" })
+            </div>
+        </div>
+        <div class="form-group">
+            <label class="control-label col-md-3" for="TemplateName">其他说明</label>
+            <div class="col-md-8">
+                @Html.TextAreaFor(m => m.qitashuoming1, htmlAttributes: new { @class = "form-control", multiple="" })
+            </div>
+        </div>
+        <div class="form-group">
+            <div class="col-md-offset-3 col-md-9">
+                <input id="saveBtn" type="button" value="保存" class="btn btn-primary btn-check" data-loading-text="提交中..." style="width:100px;height:35px" />
+            </div>
+        </div>
+    </div>
+</form>
+<script>
+    $(function () {
+        
+        $("#Wangluodiaoyan-dtl1-form #saveBtn").click(function () {
+            if (!CommitCheck()) {
+                alert("正在审核中或者非本人添加的项目");
+                return false;
+            }
+            $(this).button("loading");
+            var params = $("#Wangluodiaoyan-dtl1-form").serializeJson('&');
+            params = $.extend(params, getMstObject());
+
+            $.post("/DemandBook/SaveWangluodiaoyanDtl1", params, function (data) {
+                $("#RequirementId").val(data);
+                loadWangluodiaoyanDtl1();
+                closeModal();
+            });
+        })
+    })
+</script>

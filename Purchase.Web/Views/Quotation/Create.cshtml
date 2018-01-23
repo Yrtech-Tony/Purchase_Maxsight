@@ -1,0 +1,186 @@
+﻿@{
+    ViewBag.Title = "确认单登记";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+<style>
+    .search table {
+        width: 100%;
+    }
+    .search table tr {
+        height: 50px;
+    }
+</style>
+<div class="count2 container">
+    <h4>@ViewBag.Title</h4>
+    <hr />
+    <form id="QuotationForm" class="search">
+        <table>
+            <tr>
+                <td style="text-align:right">
+                    <a id="btnSave" class="btn btn-primary" data-loading-text="提交中..." style="width:100px;">保 存</a>
+                </td>
+            </tr>
+        </table>
+        <input id="QuotationId" name="QuotationId" type="hidden" value="@ViewBag.QuotationId" />
+        <input id="SeqNO" name="SeqNO" type="hidden" value="@ViewBag.SeqNO" />
+        <input id="QuotationType" name="QuotationType" type="hidden" value="@ViewBag.QuotationType" />
+        <input id="GroupId" name="GroupId" type="hidden" value="@ViewBag.GroupId" />
+        <input id="ModelType" name="ModelType" type="hidden"/>
+        <div id="partial"></div>
+    </form>
+</div>
+
+<div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-hidden="false">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
+                <h4 class="modal-title"></h4>
+            </div>
+            <div class="modal-body">
+            </div>
+        </div>
+    </div>
+</div>
+@section Scripts {
+    <script src="~/Scripts/custom/form-serialize.js"></script>
+    <script src="~/Content/My97DatePicker/WdatePicker.js"></script>
+    <script src="~/Scripts/custom/province_city.js"></script>
+    <script>
+        var validArray = [{ proName: 'ProjectId', msg: '项目不能为空！\n' },
+                   { proName: 'SupplierId', msg: '供应商不能为空！\n' },
+                   { proName: 'danjia', msg: '单价不能为空！\n' },
+                   { proName: 'shuliang', msg: '数量不能为空！\n' },
+                   { proName: 'ProposedPrice', msg: '参考价格不能为空！\n' },
+                   { proName: 'UnitPrice', msg: '单价不能为空！\n' },
+                   { proName: 'Count', msg: '数量不能为空！\n' }];
+        $(function () {
+            var QuotationType = getQueryString("QuotationType");
+            $("#QuotationType").val(QuotationType);
+            
+            var ModelType = getQueryString("ModelType");
+            if (ModelType == "0") {
+                $("#ModelType").val("业务");
+            }
+            else if (ModelType == "1")
+            {
+                $("#ModelType").val("内部采购");
+            }
+            else if (ModelType == "2") {
+                $("#ModelType").val("其他");
+            }
+            else if (ModelType == "3") {
+                $("#ModelType").val("其他");
+            }
+           
+            var partialView = '_Partial' + QuotationType;
+            $("#QuotationForm #partial").load("/Quotation/LoadPartial", { partialView: partialView }, function () {
+                var ProjectIdValue = getQueryString("ProjectId");
+                $("#ProjectId").val(ProjectIdValue);
+                if ($("#QuotationId").val() > 0) {
+                    $.post("/Quotation/Find" + QuotationType, { QuotationId: $("#QuotationId").val(), SeqNo: $("#SeqNO").val() }, function (data) {
+                        if (data) {
+                            $("#RequirementType").val(data.RequirementType).change();
+                            $("#fenlei").val(data.fenlei).change();
+                            $("#QuotationForm").setForm(data);                            
+                        }
+                    })
+
+                    $.post("/Quotation/FindQuotationMst", { QuotationId: $("#QuotationId").val() }, function (data) {
+                        if (data) {
+                            $("#QuotationForm").setForm(data);
+                            CommitCheck();
+                        }
+                    })
+                    $("#btnProjectSelect").parent().hide();
+                    $("#btnSupplierSelect").parent().hide();
+                    $("#btnSave").attr("style", "margin-right:10px");
+                } else {
+                    $.post("/Quotation/ProjectById", { ProjectId: $("#ProjectId").val() }, function (data) {
+                        if (data) {
+                            debugger
+                            $("#btnProjectSelect").hide();
+                            $("#btnProjectSelect").click(function () {
+                                ProjectSelect();
+                            })
+                            $("#btnSupplierSelect").click(function () {
+                                SupplierSelect(1);
+                            })
+                            $("#ProjectCode").val(data.List.ProjectCode);
+                            $("#ProjectName").val(data.List.ProjectName);
+                            $("#ProjectShortName").val(data.List.ProjectShortName);
+                        }
+                    })
+                }
+                
+                $("#btnSave").click(function () {
+                    $(this).button('loading');//禁用按钮并显示提交中
+                    var msg = '';                   
+                    for (i in validArray) {
+                        var valid = validArray[i];
+                        if ($("#" + valid.proName).length > 0) {
+                            if ($("#" + valid.proName).val() == "") {
+                                msg += valid.msg;
+                            }
+                        }
+                    }
+                    if (msg.length > 0) {
+                        alert(msg);
+                        $(this).button('reset');
+                        return;
+                    }
+                    var obj = $("#QuotationForm").serializeJson();
+                    $.post("/Quotation/Save" + QuotationType, obj, function (data) {
+                        $("#QuotationId").val(data.QuotationId);
+                        alert("保存成功！");
+                        //window.location.href = "/Quotation" + window.location.search;
+                    }).complete(function () {
+                        $("#btnSave").button('reset');
+                    })                 
+                });                
+            });
+        })
+        function ProjectSelect() {
+            $("#myModal .modal-body").empty();
+            $("#myModal").modal("show");
+            $("#myModal .modal-title").html("选择项目");
+            $("#myModal .modal-body").load("/DemandBook/ProjectSelect", { ModelType: $("#ModelType").val(), ProjectCode: "", ProjectName: "", ProjectShortName: "" }, function () {
+
+            });
+        }
+        function SupplierSelect(type) {
+            $("#myModal .modal-body").empty();
+            $("#myModal").modal("show");
+            $("#myModal .modal-title").html("选择供应商");
+            $("#myModal .modal-body").load("/Constract/SupplierMngSelect",
+                { SupplierCode: "", SupplierName: "", SupplierShortName: "", province: '', city: '' }, function () {
+                    $("#myModal .modal-body #Type").val(type)
+                });
+        }
+
+        function ProjectSelectCallback(args) {
+            $("#ProjectCode").val(args[0]);
+            $("#ProjectName").val(args[1]);
+            $("#ProjectShortName").val(args[2]);
+            $("#ProjectId").val(args[3]);
+            $("#myModal").modal("hide");
+        }
+        function SupplierSelectCallback1(args) {
+            $("#SupplierCode").val(args.SupplierCode);
+            $("#SupplierName").val(args.SupplierName);
+            $("#SupplierShortName").val(args.SupplierShortName);
+            $("#SupplierId").val(args.SupplierId);
+            $("#myModal").modal("hide");
+        }
+
+        function CommitCheck()
+        {
+            $.post("/Quotation/CommitCheckSearch", { projectId: $("#ProjectId").val() }, function (data) {
+                $("#ApplyStautCode").val(data.ApplyStatusCode);
+                if (data.ApplyStatusCode != "") {
+                    $("#btnSave").attr("disabled", true);
+                }
+            })
+        }
+    </script>
+}

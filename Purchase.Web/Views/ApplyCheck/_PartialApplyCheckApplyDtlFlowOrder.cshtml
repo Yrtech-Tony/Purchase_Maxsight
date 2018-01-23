@@ -1,0 +1,111 @@
+﻿@using Purchase.Service.DTO
+@model IEnumerable<FlowOrderDto>
+<div class="count2">
+    <div style="margin:0;width:100%">
+        <table>
+            <tr>
+                <td width="100"><strong>不可预见费：</strong></td>
+                <td style="text-align:left"><span id="Contingency"></span></td>
+                <td width="100"><strong>预算总金额：</strong></td>
+                <td style="text-align:left"><span id="BugetSum"></span></td>
+                <td width="140"><strong>实际付款总金额：</strong></td>
+                <td style="text-align:left"><span id="FactSum"></span></td>
+                <td width="80"><strong>剩余金额：</strong></td>
+                <td style="text-align:left"><span id="RemainSum"></span></td>
+            </tr>
+        </table>
+    </div>
+    <table id="RecheckUserSelect-table" class="table table-bordered table-condensed table-hover">
+        <thead>
+            <tr>
+                <th>申请编号</th>
+                <th>流转单Id</th>
+                <th>项目编号</th>
+                <th>项目名称</th>
+                <th>项目简称</th>
+                <th>供应商名称</th>
+                <th>查看附件</th>
+            </tr>
+        </thead>
+        <tbody>
+            @if (Model != null)
+            {
+                foreach (FlowOrderDto item in Model)
+                {
+                    <tr>
+                        <td>@item.ApplyId</td>
+                        <td><a href="javascript:FlowOrderDtl(@item.ApplyId,@item.FlowOrderId)">@item.FlowOrderId</a></td>
+                        <td>@item.ProjectCode</td>
+                        <td>@item.ProjectName</td>
+                        <td>@item.ProjectShortName</td>
+                        <td>@item.SupplierName</td>
+                        <td><a href="javascript:showAttachList(@item.ApplyId)">查看附件</a></td>
+                    </tr>
+                }
+            }
+        </tbody>
+    </table>
+</div>
+<br />
+<div style="position:relative; display:none">
+    <div id="flowerDtl" class="table-responsive"></div>
+</div>
+<script src="~/Scripts/custom/bs.modal.expend.js"></script>
+<script>
+    $(function () {
+        bugetSearch();
+    })
+
+    function bugetSearch() {
+        var applyId = $("#RecheckUserSelect-table tbody tr:first-child td:first-child").text();
+        $.post("/ApplyCheck/ApplyDetail_FlowOrderBugetSearch", { applyId: applyId }, function (data) {
+            if (data) {
+                var Contingency = data.Contingency || '0',
+                    BugetSum = data.BugetSum || '0',
+                    FactSum = data.FactSum || '0';
+                $("#Contingency").text(Contingency);
+                $("#BugetSum").text(BugetSum);
+                $("#FactSum").text(FactSum);
+                var RemainSum = parseFloat(Contingency) + parseFloat(BugetSum) - parseFloat(FactSum)
+                $("#RemainSum").text(RemainSum);
+                if (data.OverFlowCheck) {
+                    $("#BugetSum").css("color", "red");
+                }
+                if (RemainSum < 0) {
+                    $("#RemainSum").css("color", "red");
+                }
+            }
+        })
+    }
+    //function openQuotationDetail(QuotationId,QuotationType,ModelType) {
+    //    var modeltypes = ["业务", "内部采购", "其他1", "其他2"];
+    //    var url = "/Quotation/Create?id=" + QuotationId;
+    //    url += "&QuotationType=" + QuotationType;
+    //    url += "&ModelType=" + modeltypes.indexOf(ModelType);
+    //    if (RequirementId != 0) {
+    //        url += "&RequirementId=" + RequirementId;
+    //    }
+    //    var url = "/Quotation/Create?id=" + QuotationId;
+    //    window.open(url);
+    //}
+    function openFlowOrder(ApplyId, Id) {
+        var url = "/FlowOrder/Edit?Id=" + Id;
+        window.open(url);
+    }
+
+    function FlowOrderDtl(ApplyId, Id) {
+        $("#flowerDtl").empty();
+        $("#flowerDtl").load("/ApplyCheck/ApplyDetail_FlowOrderBy", { ApplyId: ApplyId, id: Id }, function () {
+            $("#flowerDtl").parent().show();
+        });
+    }
+
+    function showAttachList(ApplyId) {
+        var bsWindow = createBSWindow({
+            title: "附件"
+        });
+        $(".modal-body", bsWindow).load("/ApplyCheck/AttachShow", { applyId: ApplyId }, function () {
+
+        });
+    }
+</script>

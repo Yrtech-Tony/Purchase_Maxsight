@@ -1,0 +1,289 @@
+﻿@{
+    ViewBag.Title = "合同登记及查询";
+    Layout = "~/Views/Shared/_ConstractLayout.cshtml";
+}
+<div class="count inline-block">
+    <form id="search-form" class="form">
+        <table>
+            <tr>
+                <td colspan="10" style="text-align:right">
+                    <button id="btnQuery" type="button" class="btn btn-primary" style="width:100px">查 询</button>
+                    <button id="btnAdd" onclick="openNew()" type="button" class="btn btn-primary" style="width:100px">新 增</button>
+                </td>
+            </tr>
+            <tr>
+                <td width="90">合同名称</td>
+                <td width="130">
+                    <input id="ConstractName" name="ConstractName" class="form-control">
+                </td>
+                <td width="80">服务行业</td>
+                <td width="100">
+                    <select id="ServiceTrade" name="ServiceTrade" class="form-control"></select>
+                </td>
+                <td width="70">项目名称</td>
+                <td width="240">
+                    <input id="ProjectCode" name="ProjectCode" class="form-control" type="hidden" />
+                    <input id="ProjectName" name="ProjectName" class="form-control" />
+                </td>
+                <td width="70">项目简称</td>
+                <td width="140">
+                    <input id="ProjectShortName" name="ProjectShortName" class="form-control" />
+                </td>
+                <td width="90">供应商</td>
+                <td width="240">
+                    <input id="SupplierCode" name="SupplierCode" class="form-control" type="hidden">
+                    <input id="SupplierName" name="SupplierName" class="form-control">
+                    <input id="SupplierShortName" name="SupplierShortName" class="form-control" type="hidden">
+                </td>
+            </tr>
+        </table>
+    </form>
+    <div class="table-responsive">
+        <table id="Constract-table" class="table table-bordered table-condensed">
+            <thead>
+                <tr>
+                    <th class="piao">提交审核</th>
+                    <th class="piao" style="left: 79px">删除</th>
+                    @*<th class="piao" style="left: 158px">复制</th>*@
+                    <th class="piao" style="left: 158px">详细</th>
+                    <th class="piao" style="left: 237px">预览</th>
+                    <th class="piao" style="left: 316px">发送邮件</th>
+                    <th><div class='pzhan' style='width:382px'></div></th>
+                    <th>
+                        合同名称
+                    </th>
+                    <th>项目简称</th>
+                    <th>供应商简称</th>
+                    <th>
+                        开始日期
+                    </th>
+                    <th>
+                        结束日期
+                    </th>
+                    <th>
+                        申请状态
+                    </th>
+                    <th>
+                        邮件发送时间
+                    </th>
+                    <th>
+                        项目编号
+                    </th>
+                    <th>项目名称</th>
+
+                    <th>供应商编号</th>
+                    <th>供应商名称</th>
+
+                    <th>登记人</th>
+                    <th>登记时间</th>
+                </tr>
+            </thead>
+            <tbody></tbody>
+        </table>
+    </div>
+    <div id="pagination" class="pull-right">
+        <ul id="pageUl"></ul>
+    </div>
+</div>
+<div class="modal fade" id="templateModal" tabindex="-1" role="dialog" aria-hidden="false">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
+                <h4 class="modal-title"></h4>
+            </div>
+            <div class="modal-body">
+            </div>
+        </div>
+    </div>
+</div>
+<div class="modal fade" id="applyModal" tabindex="-1" role="dialog" aria-hidden="false">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
+                <h4 class="modal-title"></h4>
+            </div>
+            <div class="modal-body">
+            </div>
+        </div>
+    </div>
+</div>
+@section Scripts {
+    <script src="~/Scripts/custom/form-serialize.js"></script>
+    <script src="~/Scripts/custom/date-format.js"></script>
+    <script>
+        var curPageNum;
+        $(function () {
+            ServiceTradeBind();// 绑定服务行业
+            var query = getQueryString("queryParams");
+            if (query && query.length > 0) {
+                var queryObj = JSON.parse(query);
+                $("#search-form").setForm(queryObj);
+                load(queryObj.pageNum);
+            } else {
+                load();
+            }
+            $("#btnQuery").click(function () {
+                load();
+            })
+        })
+        var queryParams;
+        function load(pageNum) {
+            $("#btnQuery").button("loading");
+
+            var params = $("#search-form").serializeJson();
+            params = $.extend(params, { pageSize: 10, pageNum: pageNum ? pageNum : 1 });
+            queryParams = params;
+            $.post("/Constract/Load", params, function (data) {
+                $("#Constract-table tbody").empty();
+                if (data && data.List) {
+                    if (data.List.length == 0 && params.pageNum > 1) {
+                        load(1);
+                        return;
+                    }
+                    $.each(data.List, function (index, item) {
+                        var tr = $("<tr>");
+                        var applyLink = $("<a>&nbsp;</a>");
+                        tr.append($("<td class='piao'></td>").append(applyLink));
+                        if (item.UserChk) {
+                            if (item.ApplyStatusCode == "" || item.ApplyStatusCode == "拒绝") {
+                                applyLink.html("提交审核");
+                                applyLink.attr("style", "cursor: pointer;");
+                                applyLink.click(function () {
+                                    apply(item.ConstractId, item.ApplyId, item.SeqNO, item.ProjectId);
+                                })
+                            }
+                        }
+                        //删除
+                        var delLink = $("<a>&nbsp;</a>");
+                        tr.append($("<td class='piao' style='left:79px'></td>").append(delLink));
+                        if (item.ApplyStatusCode == "" && item.UserChk)
+                        {
+                            delLink.html("删除");
+                            delLink.attr("style", "cursor: pointer;");
+                            delLink.click(function () {
+                                delConstract(item.ConstractId);
+                            })
+                        }
+                        //复制
+                        //var copyLink = $("<a>&nbsp;</a>");
+                        //tr.append($("<td class='piao' style='left:158px'></td>").append(copyLink));
+                        //if (item.ApplyStatusCode == "" && item.UserChk) {
+                        //    copyLink.html("复制");
+                        //    copyLink.attr("style", "cursor: pointer;");
+                        //    copyLink.click(function () {
+                        //        copyConstract(item.ConstractId);
+                        //    })
+                        //}
+
+                        var codeLink = $("<a>").html("详细");
+                        codeLink.attr("href", "/Constract/Edit/" + item.ConstractId + "?queryParams=" + JSON.stringify(queryParams));
+                        tr.append($("<td class='piao' style='left:158px'></td>").append(codeLink));
+                        var view = $("<a>").html("预览");
+                        view.attr("style", "cursor: pointer;");
+                        view.click(function () {
+                            openPreview(item.ConstractId, item.TemplateId);
+                        })
+                        tr.append($("<td  class='piao' style='left:237px'></td>").append(view));
+
+                        var sendbtn = $("<a>").html("发送邮件");
+                        var url = "/Constract/EmailSend?";
+                        url += "id=" + item.ConstractId;
+                        sendbtn.attr("href", url);
+                        sendbtn.click(function () {
+                            if (item.ApplyStatusCode != "完成") {
+                                alert("合同未审核完毕，不能发送邮件");
+                                return false;
+                            }
+                        });
+
+                        //var sendEmailLink = $("<a>").html("发送邮件");
+                        //sendEmailLink.attr("style", "cursor: pointer;");
+                        //sendEmailLink.attr("href", "/Constract/EmailSend/" + item.ConstractId + window.location.search);
+                        tr.append($("<td  class='piao' style='left:316px'></td>").append(sendbtn));
+                        tr.append($("<td><div class='pzhan' style='width:382px'></td>"));
+
+                        tr.append($("<td></td>").html(item.ConstractName));
+                        tr.append($("<td></td>").html(item.ProjectShortName));
+                        tr.append($("<td></td>").html(item.SupplierShortName));
+                        tr.append($("<td></td>").html(item.StartDate));
+                        tr.append($("<td></td>").html(item.EndDate));
+                        tr.append($("<td></td>").html(item.ApplyStatusCode));
+                        tr.append($("<td></td>").html(item.EmailSendDateTime));
+                        tr.append($("<td></td>").html(item.ProjectCode));
+                        tr.append($("<td></td>").html(item.ProjectName));
+
+                        tr.append($("<td></td>").html(item.SupplierCode));
+                        tr.append($("<td></td>").html(item.SupplierName));
+
+                        tr.append($("<td></td>").html(item.InUserId));
+                        tr.append($("<td></td>").html(item.InDateTime));
+                        $("#Constract-table tbody").append(tr);
+                    })
+                    curPageNum = data.CurPage;
+                    createPageNav({ $container: $("#pagination"), pageCount: data.PageCount, currentNum: data.CurPage, afterFun: load });
+                }
+            }).complete(function () { $("#btnQuery").button("reset"); });
+        }
+
+        function delConstract(ConstractId) {
+            confirm("确定要删除此记录吗？", function () {
+                $.post("/Constract/DeleteConstract", { ConstractId: ConstractId }, function () {
+                    load(curPageNum);
+                })
+            });
+        }
+
+        function copyConstract(ConstractId) {
+            confirm("确定要复制此记录吗？", function () {
+                $.post("/Constract/CopyConstract", { ConstractId: ConstractId }, function () {
+                    load();
+                })
+            });
+        }
+
+        function openPreview(ContractId, TemplateId) {
+            var url = '/ContractTemplate.html?';
+            url += 'TemplateId=' + TemplateId;
+            url += '&ConstractId=' + ContractId;
+            window.open(url);
+        }
+        function openNew() {
+            var url = '/Constract/Create';
+            window.open(url);
+        }
+        function apply(ConstractId, ApplyId, SeqNO, ProjectId) {
+            debugger;
+            $.post("/Projects/RecheckProcessExistChk", { recheckType: "合同" }, function (data) {
+                if (data == 0) {
+                    alert("不在审核流程中，请联系管理人员添加");
+                    return false;
+                }
+                $("#applyModal").modal("show");
+                $("#applyModal .modal-title").html("选择审核人员");
+                $("#applyModal .modal-body").load("/Constract/RecheckUserSelect", {}, function () {
+                    $(this).append($("<input id='ConstractId' type='hidden'>").val(ConstractId));
+                    $(this).append($("<input id='ApplyId' type='hidden'>").val(ApplyId));
+                    $(this).append($("<input id='SeqNO' type='hidden'>").val(SeqNO));
+                    $(this).append($("<input id='ProjectId' type='hidden'>").val(ProjectId));
+
+                });
+            })
+
+        }
+        function applyFinish() {
+            $("#applyModal").modal("hide");//关闭弹出窗口
+            load()//刷新表格
+        }
+        function ServiceTradeBind() {
+            var el = $("#ServiceTrade");
+            el.append($("<option>").html("Max").val("Max"));
+            el.append($("<option>").html("Trip").val("Trip"));
+            el.append($("<option>").html("Zebrac").val("Zebrac"));
+            el.append($("<option>").html("Star").val("Star"));
+
+            el.data("live-search", true).prop("title", "").selectpicker("refresh");
+        }
+    </script>
+}

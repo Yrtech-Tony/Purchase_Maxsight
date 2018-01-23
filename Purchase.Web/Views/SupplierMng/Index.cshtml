@@ -1,0 +1,351 @@
+﻿@{
+    ViewBag.Title = "供应商库";
+    Layout = "_SupplierMngLayout.cshtml";
+}
+<style>
+    /**列冻结 （浮动）*/
+    .table .piao2 {
+        left: 78px;
+        width: 80px;
+        overflow: hidden;
+        background-color: #EAF0F9;
+        position: absolute;
+        z-index: 99;
+    }
+
+    .table .pzhan2 {
+        width: 134px;
+    }
+</style>
+<div class="count inline-block">
+    <form id="search-form" class="form">
+        <table>
+            <tr>
+                <td colspan="8" style="text-align:right">
+                    <button id="btnQuery" type="button" class="btn btn-primary" style="width:100px">查 询</button>
+                    <button id="btnAdd" onclick="openNew()" type="button" class="btn btn-primary" style="width:100px">新 增</button>
+                    <button id="btnExport" onclick="exportExcel()" type="button" class="btn btn-primary" style="width:100px" data-loading-text="正在导出...">导出Excel</button>
+                </td>
+            </tr>
+            <tr>
+                <td width="90">供应商编码</td>
+                <td width="130">
+                    <input id="SupplierCode" name="SupplierCode" class="form-control">
+                </td>
+                <td width="90">供应商名称</td>
+                <td width="130"><input id="SupplierName" name="SupplierName" class="form-control"></td>
+                <td width="90">供应商简称</td>
+                <td width="130"><input id="SupplierShortName" name="SupplierShortName" class="form-control"></td>
+                <td width="90">供应商类型</td>
+                <td width="130">
+                    <select id="SupplierType" name="SupplierType" class="form-control">
+                        <option value=""></option>
+                        <option value="业务采购">业务采购</option>
+                        <option value="内部采购">内部采购</option>
+                        <option value="其他">其他</option>
+                    </select>
+                </td>
+            </tr>
+            <tr>
+                <td>服务行业</td>
+                <td>
+                    <select id="ServiceTrade" name="ServiceTrade" class="form-control">
+                        <option value="">全部</option>
+                        <option value="Max">Max</option>
+                        <option value="Trip">Trip</option>
+                        <option value="Zebrac">Zebrac</option>
+                        <option value="Star">Star</option>
+                    </select>
+                </td>
+                <td>采购方式</td>
+                <td>
+                    <select id="PurchaseType" name="PurchaseType" class="form-control">
+                        <option value=""></option>
+                        <option value="集中采购">集中采购</option>
+                        <option value="分散采购">分散采购</option>
+                        <option value="其他采购">其他采购</option>
+                    </select>
+                </td>
+                <td>省份</td>
+                <td>
+                    <input id="Province" name="Province" class="form-control" />
+                </td>
+                <td>城市</td>
+                <td>
+                    <input id="City" name="City" class="form-control" />
+                </td>
+            </tr>
+            <tr>
+                <td>合作模式</td>
+                <td>
+                    <select id="CooperationState" name="CooperationState" class="form-control">
+                        <option value="">全部</option>
+                        <option value="年度合作">年度合作</option>
+                        <option value="分次合作">分次合作</option>
+                        <option value="暂不合作">暂不合作</option>
+                        <option value="不合作">不合作</option>
+                    </select>
+                </td>
+                <td>推荐部门</td>
+                <td><input id="RecommendDepartment" name="RecommendDepartment" class="form-control" /></td>
+                <td>流程状态</td>
+                <td>
+                    <select id="ApplyStatusCode" name="ApplyStatusCode" class="form-control">
+                        <option value="">全部</option>
+                        <option value="未申请">未申请</option>
+                        <option value="申请">申请</option>
+                        <option value="审核中">审核中</option>
+                        <option value="完成">完成</option>
+                        <option value="终止">终止</option>
+                    </select>
+                </td>
+                <td>登记人</td>
+                <td><input id="InUserId" name="InUserId" class="form-control" />
+                </td>
+            </tr>
+        </table>
+    </form>
+    <div class="table-responsive">
+        <table id="supplier-table" class="table table-bordered table-condensed table-hover">
+            <thead>
+                <tr>
+                    <th rowspan="2" class="piao" style="line-height: 45px;">提交审核</th>
+                    <th rowspan="2" class="piao" style="line-height: 45px; left: 79px; ">复制</th>
+                    <th rowspan="2" class="piao" style="line-height: 45px; left: 158px">供应商编码</th>
+                    <th><div class="pzhan" style='width:214px'>&nbsp;</div></th>
+                    <th rowspan="2" style="width:100px">省份</th>
+                    <th rowspan="2" width="100">城市</th>
+                    <th rowspan="2" style="width:120px">推荐部门</th>
+                    <th rowspan="2" width="120">供应商类别</th>
+                    <th rowspan="2">服务行业</th>
+                    <th rowspan="2">合作模式</th>
+                    <th rowspan="2">供应商分类</th>
+                    <th rowspan="2">采购方式</th>
+                    <th rowspan="2">禁用服务类型</th>
+                    <th rowspan="2">付款周期</th>
+                    <th rowspan="2">供应商名称</th>
+                    <th rowspan="2">供应商简称</th>
+                    <th rowspan="2">提供服务</th>
+                    <th rowspan="2">分公司所在城市</th>
+                    <th colspan="4">联系人信息-法人</th>
+                    <th colspan="4">联系人信息-主要业务联系人</th>
+                    <th colspan="4">联系人信息-次要业务联系人</th>
+                    <th rowspan="2">传真</th>
+                    <th rowspan="2">地址</th>
+                    <th rowspan="2">邮编</th>
+                    <th rowspan="2">备注</th>
+                    <th rowspan="2">审核状态</th>
+                    <th rowspan="2">登记人</th>
+                </tr>
+                <tr>
+                    <th></th>
+                    <th></th>
+                    <th>姓名</th>
+                    <th>手机</th>
+                    <th>固定电话</th>
+                    <th>电子邮箱</th>
+                    <th>姓名</th>
+                    <th>手机</th>
+                    <th>固定电话</th>
+                    <th>电子邮箱</th>
+                    <th>姓名</th>
+                    <th>手机</th>
+                    <th>固定电话</th>
+                    <th>电子邮箱</th>
+                </tr>
+            </thead>
+            <tbody></tbody>
+        </table>
+    </div>
+    <div id="pagination" class="pull-right">
+        <ul id="pageUl"></ul>
+    </div>
+</div>
+<div class="modal fade" id="applyModal" tabindex="-1" role="dialog" aria-hidden="false">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
+                <h4 class="modal-title"></h4>
+            </div>
+            <div class="modal-body">
+            </div>
+        </div>
+    </div>
+</div>
+@section Scripts {
+    <script src="~/Scripts/custom/form-serialize.js"></script>
+    <script>       
+        var queryParams;
+        var curPageNum=1;
+        $(function () {
+            // 如果没有权限新增按钮隐藏
+            if ('@ViewBag.UserRoleType'.indexOf("供应商登记") == -1) {
+                $("#search-form #btnAdd").hide();
+            }
+            var query = getQueryString("queryParams");
+            if (query && query.length > 0) {
+                var queryObj = JSON.parse(query);
+                $("#search-form").setForm(queryObj);
+                load(queryObj.pageNum);
+            } else {
+                load();
+            }           
+            
+            $("#btnQuery").click(function () {                
+                load();
+            })
+        })
+        function openNew() {
+            window.location.href = '/SupplierMng/Create';
+        }
+        function exportExcel() {
+            $("#btnExport").button("loading");
+            alert("正在导出...");
+
+            var params = $("#search-form").serializeJson();
+            $.post("/SupplierMng/ExportSupplier", params, function (data) {
+                window.location.href = "/SupplierMng/DownloadFile?fileName=" + data.ExportPath;
+            }).complete(function () {
+                $("#btnExport").button("reset");
+                closealert();
+            });
+        }
+        function load(pageNum) {
+            $("#btnQuery").button("loading");
+
+            var params = $("#search-form").serializeJson();
+            params = $.extend(params, { pageSize: 10, pageNum: pageNum ? pageNum : 1 });
+            queryParams = params;
+            $.post("../SupplierMng/Load", params, function (data) {
+                if (data && data.List) {
+                    $("#supplier-table tbody").empty();
+                    $.each(data.List, function (index, item) {
+                        var tr = $("<tr>");
+                        var applyLink = $("<a>&nbsp;</a>");
+
+                        //var item = obj.SupplierMng
+                        if (item.UserChk) {
+                            if (item.ApplyStatusCode == "") {
+                                applyLink.html("提交审核");
+                                applyLink.attr("style", "cursor: pointer;");
+                                applyLink.click(function () {
+                                    apply(item.SupplierId, item.ApplyId, item.SeqNO);
+                                })
+                            }
+                            else {
+                                if (item.ApplyStatusCode == "完成" || item.ApplyStatusCode == "终止") {
+                                    applyLink.html("提交审核");
+                                    applyLink.attr("style", "cursor: pointer;");
+                                    applyLink.click(function () {
+                                        apply(item.SupplierId, item.ApplyId, item.SeqNO);
+                                    })
+                                }
+                            }
+                        }
+                        //if ((item.ApplyStatusCode != "" && (item.ApplyStatusCode == "完成" || item.ApplyStatusCode == "终止")) || !item.UserChk) {
+                        //} else {
+                        //    applyLink.html("提交审核");
+                        //    applyLink.attr("style", "cursor: pointer;");
+                        //    applyLink.click(function () {
+                        //        apply(item.SupplierId, item.ApplyId, item.SeqNO);
+                        //    })
+                        //}
+
+                        tr.append($("<td  class='piao'></td>").append(applyLink));
+
+                        //复制
+                        var copyLink = $("<a>").html("复制").attr("style", "cursor: pointer;");
+                        copyLink.click(function () {
+                            if ('@ViewBag.UserRoleType'.indexOf("供应商登记") == -1) {
+                                alert("没有权限修改");
+                                return;
+                            }
+                            confirm("确定要复制此记录吗？", function () {
+                                $.post("/SupplierMng/SupplierMngCopy", { supplierId: item.SupplierId }, function () {
+                                    alert("复制成功");
+                                    load();
+                                });
+                            });                           
+                        });
+                        tr.append($("<td class='piao'  style='left:79px'></td>").append(copyLink));
+
+                        //编辑
+                        var codeLink = $("<a>").html(item.SupplierCode);
+                        codeLink.attr("href", "/SupplierMng/Edit/" + item.SupplierId + "?queryParams=" + JSON.stringify(queryParams));
+                        tr.append($("<td class='piao'  style='left:158px'></td>").append(codeLink));
+
+                        tr.append($('<td><div class="pzhan" style="width:214px">&nbsp;</div></td>'));
+
+                        tr.append($("<td></td>").html(item.Province));
+                        tr.append($("<td></td>").html(item.City));
+                        tr.append($("<td></td>").html(item.RecommendDepartment));
+                        tr.append($("<td></td>").html(item.SupplierType));
+                        tr.append($("<td></td>").html(item.ServiceTrade));
+                        tr.append($("<td></td>").html(item.CooperationState));
+                        tr.append($("<td></td>").html(item.SupplierType1));
+                        tr.append($("<td></td>").html(item.PurchaseType));
+                        tr.append($("<td></td>").html(item.NotServiceType));
+                        tr.append($("<td></td>").html(item.PayCycle));
+                        tr.append($("<td></td>").html(item.SupplierName));
+                        tr.append($("<td></td>").html(item.SupplierShortName));
+                        tr.append($("<td></td>").html(item.ProvideService));
+                        tr.append($("<td></td>").html(item.BranchCompanyAddress));
+
+                        tr.append($("<td></td>").html(item.CorporateName));
+                        tr.append($("<td></td>").html(item.CorporateTel));
+                        tr.append($("<td></td>").html(item.CorporateFixTel));
+                        tr.append($("<td></td>").html(item.CorporateEmail));
+
+                        tr.append($("<td></td>").html(item.BussinessMainName));
+                        tr.append($("<td></td>").html(item.BussinessMainTel));
+                        tr.append($("<td></td>").html(item.BussinessMainFixTel));
+                        tr.append($("<td></td>").html(item.BussinessMainEmail));
+
+                        tr.append($("<td></td>").html(item.BussinessSecondName));
+                        tr.append($("<td></td>").html(item.BussinessSecondTel));
+                        tr.append($("<td></td>").html(item.BussinessSecondFixTel));
+                        tr.append($("<td></td>").html(item.BussinessSecondEmail));
+
+                        tr.append($("<td></td>").html(item.CompanyFaxCode));
+                        tr.append($("<td></td>").html(item.Address));
+                        tr.append($("<td></td>").html(item.PostCode));
+                        tr.append($("<td></td>").html(item.Remark));
+
+                        tr.append($("<td></td>").html(item.ApplyStatusCode));
+                        tr.append($("<td></td>").html(item.UserName));
+
+                        $("#supplier-table tbody").append(tr);
+                    })
+                    curPageNum = data.CurPage;
+                    createPageNav({ $container: $("#pagination"), pageCount: data.PageCount, currentNum: data.CurPage, afterFun: load });
+                    //initPages(data.CurPage, data.PageCount, load);
+                }
+            }).complete(function () { $("#btnQuery").button("reset"); });
+        };
+
+        function apply(SupplierMngId, ApplyId, SeqNO) {
+            debugger
+            $.post("/Projects/RecheckProcessExistChk", { recheckType: "供应商" }, function (data) {
+                if (data == 0) {
+                    alert("不在审核流程中，请联系管理人员添加");
+                    return false;
+                }
+                $("#applyModal").modal("show");
+                $("#applyModal .modal-title").html("选择审核人员");
+                $("#applyModal .modal-body").load("/SupplierMng/RecheckUserSelect", {}, function () {
+                    debugger
+                    $(this).append($("<input id='SupplierMngId' type='hidden'>").val(SupplierMngId));
+                    $(this).append($("<input id='ApplyId' type='hidden'>").val(ApplyId));
+                    $(this).append($("<input id='SeqNO' type='hidden'>").val(SeqNO));
+                });
+            })
+
+        }
+
+        function applyFinish() {
+            $("#applyModal").modal("hide");//关闭弹出窗口
+            load()//刷新表格
+        }
+    </script>
+}

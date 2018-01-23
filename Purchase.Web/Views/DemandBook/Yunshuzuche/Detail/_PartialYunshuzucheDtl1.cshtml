@@ -1,0 +1,229 @@
+﻿@using Purchase.Web.Common
+@model Purchase.DAL.Requirement_Yunshuzuche_RequirementDtl1
+
+<form id="Yunshuzuche-dtl1-form">
+    @Html.Hidden("SeqNO", 0)
+    <div class="form-horizontal">
+        <div class="form-group">
+            <label class="control-label col-md-2" for="AgeGroup">类型</label>
+            <div class="col-md-8">
+                @Html.DropDownListFor(m => m.feilei, SelectListTool.HiddenCodeList("需求书-运输租车-展车租赁-分类"), htmlAttributes: new { @class = "form-control" })
+            </div>  
+        </div>
+        <div class="form-group">
+            <label class="control-label col-md-2" for="">类型/品牌</label>
+            <div class="col-md-8">
+                @Html.DropDownListFor(m => m.leixingpinpai, new List<SelectListItem> { }, htmlAttributes: new { @class = "form-control" })
+            </div>
+        </div>
+        <div class="form-group">
+            <label class="control-label col-md-2" for="TemplateName">规格/型号</label>
+            <div class="col-md-8">
+                @Html.TextBoxFor(m => m.guigexinghao, htmlAttributes: new { @class = "form-control" })
+            </div>
+        </div>
+
+        <div class="form-group">
+            <label class="control-label col-md-2" for="TemplateName">排量</label>
+            <div class="col-md-8">
+                @Html.TextBoxFor(m => m.pailiang, htmlAttributes: new { @class = "form-control" })
+            </div>
+        </div>
+        <div class="form-group">
+            <label class="control-label col-md-2" for="TemplateName">配置</label>
+            <div class="col-md-8">
+                @Html.TextBoxFor(m => m.peizhi, htmlAttributes: new { @class = "form-control" })
+            </div>
+        </div>
+
+        <div class="form-group">
+            <label class="control-label col-md-2" for="">厂家指导价</label>
+            <div class="col-md-8">
+                @Html.TextBoxFor(m => m.changshangzhidaojia, htmlAttributes: new { @class = "form-control" })
+            </div>
+
+        </div>
+        <div class="form-group">
+            <label class="control-label col-md-2" for="TemplateName">颜色</label>
+            @*<div class="col-md-8">
+                @Html.DropDownListFor(m => m.yanse, new List<SelectListItem> {new SelectListItem(){Text="",Value=""},
+                    new SelectListItem(){ Text="黑色",Value="黑色"},
+                    new SelectListItem(){ Text="白色",Value="白色"},
+                    new SelectListItem(){ Text="棕色",Value="棕色"},
+                    new SelectListItem(){ Text="红色",Value="红色"},
+                    new SelectListItem(){ Text="不限制",Value="不限制"},
+                    new SelectListItem(){ Text="不涉及",Value="不涉及"}
+                }, htmlAttributes: new { @class = "form-control" })
+            </div>*@
+            <div class="col-md-8">
+                @Html.TextBoxFor(m => m.yanse, htmlAttributes: new { @class = "form-control" })
+            </div>
+        </div>
+        <div class="form-group">
+            <label class="control-label col-md-2" for="">数量/面积</label>
+            @*<div class="col-md-8">
+                @Html.DropDownListFor(m => m.shuliangmianji, new List<SelectListItem> {new SelectListItem(){Text="",Value=""},
+                    new SelectListItem(){ Text="1",Value="1"},
+                    new SelectListItem(){ Text="2",Value="2"},
+                    new SelectListItem(){ Text="3",Value="3"},
+                    new SelectListItem(){ Text="4",Value="4"},
+                    new SelectListItem(){ Text="5",Value="5"},
+                    new SelectListItem(){ Text="6",Value="6"},
+                    new SelectListItem(){ Text="7",Value="7"},
+                    new SelectListItem(){ Text="8",Value="8"},
+                    new SelectListItem(){ Text="9",Value="9"},
+                    new SelectListItem(){ Text="10",Value="10"},
+                    new SelectListItem(){ Text="不涉及",Value="不涉及"},
+                    new SelectListItem(){ Text="不限制",Value="不限制"}
+                }, htmlAttributes: new { @class = "form-control" })
+            </div>*@
+            <div class="col-md-8">
+                @Html.TextBoxFor(m => m.shuliangmianji, htmlAttributes: new { @class = "form-control" })
+            </div>
+        </div>
+        <div class="form-group">
+            <label class="control-label col-md-2" for="">车辆类别</label>
+            <div class="col-md-8">
+                @Html.DropDownListFor(m => m.cheliangleibie, new List<SelectListItem> { }, htmlAttributes: new { @class = "form-control" })
+            </div>
+        </div>
+        <div class="form-group">
+            <label class="control-label col-md-2" for="">车价范围</label>
+            <div class="col-md-8">
+                @Html.DropDownListFor(m => m.chejiafanwei, new List<SelectListItem> { }, htmlAttributes: new { @class = "form-control" })
+            </div>
+        </div>
+        <div class="form-group">
+            <label class="control-label col-md-2" for="">使用时间</label>
+            <div class="col-md-8">
+                @Html.DropDownListFor(m => m.shiyongshijian, SelectListTool.HiddenCodeList("需求书-运输租车-展车租赁-使用时间"), htmlAttributes: new { @class = "form-control" })
+            </div>
+        </div>
+
+        <div class="form-group">
+            <label class="control-label col-md-2" for="TemplateName">其他说明</label>
+            <div class="col-md-8">
+                @Html.TextAreaFor(m => m.qitashuoming1, htmlAttributes: new { @class = "form-control" })
+            </div>
+        </div>
+        <div class="form-group">
+            <div class="col-md-offset-2 col-md-10">
+                <input id="saveBtn" type="button" value="保存" class="btn btn-primary btn-check" data-loading-text="提交中..." style="width:100px;height:35px" />
+            </div>
+        </div>
+    </div>
+</form>
+<script>
+    $(function () {
+        //if ($("#ApplyStautCode").val() != "") {
+        //    $("#saveBtn").attr("disabled", true);
+        //}
+        $("#Yunshuzuche-dtl1-form #saveBtn").click(function () {
+            if (!CommitCheck()) {
+                alert("正在审核中或者非本人添加的项目");
+                return false;
+            }
+            $(this).button("loading");
+            var params = $("#Yunshuzuche-dtl1-form").serializeJson('&');
+            params = $.extend(params, getMstObject());
+
+            $.post("/DemandBook/SaveYunshuzucheDtl1", params, function (data) {
+                $("#RequirementId").val(data);
+                loadYunshuzucheDtl1();
+                closeModal();
+            });
+        })
+
+        //var leixingpinpai1 = ["","量产车", "油泥模车", "模型车", "不涉及", "不限制"];
+        //var leixingpinpai2 = ["","卓思统一",  "不涉及", "不限制"];
+        $("#Yunshuzuche-dtl1-form #feilei").change(function () {
+            debugger
+            var el = $("#leixingpinpai");
+            var feileiEl = $("#Yunshuzuche-dtl1-form #feilei");
+            var combo =  $("<select id='leixingpinpai' name='leixingpinpai' class = 'form-control'> ");
+            var input = $("<input id='leixingpinpai' name='leixingpinpai' class = 'form-control'> ");          
+            
+            // 分类变更时绑定类型品牌
+            $.ajax({
+                type: 'post',
+                url: "/Base/LoadChildHiddenCode",
+                data: { type: "需求书-运输租车-展车租赁-分类-" + feileiEl.val() + "-类型/品牌" },
+                async: false,
+                success: function (data) {
+                    el.empty();
+                    if (data && data.length > 1) {
+                        el = changeSelectInput(el, combo, input, true);
+                        for (i in data) {
+                            el.append($("<option>").html(data[i]).val(data[i]));
+                        }
+                    } else {
+                        el = changeSelectInput(el, combo, input, false);
+                    }
+                    el.data("live-search", true).prop("title", "").selectpicker("refresh");
+                }
+            });
+
+            // 分类变更时车辆类别
+            var e2 = $("#cheliangleibie");
+            var feileiEl = $("#Yunshuzuche-dtl1-form #feilei");
+            var combo = $("<select id='cheliangleibie' name='cheliangleibie' class = 'form-control'> ");
+            var input = $("<input id='cheliangleibie' name='cheliangleibie' class = 'form-control'> ");
+            $.ajax({
+                type: 'post',
+                url: "/Base/LoadChildHiddenCode",
+                data: { type: "需求书-运输租车-展车租赁-分类-" + feileiEl.val() + "-车辆类别" },
+                async: false,
+                success: function (data) {
+                    e2.empty();
+                    if (data && data.length > 1) {
+                        e2 = changeSelectInput(e2, combo, input, true);
+                        for (i in data) {
+                            e2.append($("<option>").html(data[i]).val(data[i]));
+                        }
+                    } else {
+                        e2 = changeSelectInput(e2, combo, input, false);
+                    }
+                    e2.data("live-search", true).prop("title", "").selectpicker("refresh");
+                }
+            });
+
+            // 分类变更时绑定车价范围
+            var e3 = $("#chejiafanwei");
+            var feileiEl = $("#Yunshuzuche-dtl1-form #feilei");
+            var combo = $("<select id='chejiafanwei' name='chejiafanwei' class = 'form-control'> ");
+            var input = $("<input id='chejiafanwei' name='chejiafanwei' class = 'form-control'> ");
+            $.ajax({
+                type: 'post',
+                url: "/Base/LoadChildHiddenCode",
+                data: { type: "需求书-运输租车-展车租赁-分类-" + feileiEl.val() + "-车价范围" },
+                async: false,
+                success: function (data) {
+                    e3.empty();
+                    if (data && data.length > 1) {
+                        e3 = changeSelectInput(e3, combo, input, true);
+                        for (i in data) {
+                            e3.append($("<option>").html(data[i]).val(data[i]));
+                        }
+                    } else {
+                        e3 = changeSelectInput(e3, combo, input, false);
+                    }
+                    e3.data("live-search", true).prop("title", "").selectpicker("refresh");
+                }
+            });
+        })
+
+        function changeSelectInput(el, combo, input, isDropdown) {
+            var newEl;
+            if (isDropdown) {
+                newEl = combo;
+            } else {                
+                newEl = input;
+            }
+            var parent = el.parent();
+            parent.empty();
+            parent.append(newEl);
+
+            return newEl;
+        }
+    })
+</script>

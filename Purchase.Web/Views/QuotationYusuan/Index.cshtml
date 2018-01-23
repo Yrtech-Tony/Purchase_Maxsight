@@ -1,0 +1,443 @@
+﻿@{
+    ViewBag.Title = "预算确认单登记及查询";
+    Layout = "~/Views/Shared/_PurchaseLayout.cshtml";
+}
+<div class="count inline-block">
+    <form id="search-form" class="form">
+        <input type="hidden" id="LastChk" name="LastChk" value="终版" />
+        <table>
+            <tr>
+                <td colspan="10" style="text-align:right">
+                    不可预见费：<input name="ContingencyFee" id="ContingencyFee" />
+                    <a id="btnSaveYusuan" class="btn btn-primary" style="width:100px" onclick="">保存</a>
+                    <a id="btnQuery" class="btn btn-primary" style="width:100px">查 询</a>
+                </td>
+            </tr>
+            <tr>
+                <td width="70">模块类型</td>
+                <td width="100">
+                    <select id="ModelType" name="ModelType" class="form-control"></select>
+                </td>
+                <td width="80">服务行业</td>
+                <td width="100">
+                    <select id="ServiceTrade" name="ServiceTrade" class="form-control"></select>
+                </td>                
+                <td width="80">项目名称</td>
+                <td width="220">
+                    <input id="ProjectId" name="ProjectId" class="form-control" type="hidden" />
+                    <input id="ProjectName" name="ProjectName" class="form-control" readonly />
+                    <input id="ProjectCode" name="ProjectCode" class="form-control" type="hidden">
+                    <input id="ProjectApplyStatusCode" name="ProjectApplyStatusCode" class="form-control" type="hidden" />
+                    <input id="ProjectUserChk" name="ProjectUserChk" class="form-control" type="hidden" />
+                </td>
+                <td width="80">项目简称</td>
+                <td width="160">
+                    <input id="ProjectShortName" name="ProjectShortName" class="form-control" readonly />
+                </td>
+                <td>
+                    <a id="btnProjectSelect" class="btn btn-primary" style="width:100px">选择项目</a>
+                </td>
+            </tr>
+
+            <tr>
+                <td width="80">确认单类型</td>
+                <td width="100">
+                    <select id="QuotationType" name="QuotationType" class="form-control">
+                    </select>
+                </td>
+                <td width="80">确认单组</td>
+                <td width="200">
+                    <input id="QuotationGroupId" name="QuotationGroupId" class="form-control" type="hidden" />
+                    <input id="QuotationGroupName" name="QuotationGroupName" class="form-control" readonly>
+                </td>
+                <td>
+                    <a id="btnQuotationGroupSelect" class="btn btn-primary" style="width:110px">选择确认单组</a>
+                </td>
+                <td width="90" class="supplier-td" style="display:none;text-align:right">供应商</td>
+                <td width="250" colspan="2" class="supplier-td" style="display:none">
+                    <input id="SupplierId" name="SupplierId" class="form-control" type="hidden" />
+                    <input id="SupplierName" name="SupplierName" class="form-control" readonly>
+                    <input id="SupplierCode" name="SupplierCode" class="form-control" type="hidden">
+                    <input id="SupplierShortName" name="SupplierShortName" class="form-control" type="hidden">
+                </td>
+                <td class="supplier-td" style="display:none">
+                    <a id="btnSupplierSelect" class="btn btn-primary" style="width:100px">选择供应商</a>
+                </td>
+            </tr>
+
+        </table>
+    </form>
+    <div id="search-resultyusuan" class="table-responsive" style="max-height: 450px;overflow: auto;display:none"></div>
+</div>
+<div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-hidden="false">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
+                <h4 class="modal-title"></h4>
+            </div>
+            <div class="modal-body">
+            </div>
+        </div>
+    </div>
+</div>
+<div class="modal fade" id="applyModal" tabindex="-1" role="dialog" aria-hidden="false">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
+                <h4 class="modal-title"></h4>
+            </div>
+            <div class="modal-body">
+            </div>
+        </div>
+    </div>
+</div>
+<div class="modal fade" id="quotationGroupModal" tabindex="-1" role="dialog" aria-hidden="false">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
+                <h4 class="modal-title"></h4>
+            </div>
+            <div class="modal-body">
+            </div>
+        </div>
+    </div>
+</div>
+@section Scripts {
+    <script src="~/Scripts/custom/form-serialize.js"></script>
+    <script src="~/Scripts/custom/province_city.js"></script>
+    <script>
+        var ModelType, QuotationType;
+        $(function () {
+            ServiceTradeBind();// 绑定服务行业
+            //获取QuotationType
+            QuotationType = '@ViewBag.QuotationType';
+            if (QuotationType != "") {
+                $("#QuotationType").val(QuotationType);
+            }
+            $("#btnQuery").click(function () {
+                load();
+            })
+
+            $("#QuotationType").change(function () {
+               
+                checkYusuanSave();
+                var type = $(this).val();
+                if (type == null || type == "") {
+                    return false;
+                }
+                if (type == "Youxingshangpincaigou") {
+                    type = "Qita1";
+                }
+                if (type == "Wuxingshangpincaigou") {
+                    type = "Qita2";
+                }
+                $("#search-resultyusuan").show();
+                var view = "_PartialLoad" + type;
+                $("#search-resultyusuan").load("/QuotationYusuan/LoadPartial", { partialView: view });
+            }).trigger("change");
+
+            $("#btnProjectSelect").click(function () {
+                ProjectSelect();
+            })
+            $("#btnSupplierSelect").click(function () {
+                SupplierSelect(1);
+            })
+
+            $("#btnQuotationGroupSelect").click(function () {
+                QuotationGroupSelect();
+            })
+
+            $("#btnSaveYusuan").click(function () {
+                if ($("#ProjectId").val() == null || $("#ProjectId").val() == "") {
+                    alert("请选择项目");
+                    return false;
+                }
+                if (!CommitCheck()) {
+                    alert("正在审核中或者非本人添加的项目");
+                    return false;
+                }
+
+                var hasNull = false;
+                $("#search-resultyusuan input").each(function (i) {
+                    //if (i == $("#search-result input").length - 1) {
+                    //    //最后一行是合计，不保存
+                    //    return;
+                    //}
+                    if ($(this).val() == "") {
+                        hasNull = true;
+                        return false;
+                    }
+                })
+                if (hasNull) {
+                    alert("确认单预算必须全部填写");
+                    return false;
+                }
+
+                var changeItems = [];
+                $("#search-resultyusuan input[data-change]").each(function (i) {
+                    var qidseq = $(this).data("change");
+                    var arr = qidseq.split('_');
+                    changeItems.push({
+                        Id: arr[0],
+                        SeqNo: arr[1],
+                        QuotationType: $("#QuotationType").val(),
+                        Yusuandanjia: $(this).val()
+                    })
+                })
+
+                $("#btnSaveYusuan").button("loading");
+                //SaveContingency();
+                $.post("/QuotationYusuan/UpdateYusuanAndContingency", { jsonArr: JSON.stringify(changeItems), ProjectId: $("#ProjectId").val(), ContingencyFee: $("#ContingencyFee").val() }, function () {
+                    $("#search-resultyusuan input[data-change]").each(function (i) {
+                        $(this).css("border-color", "");
+                    })
+                    alert("保存成功");
+
+                }).complete(function () { $("#btnSaveYusuan").button("reset"); })
+            })
+        })
+
+        function load(pageNum) {
+            if ($("#ProjectCode").val() == "") {
+                alert("必须选择项目！")
+                return;
+            } if ($("#QuotationGroupId").val() == null || $("#QuotationGroupId").val() == "") {
+                alert("请选择确认单组");
+                return false;
+            }
+            if ($("#QuotationType").val() == null || $("#QuotationType").val() == "") {
+                alert("请选择确认单类型");
+                return false;
+            }
+
+            var type = $("#QuotationType").val();
+            if (type == "Youxingshangpincaigou") {
+                type = "Qita1";
+            }
+            if (type == "Wuxingshangpincaigou") {
+                type = "Qita2";
+            }
+
+            $("#btnQuery").button("loading");
+            var params = $("#search-form").serializeJson();
+            params = $.extend(params, { pageSize: 20, pageNum: pageNum ? pageNum : 1 });
+            $.post("/Quotation/Load" + type, params, function (data) {
+                if (data && data.List) {
+
+                    $("#quotation-table tbody").empty();
+                    $.each(data.List, function (index, item) {
+                        addQuotationTr(item);
+                    })
+                    if (data.List.length > 0) {
+                        var tr = $("<tr>");
+                        var tdCount = $("#quotation-table tbody tr:first-child td").length;
+                        for (var i = 0; i < tdCount; i++) {
+                            if (i == tdCount - 5) {
+                                tr.append($("<td>").append($("<strong>").text("合计")));
+                            } else {
+                                tr.append($("<td>").text(""));
+                            }
+                        }
+                        $("#quotation-table tbody").append(tr);
+                        calYusuanheji();
+                    }
+
+                    //createPageNav({ $container: $("#pagination"), pageCount: data.PageCount, currentNum: data.CurPage, afterFun: load });
+                }
+            }).complete(function () { $("#btnQuery").button("reset"); })
+        }
+
+        function calYusuanheji() {
+            //预算小计合计
+            var tr = $("#quotation-table tbody tr:last-child");
+            var yusuanheji = 0;
+            var tdCount;
+            $("#quotation-table tbody tr:not(:last-child)").each(function () {
+                tdCount = $(this).find("td").length;
+                var yusuanxiaoji = $(this).find("td:eq(" + (tdCount - 4) + ")").text();
+                yusuanheji += yusuanxiaoji.length > 0 ? parseFloat(yusuanxiaoji) : 0;
+            })
+            tr.find("td").each(function (i) {
+                if (i == tdCount - 4) {
+                    $(this).empty();
+                    $(this).append($("<strong>").text(yusuanheji.toFixed(2)));
+                }
+            });
+        }
+
+        function ProjectSelect() {
+            $(".modal .modal-body").empty();
+            $("#myModal").modal("show");
+            $("#myModal .modal-title").html("选择项目");
+            $("#myModal .modal-body").load("/DemandBook/ProjectSelect", { ModelType: $("#ModelType").val(), ProjectCode: "", ProjectName: "", ProjectShortName: "", ServiceTrade: $("#ServiceTrade").val() }, function () {
+                //$(this).append($("<input id='SupplierMngId' type='hidden'>").val(id));
+            });
+        }
+        function SupplierSelect(type) {
+            $(".modal .modal-body").empty();
+            $("#myModal").modal("show");
+            $("#myModal .modal-title").html("选择供应商");
+            $("#myModal .modal-body").load("/Constract/SupplierMngSelect",
+                { SupplierCode: "", SupplierName: "", SupplierShortName: "", province: '', city: '' }, function () {
+                    $("#myModal .modal-body #Type").val(type)
+                });
+        }
+        function ProjectSelectCallback(args) {
+            $("#ContingencyFee").val("0");
+            $("#ProjectCode").val(args[0]);
+            $("#ProjectName").val(args[1]);
+            $("#ProjectShortName").val(args[2]);
+            $("#ProjectId").val(args[3]);
+            $("#myModal").modal("hide");
+            $.post("FindContingency", { ProjectId: args[3] }, function (data) {
+                //if (data) {
+                debugger
+                $("#ContingencyFee").val(data.ContingencyFee);
+                //}
+            })
+            GetProjects();
+            checkYusuanSave();
+            BindQuotation();
+        }
+        function SupplierSelectCallback1(args) {
+            $("#SupplierCode").val(args.SupplierCode);
+            $("#SupplierName").val(args.SupplierName);
+            $("#SupplierShortName").val(args.SupplierShortName);
+            $("#myModal").modal("hide");
+        }
+
+        function QuotationGroupSelect() {
+            if (isEmpty($("#ProjectId").val())) {
+                alert("请选择项目");
+                return
+            }
+            $(".modal .modal-body").empty();
+            $("#quotationGroupModal").modal("show");
+            $("#quotationGroupModal .modal-title").html("选择确认单组");
+            $("#quotationGroupModal .modal-body").load("/Quotation/GroupSelect", { ProjectId: $("#ProjectId").val() }, function () {
+            });
+        }
+        function GroupSelectCallback(args) {
+            $("#search-form #QuotationGroupName").val(args[0]);
+            $("#search-form #QuotationGroupId").val(args[1]);
+            $("#quotationGroupModal").modal("hide");
+            checkYusuanSave();
+        }
+
+        function checkYusuanSave() {
+           
+            $(".supplier-td").hide();
+            if ($("#ProjectId").val() == "") return;
+            if ($("#search-form #QuotationGroupId").val() == "") return;
+            if ($("#QuotationType").val() == null || $("#QuotationType").val() == "") {
+                // alert("请选择确认单类型");
+                return ;
+            }
+            $.post("/QuotationYusuan/CheckYusuanInsert", { ProjectId: $("#ProjectId").val(), GroupId: $("#search-form #QuotationGroupId").val(), QuotationType: $("#QuotationType").val() }, function (data) {
+                if (data) {
+                    $(".supplier-td").show();
+                }
+            })
+        }
+
+        function openNew(QuotationId, SeqNo) {
+            var modelType = getQueryString("ModelType");
+            if (modelType == "") {
+                modelType = ModelType;
+            }
+            var url = '/Quotation/Create?';
+            if (QuotationId && SeqNo) {
+                url += 'Id=' + QuotationId + "&";
+                url += 'SeqNo=' + SeqNo + "&";
+            }
+            url += 'ModelType=' + modelType;
+            url += '&QuotationType=' + $("#QuotationType").val();
+            window.open(url);
+            //window.location.href = url;
+        }
+
+
+        function SaveContingency() {
+
+            $.post("SaveContingency", { ProjectId: $("#ProjectId").val(), ContingencyFee: $("#ContingencyFee").val() }, function () {
+
+            })
+        }
+        function BindQuotation() {
+            $.post("/Quotation/QueryQuotationTypeByProject", { ProjectId: $("#ProjectId").val() }, function (data) {
+                $("#QuotationType").empty();
+                if (data) {
+                    $("#QuotationType").append($("<option>"));
+                    $.each(data, function (i, item) {                        
+                        $("#QuotationType").append($("<option>").val(item.QuotationType).text(item.QuotationTypeName));
+                    })
+                }
+
+                $("#QuotationType").addClass("selectpicker").prop("title", "").data("live-search", true).selectpicker({ width: 100 }).selectpicker("refresh");
+            });
+
+        }
+        function changeSelectInput(el, combo, input, isDropdown) {
+            var newEl;
+            if (isDropdown) {
+                newEl = combo;
+            } else {
+                newEl = input;
+            }
+            var parent = el.parent();
+            parent.empty();
+            parent.append(newEl);
+
+            return newEl;
+        }
+        function GetProjects() {
+            $.get("/Projects/FindOne", { id: $("#ProjectId").val() }, function (obj) {
+                debugger
+                $("#ProjectApplyStatusCode").val(obj.ApplyStatusCode);
+                $("#ProjectUserChk").val(obj.UserChk);
+            })
+        }
+        function CommitCheck() {
+            var ApplyStatusCode = $("#ProjectApplyStatusCode").val();
+            var UserChk = $("#ProjectUserChk").val();
+            if (ApplyStatusCode == undefined) {
+                ApplyStatusCode = "";
+            }
+            if (UserChk == undefined) {
+                UserChk = "true";
+            }
+            if (UserChk == "true") {
+                if (ApplyStatusCode != "") {
+                    if (ApplyStatusCode == "完成") {
+                        return true;
+                    }
+                    else {
+                        return false;
+                    }
+                }
+                else {
+                    return false;
+                }
+            }
+            else {
+                return false;
+            }
+        }
+        function ServiceTradeBind() {
+            var el = $("#ServiceTrade");
+            var modelType = $("#ModelType").val();
+            if (modelType.startsWith("其他")) {
+                el.append($("<option>").html("Trip").val("Trip"));
+                el.append($("<option>").html("Zebrac").val("Zebrac"));
+                el.append($("<option>").html("Star").val("Star"));
+            }
+            else {
+                el.append($("<option>").html("Max").val("Max"));
+            }
+            el.data("live-search", true).prop("title", "").selectpicker("refresh");
+        }
+    </script>
+}

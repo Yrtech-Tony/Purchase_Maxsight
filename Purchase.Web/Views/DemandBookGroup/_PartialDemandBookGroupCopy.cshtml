@@ -1,0 +1,133 @@
+﻿<form id="search-demandbook-form">
+    <input id="TargetGroupId" name="TargetGroupId" type="hidden"/>
+    <table style="width: 100%;">
+        <tr>
+            <td colspan="7" style="text-align:right">
+                @*<a id="btnSearchDemandBook" class="btn btn-primary" style="width:100px">查 询</a>*@
+                <a id="btnCopySelect" class="btn btn-primary" style="width:140px">复制选中需求书</a>
+            </td>
+        </tr>
+        <tr>
+            <td width="80">需求书组</td>
+            <td width="300">
+                <input id="ProjectIdPopup" class="form-control" type="hidden">
+                <input id="RequirementGroupIdPopup" name="RequirementGroupId" class="form-control" type="hidden">
+                <input id="RequirementGroupNamePopup" name="RequirementGroupName" class="form-control" readonly>
+            </td>
+            <td width="110">
+                <a id="btnRequirementGroupSelect" class="btn btn-primary" style="width:110px">选择需求书组</a>
+            </td>
+            <td width="300" style="text-align:right">
+                <a id="btnCheckAll" class="btn btn-primary" style="width:100px">全选</a>
+                <a id="btnNotcheckAll" class="btn btn-primary" style="width:100px">反选</a>
+            </td>
+        </tr>
+    </table>
+</form>
+<div class="count2">
+    <div id="search-result-demandbooks-copy" class="table-responsive" style="max-height: 300px;overflow: auto;">
+        @Html.Partial("_PartialDemandBooksByGroupCurrent")
+    </div>
+</div>
+<div class="count2">
+    <div id="search-result-demandbooks" class="table-responsive" style="max-height: 200px;overflow: auto;">
+        @Html.Partial("_PartialDemandBooksByGroup")
+    </div>
+</div>
+
+<script>
+    $(function () {
+        $("#btnRequirementGroupSelect").click(function () {
+            $("#RequirementGroupModal").modal("show");
+            $("#RequirementGroupModal .modal-title").html("选择需求书组");
+            $("#RequirementGroupModal .modal-body").empty();
+            var params={ ProjectName: $("#ProjectName").val(), ProjectShortName: $("#ProjectShortName").val(),ModelType: $("#ModelType").val() };
+            $("#RequirementGroupModal .modal-body").load("/DemandBookGroup/RequirementGroupSelect", params, function () {
+                $("#search-group-form").setForm(params);
+            });
+        })
+
+        $("#btnCheckAll").click(function () {
+            $("#search-result-demandbooks-copy input[type=checkbox]").prop("checked", true).change();
+        })
+        $("#btnNotcheckAll").click(function () {
+            $("#search-result-demandbooks-copy input[type=checkbox]").prop("checked", false).change();
+        })
+
+    })
+
+    function GroupSelectCallback(args) {
+        $("#search-demandbook-form #RequirementGroupNamePopup").val(args.RequirementGroupName);
+        $("#search-demandbook-form #RequirementGroupIdPopup").val(args.GroupId);
+        $("#search-demandbook-form #ProjectIdPopup").val(args.ProjectId);
+        $("#RequirementGroupModal").modal("hide");
+        if ($("#search-demandbook-form #RequirementGroupIdPopup").val() != "") {
+            searchDemandBookByGroup();
+        }
+    }
+
+    $("#btnCopySelect").click(function () {
+        var checkRadios = $("#search-result-demandbooks-copy table input[type=checkbox]:checked");
+        if (checkRadios.length == 0)
+        {
+            return;
+        }
+       
+        var jsonData = [];
+        checkRadios.each(function () {
+            debugger
+            var item = JSON.parse($(this).val());
+            var SeqNoOld = $(this).parents("tr").find("#SeqNoOld").val();
+            if (SeqNoOld.length > 0 && !isNaN(parseInt(SeqNoOld))) {
+                jsonData.push([item.SeqNo, SeqNoOld]);
+            }            
+        })
+
+        $("#btnCopySelect").button("loading");
+        
+        $.post("/DemandBookGroup/CopyDemandBookBatch", {
+            FromGroupId:$("#RequirementGroupIdPopup").val(),
+            TargetGroupId:$("#TargetGroupId").val(),
+            jsonArr: JSON.stringify(jsonData)
+        }, function () {
+            CopyDemandBookSelectFinish($("#TargetGroupId").val());
+        }).complete(function () { $("#btnCopySelect").button("reset"); });
+    })
+
+    function searchDemandBookByGroup() {
+        if (isEmpty($("#RequirementGroupIdPopup").val())) {
+            alert("请选择需求书组");
+            return
+        }
+
+        $("#btnSearchDemandBook").button("loading");
+
+        var params = $("#search-demandbook-form").serializeJson();
+        debugger
+        $.post("/DemandBookGroup/SearchDemandBookByGroupCurrent", {
+            ProjectId: $("#ProjectId").val(),
+            OldGroupId: $("#RequirementGroupIdPopup").val(),
+            NewGroupId: $("#TargetGroupId").val(),
+            ModelType: $("#ModelType").val()
+        }, function (data) {
+            $("#search-result-demandbooks-copy").html(data);
+        }).success(function () {
+
+            $.post("/DemandBookGroup/SearchDemandBookByGroup", {
+                ProjectId: $("#ProjectIdPopup").val(),
+                GroupId: $("#RequirementGroupIdPopup").val(),
+                ModelType: $("#ModelType").val()
+            }, function (data) {
+                $("#search-result-demandbooks").html(data);
+            })
+        }).complete(function () { $("#btnSearchDemandBook").button("reset"); });
+
+        //$.post("/DemandBookGroup/SearchDemandBookByGroup", {
+        //    ProjectId: $("#ProjectIdPopup").val(),
+        //    GroupId: $("#RequirementGroupIdPopup").val(),
+        //    ModelType: $("#ModelType").val()
+        //}, function (data) {
+        //    $("#search-result-demandbooks").html(data);
+        //}).complete(function () { $("#btnSearchDemandBook").button("reset"); });
+    }
+</script>

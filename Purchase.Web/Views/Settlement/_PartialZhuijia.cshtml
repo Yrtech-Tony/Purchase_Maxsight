@@ -1,0 +1,90 @@
+﻿<table id="zhuijia-table" class="table table-bordered table-condensed table-hover">
+    <thead>
+        <tr>
+            <th>供应商名称</th>
+            <th>执行省份</th>
+            <th>执行城市</th>
+            <th>费用内容</th>
+            <th>单价</th>
+            <th>数量</th>
+            <th>合计</th>
+            <th>备注</th>
+        </tr>
+    </thead>
+    <tbody></tbody>
+</table>
+<script>
+    function loadZhuijia() {
+        if ($("#ProjectId").val() == null || $("#ProjectId").val() == "") {
+            alert("请选择项目");
+            return false;
+        }
+
+        $("#btnQueryZhuijia").button("loading");
+        $.post("/Settlement/Zhuijia", {ProjectId:$("#ProjectId").val()}, function (data) {
+            if (data) {
+                if (data.List) {
+                    $("#zhuijia-table tbody").empty();
+                    $.each(data.List, function (index, item) {
+                        var tr = $("<tr>");
+
+                        tr.append($("<td></td>").html(item.SupplierName));
+                        tr.append($("<td></td>").html(item.zhixingshengfen));
+                        tr.append($("<td></td>").html(item.zhixingchengshi));
+                        tr.append($("<td></td>").html(item.FeeContent));
+                        tr.append($("<td></td>").html(item.danjia));
+                        tr.append($("<td></td>").html(item.SettleCount));
+                        tr.append($("<td></td>").html(item.SettleAmt));
+                        tr.append($("<td></td>").html(item.Remark));
+
+                        $("#zhuijia-table tbody").append(tr);
+                    })
+                    
+                    if (data.List.length>0) {
+                        calHeji();
+                    }
+                }
+            }
+        }).complete(function () { $("#btnQueryZhuijia").button("reset"); })
+    };
+
+    //增加合计
+    function calHeji() {
+        var hasHejiIndexs = [6];
+        //预算小计合计
+        var tr = $("<tr>");
+
+        var tdCount;
+        $("#zhuijia-table thead tr").each(function () {
+            tdCount = $(this).find("th").length;
+        })
+        var hejiArr = new Array(hasHejiIndexs.length);
+        for (var i = 0; i < hasHejiIndexs.length; i++) {
+            hejiArr[i] = 0;
+        }
+        $("#zhuijia-table tbody tr").each(function () {
+            var tds = $(this).find("td");
+            for (var i = 0; i < hasHejiIndexs.length; i++) {
+                var v = parseFloat(tds.eq(hasHejiIndexs[i]).text());
+                if (!isNaN(v)) {
+                    hejiArr[i] += v;
+                }
+            }
+        })
+        for (var i = 0; i < tdCount; i++) {
+            var td = $("<td>");
+            if (i == 0) {
+                tr.append($("<td><strong>合计<strong></td>"));
+                continue;
+            }
+            for (var j = 0; j < hasHejiIndexs.length; j++) {
+                if (hasHejiIndexs[j] == i) {
+                    td.html(hejiArr[j].toFixed(2));
+                }
+            }
+            tr.append(td);
+        }
+
+        $("#zhuijia-table tbody").append(tr);
+    }
+</script>

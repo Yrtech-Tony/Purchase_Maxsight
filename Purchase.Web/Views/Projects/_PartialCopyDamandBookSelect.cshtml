@@ -1,0 +1,26 @@
+﻿<style>
+    .count input[type=radio]{
+        height:16px !important;
+        text-align:center;
+        vertical-align:middle;
+    }
+</style>
+<input id="toSeqNO" type="hidden" />
+<div class="row text-center">
+    <div id="select-demandbook-copy" style="width:96.5%;" class="count">
+
+    </div>
+    <div class="col-md-12 mt20" style="text-align:right;">
+        <button id="btnCopy" type="button" class="btn btn-primary" style="width:100px;">复 制</button>
+    </div>
+</div>
+
+<script>
+    $("#btnCopy").click(function () {
+        var checkRadio = $("#select-demandbook-copy table input[type=radio]:checked");
+        var seqNo = checkRadio.val();
+        $.post("/DemandBook/CopyDemandBook", { projectId: $("#Id").val(), fromSeqNO: seqNo, toSeqNO: $("#toSeqNO").val() }, function () {
+            CopyDemandBookSelectFinish();
+        })
+    })
+</script>

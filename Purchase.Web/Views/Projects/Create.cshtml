@@ -1,0 +1,20 @@
+﻿@model Purchase.DAL.Projects
+
+@{
+    ViewBag.Title = "立项信息登记";
+    Layout = "~/Views/Shared/_PurchaseLayout.cshtml";
+}
+<div class="count inline-block">
+    <h4>@ViewBag.Title</h4>
+    <hr />
+    @using (Html.BeginForm("Create", "Projects", FormMethod.Post, new { Id = "ProjectsForm" }))
+    {
+        @Html.AntiForgeryToken()
+        @Html.ValidationSummary(false)
+
+        @Html.Partial("_PartialEdit", Model)
+    }
+</div>
+@section Scripts {
+    <script src="~/Content/My97DatePicker/WdatePicker.js"></script>
+}

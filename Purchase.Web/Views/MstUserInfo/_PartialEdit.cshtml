@@ -1,0 +1,85 @@
+﻿@using Purchase.DAL
+@model Mst_UserInfo
+
+<div class="count2 inline-block" style="line-height:40px">
+    @using (Html.BeginForm("", "", FormMethod.Post, new { Id = "userinfoForm" }))
+    {
+        <div class="form-horizontal">
+            <table style="width:100%">
+                <tr>
+                    <td colspan="2" style="text-align:right">
+                        <a id="btnSave" class="btn btn-primary" data-loading-text="提交中...">保 存</a>
+                    </td>
+                </tr>
+            </table>
+            <table style="width:100%">
+                <tr>
+                    <td width="110">登录账号 </td>
+                    <td width="380">
+                        @Html.TextBoxFor(m => m.UserId, htmlAttributes: new { @class = "form-control" })
+                    </td>
+                </tr>
+                <tr>
+                    <td>姓名 </td>
+                    <td>
+                        @Html.TextBoxFor(m => m.UserName, htmlAttributes: new { @class = "form-control" })
+                    </td>
+                </tr>
+                <tr>
+                    <td>部门</td>
+                    <td>
+                        @Html.DropDownListFor(m => m.DepartmentCode, Purchase.Web.Common.SelectListTool.DeparmentList(), htmlAttributes: new { @class = "form-control" })
+                    </td>
+                </tr>
+                <tr>
+                    <td>职位</td>
+                    <td>
+                        @Html.DropDownListFor(m => m.PositionCode, Purchase.Web.Common.SelectListTool.PositionList(), htmlAttributes: new { @class = "form-control" })
+                    </td>
+                </tr>
+                <tr>
+                    <td>角色类型</td>
+                    <td>
+                        <div style="width:380px">
+                            <input id="RoleTypeCodeHidden" type="hidden" value="@Model.RoleTypeCode" />
+                            @Html.DropDownListFor(m => m.RoleTypeCode, Purchase.Web.Common.SelectListTool.RoleTypeList(), htmlAttributes: new { @class = "form-control", multiple = "" })
+                            
+                        </div>
+                    </td>
+                </tr>
+                <tr>
+                    <td>邮箱 </td>
+                    <td>
+                        @Html.TextBoxFor(m => m.Email, htmlAttributes: new { @class = "form-control" })
+                    </td>
+                </tr>
+                <tr>
+                    <td>邮箱密码 </td>
+                    <td>
+                        @Html.Password("EmailPassword", Model.EmailPassword, htmlAttributes: new { @class = "form-control" })
+                    </td>
+                </tr>
+                <tr>
+                    <td>是否使用</td>
+                    <td style="text-align:left">
+                        @Html.CheckBox("UseChkCheckbox", Model.UseChk.HasValue ? Model.UseChk.Value : true, new { @class = "form-control" }) 
+                    </td>
+                </tr>
+            </table>
+        </div>
+    }
+</div>
+
+<script>
+    $("#RoleTypeCode").val($("#RoleTypeCodeHidden").val().split("&"));
+    $("#userinfoForm select").prop("title", "").data("live-search", true).selectpicker("refresh").selectpicker({ width: 380 });
+
+    $("#btnSave").click(function () {
+        var params = $("#userinfoForm").serializeJson("&");
+        params.UseChk = $("#UseChkCheckbox").is(":checked");
+        $.post("/MstUserInfo/Save", params, function () {
+            load(curPage);
+            $("#myModal").modal("hide");
+        })
+    })
+</script>

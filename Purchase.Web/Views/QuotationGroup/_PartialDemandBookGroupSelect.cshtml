@@ -1,0 +1,45 @@
+﻿@using Purchase.Service.DTO
+@model IEnumerable<RequirementGroupDto>
+
+
+<div class="count2">
+    <form id="search-project-form">
+        <table style="width: 100%;">
+            <tr>
+                <td colspan="10" style="text-align:right">
+                    <a id="btnConfirm" class="btn btn-primary" style="width:100px">确 认</a>
+                </td>
+            </tr>
+        </table>
+    </form>
+    <table id="select-table" class="table table-bordered table-condensed table-hover">
+        <thead>
+            <tr>
+                <th width="80">选择</th>
+                <th>需求书组名</th>
+            </tr>
+        </thead>
+        <tbody>
+            @if (Model != null)
+            {
+                foreach (RequirementGroupDto item in Model)
+                {
+                    <tr>
+                        <td>@Html.RadioButton("radio", item.GroupId)</td>
+                        <td>@item.RequirementGroupName</td>
+                    </tr>
+                }
+            }
+        </tbody>
+    </table>
+</div>
+<script>
+    $("#btnConfirm").click(function () {
+        var checkedRadio = $("#select-table input[type=radio]:checked");
+        var tds = checkedRadio.parents("tr:first").find("td");
+        var args = [];
+        args.push(tds.eq(1).html());
+        args.push(checkedRadio.val());
+        GroupSelectCallback(args);
+    })   
+</script>

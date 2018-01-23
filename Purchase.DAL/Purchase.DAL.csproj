@@ -1,0 +1,533 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="12.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProjectGuid>{AD554284-6875-4E12-936F-9BC7325D3042}</ProjectGuid>
+    <OutputType>Library</OutputType>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <RootNamespace>Purchase.DAL</RootNamespace>
+    <AssemblyName>Purchase.DAL</AssemblyName>
+    <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
+    <FileAlignment>512</FileAlignment>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\Debug\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>bin\Release\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="ChnCharInfo">
+      <HintPath>..\packages\Microsoft.International.Converters.PinYinConverter.1.0.0\lib\ChnCharInfo.dll</HintPath>
+    </Reference>
+    <Reference Include="EntityFramework, Version=6.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089, processorArchitecture=MSIL">
+      <HintPath>..\packages\EntityFramework.6.1.3\lib\net45\EntityFramework.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="EntityFramework.SqlServer, Version=6.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089, processorArchitecture=MSIL">
+      <HintPath>..\packages\EntityFramework.6.1.3\lib\net45\EntityFramework.SqlServer.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="System" />
+    <Reference Include="System.ComponentModel.DataAnnotations" />
+    <Reference Include="System.Core" />
+    <Reference Include="System.Runtime.Serialization" />
+    <Reference Include="System.Security" />
+    <Reference Include="System.Xml.Linq" />
+    <Reference Include="System.Data.DataSetExtensions" />
+    <Reference Include="Microsoft.CSharp" />
+    <Reference Include="System.Data" />
+    <Reference Include="System.Xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="AccruedCharges.cs">
+      <DependentUpon>PurchaseEntities.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Ana_HuizongbiaoRemak.cs">
+      <DependentUpon>PurchaseEntities.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Apply.cs">
+      <DependentUpon>PurchaseEntities.tt</DependentUpon>
+    </Compile>
+    <Compile Include="ApplyDtl.cs">
+      <DependentUpon>PurchaseEntities.tt</DependentUpon>
+    </Compile>
+    <Compile Include="ApplyDtl_FlowOrder.cs">
+      <DependentUpon>PurchaseEntities.tt</DependentUpon>
+    </Compile>
+    <Compile Include="ApplyDtl_SettlementDtl.cs">
+      <DependentUpon>PurchaseEntities.tt</DependentUpon>
+    </Compile>
+    <Compile Include="ApplyDtl_SettlementDtl_zhuijia_shoudong.cs">
+      <DependentUpon>PurchaseEntities.tt</DependentUpon>
+    </Compile>
+    <Compile Include="ApplyDtl_SettlementMst.cs">
+      <DependentUpon>PurchaseEntities.tt</DependentUpon>
+    </Compile>
+    <Compile Include="ApplyDtl_SupplierMng.cs">
+      <DependentUpon>PurchaseEntities.tt</DependentUpon>
+    </Compile>
+    <Compile Include="ApplyDtl_SupplierMngAttachmentFile.cs">
+      <DependentUpon>PurchaseEntities.tt</DependentUpon>
+    </Compile>
+    <Compile Include="ApplyFile.cs">
+      <DependentUpon>PurchaseEntities.tt</DependentUpon>
+    </Compile>
+    <Compile Include="ApplyRecheckStatus.cs">
+      <DependentUpon>PurchaseEntities.tt</DependentUpon>
+    </Compile>
+    <Compile Include="CapitalRequirement.cs">
+      <DependentUpon>PurchaseEntities.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Constract.cs">
+      <DependentUpon>PurchaseEntities.tt</DependentUpon>
+    </Compile>
+    <Compile Include="ConstractAttachment.cs">
+      <DependentUpon>PurchaseEntities.tt</DependentUpon>
+    </Compile>
+    <Compile Include="ConstractDtl.cs">
+      <DependentUpon>PurchaseEntities.tt</DependentUpon>
+    </Compile>
+    <Compile Include="ConstractDtlCommonText.cs">
+      <DependentUpon>PurchaseEntities.tt</DependentUpon>
+    </Compile>
+    <Compile Include="ConstractTemplate.cs">
+      <DependentUpon>PurchaseEntities.tt</DependentUpon>
+    </Compile>
+    <Compile Include="ConstractTemplateDtl.cs">
+      <DependentUpon>PurchaseEntities.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Contingency.cs">
+      <DependentUpon>PurchaseEntities.tt</DependentUpon>
+    </Compile>
+    <Compile Include="CustomerColumn.cs">
+      <DependentUpon>PurchaseEntities.tt</DependentUpon>
+    </Compile>
+    <Compile Include="FlowOrder.cs">
+      <DependentUpon>PurchaseEntities.tt</DependentUpon>
+    </Compile>
+    <Compile Include="HiddenCode.cs">
+      <DependentUpon>PurchaseEntities.tt</DependentUpon>
+    </Compile>
+    <Compile Include="HiddenCodeType.cs">
+      <DependentUpon>PurchaseEntities.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Mst_Department.cs">
+      <DependentUpon>PurchaseEntities.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Mst_Position.cs">
+      <DependentUpon>PurchaseEntities.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Mst_RoleType.cs">
+      <DependentUpon>PurchaseEntities.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Mst_UserInfo.cs">
+      <DependentUpon>PurchaseEntities.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Mst_UserInfoSetLog.cs">
+      <DependentUpon>PurchaseEntities.tt</DependentUpon>
+    </Compile>
+    <Compile Include="ProjectCity.cs">
+      <DependentUpon>PurchaseEntities.tt</DependentUpon>
+    </Compile>
+    <Compile Include="ProjectPerson.cs">
+      <DependentUpon>PurchaseEntities.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Projects.cs">
+      <DependentUpon>PurchaseEntities.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="PurchaseEntities.Context.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>PurchaseEntities.Context.tt</DependentUpon>
+    </Compile>
+    <Compile Include="PurchaseEntities.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>PurchaseEntities.tt</DependentUpon>
+    </Compile>
+    <Compile Include="PurchaseEntities.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>PurchaseEntities.edmx</DependentUpon>
+    </Compile>
+    <Compile Include="Quotation_Biancheng_Dtl.cs">
+      <DependentUpon>PurchaseEntities.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Quotation_Chezhan_Dtl.cs">
+      <DependentUpon>PurchaseEntities.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Quotation_Fuhe_Dtl.cs">
+      <DependentUpon>PurchaseEntities.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Quotation_Group.cs">
+      <DependentUpon>PurchaseEntities.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Quotation_Group_Yusuan.cs">
+      <DependentUpon>PurchaseEntities.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Quotation_Qita1_Dtl.cs">
+      <DependentUpon>PurchaseEntities.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Quotation_Qita2_Dtl.cs">
+      <DependentUpon>PurchaseEntities.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Quotation_QuotationMst.cs">
+      <DependentUpon>PurchaseEntities.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Quotation_Yanjiu_Dtl.cs">
+      <DependentUpon>PurchaseEntities.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Quotation_Yusuan_Dtl.cs">
+      <DependentUpon>PurchaseEntities.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Quotation_Zhichi_Dtl.cs">
+      <DependentUpon>PurchaseEntities.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Quotation_Zhixing_Dtl.cs">
+      <DependentUpon>PurchaseEntities.tt</DependentUpon>
+    </Compile>
+    <Compile Include="RecheckProcess.cs">
+      <DependentUpon>PurchaseEntities.tt</DependentUpon>
+    </Compile>
+    <Compile Include="RecheckProcessExcept.cs">
+      <DependentUpon>PurchaseEntities.tt</DependentUpon>
+    </Compile>
+    <Compile Include="RemindCancel.cs">
+      <DependentUpon>PurchaseEntities.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Requirement_Anfang_RequirementDtl0.cs">
+      <DependentUpon>PurchaseEntities.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Requirement_Anfang_RequirementDtl1.cs">
+      <DependentUpon>PurchaseEntities.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Requirement_Anfang_RequirementDtl2.cs">
+      <DependentUpon>PurchaseEntities.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Requirement_Anfang_RequirementDtl3.cs">
+      <DependentUpon>PurchaseEntities.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Requirement_Anfang_RequirementDtl4.cs">
+      <DependentUpon>PurchaseEntities.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Requirement_Anfang_RequirementDtl5.cs">
+      <DependentUpon>PurchaseEntities.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Requirement_Anfang_RequirementDtl6.cs">
+      <DependentUpon>PurchaseEntities.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Requirement_Anfang_RequirementDtl7.cs">
+      <DependentUpon>PurchaseEntities.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Requirement_Bianchengjibianji_RequirementDtl1.cs">
+      <DependentUpon>PurchaseEntities.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Requirement_Bianchengjibianji_RequirementDtl2.cs">
+      <DependentUpon>PurchaseEntities.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Requirement_Bianmajifuhe_RequirementDtl1.cs">
+      <DependentUpon>PurchaseEntities.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Requirement_Bianmajifuhe_RequirementDtl2.cs">
+      <DependentUpon>PurchaseEntities.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Requirement_Bianmajifuhe_RequirementDtl3.cs">
+      <DependentUpon>PurchaseEntities.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Requirement_Bianmajifuhe_RequirementDtl4.cs">
+      <DependentUpon>PurchaseEntities.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Requirement_Bianmajifuhe_RequirementDtl5.cs">
+      <DependentUpon>PurchaseEntities.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Requirement_Bianmajifuhe_RequirementDtl6.cs">
+      <DependentUpon>PurchaseEntities.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Requirement_Bianmajifuhe_RequirementDtl7.cs">
+      <DependentUpon>PurchaseEntities.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Requirement_Bianmajifuhe_RequirementDtl71.cs">
+      <DependentUpon>PurchaseEntities.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Requirement_Bianmajifuhe_RequirementDtl8.cs">
+      <DependentUpon>PurchaseEntities.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Requirement_Bianmajifuhe_RequirementDtl9.cs">
+      <DependentUpon>PurchaseEntities.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Requirement_Changdibuzhan_RequirementDtl1.cs">
+      <DependentUpon>PurchaseEntities.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Requirement_Changdibuzhan_RequirementDtl2.cs">
+      <DependentUpon>PurchaseEntities.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Requirement_Cheliangzhanpinghui_RequirementDtl1.cs">
+      <DependentUpon>PurchaseEntities.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Requirement_Cheliangzhanpinghui_RequirementDtl10.cs">
+      <DependentUpon>PurchaseEntities.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Requirement_Cheliangzhanpinghui_RequirementDtl11.cs">
+      <DependentUpon>PurchaseEntities.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Requirement_Cheliangzhanpinghui_RequirementDtl12.cs">
+      <DependentUpon>PurchaseEntities.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Requirement_Cheliangzhanpinghui_RequirementDtl13.cs">
+      <DependentUpon>PurchaseEntities.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Requirement_Cheliangzhanpinghui_RequirementDtl2.cs">
+      <DependentUpon>PurchaseEntities.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Requirement_Cheliangzhanpinghui_RequirementDtl3.cs">
+      <DependentUpon>PurchaseEntities.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Requirement_Cheliangzhanpinghui_RequirementDtl31.cs">
+      <DependentUpon>PurchaseEntities.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Requirement_Cheliangzhanpinghui_RequirementDtl4.cs">
+      <DependentUpon>PurchaseEntities.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Requirement_Cheliangzhanpinghui_RequirementDtl5.cs">
+      <DependentUpon>PurchaseEntities.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Requirement_Cheliangzhanpinghui_RequirementDtl6.cs">
+      <DependentUpon>PurchaseEntities.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Requirement_Cheliangzhanpinghui_RequirementDtl7.cs">
+      <DependentUpon>PurchaseEntities.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Requirement_Cheliangzhanpinghui_RequirementDtl71.cs">
+      <DependentUpon>PurchaseEntities.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Requirement_Cheliangzhanpinghui_RequirementDtl8.cs">
+      <DependentUpon>PurchaseEntities.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Requirement_Cheliangzhanpinghui_RequirementDtl9.cs">
+      <DependentUpon>PurchaseEntities.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Requirement_Gongyingshangchailv_RequirementDtl1.cs">
+      <DependentUpon>PurchaseEntities.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Requirement_Group.cs">
+      <DependentUpon>PurchaseEntities.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Requirement_Guangkong_RequirementDtl1.cs">
+      <DependentUpon>PurchaseEntities.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Requirement_Guangkong_RequirementDtl2.cs">
+      <DependentUpon>PurchaseEntities.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Requirement_Guangkong_RequirementDtl3.cs">
+      <DependentUpon>PurchaseEntities.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Requirement_Internal_Intangible_Qita2.cs">
+      <DependentUpon>PurchaseEntities.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Requirement_Internal_Tangible_Qita1.cs">
+      <DependentUpon>PurchaseEntities.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Requirement_Mianfangjidianfang_RequirementDtl1.cs">
+      <DependentUpon>PurchaseEntities.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Requirement_Mianfangjidianfang_RequirementDtl2.cs">
+      <DependentUpon>PurchaseEntities.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Requirement_Mianfangjidianfang_RequirementDtl3.cs">
+      <DependentUpon>PurchaseEntities.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Requirement_Mianfangjidianfang_RequirementDtl4.cs">
+      <DependentUpon>PurchaseEntities.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Requirement_Mianfangjidianfang_RequirementDtl5.cs">
+      <DependentUpon>PurchaseEntities.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Requirement_Mingjian_RequirementDtl1.cs">
+      <DependentUpon>PurchaseEntities.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Requirement_Mingjian_RequirementDtl2.cs">
+      <DependentUpon>PurchaseEntities.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Requirement_Mingjian_RequirementDtl3.cs">
+      <DependentUpon>PurchaseEntities.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Requirement_Mingjian_RequirementDtl4.cs">
+      <DependentUpon>PurchaseEntities.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Requirement_Mingjian_RequirementDtl5.cs">
+      <DependentUpon>PurchaseEntities.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Requirement_Pankujijiagediaocha_RequirementDtl1.cs">
+      <DependentUpon>PurchaseEntities.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Requirement_Pankujijiagediaocha_RequirementDtl2.cs">
+      <DependentUpon>PurchaseEntities.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Requirement_Pankujijiagediaocha_RequirementDtl3.cs">
+      <DependentUpon>PurchaseEntities.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Requirement_Pankujijiagediaocha_RequirementDtl4.cs">
+      <DependentUpon>PurchaseEntities.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Requirement_Pankujijiagediaocha_RequirementDtl5.cs">
+      <DependentUpon>PurchaseEntities.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Requirement_RequirementDtlLast.cs">
+      <DependentUpon>PurchaseEntities.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Requirement_RequirementMst.cs">
+      <DependentUpon>PurchaseEntities.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Requirement_Shenfangjirijiliuzhi_RequirementDtl1.cs">
+      <DependentUpon>PurchaseEntities.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Requirement_Shenfangjirijiliuzhi_RequirementDtl2.cs">
+      <DependentUpon>PurchaseEntities.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Requirement_Shenfangjirijiliuzhi_RequirementDtl3.cs">
+      <DependentUpon>PurchaseEntities.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Requirement_Shenfangjirijiliuzhi_RequirementDtl4.cs">
+      <DependentUpon>PurchaseEntities.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Requirement_Shenfangjirijiliuzhi_RequirementDtl5.cs">
+      <DependentUpon>PurchaseEntities.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Requirement_Shenfangjirijiliuzhi_RequirementDtl6.cs">
+      <DependentUpon>PurchaseEntities.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Requirement_Wangluodiaoyan_RequirementDtl1.cs">
+      <DependentUpon>PurchaseEntities.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Requirement_Wangluodiaoyan_RequirementDtl2.cs">
+      <DependentUpon>PurchaseEntities.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Requirement_Wangluodiaoyan_RequirementDtl3.cs">
+      <DependentUpon>PurchaseEntities.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Requirement_Wangluodiaoyan_RequirementDtl4.cs">
+      <DependentUpon>PurchaseEntities.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Requirement_Yanjiujishujufenxi_RequirementDtl1.cs">
+      <DependentUpon>PurchaseEntities.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Requirement_Yanjiujishujufenxi_RequirementDtl2.cs">
+      <DependentUpon>PurchaseEntities.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Requirement_Yunshuzuche_RequirementDtl1.cs">
+      <DependentUpon>PurchaseEntities.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Requirement_Yunshuzuche_RequirementDtl2.cs">
+      <DependentUpon>PurchaseEntities.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Requirement_Zuotanhui_RequirementDtl1.cs">
+      <DependentUpon>PurchaseEntities.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Requirement_Zuotanhui_RequirementDtl2.cs">
+      <DependentUpon>PurchaseEntities.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Requirement_Zuotanhui_RequirementDtl3.cs">
+      <DependentUpon>PurchaseEntities.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Requirement_Zuotanhui_RequirementDtl4.cs">
+      <DependentUpon>PurchaseEntities.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Requirement_Zuotanhui_RequirementDtl5.cs">
+      <DependentUpon>PurchaseEntities.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Requirement_Zuotanhui_RequirementDtl6.cs">
+      <DependentUpon>PurchaseEntities.tt</DependentUpon>
+    </Compile>
+    <Compile Include="SettlementCommitGroup.cs">
+      <DependentUpon>PurchaseEntities.tt</DependentUpon>
+    </Compile>
+    <Compile Include="SettlementCommitGroupDtl.cs">
+      <DependentUpon>PurchaseEntities.tt</DependentUpon>
+    </Compile>
+    <Compile Include="SettlementDtl.cs">
+      <DependentUpon>PurchaseEntities.tt</DependentUpon>
+    </Compile>
+    <Compile Include="SettlementDtl_zhuijia_shoudong.cs">
+      <DependentUpon>PurchaseEntities.tt</DependentUpon>
+    </Compile>
+    <Compile Include="SettlementMst.cs">
+      <DependentUpon>PurchaseEntities.tt</DependentUpon>
+    </Compile>
+    <Compile Include="SupplierAlter.cs">
+      <DependentUpon>PurchaseEntities.tt</DependentUpon>
+    </Compile>
+    <Compile Include="SupplierEvaAnswer.cs">
+      <DependentUpon>PurchaseEntities.tt</DependentUpon>
+    </Compile>
+    <Compile Include="SupplierEvaDepartment.cs">
+      <DependentUpon>PurchaseEntities.tt</DependentUpon>
+    </Compile>
+    <Compile Include="SupplierEvaMainSubjects.cs">
+      <DependentUpon>PurchaseEntities.tt</DependentUpon>
+    </Compile>
+    <Compile Include="SupplierEvaSubSubjects.cs">
+      <DependentUpon>PurchaseEntities.tt</DependentUpon>
+    </Compile>
+    <Compile Include="SupplierMng.cs">
+      <DependentUpon>PurchaseEntities.tt</DependentUpon>
+    </Compile>
+    <Compile Include="SupplierMngAttachmentFile.cs">
+      <DependentUpon>PurchaseEntities.tt</DependentUpon>
+    </Compile>
+    <Compile Include="SupplierRequirementEmail.cs">
+      <DependentUpon>PurchaseEntities.tt</DependentUpon>
+    </Compile>
+    <Compile Include="SupplierRequirementEmailFile.cs">
+      <DependentUpon>PurchaseEntities.tt</DependentUpon>
+    </Compile>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="App.Config">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="packages.config" />
+    <EntityDeploy Include="PurchaseEntities.edmx">
+      <Generator>EntityModelCodeGenerator</Generator>
+      <LastGenOutput>PurchaseEntities.Designer.cs</LastGenOutput>
+    </EntityDeploy>
+    <None Include="PurchaseEntities.Context.tt">
+      <Generator>TextTemplatingFileGenerator</Generator>
+      <DependentUpon>PurchaseEntities.edmx</DependentUpon>
+      <LastGenOutput>PurchaseEntities.Context.cs</LastGenOutput>
+    </None>
+    <None Include="PurchaseEntities.edmx.diagram">
+      <DependentUpon>PurchaseEntities.edmx</DependentUpon>
+    </None>
+    <None Include="PurchaseEntities.tt">
+      <Generator>TextTemplatingFileGenerator</Generator>
+      <DependentUpon>PurchaseEntities.edmx</DependentUpon>
+      <LastGenOutput>PurchaseEntities.cs</LastGenOutput>
+    </None>
+  </ItemGroup>
+  <ItemGroup>
+    <Service Include="{508349B6-6B84-4DF5-91F0-309BEEBAD82D}" />
+  </ItemGroup>
+  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+  <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
+       Other similar extension points exist, see Microsoft.Common.targets.
+  <Target Name="BeforeBuild">
+  </Target>
+  <Target Name="AfterBuild">
+  </Target>
+  -->
+</Project>

@@ -1,0 +1,18 @@
+﻿@model Purchase.DAL.ConstractTemplate
+
+@{
+    ViewBag.Title = "合同模板信息登记";
+    Layout = "~/Views/Shared/_ConstractLayout.cshtml";
+}
+
+<div class="count inline-block">
+    <h4>@ViewBag.Title</h4>
+    <hr />
+    @using (Html.BeginForm("Create", "ConstractTemplate", FormMethod.Post, new { Id = "ConstractTemplateForm" }))
+    {
+        @Html.AntiForgeryToken()
+        @Html.ValidationSummary(false)
+
+        @Html.Partial("_PartialEdit", Model)
+    }
+</div>

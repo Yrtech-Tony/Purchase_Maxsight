@@ -1,0 +1,170 @@
+﻿@model IEnumerable<Purchase.DAL.ConstractTemplate>
+
+@{
+    ViewBag.Title = "合同模板登记及查询";
+    Layout = "~/Views/Shared/_ConstractLayout.cshtml";
+}
+<div class="count inline-block">
+    <form id="search-form" class="form">
+        <table>
+            <tr>
+                <td colspan="10" style="text-align:right">
+                    <button id="btnQuery" type="button" class="btn btn-primary" style="width:100px">查 询</button>
+                    <button id="btnAdd" onclick="openNew()" type="button" class="btn btn-primary" style="width:100px">新 增</button>
+                </td>
+            </tr>
+            <tr>
+                <td width="90">合同模板名称</td>
+                <td width="130">
+                    <input  id="TemplateName" name="TemplateName" class="form-control">
+                </td>
+            </tr>
+        </table>
+    </form>
+    <table id="ConstractTemplate-table" class="table table-bordered table-condensed table-hover mt20">
+        <thead>
+            <tr>
+                @*<th>
+                    合同模板编号
+                </th>*@
+                <th width="80">模板详细</th>
+                <th width="80">另存为</th>
+                <th width="80">模板预览</th>
+                <th>
+                    合同模板名称
+                </th>
+                @*<th>
+                    模块类型
+                </th>*@
+                @*<th>
+                    合同附件
+                </th>*@
+                <th>
+                    是否使用
+                </th>
+                <th>
+                    登记人
+                </th>
+                <th>登记时间</th>
+            </tr>
+        </thead>
+        <tbody></tbody>
+    </table>
+    <div id="pagination" class="pull-right">
+        <ul id="pageUl"></ul>
+    </div>
+</div>
+<div class="modal fade" id="templateModal" tabindex="-1" role="dialog" aria-hidden="false">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
+                <h4 class="modal-title"></h4>
+            </div>
+            <div class="modal-body form-horizontal" >
+                <div class="form-group">
+                    @Html.Hidden("TemplateId")
+                    <label class="control-label col-md-3" for="TemplateName">合同模板名称</label>
+                    <div class="col-md-6">
+                        <input id="TemplateName" name="TemplateName" class="form-control">
+                    </div>
+                    <div class="col-md-2 text-right">
+                        <a class="btn btn-primary" data-loading-text="保存中..." onclick="copyTemplate()">另存为</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+@section Scripts {
+<script src="~/Scripts/custom/form-serialize.js"></script>
+    <script src="~/Scripts/custom/date-format.js"></script>
+    <script>
+        var queryParams;
+        $(function () {
+            debugger
+            // 如果没有权限隐藏新增按钮
+            if ('@ViewBag.UserRoleType'.indexOf("合同模板添加") == -1) {
+                $("#search-form #btnAdd").hide();
+            }
+            var query = getQueryString("query");
+
+            if (query && query.length > 0) {
+                var queryObj = JSON.parse(query);
+                $("#search-form").setForm(queryObj);
+                load(queryObj.pageNum);
+            } else {
+                load();
+            }
+            $("#btnQuery").click(function () {
+                load();
+            })
+        })
+
+        function load(pageNum) {
+            $("#btnQuery").button("loading");
+
+            var params = $("#search-form").serializeJson();
+            params = $.extend(params, { pageSize: 10, pageNum: pageNum ? pageNum : 1 });
+            queryParams = params;
+            $.post("/ConstractTemplate/Load", params, function (data) {
+                if (data && data.List) {
+                    $("#ConstractTemplate-table tbody").empty();    
+                    $.each(data.List, function (index, item) {
+                        var tr = $("<tr>");
+                        var codeLink = $("<a>").html("模板详细");
+                        codeLink.attr("href", "/ConstractTemplate/Edit/" + item.Id + "?queryParams=" + JSON.stringify(queryParams));
+                        tr.append($("<td></td>").append(codeLink));
+
+                        var copyLink = $("<a>").html("另存为");
+                        copyLink.css("cursor", "pointer");
+                        copyLink.click(function () {
+                            if ('@ViewBag.UserRoleType'.indexOf("合同模板添加") == -1) {
+                                alert("没有权限修改");
+                                return;
+                            }
+                            saveOtherTemplate(item.Id, item.TemplateName);
+                        })
+                        tr.append($("<td></td>").append(copyLink));
+
+                        var view = $("<a>").html("预览");
+                        view.attr("style", "cursor: pointer;");
+                        view.click(function () {
+                            openPreview(item.Id);
+                        })
+                        tr.append($("<td></td>").append(view));
+                        tr.append($("<td></td>").html(item.TemplateName));
+                        tr.append($("<td></td>").html(item.UseChk?"是":"否"));
+                        tr.append($("<td></td>").html(item.InUserId));
+                        tr.append($("<td></td>").html(item.InDateTime));
+                        $("#ConstractTemplate-table tbody").append(tr);
+                    })
+
+                   createPageNav({ $container: $("#pagination"), pageCount: data.PageCount, currentNum: data.CurPage, afterFun: load });
+                }
+            }).complete(function () { $("#btnQuery").button("reset"); });
+        }
+        function saveOtherTemplate(TemlateId, TemplateName) {
+            $("#templateModal").modal("show");
+            $("#templateModal .modal-title").html("模板详细");
+            $("#templateModal #TemplateId").val(TemlateId);
+            $("#templateModal #TemplateName").val(TemplateName);
+        }
+        function openNew() {
+            window.location.href = '/ConstractTemplate/Create';
+        }
+        function openPreview(Id) {
+            window.open('/ContractTemplate.html?TemplateId=' + Id);
+        }
+
+        function copyTemplate() {
+            var id = $("#templateModal #TemplateId").val(), templateName = $("#templateModal #TemplateName").val();
+            $.post("/ConstractTemplate/CopyTemplate", { Id: id, TemplateName: templateName }, function (data) {
+                $("#templateModal").modal("hide");
+                alert("保存成功！");
+                load();
+            });
+        }
+
+    </script>
+}

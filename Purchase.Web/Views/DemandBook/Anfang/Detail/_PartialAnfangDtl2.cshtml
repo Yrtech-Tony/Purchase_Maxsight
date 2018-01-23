@@ -1,0 +1,144 @@
+﻿@using Purchase.Web.Common
+@model Purchase.DAL.Requirement_Anfang_RequirementDtl2
+
+<form id="anfang-dtl2-form">
+    @Html.Hidden("SeqNO", 0)
+    <div class="form-horizontal">
+        <div class="form-group">
+            <label class="control-label col-md-2" for="AgeGroup">访问时长</label>
+            <div class="col-md-4">
+                @Html.DropDownListFor(m => m.AccessTime, SelectListTool.HiddenCodeList("需求书-暗访-执行要求-访问时长")
+                , htmlAttributes: new { @class = "form-control", multiple="" })
+            </div>
+            <label class="control-label col-md-2" for="EducationGroup">录音</label>
+            <div class="col-md-4">
+                @Html.DropDownListFor(m => m.SoundRecordChk, SelectListTool.HiddenCodeList("需求书-暗访-执行要求-录音")
+                , htmlAttributes: new { @class = "form-control", multiple = "" })
+            </div>
+        </div>
+        <div class="form-group">
+            <label class="control-label col-md-2" for="DrivingLicense">录像</label>
+            <div class="col-md-4">
+                @Html.DropDownListFor(m => m.Videotape, SelectListTool.HiddenCodeList("需求书-暗访-执行要求-录像")
+                , htmlAttributes: new { @class = "form-control", multiple = "" })
+            </div>
+            <label class="control-label col-md-2" for="DrivingLicense">培训方式</label>
+            <div class="col-md-4">
+                @Html.DropDownListFor(m => m.TrainingMode, SelectListTool.HiddenCodeList("需求书-暗访-执行要求-访问时长")
+                , htmlAttributes: new { @class = "form-control", multiple = "" })
+            </div>
+        </div>
+        <div class="form-group">
+            <label class="control-label col-md-2" for="DrivingLicense">进店前预约</label>
+            <div class="col-md-4">
+                @Html.DropDownListFor(m => m.Appointment, SelectListTool.HiddenCodeList("需求书-暗访-执行要求-进店前预约")
+                , htmlAttributes: new { @class = "form-control", multiple = "" })
+            </div>
+            <label class="control-label col-md-2" for="DrivingLicense">进店规避要求</label>
+            <div class="col-md-4">
+                @Html.DropDownListFor(m => m.Avoid, SelectListTool.HiddenCodeList("需求书-暗访-执行要求-进店规避要求")
+                , htmlAttributes: new { @class = "form-control", multiple = "" })
+            </div>
+        </div>
+        <div class="form-group">
+            <label class="control-label col-md-2" for="DrivingLicense">二次进店</label>
+            <div class="col-md-4">
+                @Html.DropDownListFor(m => m.IntoShopAgain, SelectListTool.HiddenCodeList("需求书-暗访-执行要求-二次进店")
+                , htmlAttributes: new { @class = "form-control", multiple = "" })
+            </div>
+
+            <label class="control-label col-md-2" for="DrivingLicense">二次进店比例</label>
+            <div class="col-md-4">
+                @{
+                    List<SelectListItem> IntoShopAgainRateList = new List<SelectListItem>();
+                    IntoShopAgainRateList.Add(new SelectListItem() { Text = "", Value = "" });
+                    for (int i = 1; i <= 100; i++)
+                    {
+                        IntoShopAgainRateList.Add(new SelectListItem() { Text = i.ToString()+'%', Value = i.ToString()+'%' });
+                    }
+                    IntoShopAgainRateList.Add(new SelectListItem() { Text = "不涉及", Value = "不涉及" });
+                    IntoShopAgainRateList.Add(new SelectListItem() { Text = "不限制", Value = "不限制" });
+                }
+                @Html.DropDownListFor(m => m.IntoShopAgainRate, IntoShopAgainRateList, htmlAttributes: new { @class = "form-control" })
+            </div>
+        </div>
+        <div class="form-group">
+            <label class="control-label col-md-2" for="DrivingLicense">GPS定位/短信定位</label>
+            <div class="col-md-4">
+                @Html.DropDownListFor(m => m.GPSLocationOrSMS, SelectListTool.HiddenCodeList("需求书-暗访-执行要求-GPS定位/短信定位")
+                , htmlAttributes: new { @class = "form-control", multiple = "" })
+            </div>
+            <label class="control-label col-md-2" for="DrivingLicense">手机答卷</label>
+            <div class="col-md-4">
+                @Html.DropDownListFor(m => m.MobileAnswer, SelectListTool.HiddenCodeList("需求书-暗访-执行要求-手机答卷")
+                , htmlAttributes: new { @class = "form-control", multiple = "" })
+            </div>
+        </div>
+        <div class="form-group">
+            <label class="control-label col-md-2" for="DrivingLicense">报时方式</label>
+            <div class="col-md-4">
+                @Html.DropDownListFor(m => m.TimeMothod, SelectListTool.HiddenCodeList("需求书-暗访-执行要求-报时方式")
+                , htmlAttributes: new { @class = "form-control", multiple = "" })
+            </div>
+            <label class="control-label col-md-2" for="DrivingLicense">电话回访</label>
+            <div class="col-md-4">
+                @Html.DropDownListFor(m => m.TelReturnVisit, SelectListTool.HiddenCodeList("需求书-暗访-执行要求-电话回访")
+                , htmlAttributes: new { @class = "form-control", multiple = "" })
+            </div>
+        </div>
+        <div class="form-group">
+            <label class="control-label col-md-2" for="DrivingLicense">电话回访号码要求</label>
+            <div class="col-md-4">
+                @Html.DropDownListFor(m => m.TelReturnVisitNumberRequirement, SelectListTool.HiddenCodeList("需求书-暗访-执行要求-电话回访号码要求")
+                , htmlAttributes: new { @class = "form-control", multiple = "" })
+            </div>
+            <label class="control-label col-md-2" for="DrivingLicense">车主回访</label>
+            <div class="col-md-4">
+                @Html.DropDownListFor(m => m.OwnerreturenVisit, SelectListTool.HiddenCodeList("需求书-暗访-执行要求-车主回访")
+                , htmlAttributes: new { @class = "form-control", multiple = "" })
+            </div>
+        </div>
+        <div class="form-group">
+            <label class="control-label col-md-2" for="DrivingLicense">集中接听</label>
+            <div class="col-md-4">
+                @Html.DropDownListFor(m => m.FocusAnswer, SelectListTool.HiddenCodeList("需求书-暗访-执行要求-集中接听")
+                , htmlAttributes: new { @class = "form-control", multiple = "" })
+            </div>
+            <label class="control-label col-md-2" for="DrivingLicense">客服专线接听</label>
+            <div class="col-md-4">
+                @Html.DropDownListFor(m => m.CustomerServiceLine, SelectListTool.HiddenCodeList("需求书-暗访-执行要求-客服专线接听")
+                , htmlAttributes: new { @class = "form-control", multiple = "" })
+            </div>
+        </div>
+        <div class="form-group">
+            <label class="control-label col-md-2" for="TemplateName">其他说明</label>
+            <div class="col-md-10">
+                @Html.TextAreaFor(m => m.RemarkDtl2, htmlAttributes: new { @class = "form-control", multiple="" })
+            </div>
+        </div>
+        <div class="form-group">
+            <div class="col-md-offset-2 col-md-10">
+                <input id="saveBtn" type="button" value="保存" class="btn btn-primary btn-check" data-loading-text="提交中..." style="width:100px;height:35px" />
+            </div>
+        </div>
+    </div>
+</form>
+<script>
+    $(function () {
+        $("#anfang-dtl2-form #saveBtn").click(function () {
+            if (!CommitCheck()) {
+                alert("正在审核中或者非本人添加的项目");
+                return false;
+            }
+            $(this).button("loading")
+            var params = $("#anfang-dtl2-form").serializeJson('&');
+            params = $.extend(params, getMstObject());
+
+            $.post("/DemandBook/SaveAnfangdtl2", params, function (data) {
+                $("#RequirementId").val(data);
+                loadAnfangDtl2();
+                closeModal();
+            });
+        })
+    })
+</script>

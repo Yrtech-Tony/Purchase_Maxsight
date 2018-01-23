@@ -1,0 +1,39 @@
+﻿@model Purchase.DAL.Requirement_Group
+
+<div class="count2 inline-block">
+    @using (Html.BeginForm("", "", FormMethod.Post, new { Id = "DemandBookGroupForm", enctype = "multipart/form-data" }))
+    {
+        @Html.HiddenFor(m => Model.Id)
+        @Html.HiddenFor(m => Model.ProjectId)
+
+        <div class="form-horizontal">
+            <div class="form-group">
+                <label class="control-label col-md-4" for="TemplateName">需求书组名称</label>
+                <div class="col-md-6">
+                    @Html.TextBoxFor(m => Model.RequirementGroupName, new { @class = "form-control" })
+                </div>
+                <div class="col-md-2 text-right">
+                    <a id="btnSave" class="btn btn-primary" data-loading-text="提交中..." style="width:100px;">保 存</a>
+                </div>
+            </div>
+        </div>
+        
+    }
+</div>
+
+<script>
+    $(function () {
+        $("#btnSave").click(function () {
+            if (!CommitCheck()) {
+                alert("正在审核中或者非本人添加的项目");
+                return false;
+            }
+            $(this).button('loading');//禁用按钮并显示提交中
+            $.post("/DemandBookGroup/Save", $("#DemandBookGroupForm").serialize(), function () {
+                debugger
+                $("#myModal2").modal('hide');
+                load();
+            });
+        })
+    })
+</script>

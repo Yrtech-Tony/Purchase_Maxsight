@@ -1,0 +1,226 @@
+﻿@model Purchase.Service.DTO.FlowOrderDto
+@{
+    Model.FlowOrderId = Model.FlowOrderId == null ? "0" : Model.FlowOrderId;
+}
+@using Purchase.Web.Common
+<div class="count2 inline-block" style="line-height:40px">
+    @using (Html.BeginForm("", "", FormMethod.Post, new { Id = "FlowOrderForm" }))
+    {
+        @Html.HiddenFor(m => m.FlowOrderId)
+        @Html.HiddenFor(m => m.ProjectId)
+        @Html.HiddenFor(m => m.ApplyStatusCode)
+
+        <div class="form-horizontal">
+            <table>
+                <tr>
+                    <td colspan="10" style="text-align:right">
+                        <a id="btnSave" class="btn btn-primary" data-loading-text="提交中...">保 存</a>
+                    </td>
+                </tr>
+                <tr>
+                    <td width="110">收款人</td>
+                    <td>
+                        <input id="SupplierId" name="SupplierId" class="form-control" type="hidden" value="@Model.SupplierId" />
+                        <input id="Payee" name="Payee" class="form-control" value="@Model.Payee">
+                    </td>
+                    <td width="110">供应商全称</td>
+                    <td>
+                        <input id="SupplierName" name="SupplierName" class="form-control" value="@Model.SupplierName">
+                    </td>
+                    <td class="pull-left">
+                        <a id="btnSupplierSelect_Dialog" class="btn btn-primary" style="width:100px">选择供应商</a>
+                    </td>
+                    <td></td>
+                </tr>
+                <tr>
+                    <td width="110">支出用途 </td>
+                    @*<td>
+                        @Html.DropDownListFor(m => m.ExpendType, new List<SelectListItem> {
+                            new SelectListItem(){Text="",Value=""},
+                            new SelectListItem(){ Text="国峰丽英",Value="国峰丽英"},
+                            new SelectListItem(){ Text="代理费",Value="代理费"},
+                            new SelectListItem(){ Text="北京智美",Value="北京智美"},
+                            new SelectListItem(){ Text="石家庄智美",Value="石家庄智美"},
+                            new SelectListItem(){ Text="出发中心",Value="出发中心"},
+                            new SelectListItem(){ Text="石家庄晟煊",Value="石家庄晟煊"},
+                            new SelectListItem(){ Text="河北诺亚",Value="河北诺亚"},
+                            new SelectListItem(){ Text="车展",Value="车展"}
+                       }, htmlAttributes: new { @class = "form-control" })
+                    </td>*@
+                    <td>
+                        @Html.DropDownListFor(m => m.ExpendType, SelectListTool.HiddenCodeList("应付流转单-支出用途"), htmlAttributes: new { @class = "form-control" })
+                    </td>
+                    <td width="110">支出方式</td>
+                    <td>
+                        @Html.DropDownListFor(m => m.ExpendPattern, new List<SelectListItem> {
+                            new SelectListItem(){Text="",Value=""},
+                            new SelectListItem(){ Text="对公付款",Value="对公付款"},
+                            new SelectListItem(){ Text="对公借款",Value="对公借款"},
+                            new SelectListItem(){ Text="个人借款",Value="个人借款"},
+                            new SelectListItem(){ Text="其他",Value="其他"}
+                       }, htmlAttributes: new { @class = "form-control" })
+                    </td>
+                    <td width="110">付款类型</td>
+                    <td>
+                        @Html.DropDownListFor(m => m.PaymentType, new List<SelectListItem> {
+                            new SelectListItem(){Text="",Value=""},
+                            new SelectListItem(){ Text="押金",Value="押金"},
+                            new SelectListItem(){ Text="预付款",Value="预付款"},
+                            new SelectListItem(){ Text="进度款",Value="进度款"},
+                            new SelectListItem(){ Text="尾款",Value="尾款"}
+                       }, htmlAttributes: new { @class = "form-control" })
+                    </td>
+                </tr>
+                <tr>
+                    <td width="110">付款公司</td>
+                    <td>
+                        @Html.DropDownListFor(m => m.PaymentCompany, new List<SelectListItem> {
+                            new SelectListItem(){Text="",Value=""},
+                            new SelectListItem(){ Text="MAX-BJ",Value="MAX-BJ"},
+                            new SelectListItem(){ Text="MAX-SH",Value="MAX-SH"},
+                            new SelectListItem(){ Text="MAX-GZ",Value="MAX-GZ"},
+                            new SelectListItem(){ Text="Zebrac",Value="Zebrac"},
+                            new SelectListItem(){ Text="Trip",Value="Trip"},
+                            new SelectListItem(){ Text="Star",Value="Star"}
+                       }, htmlAttributes: new { @class = "form-control" })
+                    </td>
+                    <td>预计付款时间</td>
+                    <td>
+                        @Html.TextBoxFor(m => m.EstimatedPaymentTime, htmlAttributes: new { @class = "form-control", onclick = "WdatePicker()" })
+                    </td>
+                    <td>预计付款金额</td>
+                    <td>
+                        @Html.TextBoxFor(m => m.EstimatePaymentAmt, htmlAttributes: new { @class = "form-control", type = "number" })
+                    </td>
+                </tr>
+                <tr>
+                    <td>实际付款时间</td>
+                    <td>
+                        @Html.TextBoxFor(m => m.FactPaymentTime, htmlAttributes: new { @class = "form-control", onclick = "WdatePicker()" })
+                    </td>
+                    <td>实际付款金额</td>
+                    <td>
+                        @Html.TextBoxFor(m => m.FactPaymentAmt, htmlAttributes: new { @class = "form-control", type = "number" })
+                    </td>
+                    <td>发票冲抵金额</td>
+                    <td>
+                        @Html.TextBoxFor(m => m.InvoiceAmt, htmlAttributes: new { @class = "form-control", type = "number", @readonly = "readonly" })
+                    </td>
+                </tr>
+                <tr>
+                    <td>执行开始时间</td>
+                    <td>
+                        @Html.TextBoxFor(m => m.ExecuteCycleStartDate, htmlAttributes: new { @class = "form-control", onclick = "WdatePicker()" })
+                    </td>
+                    <td>执行结束时间</td>
+                    <td>
+                        @Html.TextBoxFor(m => m.ExecuteCycleEndDate, htmlAttributes: new { @class = "form-control", onclick = "WdatePicker()" })
+                    </td>
+                    <td colspan="2"></td>
+                </tr>
+                <tr>
+                    <td>备注</td>
+                    <td colspan="5">
+                        @Html.TextAreaFor(m => m.Remark, htmlAttributes: new { @class = "form-control" })
+                    </td>
+                </tr>
+            </table>
+        </div>
+    }
+</div>
+
+<script>
+    var validArray = [{ proName: 'Payee', msg: '收款人不能为空！<br>' },
+        { proName: 'ExpendType', msg: '支出用途不能为空！<br>' },
+        { proName: 'ExpendPattern', msg: '支出方式不能为空！<br>' },
+        { proName: 'PaymentType', msg: '付款类型不能为空！<br>' },
+         { proName: 'PaymentCompany', msg: '付款公司不能为空！<br>' },
+
+        //{ proName: 'EstimatedPaymentTime', msg: '预计付款时间不能为空！<br>' },
+        //{ proName: 'EstimatePaymentAmt', msg: '预计付款金额不能为空！<br>' },
+        //{ proName: 'FactPaymentTime', msg: '实际付款时间不能为空！<br>' },
+        //{ proName: 'FactPaymentAmt', msg: '实际付款金额不能为空！<br>' },
+        //{ proName: 'InvoiceAmt', msg: '发票冲抵金额不能为空！<br>' },
+        { proName: 'ExecuteCycleStartDate', msg: '执行开始时间不能为空！<br>' },
+        { proName: 'ExecuteCycleEndDate', msg: '执行结束时间不能为空！<br>' }];
+    $(function () {
+        $("#PaymentType").change(function () {
+            if ($(this).val() == "押金" || $(this).val() == "预付款") {
+                $("#FactPaymentTime").attr("readonly", false);
+                $("#FactPaymentAmt").attr("readonly", false);
+            } else {
+                $("#FactPaymentTime").attr("readonly", true).val("");
+                $("#FactPaymentAmt").attr("readonly", true).val("");                
+            }
+            
+        }).change();
+        $("#btnSave").click(function () {
+            // 如果已经提交审核不能修改
+            // 新增的时候不需要进行判断(FlowOrderId=0)
+            if (!CommitCheck() || (!OrderCommitCheck() && $("#FlowOrderId").val() != "0")) {
+                alert("正在审核中或者非本人添加的项目");
+                return false;
+            }
+           
+            if ($("#FlowOrderForm #SupplierId").val() == null || $("#FlowOrderForm #SupplierId").val() == "") {
+                alert("请选择供应商");
+                return false;
+            }
+
+            var msg = '';
+            for (i in validArray) {
+                var valid = validArray[i];
+                if ($("#" + valid.proName).length > 0) {
+                    if ($("#" + valid.proName).val() == "") {
+                        msg += valid.msg;
+                    }
+                }
+            }
+            if ($("#EstimatedPaymentTime").val() == "" || $("#EstimatePaymentAmt").val() == "") {
+                if ($("#FactPaymentTime").val() == "" || $("#FactPaymentAmt").val() == "") {
+                    alert("预计付款时间和金额、实际付款时间和金额不能都为空");
+                    return false;
+                }
+            }
+
+            if (msg.length > 0) {
+                alert(msg);
+                return;
+            }
+            $(this).button('loading');//禁用按钮并显示提交中
+            var params = $("#FlowOrderForm").serializeJson();
+            $.post("/FlowOrder/Save", params, function () {
+                load();
+                $("#myModal").modal("hide");
+            })
+        })
+
+        $("#btnSupplierSelect_Dialog").click(function () {
+            $("#supplierModal .modal-body").empty();
+            $("#supplierModal").modal("show");
+            $("#supplierModal .modal-title").html("选择供应商");
+            $("#supplierModal .modal-body").load("/Constract/SupplierMngSelect",
+                { SupplierCode: "", SupplierName: "", SupplierShortName: "", province: '', city: '' }, function () {
+                    $("#supplierModal .modal-body #Type").val(2)
+                });
+        })
+    })
+
+    function SupplierSelectCallback2(args) {
+        $("#FlowOrderForm #Payee").val(args.SupplierName);
+        $("#FlowOrderForm #SupplierName").val(args.SupplierName);
+        $("#FlowOrderForm #SupplierId").val(args.SupplierId);
+        $("#FlowOrderForm #Payee").val(args.SupplierName);
+        $("#supplierModal").modal("hide");
+    }
+    function OrderCommitCheck() {
+        if ($("#FlowOrderForm #ApplyStatusCode").val() == "申请"
+            || $("#FlowOrderForm #ApplyStatusCode").val() == "审核中") {
+            return false
+        }
+        else {
+            return true;
+        }
+    }
+
+</script>

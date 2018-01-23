@@ -1,0 +1,84 @@
+﻿<div class="panel panel-default mt20">
+    <div class="panel-heading">
+        <strong style="line-height:35px;font-size:14px;">座谈会_资料提交</strong>
+        <button class="btn btn-primary btn pull-right clearfix" onclick="addDtl8()">添加</button>
+        <button class="btn btn-primary btn pull-right" style="margin-right:5px;" onclick="delDemandBookDtl('8')">删除</button>
+    </div>
+    <div class="panel-body">
+        <div class="table-responsive">
+            <table id="dtl8-table" class="table table-bordered table-condensed table-hover text-center" style="width: 2000px !important">
+                <thead>
+                    <tr>
+                        <th width="50">选择</th>
+                        <th width="50">
+                            复制
+                        </th>
+                        <th width="50">
+                            详细
+                        </th>
+                        <th>
+                            序号
+                        </th>
+                        <th>
+                            笔录
+                        </th>
+                        <th>
+                            笔录提交时间
+                        </th>
+                       
+                        <th>
+                            其他说明
+                        </th>
+                    </tr>
+                </thead>
+                <tbody></tbody>
+            </table>
+        </div>
+    </div>
+</div>
+<script>
+    var detailView8 = 'Cheliangzhanpinghui/Detail/_PartialCheliangzhanpinghuiDtl8';
+    var title8 = "座谈会_资料提交";
+    function addDtl8() {
+        if (!CommitCheck()) {
+            alert("正在审核中或者非本人添加的项目");
+            return false;
+        }
+        setModal(title8, detailView8, undefined, true);
+        $("#myModal").modal("show");
+    }
+
+    function loadCheliangzhanpinghuiDtl8() {
+        $.post("/DemandBook/LoadCheliangzhanpinghuiDtl8", { RequirementId: $("#RequirementId").val() }, function (data) {
+            if (data) {
+                $("#dtl8-table tbody").empty();
+                $.each(data, function (index, item) {
+                    var tr = $("<tr>");
+
+                    tr.append($("<td></td>").append($("<input type='checkbox'>")));
+                    var copyBtn = $("<a class='btn btn-primary btn2'>").html("复制");
+                    copyBtn.click(function () {
+                        item.SeqNO = 0;
+                        setModal(title8, detailView8, item, true);
+                        $("#myModal").modal("show");
+                    })
+                    tr.append($("<td></td>").append(copyBtn));
+                    var editBtn = $("<a class='btn btn-primary btn2'>").html("详细");
+                    editBtn.click(function () {
+                        setModal(title8, detailView8, item);
+                        $("#myModal").modal("show");
+                    })
+                    tr.append($("<td></td>").append(editBtn));
+                    tr.append($("<td></td>").html(item.SeqNO));
+                    tr.append($("<td></td>").html(item.bilu));
+                    tr.append($("<td></td>").html(item.bilutijiaoshijian));
+                    //tr.append($("<td></td>").html(item.qitashuoming8));
+                    var qitashuoming8 = item.qitashuoming8 != null ? item.qitashuoming8.replace(/\n/g, '<br>') : "&nbsp;";
+                    tr.append($("<td style='text-align: left;'></td>").html(qitashuoming8));//其他说明
+
+                    $("#dtl8-table tbody").append(tr);
+                })
+            }
+        })
+    }
+</script>

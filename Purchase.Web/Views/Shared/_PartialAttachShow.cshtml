@@ -1,0 +1,25 @@
+﻿@using Purchase.DAL
+@model IEnumerable<ApplyFile>
+
+<div class="uploader-list table-responsive" style="max-height: 580px; overflow-y: auto; margin-top: 3px;">
+    <table class="table table-bordered table-condensed table-hover">
+        <thead>
+            <tr>
+                <th>文件名</th>
+                <th width="60">操作</th>
+            </tr>
+        </thead>
+        <tbody>
+            @if (Model != null)
+            {
+                foreach (ApplyFile applyFile in Model)
+                {
+                    <tr>
+                        <td>@applyFile.FileName</td>
+                        <td><a href="/ApplyCheck/DownloadAttachFile?fileName=@applyFile.FileName" >下载</a></td>
+                    </tr>
+                }
+            }
+        </tbody>
+    </table>
+</div>

@@ -1,0 +1,55 @@
+﻿@using Purchase.Service.DTO
+@model IEnumerable<ConstractDto>
+<div class="count2">
+    <table id="RecheckUserSelect-table" class="table table-bordered table-condensed table-hover">
+        <thead>
+            <tr>
+                <th>申请编号</th>
+                <th>预览</th>
+                <th>合同名称</th>
+                <th>供应商名称</th>
+                <th>项目名称</th>
+                <th>项目简称</th>
+                <th>查看附件</th>
+            </tr>
+        </thead>
+        <tbody>
+            @if (Model != null)
+            {
+                foreach (ConstractDto item in Model)
+                { 
+                    <tr>
+                        <td>@item.ApplyId</td>
+                        <td><a href="javascript:openPreview('@item.ConstractId','@item.TemplateId')">预览</a></td>
+                        <td><a href="javascript:openConstractDetail(@item.ConstractId)">@item.ConstractName</a></td>
+                        <td>@item.SupplierName</td>
+                        <td>@item.ProjectName</td>
+                        <td>@item.ProjectShortName</td>
+                        <td><a href="javascript:showAttachList(@item.ApplyId)">查看附件</a></td>
+                    </tr>
+                }
+            }
+        </tbody>
+    </table>
+</div>
+<script src="~/Scripts/custom/bs.modal.expend.js"></script>
+<script>
+    function openConstractDetail(ConstractId) {
+        var url = "/Constract/Edit?id=" + ConstractId;
+        window.open(url);
+    }
+    function openPreview(ContractId, TemplateId) {
+        var url = '/ContractTemplate.html?';
+        url += 'TemplateId=' + TemplateId;
+        url += '&ConstractId=' + ContractId;
+        window.open(url);
+    }
+    function showAttachList(ApplyId) {
+        var bsWindow = createBSWindow({
+            title: "附件"
+        });
+        $(".modal-body", bsWindow).load("/ApplyCheck/AttachShow", { applyId: ApplyId }, function () {
+
+        });
+    }
+</script>

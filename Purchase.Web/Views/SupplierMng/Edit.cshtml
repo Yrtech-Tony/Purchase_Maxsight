@@ -1,0 +1,106 @@
+﻿@model Purchase.DAL.SupplierMng
+@{
+    ViewBag.Title = "供应商信息编辑";
+    Layout = "_SupplierMngLayout.cshtml";
+}
+
+<div class="count inline-block">
+    <h4>@ViewBag.Title</h4>
+    <hr />
+    @using (Html.BeginForm("Edit", "SupplierMng", FormMethod.Post, new { Id = "SupplierMngForm"}))
+    {
+        @Html.AntiForgeryToken()
+        @Html.ValidationSummary(false)
+        @Html.HiddenFor(m => m.Id)
+        @Html.Hidden("QueryParams", (string)ViewBag.queryParams)
+       
+        @Html.Partial("_PartialEdit", Model)
+    }
+</div>
+@section Scripts {
+    <script src="~/Content/My97DatePicker/WdatePicker.js"></script>
+    <script src="~/Scripts/custom/province_city.js?1"></script>
+    <script src="~/Scripts/custom/form-serialize.js"></script>
+    <script src="~/Scripts/custom/date-format.js"></script>
+    <script>
+        $(function () {
+            $.get("/SupplierMng/FindOne", { id: $("#Id").val() }, function (obj) {
+                if (obj.UserChk) {
+                    if (obj.ApplyStatusCode == "") {
+                        setdiable(true);
+                    }
+                    else {
+                        if (obj.ApplyStatusCode == "完成" || obj.ApplyStatusCode == "终止") {
+                            setdiable(true);
+                        } else {
+                            setdiable(false);   
+                        }
+                    }
+                }
+                else {
+                    setdiable(false);
+                }
+
+                $("#SupplierMngForm").setForm(obj);
+                $("#Province").val(obj.Province);
+                $("#SupplierNameOld").val(obj.SupplierName);
+                $("#BussinessPngChk").val(obj.BussinessPngChk);
+                
+                $("#ServiceTrade").change();
+                $("#RecommendDepartment").val(obj.RecommendDepartment).selectpicker('refresh');
+                $(".selectpicker").selectpicker('refresh');               
+                
+                loadCityByProvince($("#Province option:selected").attr("id"));
+                $("#City").val(obj.City).selectpicker('refresh');
+                $("#OperationStartDate").val(obj.OperationStartDate);
+                $("#OperationEndDate").val(obj.OperationEndDate);
+                if (obj.OperationEndDate == null || obj.OperationEndDate == '1970-01-01') {
+                    $("#OperationEndDateChk").prop("checked", true);
+                    $("#OperationEndDateChk").prev().val("").prop("readonly", true);
+                } else {
+                    $("#OperationEndDateChk").prop("checked", false);
+                    $("#OperationEndDateChk").prev().prop("readonly", false);
+                }
+                debugger
+                if ($("#TempChk").val() == "Y")
+                {
+                    $("#btnSaveTemp").attr("disabled", false);
+                }
+                else
+                {
+                    $("#btnSaveTemp").attr("disabled", true);
+                }
+                $.post("/SupplierMng/FindOnePngs", { id: $("#Id").val() }, function (data) {
+                    $.each(data, function (i, item) {
+                        bindPng("#filePicker"+(i + 1), item);
+                    })
+                })
+            })           
+        })
+        function setdiable(check)
+        {
+            if (check) {
+                $("#btnSave").attr("disabled", false);
+                $("#btnSaveTemp").attr("disabled", false);
+                $("#filePicker1").attr("disabled", false);
+                $(".att_del").html("删除");
+                $("#filePicker2").attr("disabled", false);
+                $("#filePicker3").attr("disabled", false);
+                $("#filePicker4").attr("disabled", false);
+                $("#filePicker5").attr("disabled", false);
+                $("#filePicker6").attr("disabled", false);
+            }
+            else {
+                $("#btnSave").attr("disabled", true);
+                $("#btnSaveTemp").attr("disabled", true);
+                $("#filePicker1").attr("disabled", true);
+                $(".att_del").html("");
+                $("#filePicker2").attr("disabled", true);
+                $("#filePicker3").attr("disabled", true);
+                $("#filePicker4").attr("disabled", true);
+                $("#filePicker5").attr("disabled", true);
+                $("#filePicker6").attr("disabled", true);
+            }
+        }
+    </script>
+}

@@ -1,0 +1,100 @@
+﻿<div class="panel panel-default mt20">
+    <div class="panel-heading">
+        <strong style="line-height:35px;font-size:14px;">资料提交</strong>
+        <button class="btn btn-primary btn pull-right clearfix" onclick="addDtl13()">添加</button>
+        <button class="btn btn-primary btn pull-right" style="margin-right:5px;" onclick="delDemandBookDtl('13')">删除</button>
+    </div>
+    <div class="panel-body">
+        <div class="table-responsive">
+            <table id="dtl13-table" class="table table-bordered table-condensed table-hover text-center" style="width: 2000px !important">
+                <thead>
+                    <tr>
+                        <th width="50">选择</th>
+                        <th width="50">
+                            复制
+                        </th>
+                        <th width="50">
+                            详细
+                        </th>
+                        <th>
+                            序号
+                        </th>
+                        <th>
+                            录音类型
+                        </th>
+                        <th>
+                            合格录音比例
+                        </th>
+                        <th>
+                            问卷类型
+                        </th>
+                        <th>
+                            证照类型
+                        </th>
+                        <th>
+                            合格证照比例
+                        </th>
+                        <th>
+                            现场到车率
+                        </th>
+                        <th>
+                            其他说明
+                        </th>
+                    </tr>
+                </thead>
+                <tbody></tbody>
+            </table>
+        </div>
+    </div>
+</div>
+<script>
+    var detailView13 = 'Cheliangzhanpinghui/Detail/_PartialCheliangzhanpinghuiDtl13';
+    var title13 = "资料提交";
+    function addDtl13() {
+        if (!CommitCheck()) {
+            alert("正在审核中或者非本人添加的项目");
+            return false;
+        }
+        setModal(title13, detailView13, undefined, true);
+        $("#myModal").modal("show");
+    }
+
+    function loadCheliangzhanpinghuiDtl13() {
+        $.post("/DemandBook/LoadCheliangzhanpinghuiDtl13", { RequirementId: $("#RequirementId").val() }, function (data) {
+            if (data) {
+                $("#dtl13-table tbody").empty();
+                $.each(data, function (index, item) {
+                    var tr = $("<tr>");
+
+                    tr.append($("<td></td>").append($("<input type='checkbox'>")));
+                    var copyBtn = $("<a class='btn btn-primary btn2'>").html("复制");
+                    copyBtn.click(function () {
+                        debugger
+                        item.SeqNO = 0;
+                        setModal(title13, detailView13, item, true);
+                        $("#myModal").modal("show");
+                    })
+                    tr.append($("<td></td>").append(copyBtn));
+                    var editBtn = $("<a class='btn btn-primary btn2'>").html("详细");
+                    editBtn.click(function () {
+                        setModal(title13, detailView13, item);
+                        $("#myModal").modal("show");
+                    })
+                    tr.append($("<td></td>").append(editBtn));
+                    tr.append($("<td></td>").html(item.SeqNO));
+                    tr.append($("<td></td>").html(item.luxingleixing));//录音类型
+                    tr.append($("<td></td>").html(item.hegeluyinbili));//合格录音比例
+                    tr.append($("<td></td>").html(item.wenjuanleixing));//问卷类型
+                    tr.append($("<td></td>").html(item.zhengzhaoleixing));//证照类型
+                    tr.append($("<td></td>").html(item.hegezhengzhaoleixingbili));//合格证照比例
+                    tr.append($("<td></td>").html(item.xianchangdaochelv));//合格证照比例
+                    //tr.append($("<td></td>").html(item.qitashuoming13));//其他说明
+                    var qitashuoming13 = item.qitashuoming13 != null ? item.qitashuoming13.replace(/\n/g, '<br>') : "&nbsp;";
+                    tr.append($("<td style='text-align: left;'></td>").html(qitashuoming13));//其他说明
+
+                    $("#dtl13-table tbody").append(tr);
+                })
+            }
+        })
+    }
+</script>

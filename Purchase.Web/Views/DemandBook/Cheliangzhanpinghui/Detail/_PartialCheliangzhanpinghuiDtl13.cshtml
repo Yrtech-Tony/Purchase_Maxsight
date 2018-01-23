@@ -1,0 +1,81 @@
+﻿@using Purchase.Web.Common
+@model Purchase.DAL.Requirement_Cheliangzhanpinghui_RequirementDtl13
+
+<form id="Cheliangzhanpinghui-dtl13-form">
+    @Html.Hidden("SeqNO", 0)
+    <div class="form-horizontal">
+        <div class="form-group">
+            <label class="control-label col-md-2" for="luyinleixing">录音类型</label>
+            <div class="col-md-8">
+                @Html.DropDownListFor(m => m.luxingleixing, SelectListTool.HiddenCodeList("需求书-车辆展评会-资料提交-资料提交-录音类型"),
+                   htmlAttributes: new { @class = "form-control", multiple = "" })
+            </div>
+        </div>
+        <div class="form-group">
+            <label class="control-label col-md-2" for="hegeluyingbili">合格录音比例</label>
+            <div class="col-md-8">
+                @Html.DropDownListFor(m => m.hegeluyinbili, SelectListTool.HiddenCodeList("需求书-车辆展评会-资料提交-资料提交-合格录音比例"),
+                    htmlAttributes: new { @class = "form-control", multiple = "" })
+            </div>
+        </div>
+        <div class="form-group">
+            <label class="control-label col-md-2" for="wenjuanleixing">问卷类型</label>
+            <div class="col-md-8">
+                @Html.DropDownListFor(m => m.wenjuanleixing, SelectListTool.HiddenCodeList("需求书-车辆展评会-资料提交-资料提交-问卷类型"),
+                    htmlAttributes: new { @class = "form-control", multiple = "" })
+            </div>
+        </div>
+        <div class="form-group">
+            <label class="control-label col-md-2" for="zhengzhaoleixing">证照类型</label>
+            <div class="col-md-8">
+                @Html.DropDownListFor(m => m.zhengzhaoleixing, SelectListTool.HiddenCodeList("需求书-车辆展评会-资料提交-资料提交-证照类型"),
+                    htmlAttributes: new { @class = "form-control", multiple = "" })
+            </div>
+        </div>
+        <div class="form-group">
+            <label class="control-label col-md-2" for="hegezhenghaobili">合格证照比例</label>
+            <div class="col-md-8">
+                @Html.DropDownListFor(m => m.hegezhengzhaoleixingbili, SelectListTool.HiddenCodeList("需求书-车辆展评会-资料提交-资料提交-合格证照比例"),
+                    htmlAttributes: new { @class = "form-control", multiple = "" })
+            </div>
+        </div>
+        <div class="form-group">
+            <label class="control-label col-md-2" for="">现场到车率</label>
+            <div class="col-md-8">
+                @Html.DropDownListFor(m => m.xianchangdaochelv, SelectListTool.HiddenCodeList("需求书-车辆展评会-资料提交-资料提交-现场到车率"),
+                    htmlAttributes: new { @class = "form-control", multiple = "" })
+            </div>
+        </div>
+        <div class="form-group">
+            <label class="control-label col-md-2" for="qitashuoming5">其他说明</label>
+            <div class="col-md-8">
+                @Html.TextAreaFor(m => m.qitashuoming13, htmlAttributes: new { @class = "form-control", multiple="" })
+            </div>
+        </div>
+        <div class="form-group">
+            <div class="col-md-offset-2 col-md-10">
+                <input id="saveBtn" type="button" value="保存" class="btn btn-primary btn-check" data-loading-text="提交中..." style="width:100px;height:35px" />
+            </div>
+        </div>
+    </div>
+</form>
+<script>
+    $(function () {
+        
+        $("#Cheliangzhanpinghui-dtl13-form #saveBtn").click(function () {
+            if (!CommitCheck()) {
+                alert("正在审核中或者非本人添加的项目");
+                return false;
+            }
+            $(this).button("loading")
+            var params = $("#Cheliangzhanpinghui-dtl13-form").serializeJson('&');
+            params = $.extend(params, getMstObject());
+
+            $.post("/DemandBook/SaveCheliangzhanpinghuiDtl13", params, function (data) {
+                $("#RequirementId").val(data);
+                loadCheliangzhanpinghuiDtl13();
+                closeModal();
+            });
+        })
+    })
+</script>

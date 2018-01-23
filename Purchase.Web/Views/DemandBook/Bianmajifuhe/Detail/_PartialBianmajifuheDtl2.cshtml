@@ -1,0 +1,165 @@
+﻿@using Purchase.Web.Common
+@model Purchase.DAL.Requirement_Bianmajifuhe_RequirementDtl2
+
+<form id="Bianmajifuhe-dtl2-form">
+    @Html.Hidden("SeqNO", 0)
+    <div class="form-horizontal">
+        <div class="form-group">
+            <label class="control-label col-md-2" for="">复核要求</label>
+            <div class="col-md-4">
+                @Html.DropDownListFor(m => m.fuheyaoqiu, SelectListTool.HiddenCodeList("需求书-编码及复核-配额要求-复核要求"),
+                        htmlAttributes: new { @class = "form-control", multiple = "" })
+            </div>
+            <label class="control-label col-md-2" for="">电话咨询</label>
+            <div class="col-md-4">
+                @Html.DropDownListFor(m => m.dianhuazixun, SelectListTool.HiddenCodeList("需求书-编码及复核-配额要求-电话咨询"),
+                        htmlAttributes: new { @class = "form-control", multiple = "" })
+            </div>
+        </div>
+        <div class="form-group">
+            <label class="control-label col-md-2" for="">电话回访</label>
+            <div class="col-md-4">
+                @Html.DropDownListFor(m => m.dianhuhuifang, SelectListTool.HiddenCodeList("需求书-编码及复核-配额要求-电话回访"),
+                        htmlAttributes: new { @class = "form-control", multiple = "" })
+            </div>
+            <label class="control-label col-md-2" for="">样本编辑</label>
+            <div class="col-md-4">
+                @Html.DropDownListFor(m => m.yanbenbianji, SelectListTool.HiddenCodeList("需求书-编码及复核-配额要求-样本编辑"),
+                        htmlAttributes: new { @class = "form-control", multiple = "" })
+            </div>
+        </div>
+        <div class="form-group">
+            <label class="control-label col-md-2" for="">辅助用品</label>
+            <div class="col-md-4">
+                @Html.DropDownListFor(m => m.fuzhuyongpin, SelectListTool.HiddenCodeList("需求书-编码及复核-配额要求-辅助用品"),
+                        htmlAttributes: new { @class = "form-control", multiple = "" })
+            </div>
+            <label class="control-label col-md-2" for="">编码类型</label>
+            <div class="col-md-4">
+                @Html.DropDownListFor(m => m.bianmaleixing, SelectListTool.HiddenCodeList("需求书-编码及复核-配额要求-编码类型"),
+                        htmlAttributes: new { @class = "form-control", multiple = "" })
+            </div>
+        </div>
+        <div class="form-group">
+            <label class="control-label col-md-2" for="">问卷编程</label>
+            <div class="col-md-4">
+                @Html.DropDownListFor(m => m.wenjuanbiancheng, SelectListTool.HiddenCodeList("需求书-编码及复核-配额要求-问卷编程"),
+                        htmlAttributes: new { @class = "form-control", multiple = "" })
+            </div>
+            <label class="control-label col-md-2" for="">题目数量</label>
+            <div class="col-md-4">
+                @Html.DropDownListFor(m => m.timushuliang, SelectListTool.HiddenCodeList("需求书-编码及复核-配额要求-题目数量"),
+                        htmlAttributes: new { @class = "form-control", multiple = "" })
+            </div>
+        </div>
+        <div class="form-group">
+            <label class="control-label col-md-2" for="">字数数量</label>
+            <div class="col-md-4">
+                @Html.DropDownListFor(m => m.zishushuliang, SelectListTool.HiddenCodeList("需求书-编码及复核-配额要求-字数数量"),
+                        htmlAttributes: new { @class = "form-control", multiple = "" })
+            </div>
+            <label class="control-label col-md-2" for="TemplateName">样本量</label>
+            <div class="col-md-4">
+                @Html.TextBoxFor(m => m.yangbenliang, htmlAttributes: new { @class = "form-control", multiple="" })
+            </div>
+        </div>
+        <div class="form-group">
+            <label class="control-label col-md-2" for="">AB卷</label>
+            <div class="col-md-4">
+                @Html.DropDownListFor(m => m.abjuan, SelectListTool.HiddenCodeList("需求书-编码及复核-配额要求-AB卷"),
+                         htmlAttributes: new { @class = "form-control", multiple = "" })
+            </div>
+            <label class="control-label col-md-2" for="DrivingLicense">AB卷样本量或比例</label>
+            <div class="col-md-4">
+                @Html.TextBoxFor(m => m.abjuanyangbenlianghuobili, htmlAttributes: new { @class = "form-control", multiple = "" })
+            </div>
+        </div>
+        <div class="form-group">
+            <label class="control-label col-md-2" for="">问卷作答录音复核</label>
+            <div class="col-md-4">
+                @Html.DropDownListFor(m => m.wenjuanzuodaluyinfuhe, SelectListTool.HiddenCodeList("需求书-编码及复核-配额要求-问卷作答录音复核"),
+                         htmlAttributes: new { @class = "form-control", multiple = "" })
+            </div>
+
+            <label class="control-label col-md-2" for="DrivingLicense">问卷作答录音复核样本量或比例</label>
+            <div class="col-md-4">
+                @Html.TextBoxFor(m => m.wenjuanzuodaluyinfuheyangbenlianghuobili, htmlAttributes: new { @class = "form-control", multiple = "" })
+            </div>
+        </div>
+        <div class="form-group">
+            <label class="control-label col-md-2" for="TemplateName">配额说明</label>
+            <div class="col-md-10">
+                @Html.TextBoxFor(m => m.peieshuoming, htmlAttributes: new { @class = "form-control", multiple = "" })
+            </div>
+        </div>   
+        <div class="form-group">
+            <label class="control-label col-md-2" for="TemplateName">其他说明</label>
+            <div class="col-md-10">
+                @Html.TextAreaFor(m => m.qitashuoming2, htmlAttributes: new { @class = "form-control", multiple="" })
+            </div>
+        </div>
+        <div class="form-group">
+            <div class="col-md-offset-2 col-md-10">
+                <input id="saveBtn" type="button" value="保存" class="btn btn-primary btn-check" data-loading-text="提交中..." style="width:100px;height:35px" />
+            </div>
+        </div>
+    </div>
+</form>
+<script>
+    $(function () {
+       
+        $("#Bianmajifuhe-dtl2-form #saveBtn").click(function () {
+            if (!CommitCheck()) {
+                alert("正在审核中或者非本人添加的项目");
+                return false;
+            }
+            $("#myModal .modal-body #SeqNO").val($("#SeqNOForLocalCopy").val());
+            $(this).button("loading")
+            if ($("#myModal .modal-body #SeqNO").val() != "0") {
+                var row = {
+                    SeqNO: $("#myModal .modal-body #SeqNO").val(),
+                    fuheyaoqiu: $("#fuheyaoqiu").val(), dianhuazixun: $("#dianhuazixun").val(), dianhuhuifang: $("#dianhuhuifang").val(), yanbenbianji: $("#yanbenbianji").val()
+              , fuzhuyongpin: $("#fuzhuyongpin").val(), bianmaleixing: $("#bianmaleixing").val(), wenjuanbiancheng: $("#wenjuanbiancheng").val(), timushuliang: $("#timushuliang").val()
+              , zishushuliang: $("#zishushuliang").val(), peieshuoming: $("#peieshuoming").val(), yangbenliang: $("#yangbenliang").val()
+              , abjuan: $("#abjuan").val(), abjuanyangbenlianghuobili: $("#abjuanyangbenlianghuobili").val(), wenjuanzuodaluyinfuhe: $("#wenjuanzuodaluyinfuhe").val(), wenjuanzuodaluyinfuheyangbenlianghuobili: $("#wenjuanzuodaluyinfuheyangbenlianghuobili").val()
+              , qitashuoming2: $("#qitashuoming2").val()
+             
+                };
+                var insertCount = 0;
+                for (var i = 0; i < sourceData.length; i++) {
+                    if (sourceData[i].SeqNO == $("#myModal .modal-body #SeqNO").val()) {
+                        insertCount = i;
+                    }
+                }
+                // sourceData.splice($("#myModal .modal-body #SeqNO").val() - 1, 1, row);
+                sourceData.splice(insertCount, 1, row);
+            }
+            else {
+                //var num = sourceData[sourceData.length - 1].SeqNO + 1;
+                var num = 1;
+                if (sourceData.length != 0)
+                { num = Number(sourceData[sourceData.length - 1].SeqNO) + 1; }
+                var row = {
+                    SeqNO: num,
+                    fuheyaoqiu: $("#fuheyaoqiu").val(), dianhuazixun: $("#dianhuazixun").val(), dianhuhuifang: $("#dianhuhuifang").val(), yanbenbianji: $("#yanbenbianji").val()
+              , fuzhuyongpin: $("#fuzhuyongpin").val(), bianmaleixing: $("#bianmaleixing").val(), wenjuanbiancheng: $("#wenjuanbiancheng").val(), timushuliang: $("#timushuliang").val()
+              , zishushuliang: $("#zishushuliang").val(), peieshuoming: $("#peieshuoming").val(), yangbenliang: $("#yangbenliang").val()
+              , abjuan: $("#abjuan").val(), abjuanyangbenlianghuobili: $("#abjuanyangbenlianghuobili").val(), wenjuanzuodaluyinfuhe: $("#wenjuanzuodaluyinfuhe").val(), wenjuanzuodaluyinfuheyangbenlianghuobili: $("#wenjuanzuodaluyinfuheyangbenlianghuobili").val()
+              , qitashuoming2: $("#qitashuoming2").val()
+
+                };
+                sourceData.push(row);
+            }
+            loadpage();
+            closeModal();
+            //var params = $("#Bianmajifuhe-dtl2-form").serializeJson('&');
+            //params = $.extend(params, getMstObject());
+
+            //$.post("/DemandBook/SaveBianmajifuhedtl2", params, function (data) {
+            //    $("#RequirementId").val(data);
+            //    loadBianmajifuheDtl2();
+            //    closeModal();
+            //});
+        })
+    })
+</script>

@@ -1,0 +1,206 @@
+﻿@{
+    Layout = "~/Views/Shared/_Layout.cshtml";
+    ViewBag.Title = "Home Page";
+}
+<div class="body">
+    <div class="nav-box">
+        @if ((Session["LoginUser"] as Purchase.DAL.Mst_UserInfo).RoleTypeCode.Contains("采购基本权限")
+            //(Session["LoginUser"] as Purchase.DAL.Mst_UserInfo).UserId == "wangchao"
+            //|| (Session["LoginUser"] as Purchase.DAL.Mst_UserInfo).UserId == "zhengzilong"
+            //|| (Session["LoginUser"] as Purchase.DAL.Mst_UserInfo).UserId == "gaolei"
+            //|| (Session["LoginUser"] as Purchase.DAL.Mst_UserInfo).UserId == "xuweijia"
+            //|| (Session["LoginUser"] as Purchase.DAL.Mst_UserInfo).UserId == "lipengna"
+            //|| (Session["LoginUser"] as Purchase.DAL.Mst_UserInfo).UserId == "yubingke"
+            //|| (Session["LoginUser"] as Purchase.DAL.Mst_UserInfo).UserId == "kongshengbei"
+            //|| (Session["LoginUser"] as Purchase.DAL.Mst_UserInfo).UserId == "zhangqianqian"
+            )
+        {
+            <a href="/Projects?ModelType=0"><img src="../images/business.png" /><br />业务采购</a>
+        }
+        @if ((Session["LoginUser"] as Purchase.DAL.Mst_UserInfo).RoleTypeCode.Contains("采购基本权限")
+            //(Session["LoginUser"] as Purchase.DAL.Mst_UserInfo).UserId == "wangchao"
+            //|| (Session["LoginUser"] as Purchase.DAL.Mst_UserInfo).UserId == "zhengzilong"
+            //|| (Session["LoginUser"] as Purchase.DAL.Mst_UserInfo).UserId == "gaolei"
+            //|| (Session["LoginUser"] as Purchase.DAL.Mst_UserInfo).UserId == "xuweijia"
+            //|| (Session["LoginUser"] as Purchase.DAL.Mst_UserInfo).UserId == "lipengna"
+            //|| (Session["LoginUser"] as Purchase.DAL.Mst_UserInfo).UserId == "yubingke"
+            //|| (Session["LoginUser"] as Purchase.DAL.Mst_UserInfo).UserId == "kongshengbei"
+            //|| (Session["LoginUser"] as Purchase.DAL.Mst_UserInfo).UserId == "zhangqianqian"
+            )
+        {
+            <a href="/Projects?ModelType=1"><img src="../images/purchase.png" /><br />内部采购</a>
+        }
+        @if ((Session["LoginUser"] as Purchase.DAL.Mst_UserInfo).RoleTypeCode.Contains("采购基本权限")
+            //(Session["LoginUser"] as Purchase.DAL.Mst_UserInfo).UserId == "wangchao"
+            //|| (Session["LoginUser"] as Purchase.DAL.Mst_UserInfo).UserId == "zhengzilong"
+            //|| (Session["LoginUser"] as Purchase.DAL.Mst_UserInfo).UserId == "gaolei"
+            //|| (Session["LoginUser"] as Purchase.DAL.Mst_UserInfo).UserId == "xuweijia"
+            //|| (Session["LoginUser"] as Purchase.DAL.Mst_UserInfo).UserId == "lipengna"
+            //|| (Session["LoginUser"] as Purchase.DAL.Mst_UserInfo).UserId == "yubingke"
+            //|| (Session["LoginUser"] as Purchase.DAL.Mst_UserInfo).UserId == "kongshengbei"
+            //|| (Session["LoginUser"] as Purchase.DAL.Mst_UserInfo).UserId == "zhangqianqian"
+            )
+        {
+            <a href="/Projects?ModelType=2"><img src="../images/other1.png" /><br />其他</a>
+        }
+        @*@if ((Session["LoginUser"] as Purchase.DAL.Mst_UserInfo).UserId == "wangchao"
+                || (Session["LoginUser"] as Purchase.DAL.Mst_UserInfo).UserId == "zhengzilong"
+                || (Session["LoginUser"] as Purchase.DAL.Mst_UserInfo).UserId == "gaolei"
+                || (Session["LoginUser"] as Purchase.DAL.Mst_UserInfo).UserId == "xuweijia"
+                || (Session["LoginUser"] as Purchase.DAL.Mst_UserInfo).UserId == "lipengna"
+                || (Session["LoginUser"] as Purchase.DAL.Mst_UserInfo).UserId == "yubingke"
+                || (Session["LoginUser"] as Purchase.DAL.Mst_UserInfo).UserId == "kongshengbei"
+                || (Session["LoginUser"] as Purchase.DAL.Mst_UserInfo).UserId == "zhangqianqian")
+            {
+                <a href="/Projects?ModelType=3"><img src="../images/other2.png" /><br />其他2</a>
+            }*@
+        @if ((Session["LoginUser"] as Purchase.DAL.Mst_UserInfo).RoleTypeCode.Contains("采购基本权限")
+            //(Session["LoginUser"] as Purchase.DAL.Mst_UserInfo).UserId == "wangchao"
+            //|| (Session["LoginUser"] as Purchase.DAL.Mst_UserInfo).UserId == "zhengzilong"
+            //|| (Session["LoginUser"] as Purchase.DAL.Mst_UserInfo).UserId == "gaolei"
+            //|| (Session["LoginUser"] as Purchase.DAL.Mst_UserInfo).UserId == "xuweijia"
+            //|| (Session["LoginUser"] as Purchase.DAL.Mst_UserInfo).UserId == "lipengna"
+            //|| (Session["LoginUser"] as Purchase.DAL.Mst_UserInfo).UserId == "yubingke"
+            //|| (Session["LoginUser"] as Purchase.DAL.Mst_UserInfo).UserId == "kongshengbei"
+            //|| (Session["LoginUser"] as Purchase.DAL.Mst_UserInfo).UserId == "zhangqianqian"
+            )
+        {
+            <a href="/Constract/"><img src="../images/contract.png" /><br />合同管理</a>
+        }
+        @if ((Session["LoginUser"] as Purchase.DAL.Mst_UserInfo).RoleTypeCode.Contains("采购基本权限")
+            //(Session["LoginUser"] as Purchase.DAL.Mst_UserInfo).UserId == "wangchao"
+            //|| (Session["LoginUser"] as Purchase.DAL.Mst_UserInfo).UserId == "zhengzilong"
+            //|| (Session["LoginUser"] as Purchase.DAL.Mst_UserInfo).UserId == "gaolei"
+            //|| (Session["LoginUser"] as Purchase.DAL.Mst_UserInfo).UserId == "xuweijia"
+            //|| (Session["LoginUser"] as Purchase.DAL.Mst_UserInfo).UserId == "lipengna"
+            //|| (Session["LoginUser"] as Purchase.DAL.Mst_UserInfo).UserId == "yubingke"
+            //|| (Session["LoginUser"] as Purchase.DAL.Mst_UserInfo).UserId == "kongshengbei"
+            //|| (Session["LoginUser"] as Purchase.DAL.Mst_UserInfo).UserId == "zhangqianqian"
+            )
+        {
+            <a href="/ApplyCheck/MyApplySearch"><img src="../images/public.png" /><br />我的任务</a>
+        }
+        @if ((Session["LoginUser"] as Purchase.DAL.Mst_UserInfo).RoleTypeCode.Contains("财务基本权限"))
+        {
+            <a href="/Payment/FinanceIndex"><img src="../images/statistics.png" /><br />统计</a>
+        }
+        else
+        {
+            <a href="/Payment/Index"><img src="../images/statistics.png" /><br />统计</a>
+        }
+        @if ((Session["LoginUser"] as Purchase.DAL.Mst_UserInfo).RoleTypeCode.Contains("采购基本权限")
+            //(Session["LoginUser"] as Purchase.DAL.Mst_UserInfo).UserId == "wangchao"
+            //|| (Session["LoginUser"] as Purchase.DAL.Mst_UserInfo).UserId == "zhengzilong"
+            //|| (Session["LoginUser"] as Purchase.DAL.Mst_UserInfo).UserId == "gaolei"
+            //|| (Session["LoginUser"] as Purchase.DAL.Mst_UserInfo).UserId == "xuweijia"
+            //|| (Session["LoginUser"] as Purchase.DAL.Mst_UserInfo).UserId == "lipengna"
+            //|| (Session["LoginUser"] as Purchase.DAL.Mst_UserInfo).UserId == "yubingke"
+            //|| (Session["LoginUser"] as Purchase.DAL.Mst_UserInfo).UserId == "kongshengbei"
+            //|| (Session["LoginUser"] as Purchase.DAL.Mst_UserInfo).UserId == "zhangqianqian"
+            )
+        {
+            <a href="/SupplierMng"><img src="../images/supplier.png" /><br />供应商管理</a>
+        }
+        else if ((Session["LoginUser"] as Purchase.DAL.Mst_UserInfo).RoleTypeCode.Contains("财务基本权限"))
+        {
+            <a href="/SupplierMng/BankInfo"><img src="../images/supplier.png" /><br />供应商管理</a>
+        }
+        @if ((Session["LoginUser"] as Purchase.DAL.Mst_UserInfo).RoleTypeCode.Contains("设置管理")
+            //(Session["LoginUser"] as Purchase.DAL.Mst_UserInfo).UserId == "wangchao"
+            //|| (Session["LoginUser"] as Purchase.DAL.Mst_UserInfo).UserId == "gaolei"
+            //|| (Session["LoginUser"] as Purchase.DAL.Mst_UserInfo).UserId == "zhengzilong"
+        )
+        {
+            <a href="/MstUserInfo/"><img src="../images/setup.png" /><br />设置</a>
+        }
+    </div>
+</div>
+<div class="body">
+    <div class="row i-panel">
+        <div class="col-xs-12">
+            <div class="panel panel-default">
+                <div class="panel-heading"><strong>提醒</strong></div>
+                <div class="panel-body">
+                    <table id="remind" class="pl18">
+                        <tbody></tbody>
+                    </table>
+                    <div id="pagination" class="pull-right">
+                        <ul id="pageUl"></ul>
+                    </div>
+                </div>
+
+            </div>
+
+        </div>
+    </div>
+</div>
+@section Scripts {
+    <script>
+        $(function () {
+            loadRemin();
+        })
+        function loadRemin(pageNum) {
+            var params = {};
+            params = $.extend(params, { pageSize: 5, pageNum: pageNum ? pageNum : 1 });
+            $.post("/Home/RemindSearch", params, function (data) {
+                if (data && data.List) {
+                    $("#remind tbody").empty();
+                    $.each(data.List, function (i, item) {
+                        var tr = $("<tr>");
+
+                        tr.append($("<td  width='30'></td>").html((i + 1) + ". "));
+                                             
+                        tr.append($("<td width='300'>").html(item.RemindContent));
+                        tr.append($("<td width='300'>").html(item.RemindObject));
+                        tr.append($("<td >").html(item.Remark));
+                        if (item.AlterCancelChk == "1") {
+                            var noAlert = $("<a>").html("不再提醒");
+                            noAlert.click(function () {
+                                $.post("/Home/RemindCancel", { remindType: item.RemindContent, remindId: item.RemindId, alterUserId: item.AlterUserId }, function () {
+                                    loadRemin(params.pageNum);
+                                });
+                            })
+                            tr.append($("<td width='120' style='text-align:center'></td>").append(noAlert));
+
+                        } else {
+                            tr.append($("<td></td>").html("&nbsp;"));
+                        }
+                        $("#remind tbody").append(tr);
+                    })
+                }
+                
+                initPages(data.CurPage, data.PageCount, loadRemin);
+            })
+        }
+    </script>
+}
+<style>
+    .pl18 a {
+        color: #428bca;
+        text-decoration: none;
+        cursor: pointer;
+        padding-left:5px;
+        padding-right:5px;        
+    }
+
+        .pl18 a:hover {
+            color: #2a6496;
+            text-decoration: underline;
+        }
+
+    .pl18 li {
+        width: 100%;
+    }
+
+        .pl18 li a:first-child {
+            width: 25%;
+        }
+
+        .pl18 li a:nth-child(2) {
+            width: 25%;
+        }
+
+        .pl18 li a:nth-child(3) {
+            width: 50%;
+        }
+</style>

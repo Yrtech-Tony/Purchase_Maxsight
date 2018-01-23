@@ -1,0 +1,171 @@
+﻿@using Purchase.Web.Common
+@model Purchase.DAL.ProjectCity
+<form id="ProjectsCityForm">
+    @Html.Hidden("SeqNO", 0)
+    <table>
+        <tr>
+            <td width="80">执行省份</td>
+            <td width="140">
+                <select id="Province" name="Province" class="form-control"></select>
+            </td>
+            <td width="80">执行城市</td>
+            <td width="140">
+                <select id="City" name="City" class="form-control">
+                    <option value=""></option>
+                </select>
+            </td>
+        </tr>
+        <tr id="BussinessTr">
+            <td width="60">工作职责</td>
+            <td>
+                @Html.DropDownListFor(m => m.Responsibilites, SelectListTool.HiddenCodeList("立项-样本量-工作职责"), htmlAttributes: new { @class = "form-control" })
+
+            </td>
+            <td>项目类型</td>
+            <td>
+                @Html.DropDownListFor(m => m.ProjectType, SelectListTool.HiddenCodeList("立项-样本量-项目类型"), htmlAttributes: new { @class = "form-control" })
+            </td>
+        </tr>
+        <tr id="ExcuteModeltr">
+            <td>执行方式</td>
+            <td>
+                @Html.DropDownListFor(m => m.ExcuteMode, SelectListTool.HiddenCodeList("立项-样本量-执行方式"), htmlAttributes: new { @class = "form-control" })
+            </td>
+            <td></td>
+            <td></td>
+        </tr>
+        <tr id="PurchaseModeTr">
+            <td>采购分类</td>
+            <td>
+                @Html.DropDownListFor(m => m.PurchaseType, SelectListTool.HiddenCodeList("立项-样本量-采购分类"), htmlAttributes: new { @class = "form-control" })
+            </td>
+            <td>采购方式</td>
+            <td>
+                @Html.DropDownListFor(m => m.PurchaseMode, SelectListTool.HiddenCodeList("立项-样本量-采购方式"), htmlAttributes: new { @class = "form-control" })
+            </td>
+        </tr>
+        <tr>
+            <td>提供服务</td>
+            <td>
+                <select id="SupplyService" name="SupplyService" class="form-control"></select>
+            </td>
+            <td>品名</td>
+            <td>
+                <input id="ItemName" name="ItemName" class="form-control">
+            </td>
+        </tr>
+        <tr>
+            <td>样本量</td>
+            <td>
+                <input id="Count" name="Count" type="number" class="form-control" />
+            </td>
+            <td>状态</td>
+            <td>
+                <select id="Status" name="Status" class="form-control">
+                    <option value="正常">正常</option>
+                    <option value="取消">取消</option>
+                </select>
+            </td>
+        </tr>
+        <tr>
+            <td>备注</td>
+            <td colspan="3">
+                <textarea id="Remark" name="Remark" class="form-control"></textarea>
+            </td>
+        </tr>
+        <tr>
+            <td></td>
+            <td colspan="3">
+                <button id="saveCityBtn" type="button" class="btn btn-primary" style="width:100px">保 存</button>
+            </td>
+        </tr>
+    </table>
+
+</form>
+<script src="~/Scripts/custom/province_city.js"></script>
+<script>
+    $(function () {
+        if ($("#ModelType").val() == "业务") {
+            $("#PurchaseModeTr").hide();
+            $("#PurchaseModeTr input").attr("disabled", true);
+        }
+        else {
+            $("#BussinessTr").hide();
+            $("#BussinessTr input").attr("disabled", true);
+            $("#ExcuteModeltr").hide();
+            $("#ExcuteModeltr input").attr("disabled", true);
+
+        }
+        BindSupplyService();
+        $("#saveCityBtn").click(function () {
+            if (!CommitCheck()) {
+                alert("正在审核中或者非本人添加的项目");
+                return false;
+            }
+            var params = $("#ProjectsCityForm").serializeJson();
+            debugger
+            params.ProjectId = $("#Id").val();
+
+            $.post("/Projects/SaveCity", params, function (data) {
+                loadProjectCity();
+            });
+        })
+    })
+    function CommitCheck() {
+        var ApplyStatusCode = $("#ApplyStautCode").val();
+        var UserChk = $("#UserChk").val();
+        if (ApplyStatusCode == undefined) {
+            ApplyStatusCode = "";
+        }
+        if (UserChk == undefined) {
+            UserChk = "true";
+        }
+        if (UserChk == "true") {
+            if (ApplyStatusCode != "") {
+                if (ApplyStatusCode == "完成") {
+                    return true;
+                }
+                else {
+                    return false;
+                }
+            }
+            else {
+                return true;
+            }
+        }
+        else {
+            return false;
+        }
+    }
+    function BindSupplyService() {
+        var el = $("#SupplyService");
+        var combo = $("<select id='SupplyService' name='SupplyService' class = 'form-control'> ");
+        var input = $("<input id='SupplyService' name='SupplyService' class = 'form-control'> ");
+
+        var modelType = $("#ModelType").val();
+        var type = "立项-" + modelType + "-提供服务";
+        var DepartmentCode = $("#DepartmentCode").val();
+        if (modelType != "业务") {
+            type = "立项-" + modelType + "-" + DepartmentCode + "-提供服务";
+        }
+
+        $.ajax({
+            type: 'post',
+            url: "/Base/LoadChildHiddenCode",
+            data: { type: type },
+            async: false,
+            success: function (data) {
+                if (data && data.length > 1) {
+                    el = changeSelectInput(el, combo, input, true);
+                    for (i in data) {
+                        el.append($("<option>").html(data[i]).val(data[i]));
+                    }
+                } else {
+                    el = changeSelectInput(el, combo, input, false);
+                }
+
+                el.data("live-search", true).prop("title", "").selectpicker("refresh");
+            }
+        });
+    }
+</script>

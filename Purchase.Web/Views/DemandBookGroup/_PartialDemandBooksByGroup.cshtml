@@ -1,0 +1,80 @@
+﻿@using Purchase.Service.DTO
+@model IEnumerable<ProjectCityDto>
+
+<table class="table table-bordered table-condensed table-hover">
+    <thead>
+        <tr>
+            @*<th width="80">选择</th>*@
+           
+            <th>省份</th>
+            <th>城市</th>
+            @if (ViewBag.ModelType == "业务")
+            {
+                <th id="Responsibilites">工作职责</th>
+                <th id="ProjectType">项目类型</th>
+                <th id="ExcuteMode">执行方式</th>
+            }
+            else
+            {
+                <th id="PurchaseType">采购分类</th>
+                <th id="PurchaseMode">采购方式</th>
+
+            }
+            <th>需求书类型</th>
+            <th>提供服务</th>
+            <th>品名</th>
+            <th>样本量</th>
+            <th>城市样本量序号</th>
+            <th>备注</th>
+            @*<th>状态</th>
+            <th>取消时间</th>*@
+        </tr>
+    </thead>
+    <tbody>
+        @if (Model != null)
+        {
+            foreach (ProjectCityDto item in Model)
+            {
+                <tr>
+                    @*<td><input type="checkbox" value="@Json.Encode(item)"></td>*@
+                    
+                    <td>@item.Province</td>
+                    <td>@item.City</td>
+                    @if (ViewBag.ModelType == "业务")
+                    {
+                        <td>@item.Responsibilites</td>
+                        <td>@item.ProjectType</td>
+                        <td>@item.ExcuteMode</td>
+                    }
+                    else
+                    {
+                        <td>@item.PurchaseType</td>
+                        <td>@item.PurchaseMode</td>
+                    }
+                    <td>@item.RequirementName</td>
+                    <td>@item.SupplyService</td>
+                    <td>@item.ItemName</td>
+                    <td>@item.Count</td>
+                    <td>@item.SeqNo</td>
+                    <td>@item.Remark</td>
+                    @*<td>@item.Status</td>
+                    <td>@item.StatusDate</td>*@
+                </tr>
+            }
+        }
+    </tbody>
+</table>
+<script>
+    function openDemandBook(DemandBookType, ProjectId, SeqNO, RequirementId, GroupId) {
+        var modeltypes = ["业务", "内部采购", "其他"];
+        var url = "/DemandBook/Create?DemandBookType=" + DemandBookType;
+        url += "&ProjectId=" + ProjectId;
+        url += "&SeqNO=" + SeqNO;
+        if (RequirementId != 0) {
+            url += "&RequirementId=" + RequirementId;
+        }
+        url += "&GroupId=" + GroupId;
+
+        window.open(url);
+    }
+</script>

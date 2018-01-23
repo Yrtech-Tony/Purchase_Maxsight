@@ -1,0 +1,478 @@
+﻿@model Purchase.Service.DTO.ConstractDto
+
+<input type="hidden" id="TemplateId" name="TemplateId" class="form-control" value="0">
+<table>
+    <tr>
+        <td colspan="10" style="text-align:right">
+            <a id="btnBack" class="btn btn-primary">返 回</a>
+            <a onclick="openReview()" class="btn btn-primary">
+                合同预览
+            </a>
+            <a id="btnSave" class="btn btn-primary" data-loading-text="提交中...">保 存</a>
+        </td>
+    </tr>
+</table>
+<div class="panel panel-default">
+    <div class="panel-heading"><strong>合同信息</strong></div>
+    <div class="panel-body">
+        <table>
+            <tr>
+                <td width="80">合同编号</td>
+                <td>
+                    @Html.TextBoxFor(x => x.ConstractId, new { @class = "form-control", disabled = "disabled" })
+                </td>
+                @*<td width="80">合同名称</td>
+                    <td>
+                        @Html.TextBoxFor(x => x.ConstractName, new { @class = "form-control" })
+                    </td>*@
+                <td width="70">项目名称</td>
+                <td width="250">
+                    @Html.HiddenFor(x => x.ProjectId, new { @class = "form-control" })
+                    @Html.HiddenFor(x => x.ProjectCode, new { @class = "form-control", })
+                    @Html.TextBoxFor(x => x.ProjectName, new { @class = "form-control", disabled = "disabled" })
+                </td>
+                <td width="70">项目简称</td>
+                <td width="160">
+                    @Html.TextBoxFor(x => x.ProjectShortName, new { @class = "form-control", disabled = "disabled" })
+                </td>
+                <td>
+                    <input type="button" id="btnProjectSelect" class="btn btn-primary" style="width:100px" value="选择项目" />
+                </td>
+            </tr>
+            <tr>
+                <td width="80">
+                    合同时间
+                </td>
+                <td style="text-align:left">
+                    <input id="StartDate" name="StartDate" onclick="WdatePicker()" class="form-control" style="width: 45%;display:inline-block">
+                    <span style="width: 20px; text-align: center; display: inline-block; margin: 0; ">-</span>
+                    <input id="EndDate" name="EndDate" onclick="WdatePicker()" class="form-control" style="width: 45%; display: inline-block">
+                </td>
+                <td>供应商</td>
+                <td>
+                    <input id="SupplierId" name="SupplierId" type="hidden" />
+                    <input id="SupplierCode" name="SupplierCode" class="form-control" type="hidden">
+                    <input id="SupplierName" name="SupplierName" class="form-control" disabled>
+                    <input id="SupplierShortName" name="SupplierShortName" class="form-control" type="hidden">
+                </td>
+                <td>
+                    <input type="button" id="btnSupplierSelect" class="btn btn-primary" style="width:100px" value="选择供应商" />
+                </td>
+            </tr>
+        </table>
+    </div>
+</div>
+<div class="panel panel-default">
+    <div class="panel-heading"><strong>甲方信息</strong></div>
+    <div class="panel-body">
+        <table>
+            <tr>
+                <td width="70">名称</td>
+                <td width="200">
+                    <input type="text" id="PartAName" name="PartAName" class="form-control">
+                </td>
+                <td width="70">地址</td>
+                <td width="250">
+                    <input id="PartAAddress" name="PartAAddress" class="form-control" />
+                </td>
+                <td width="70">邮编</td>
+                <td width="300">
+                    <input id="PartAPostCode" name="PartAPostCode" class="form-control" />
+                </td>
+                <td></td>
+            </tr>
+            <tr>
+                <td width="70">联系人</td>
+                <td width="200">
+                    <input id="PartAContacts" name="PartAContacts" class="form-control" />
+                </td>
+                <td width="70">电话</td>
+                <td width="250">
+                    <input id="PartATel" name="PartATel" class="form-control" />
+                </td>
+                <td width="70">邮箱</td>
+                <td width="300">
+                    <input id="PartAEmail" name="PartAEmail" class="form-control" />
+                </td>
+                <td>
+                    <input type="button" onclick="SupplierSelect(2)" class="btn btn-primary" style="width:120px" value="从供应商获取" />
+                </td>
+            </tr>
+
+        </table>
+    </div>
+</div>
+<div class="panel panel-default">
+    <div class="panel-heading"><strong>乙方信息</strong></div>
+    <div class="panel-body">
+        <table>
+            <tr>
+                <td width="70">名称</td>
+                <td width="200">
+                    <input type="text" id="PartBName" name="PartBName" class="form-control">
+                </td>
+                <td width="70">地址</td>
+                <td width="250">
+                    <input id="PartBAddress" name="PartBAddress" class="form-control" />
+                </td>
+                <td width="70">邮编</td>
+                <td width="300">
+                    <input id="PartBPostCode" name="PartBPostCode" class="form-control" />
+                </td>
+                <td></td>
+            </tr>
+            <tr>
+                <td width="70">联系人</td>
+                <td width="200">
+                    <input id="PartBContacts" name="PartBContacts" class="form-control" />
+                </td>
+                <td width="70">电话</td>
+                <td width="250">
+                    <input id="PartBTel" name="PartBTel" class="form-control" />
+                </td>
+                <td width="70">邮箱</td>
+                <td width="300">
+                    <input id="PartBEmail" name="PartBEmail" class="form-control" />
+                </td>
+                <td>
+                    <input type="button" onclick="SupplierSelect(3)" class="btn btn-primary" style="width:120px" value="从供应商获取" />
+                </td>
+            </tr>
+        </table>
+    </div>
+</div>
+<div class="panel panel-default">
+    <div class="panel-heading"><strong>确认单信息</strong></div>
+    <div class="panel-body">
+        <table>
+            <tr>
+                <td></td>
+                <td style="text-align:right">
+                    <input type="text" id="QuotationIdList" name="QuotationIdList" style="border:none;background-color:transparent;width:100%;text-align: right;display:none" />
+                    <input type="button" onclick="QuotationSelect()" class="btn btn-primary" style="width:100px" value="选择确认单" />
+                </td>
+            </tr>
+            <tr>
+                <td width="80">说明</td>
+                <td>
+                    <textarea id="QuotationRemark" name="QuotationRemark" class="form-control"></textarea>
+                </td>
+            </tr>
+
+        </table>
+    </div>
+</div>
+<div class="panel panel-default">
+    <div class="panel-heading"><strong>确认单2信息</strong></div>
+    <div class="panel-body">
+        <table>
+            <tr>
+                <td></td>
+                <td style="text-align:right">
+                    <input type="text" id="QuotationId2List" name="QuotationId2List" style="border:none;background-color:transparent;width:100%;text-align: right;display:none" />
+                    <input type="button" onclick="QuotationSelect2()" class="btn btn-primary" style="width:100px" value="选择确认单" />
+                </td>
+            </tr>
+            <tr>
+                <td width="80">说明</td>
+                <td>
+                    <textarea id="Quotation2Remark" name="Quotation2Remark" class="form-control"></textarea>
+                </td>
+            </tr>
+
+        </table>
+    </div>
+</div>
+<script src="~/Content/My97DatePicker/WdatePicker.js"></script>
+<script src="~/Scripts/custom/form-serialize.js?2017"></script>
+<script>
+    $(function () {
+        $("#btnBack").click(function () {
+            this.href = "/Constract/Index" + window.location.search;
+        })
+        $("#btnSave").click(function () {
+            $("#ConstractForm").submit(function () {
+
+                debugger;
+                //if (isEmpty($("#ConstractCode").val())) {
+                //    alert("合同编号必须填写");
+                //    return false;
+                //}
+
+                //if (isEmpty($("#ConstractName").val())) {
+                //    alert("合同名称必须填写");
+                //    return false;
+                //}
+                if (isEmpty($("#ProjectCode").val())) {
+                    alert("请选择项目");
+                    return false;
+                }
+                if (isEmpty($("#StartDate").val())) {
+                    alert("请选择开始日期");
+                    return false;
+                }
+                if (isEmpty($("#EndDate").val())) {
+                    alert("请选择结束日期");
+                    return false;
+                }
+                if ($("#StartDate").val() > $("#EndDate").val()) {
+                    alert("开始日期不能大于结束日期");
+                    return false;
+                }
+                if (isEmpty($("#SupplierCode").val())) {
+                    alert("请选择供应商");
+                    return false;
+                }
+                if (isEmpty($("#PartAName").val())) {
+                    alert("甲方姓名必须填写");
+                    return false;
+                }
+                if (isEmpty($("#PartAAddress").val())) {
+                    alert("甲方地址必须填写");
+                    return false;
+                }
+                if (isEmpty($("#PartAContacts").val())) {
+                    alert("甲方联系人必须填写");
+                    return false;
+                }
+                if (isEmpty($("#PartATel").val())) {
+                    alert("甲方电话必须填写");
+                    return false;
+                }
+                var PartATel = $("#PartATel").val();
+                var PartATelList = PartATel.replace(/；/g, ';').split(";");
+                for (var i = 0; i < PartATelList.length; i++) {
+                    if (!(isTelNumber(PartATelList[i]) || isFixTel(PartATelList[i]))) {
+                        alert("甲方电话格式不正确");
+                        return false;
+                    }
+                }
+
+                if (isEmpty($("#PartAEmail").val())) {
+                    alert("甲方邮箱必须填写");
+                    return false;
+                }
+                var PartAEmail = $("#PartAEmail").val();
+                var PartAEmailList = PartAEmail.replace(/；/g, ';').split(";");
+                for (var i = 0; i < PartAEmailList.length; i++) {
+                    if (!isEmail(PartAEmailList[i])) {
+                        alert("甲方邮箱格式不正确");
+                        return false;
+                    }
+                }
+
+                if (isEmpty($("#PartBName").val())) {
+                    alert("乙方姓名必须填写");
+                    return false;
+                }
+                if (isEmpty($("#PartBAddress").val())) {
+                    alert("乙方地址必须填写");
+                    return false;
+                }
+                if (isEmpty($("#PartBContacts").val())) {
+                    alert("乙方联系人必须填写");
+                    return false;
+                }
+                if (isEmpty($("#PartBTel").val())) {
+                    alert("乙方电话必须填写");
+                    return false;
+                }
+
+                var PartBTel = $("#PartBTel").val();
+                var PartBTelList = PartBTel.replace(/；/g, ';').split(";");
+                for (var i = 0; i < PartBTelList.length; i++) {
+                    if (!(isTelNumber(PartBTelList[i]) || isFixTel(PartATelList[i]))) {
+                        alert("乙方电话格式不正确");
+                        return false;
+                    }
+                }
+
+                if (isEmpty($("#PartBEmail").val())) {
+                    alert("乙方邮箱必须填写");
+                    return false;
+                }
+                var PartBEmail = $("#PartBEmail").val();
+                var PartBEmailList = PartBEmail.replace(/；/g, ';').split(";");
+                for (var i = 0; i < PartBEmailList.length; i++) {
+                    if (!isEmail(PartBEmailList[i])) {
+                        alert("乙方邮箱格式不正确");
+                        return false;
+                    }
+                }
+
+                if (isEmpty($("#PartBEmail").val())) {
+                    alert("乙方邮箱必须填写");
+                    return false;
+                }
+                if (isEmpty($("#TemplateName").val())) {
+                    alert("请选择合同模板");
+                    return false;
+                }
+
+            }).submit();
+        })
+        $("#btnProjectSelect").click(function () {
+            ProjectSelect();
+        })
+        $("#btnSupplierSelect").click(function () {
+            SupplierSelect(1);
+        })
+    })
+
+    function isEmpty(value) {
+        if (value == "")
+            return true;
+        else
+            return false;
+    }
+    function isTelNumber(telNumber) {
+        var re = /^1\d{10}$/;
+        if (re.test(telNumber)) {
+            return true;
+        } else {
+            return false;
+        }
+    }
+    function isFixTel(tel) {
+        var filter = /^(\d{5}|(\d{5})-(\d{1,2})|(\d{4}|\d{3})-(\d{7,8})|(\d{4}|\d{3})-(\d{7,8})-(\d{6}|\d{5}|\d{4}|\d{3}|\d{2}|\d{1}))$/;
+        if (filter.test(tel) || isTelNumber(tel))
+            return true;
+        else {
+            return false;
+        }
+    }
+    function isEmail(email) {
+        var filter = /^([a-zA-Z0-9_\.\-])+\@@(([a-zA-Z0-9\-])+\.)+([a-zA-Z0-9]{2,4})+$/;
+        if (filter.test(email))
+            return true;
+        else {
+            return false;
+        }
+    }
+    function openReview() {
+        var url = '/ContractTemplate.html?';
+        url += 'TemplateId=' + $("#TemplateId").val();
+        url += '&ConstractId=' + $("#Id").val();
+
+        window.open(url);
+    }
+
+    function ProjectSelect() {
+        $("#myModal .modal-body").empty();
+        $("#myModal").modal("show");
+        $("#myModal .modal-title").html("选择项目");
+        $("#myModal .modal-body").load("/DemandBook/ProjectSelect", { ModelType: "", ProjectCode: "", ProjectName: "", ProjectShortName: "", loginUserChk: "Y" }, function () {
+            // 如果切换项目的话，清空确认单的列表
+            $("#QuotationIdList").val("");
+            //$(this).append($("<input id='SupplierMngId' type='hidden'>").val(id));
+        });
+    }
+    function SupplierSelect(type) {
+        $("#myModal .modal-body").empty();
+        $("#myModal").modal("show");
+        $("#myModal .modal-title").html("选择供应商");
+        $("#myModal .modal-body").load("/Constract/SupplierMngSelect",
+            { SupplierCode: "", SupplierName: "", SupplierShortName: "", province: '', city: '' }, function () {
+                $("#myModal .modal-body #Type").val(type)
+                // 如果切换供应商的话，清空确认单的列表
+                $("#QuotationIdList").val("");
+            });
+    }
+
+    function QuotationSelect() {
+        $("#myModal .modal-body").empty();
+        $("#myModal").modal("show");
+        $("#myModal .modal-title").html("选择确认单");
+        $("#myModal .modal-body").load("/Constract/QuotationSelect",
+            {
+                ProjectId: $("#ProjectId").val(),
+                SupplierId: $("#SupplierId").val(),
+            },
+            function () {
+                loadSelectedValues($("#QuotationIdList").val());
+                isQuotationId2List = false;
+            });
+    }
+
+    function QuotationSelect2() {
+        $("#myModal .modal-body").empty();
+        $("#myModal").modal("show");
+        $("#myModal .modal-title").html("选择确认单");
+        $("#myModal .modal-body").load("/Constract/QuotationSelect",
+            {
+                ProjectId: $("#ProjectId").val(),
+                SupplierId: $("#SupplierId").val(),
+            },
+            function () {
+                loadSelectedValues($("#QuotationId2List").val());
+                isQuotationId2List = true;
+            });
+    }
+
+    function ProjectSelectCallback(args) {
+        $("#ProjectCode").val(args[0]);
+        $("#ProjectName").val(args[1]);
+        $("#ProjectShortName").val(args[2]);
+        $("#ProjectId").val(args[3]);
+        $("#myModal").modal("hide");
+    }
+    function SupplierSelectCallback1(args) {
+        $("#SupplierCode").val(args.SupplierCode);
+        $("#SupplierName").val(args.SupplierName);
+        $("#SupplierShortName").val(args.SupplierShortName);
+        $("#SupplierId").val(args.SupplierId);
+        $("#myModal").modal("hide");
+    }
+    function SupplierSelectCallback2(args) {
+        $("#PartAName").val(args.SupplierName);
+        $("#PartAAddress").val(args.Address);
+        $("#PartAContacts").val(args.BussinessMainName);
+        $("#PartATel").val(args.BussinessMainTel);
+        $("#PartAEmail").val(args.BussinessMainEmail);
+        $("#PartAPostCode").val(args.PostCode);
+        $("#myModal").modal("hide");
+    }
+
+    function SupplierSelectCallback3(args) {
+        $("#PartBName").val(args.SupplierName);
+        $("#PartBAddress").val(args.Address);
+        $("#PartBContacts").val(args.BussinessMainName);
+        $("#PartBTel").val(args.BussinessMainTel);
+        $("#PartBEmail").val(args.BussinessMainEmail);
+        $("#PartBPostCode").val(args.PostCode);
+        $("#myModal").modal("hide");
+    }
+
+    function QuotationSelectCallback(args) {
+        var lst = '';
+        $.each(args, function (i, item) {
+            lst = lst + item.QuotationId + ',' + item.QuotationType + ',' + item.SeqNO + ';';
+        })
+        if (lst.length > 0) {
+            lst = lst.substr(0, lst.length - 1);
+        }
+        if (isQuotationId2List) {
+            $("#QuotationId2List").val(lst);
+        } else {
+            $("#QuotationIdList").val(lst);
+        }
+        
+        $("#myModal").modal("hide");
+    }
+
+    function selectTemplate() {
+        $("#myModal .modal-body").empty();
+        $("#myModal").modal("show");
+        $("#myModal .modal-title").html("选择合同模板");
+        $("#myModal .modal-body").load("/Constract/TemplateSelect",
+            { TemplateName: "", templateType: "" }, function () {
+            });
+    }
+
+    function templateSelectCallback(args) {
+        $("#ConstractForm #TemplateId").val(args.Id);
+        $("#ConstractForm #TemplateName").val(args.TemplateName);
+        $("#ConstractForm #TemplateType").val(args.TemplateType);
+    }
+
+</script>

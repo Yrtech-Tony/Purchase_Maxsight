@@ -1,0 +1,129 @@
+﻿@{
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+<div class="body inline-block-father">
+    <div class="menu inline-block">
+        <div class="panel panel-default">
+            <div class="panel-heading"><h4>应付流转单</h4></div>
+            <div class="panel-body">
+                @if ((Session["LoginUser"] as Purchase.DAL.Mst_UserInfo).RoleTypeCode.Contains("应付流转单付款申请"))
+                {
+                    <a href="/FlowOrder/ApplyPayIndex">应付流转单付款申请</a>
+                }
+                @if ((Session["LoginUser"] as Purchase.DAL.Mst_UserInfo).RoleTypeCode.Contains("采购基本权限")
+                    //|| (Session["LoginUser"] as Purchase.DAL.Mst_UserInfo).UserId == "zhengzilong"
+                    //|| (Session["LoginUser"] as Purchase.DAL.Mst_UserInfo).UserId == "gaolei"
+                    //|| (Session["LoginUser"] as Purchase.DAL.Mst_UserInfo).UserId == "xuweijia"
+                    //|| (Session["LoginUser"] as Purchase.DAL.Mst_UserInfo).UserId == "lipengna"
+                    //|| (Session["LoginUser"] as Purchase.DAL.Mst_UserInfo).UserId == "yubingke"
+                    //|| (Session["LoginUser"] as Purchase.DAL.Mst_UserInfo).UserId == "kongshengbei"
+                    //|| (Session["LoginUser"] as Purchase.DAL.Mst_UserInfo).UserId == "zhangqianqian"
+                    )
+                {
+                    <hr />
+                    <a href="/Payment/">对公付款查询</a>
+                }
+                @if ((Session["LoginUser"] as Purchase.DAL.Mst_UserInfo).RoleTypeCode.Contains("财务基本权限"))
+                {
+                    <hr />
+                    <a href="/Payment/FinanceIndex">财务对公付款查询</a>
+                }
+            </div>
+        </div>
+        @*<div class="panel panel-default">
+                <div class="panel-heading"><h4>供应商结算单</h4></div>
+                <div class="panel-body">
+                    <a href="/Settlement/SettlementMst">供应商结算单概要查询</a>
+                    <hr />
+                    <a href="/Settlement/SettlementDtl">供应商结算单详细查询</a>
+                </div>
+            </div>*@
+        @if ((Session["LoginUser"] as Purchase.DAL.Mst_UserInfo).RoleTypeCode.Contains("财务基本权限")
+             || (Session["LoginUser"] as Purchase.DAL.Mst_UserInfo).RoleTypeCode.Contains("采购基本权限")
+           )
+        {
+            <div class="panel panel-default">
+                <div class="panel-heading"><h4>财务计提</h4></div>
+                <div class="panel-body">
+                    <a href="/AccruedCharges/">计提查询</a>
+                </div>
+            </div>
+            <div class="panel panel-default">
+                <div class="panel-heading"><h4>资金需求表</h4></div>
+                <div class="panel-body">
+                    <a href="/CapitalRequirement/">资金需求表查询</a>
+                </div>
+            </div>
+        }
+        @if ((Session["LoginUser"] as Purchase.DAL.Mst_UserInfo).RoleTypeCode.Contains("采购基本权限")
+                    )
+        {
+            <div class="panel panel-default">
+                <div class="panel-heading"><h4>汇总表</h4></div>
+                <div class="panel-body">
+                    <a href="/Huizongbiao/">汇总表查询-业务</a>
+                    <hr />
+                    <a href="/Huizongbiao/NeibuIndex">汇总表查询-内部</a>
+                    <hr />
+                    <a href="/Huizongbiao/QitaIndex">汇总表查询-其他</a>
+                    <hr />
+                    <a href="/Huizongbiao/ZhuijiaIndex">汇总表查询-追加</a>
+                </div>
+            </div>
+            <div class="panel panel-default">
+                <div class="panel-heading"><h4>决算统计表</h4></div>
+                <div class="panel-body">
+                    <a href="/Juesuantongjiebiao/yewucaigoubiao1">决算统计表1查询-业务</a>
+                    <hr />
+                    <a href="/Juesuantongjiebiao/yewucaigoubiao2">决算统计表2查询-业务</a>
+                    <hr />
+                    <a href="/Juesuantongjiebiao/neibucaigoubiao1">决算统计表1查询-内部</a>
+                    <hr />
+                    <a href="/Juesuantongjiebiao/neibucaigoubiao2">决算统计表2查询-内部</a>
+                    <hr />
+                    <a href="/Juesuantongjiebiao/qitacaigoubiao1">决算统计表1查询-其他</a>
+                    <hr />
+                    <a href="/Juesuantongjiebiao/qitacaigoubiao2">决算统计表2查询-其他</a>
+                    <hr />
+                    <a href="/Juesuantongjiebiao/zhuijiaJuesuan1">决算统计表1查询-预算外确认单</a>
+                    <hr />
+                    <a href="/Juesuantongjiebiao/zhuijiaJuesuan2">决算统计表2查询-预算外确认单</a>
+                </div>
+            </div>
+            <div class="panel panel-default">
+                <div class="panel-heading"><h4>价格统计表</h4></div>
+                <div class="panel-body">
+                    <a href="/Jiagetongjiebiao/">价格统计表查询-业务</a>
+                    <hr />
+                    <a href="/Jiagetongjiebiao/NeibuIndex">价格统计表查询-内部</a>
+                    <hr />
+                    <a href="/Jiagetongjiebiao/QitaIndex">价格统计表查询-其他</a>
+                    <hr />
+                    <a href="/Jiagetongjiebiao/ZhuijiaIndex">价格统计表查询-追加</a>
+                </div>
+            </div>
+            <div class="panel panel-default">
+                <div class="panel-heading"><h4>项目统计</h4></div>
+                <div class="panel-body">
+                    @*<a href="/Stat/ProjectStat">项目概况统计务</a>
+                    <hr />
+                    <a href="/Stat/SupplierStat">供应商信息统计</a>
+                    <hr />
+                    <a href="/Stat/CityStat">执行城市统计</a>
+                    <hr />
+                    <a href="/Stat/ProjectDetailStat">项目详细统计</a>
+                    <hr />*@
+                    <a href="/Stat/ProjectGeneralStat">项目情况统计-自定义</a>
+                   
+                </div>
+            </div>
+        }
+    </div>
+    <script>
+        if ($(".panel-body hr:first-child").prev().length == 0) {
+            $(".panel-body hr:first-child").remove();
+        }
+    </script>
+    @RenderBody()
+    @RenderSection("scripts", required: false)
+</div>

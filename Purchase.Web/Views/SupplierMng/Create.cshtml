@@ -1,0 +1,27 @@
+﻿@model Purchase.DAL.SupplierMng
+
+@{
+    ViewBag.Title = "供应商信息登记";
+    Layout = "_SupplierMngLayout.cshtml";
+}
+<div class="count inline-block">
+    <h4>@ViewBag.Title</h4>
+    <hr />
+    @using (Html.BeginForm("Create", "SupplierMng", FormMethod.Post, new { Id = "SupplierMngForm", enctype = "multipart/form-data" }))
+    {
+        @Html.AntiForgeryToken()
+
+        @Html.Partial("_PartialEdit", Model)    
+    }
+</div>
+@section Scripts {
+    <script src="~/Content/My97DatePicker/WdatePicker.js"></script>
+    <script src="~/Scripts/custom/province_city.js"></script>
+    <script>
+        $(function () {
+            loadProvince();
+            debugger
+        })
+       
+    </script>
+}

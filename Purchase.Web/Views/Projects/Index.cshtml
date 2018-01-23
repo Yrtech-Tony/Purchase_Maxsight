@@ -1,0 +1,329 @@
+﻿@{
+    ViewBag.Title = "立项登记及查询";
+    Layout = "~/Views/Shared/_PurchaseLayout.cshtml";
+}
+<div class="count inline-block">
+    <form id="search-form" class="form">
+        <table>
+            <tr>
+                <td colspan="12" style="text-align:right">
+                    <button id="btnQuery" type="button" class="btn btn-primary" style="width:100px">查 询</button>
+                    <button onclick="openNew()" type="button" class="btn btn-primary" style="width:100px">新 增</button>
+                </td>
+            </tr>
+            <tr>
+                <td width="60">模块类型</td>
+                <td width="80">
+                    <select id="ModelType" name="ModelType" class="form-control"></select>
+                </td>
+                <td width="60">所属部门</td>
+                <td>
+                    <select id="DepartmentCode" name="DepartmentCode" class="form-control"></select>
+                </td>
+                <td width="60">期间</td>
+                <td>
+                    <input id="StartDate" name="StartDate" onclick="WdatePicker()" class="form-control">
+                </td>
+                <td>至</td>
+                <td>
+                    <input id="EndDate" name="EndDate" onclick="WdatePicker()" class="form-control">
+                </td>
+                <td>所属年份</td>
+                <td>
+                    <input id="Year" name="Year" class="form-control" />
+                </td>
+            </tr>
+            <tr>
+                <td>服务行业</td>
+                <td>
+                    <select id="ServiceTrade" name="ServiceTrade" class="form-control"></select>
+                </td>
+                @*<td>项目编号</td>
+                <td>
+                    <input id="ProjectCode" name="ProjectCode" class="form-control" />
+                </td>*@
+                <td>项目名称</td>
+                <td>
+                    <input id="ProjectName" name="ProjectName" class="form-control" />
+                </td>
+                <td>项目简称</td>
+                <td>
+                    <input id="ProjectShortName" name="ProjectShortName" class="form-control">
+                </td>
+                <td width="60">阶段</td>
+                <td>
+                    <select id="Step" name="Step" class="form-control">
+                        <option value="">全部</option>
+                        <option value="报价">报价</option>
+                        <option value="竞标">竞标</option>
+                        <option value="支持">支持</option>
+                    </select>
+                </td>
+                <td width="60">登记人</td>
+                <td>
+                    <input id="UserName" name="UserName" class="form-control" />
+                </td>
+            </tr>
+        </table>
+    </form>
+    <div class="table-responsive">
+        <table id="Projects-table" class="table table-bordered table-condensed">
+            <thead>
+                <tr>
+                    <th>提交审核</th>
+                    <th>删除</th>
+                    <th>复制</th>
+                    <th>模块类型</th>
+                    <th>阶段</th>
+                    <th>项目编号</th>
+                    <th>项目名称</th>
+                    <th>项目简称</th>
+                    <th>所属部门</th>
+                    <th>所属年份</th>
+                    <th>开始日期</th>
+                    <th>结束日期</th>
+                    <th>登记人</th>
+                    <th id="ExcecuteType">区域方式</th>
+                    <th>状态</th>
+                    <th>关闭/终止时间</th>
+                    <th>备注</th>
+                </tr>
+            </thead>
+            <tbody></tbody>
+        </table>
+    </div>
+
+    <div id="pagination" class="pull-right">
+        <ul id="pageUl"></ul>
+    </div>
+</div>
+<div class="modal fade" id="applyModal" tabindex="-1" role="dialog" aria-hidden="false">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
+                <h4 class="modal-title"></h4>
+            </div>
+            <div class="modal-body">
+            </div>
+        </div>
+    </div>
+</div>
+<div class="modal fade" id="projectModal" tabindex="-1" role="dialog" aria-hidden="false">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
+                <h4 class="modal-title"></h4>
+            </div>
+            <div class="modal-body">
+            </div>
+        </div>
+    </div>
+</div>
+@section Scripts {
+    <script src="~/Content/My97DatePicker/WdatePicker.js"></script>
+    <script src="~/Scripts/custom/form-serialize.js"></script>
+    <script src="~/Scripts/custom/date-format.js"></script>
+    <script>
+        var queryParams;
+        var curPageNum = 1;
+        $(function () {
+            DepartmentBind();// 绑定部门
+            ServiceTradeBind();// 绑定服务行业
+
+            //接受查询参数（打开一个新的界面时或从编辑返回时传的）
+            var query = getQueryString("queryParams");
+            if (query && query.length > 0) {
+                var queryObj = JSON.parse(query);
+                $("#search-form").setForm(queryObj);
+                $("select").data("live-search", true).prop("title", "").selectpicker("refresh");
+                load(queryObj.pageNum);
+            } else {
+                load();
+            }
+
+            $("#btnQuery").click(function () {
+                load();
+            })
+            
+        })
+        function openNew() {
+            window.location.href = '/Projects/Create' + window.location.search;
+        }
+        function load(pageNum) {
+            $("#btnQuery").button("loading");
+
+            var params = $("#search-form").serializeJson();
+            params = $.extend(params, { ServiceTrade:$("#ServiceTrade").val(), userName: $("#UserName").val(), pageSize: 10, pageNum: pageNum ? pageNum : 1 });
+            queryParams = params;
+            $.post("/Projects/Load", params, function (data) {
+                if (data && data.List) {
+                    $("#Projects-table tbody").empty();
+                    if (data.List.length == 0 && params.pageNum > 1) {
+                        load(1);
+                        return;
+                    }
+                    $.each(data.List, function (index, item) {
+                        var tr = $("<tr>");
+                                               
+                        var applyLink = $("<a>");                        
+                        if ((item.ApplyStatusCode == "" || item.ApplyStatusCode == "拒绝") && item.UserChk) {
+                            applyLink.html("提交审核");
+                            applyLink.attr("style", "cursor: pointer;");
+                            applyLink.click(function () {
+                                if (item.CityCount == 0) {
+                                    alert("未添加样本量不能提交审核");
+                                    return false;
+                                }
+                                if (item.PersonCount == 0) {
+                                    alert("未添加人员信息不能提交审核");
+                                    return false;
+                                }
+                                apply(item.ProjectId, item.ApplyId, item.SeqNO);
+                            })
+                        }
+                        tr.append($("<td></td>").append(applyLink));
+                        //删除
+                        var delLink = $("<a>");
+                        tr.append($("<td></td>").append(delLink));
+                        if (item.ApplyStatusCode == ""  && item.UserChk) {
+                            delLink.html("删除");
+                            delLink.attr("style", "cursor: pointer;");
+                            delLink.click(function () {
+                                delProject(item.ProjectId);
+                            })
+                        }
+                        //复制
+                        var copyLink = $("<a>");
+                        tr.append($("<td></td>").append(copyLink));
+                        //if (item.ApplyStatusCode == "" && item.UserChk) {
+                            copyLink.html("复制");
+                            copyLink.attr("style", "cursor: pointer;");
+                            copyLink.click(function () {
+                                openCopyProject(item.ProjectId);
+                            })
+                        //}
+
+                        tr.append($("<td></td>").html(item.ModelType));
+                        tr.append($("<td></td>").html(item.Step));
+                        var codeLink = $("<a>").html(item.ProjectCode);
+                        codeLink.attr("href", "/Projects/Edit/" + item.ProjectId + "?ModelType=" + getQueryString('ModelType')+"&queryParams=" + JSON.stringify(queryParams));
+                        tr.append($("<td></td>").append(codeLink));
+                        tr.append($("<td></td>").html(item.ProjectName));
+                        tr.append($("<td></td>").html(item.ProjectShortName));
+                        tr.append($("<td></td>").html(item.DepartmentCode));
+                        tr.append($("<td></td>").html(item.Year));
+                        tr.append($("<td></td>").html(item.StartDate));
+                        tr.append($("<td></td>").html(item.EndDate));
+                        tr.append($("<td></td>").html(item.UserName));
+                        if ($("#ModelType").val() == "业务") {
+                            $("#ExecuteType").hide();
+                            tr.append($("<td></td>").html(item.ExcuteType));
+                        } else {
+                            $("#ExcecuteType").hide();
+                        }
+                        tr.append($("<td></td>").html(item.Status));
+                        tr.append($("<td></td>").html(item.StatusDate));
+                        tr.append($("<td></td>").html(item.Remark));
+                        $("#Projects-table tbody").append(tr);
+                    })
+                    curPageNum = data.CurPage;
+                    createPageNav({ $container: $("#pagination"), pageCount: data.PageCount, currentNum: data.CurPage, afterFun: load });
+                }
+            }).complete(function () { $("#btnQuery").button("reset"); });
+        }
+
+        function delProject(ProjectId) {
+            confirm("确定要删除此记录吗？", function () {
+                $.post("/Projects/DeleteProject", { ProjectId: ProjectId }, function () {
+                    load(curPageNum);
+                })
+            });
+        }
+
+        function openCopyProject(ProjectId) {
+            $("#projectModal").modal("show");
+            $("#projectModal .modal-title").html("复制项目");
+            $("#projectModal .modal-body").load("/Projects/LoadPartial", { PartialView: "_PartialCopyProject" }, function () {
+                bindProject(ProjectId);
+            }); 
+        }
+
+        function apply(ProjectId, ApplyId, SeqNO) {
+            $.post("/Projects/RecheckProcessExistChk", { recheckType: "立项" }, function (data) {
+                if (data == 0) {
+                    alert("不在审核流程中，请联系管理人员添加");
+                    return false;
+                }
+
+                $("#applyModal").modal("show");
+                $("#applyModal .modal-title").html("选择审核人员");
+                $("#applyModal .modal-body").load("/Projects/RecheckUserSelect", {}, function () {
+                    $(this).append($("<input id='ProjectId' type='hidden'>").val(ProjectId));
+                    $(this).append($("<input id='ApplyId' type='hidden'>").val(ApplyId));
+                    $(this).append($("<input id='SeqNO' type='hidden'>").val(SeqNO));
+                });
+            });
+
+        }
+
+        function applyFinish() {
+            $("#applyModal").modal("hide");//关闭弹出窗口
+            load()//刷新表格
+        }
+        function changeSelectInput(el, combo, input, isDropdown) {
+            var newEl;
+            if (isDropdown) {
+                newEl = combo;
+            } else {
+                newEl = input;
+            }
+            var parent = el.parent();
+            parent.empty();
+            parent.append(newEl);
+
+            return newEl;
+        }
+        // 绑定部门
+        function DepartmentBind() {
+            // 根据模块类型显示所属部门
+            var el = $("#DepartmentCode");
+            var modelType = $("#ModelType").val();
+            if (modelType.startsWith("其他")) {
+                modelType = "其他";
+            }
+
+            $.ajax({
+                type: 'post',
+                url: "/Base/LoadChildHiddenCode",
+                data: { type: "立项-" + modelType + "-所属部门" },
+                async: false,
+                success: function (data) {
+                    el.empty();
+                    if (data && data.length > 0) {
+                        for (i in data) {
+                            el.append($("<option>").html(data[i]).val(data[i]));
+                        }
+                    }
+                    el.data("live-search", true).prop("title", "").selectpicker("refresh");
+                }
+            });
+
+        }
+        function ServiceTradeBind() {
+            var el = $("#ServiceTrade");
+            var modelType = $("#ModelType").val();
+            if (modelType.startsWith("其他")) {
+                el.append($("<option>").html("全部").val(""));
+                el.append($("<option>").html("Trip").val("Trip"));
+                el.append($("<option>").html("Zebrac").val("Zebrac"));
+                el.append($("<option>").html("Star").val("Star"));
+            }
+            else {
+                el.append($("<option>").html("Max").val("Max"));
+            }
+            el.data("live-search", true).prop("title", "").selectpicker("refresh");
+        }
+    </script>
+}

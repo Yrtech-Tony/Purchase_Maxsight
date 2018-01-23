@@ -1,0 +1,91 @@
+﻿<div class="panel panel-default mt20">
+    <div class="panel-heading">
+        <strong style="line-height:35px;font-size:14px;">邀约要求</strong>
+        <button class="btn btn-primary btn pull-right clearfix" onclick="addDtl3()">添加</button>
+        <button class="btn btn-primary btn pull-right" style="margin-right:5px;" onclick="delDemandBookDtl('3')">删除</button>
+    </div>
+    <div class="panel-body">
+        <div class="table-responsive">
+            <table id="dtl3-table" class="table table-bordered table-condensed table-hover text-center">
+                <thead>
+                    <tr>
+                        <th width="50">选择</th>
+                        <th width="50">
+                            复制
+                        </th>
+                        <th width="50">
+                            详细
+                        </th>
+                        <th>
+                            序号
+                        </th>
+                        <th>
+                            执行分类
+                        </th>
+                        <th>
+                            客户分类
+                        </th>
+                        <th>
+                            名单来源
+                        </th>
+                        <th>
+                            邀约方式
+                        </th>
+
+                        <th>
+                            其他说明
+                        </th>
+                    </tr>
+                </thead>
+                <tbody></tbody>
+            </table>
+        </div>
+        </div>
+</div>
+<script>
+    var detailView3 = 'Anfang/Detail/_PartialAnfangDtl3';
+    function addDtl3() {
+        if (!CommitCheck()) {
+            alert("正在审核中或者非本人添加的项目");
+            return false;
+        }
+        setModal("邀约要求", detailView3);
+        $("#myModal").modal("show");
+    }
+
+    function loadAnfangDtl3() {
+        $.post("/DemandBook/LoadAnfangDtl3", { RequirementId: $("#RequirementId").val() }, function (data) {
+            if (data) {
+                $("#dtl3-table tbody").empty();
+                $.each(data, function (index, item) {
+                    var tr = $("<tr>");
+
+                    tr.append($("<td></td>").append($("<input type='checkbox'>")));
+                    var copyBtn = $("<a class='btn btn-primary btn2'>").html("复制");
+                    copyBtn.click(function () {
+                        item.SeqNO = 0;
+                        setModal(title3, detailView3, item);
+                        $("#myModal").modal("show");
+                    })
+                    tr.append($("<td></td>").append(copyBtn));
+                    var editBtn = $("<a class='btn btn-primary btn2'>").html("详细");
+                    editBtn.click(function () {
+                        setModal("邀约要求", detailView3, item);
+                        $("#myModal").modal("show");
+                    })
+                    tr.append($("<td></td>").append(editBtn));
+                    tr.append($("<td></td>").html(item.SeqNO));
+                    tr.append($("<td></td>").html(item.ExecuteType));
+                    tr.append($("<td></td>").html(item.CustomerType));
+                    tr.append($("<td></td>").html(item.ListSource));
+                    tr.append($("<td></td>").html(item.Approaches));
+                    //tr.append($("<td></td>").html(item.RemarkDtl3));
+                    var RemarkDtl3 = item.RemarkDtl3 != null ? item.RemarkDtl3.replace(/\n/g, '<br>') : "&nbsp;";
+                    tr.append($("<td style='text-align: left;'></td>").html(RemarkDtl3));//其他说明
+
+                    $("#dtl3-table tbody").append(tr);
+                })
+            }
+        })
+    }
+</script>

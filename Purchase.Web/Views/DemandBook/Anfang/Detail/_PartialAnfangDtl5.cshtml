@@ -1,0 +1,53 @@
+﻿@using Purchase.Web.Common
+@model Purchase.DAL.Requirement_Anfang_RequirementDtl5
+
+<form id="anfang-dtl5-form">
+    @Html.Hidden("SeqNO", 0)
+    <div class="form-horizontal">
+        <div class="form-group">
+            <label class="control-label col-md-4" for="CandidDevice">评估员设备-偷拍设备</label>
+            <div class="col-md-6">
+                @Html.DropDownListFor(m => m.CandidDevice, SelectListTool.HiddenCodeList("需求书-暗访-设备要求-评估员设备(偷拍设备)"),
+                     htmlAttributes: new { @class = "form-control", multiple = "" })
+            </div>
+        </div>
+        <div class="form-group">
+            <label class="control-label col-md-4" for="AssistantDevice">评估员设备-辅助设备</label>
+            <div class="col-md-6">
+                @Html.DropDownListFor(m => m.AssistantDevice, SelectListTool.HiddenCodeList("需求书-暗访-设备要求-评估员设备(辅助设备)"),
+                      htmlAttributes: new { @class = "form-control", multiple = "" })
+            </div>
+        </div>
+        <div class="form-group">
+            <label class="control-label col-md-4" for="RemarkDtl5">其他说明</label>
+            <div class="col-md-6">
+                @Html.TextAreaFor(m => m.RemarkDtl5, htmlAttributes: new { @class = "form-control", multiple="" })
+            </div>
+        </div>
+        <div class="form-group">
+            <div class="col-md-offset-4 col-md-10">
+                <input id="saveBtn" type="button" value="保存" class="btn btn-primary btn-check" data-loading-text="提交中..." style="width:100px;height:35px" />
+            </div>
+        </div>
+    </div>
+</form>
+<script>
+    $(function () {
+       
+        $("#anfang-dtl5-form #saveBtn").click(function () {
+            if (!CommitCheck()) {
+                alert("正在审核中或者非本人添加的项目");
+                return false;
+            }
+            $(this).button("loading")
+            var params = $("#anfang-dtl5-form").serializeJson('&');
+            params = $.extend(params, getMstObject());
+
+            $.post("/DemandBook/SaveAnfangDtl5", params, function (data) {
+                $("#RequirementId").val(data);
+                loadAnfangDtl5();
+                closeModal();
+            });
+        })
+    })
+</script>

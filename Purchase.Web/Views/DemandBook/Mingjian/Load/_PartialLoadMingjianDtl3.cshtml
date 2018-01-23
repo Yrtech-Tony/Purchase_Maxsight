@@ -1,0 +1,97 @@
+﻿<div class="panel panel-default mt20">
+    <div class="panel-heading">
+        <strong style="line-height:35px;font-size:14px;">设备要求</strong>
+        <button class="btn btn-primary btn pull-right clearfix" onclick="addDtl3()">添加</button>
+        <button class="btn btn-primary btn pull-right" style="margin-right:5px;" onclick="delDemandBookDtl('3')">删除</button>
+    </div>
+    <div class="panel-body">
+        <div class="table-responsive">
+            <table id="dtl3-table" class="table table-bordered table-condensed table-hover text-center">
+                <thead>
+                    <tr>
+                        <th width="50">选择</th>
+                        <th width="50">
+                            复制
+                        </th>
+                        <th width="50">
+                            详细
+                        </th>
+                        <th>
+                            序号
+                        </th>
+                        <th>
+                            分类
+                        </th>
+                        <th>
+                            类型/品牌
+                        </th>
+                        <th>
+                            规格/型号
+                        </th>
+                        <th>
+                            数量/面积
+                        </th>
+                        <th>
+                            使用时间
+                        </th>
+
+                        <th>
+                            其他说明
+                        </th>
+                    </tr>
+                </thead>
+                <tbody></tbody>
+            </table>
+        </div>
+        </div>
+</div>
+<script>
+    var detailView3 = 'Mingjian/Detail/_PartialMingjianDtl3';
+    function addDtl3() {
+        if (!CommitCheck()) {
+            alert("正在审核中或者非本人添加的项目");
+            return false;
+        }
+        setModal("设备要求", detailView3);
+        $("#myModal").modal("show");
+    }
+
+    function loadMingjianDtl3() {
+        $.post("/DemandBook/LoadMingjianDtl3", { RequirementId: $("#RequirementId").val() }, function (data) {
+            if (data) {
+                $("#dtl3-table tbody").empty();
+                $.each(data, function (index, item) {
+                    var tr = $("<tr>");
+                    tr.append($("<td></td>").append($("<input type='checkbox'>")));
+                    var copyBtn = $("<a class='btn btn-primary btn2'>").html("复制");
+                    copyBtn.click(function () {
+                        item.SeqNO = 0;
+                        setModal(title3, detailView3, item);
+                        $("#myModal").modal("show");
+                    })
+                    tr.append($("<td></td>").append(copyBtn));
+                    var editBtn = $("<a class='btn btn-primary btn2'>").html("详细");
+                    editBtn.click(function () {
+                        setModal("设备要求", detailView3, item);
+                        $("#myModal").modal("show");
+                    })
+                    tr.append($("<td></td>").append(editBtn));
+                    tr.append($("<td></td>").html(item.SeqNO));
+                    tr.append($("<td></td>").html(item.fenlei));
+                    tr.append($("<td></td>").html(item.leixingpinpai));
+                    tr.append($("<td></td>").html(item.guigexinghao));
+                    tr.append($("<td></td>").html(item.shuliangmianji));
+                    tr.append($("<td></td>").html(item.shiyongshijian));
+                    //tr.append($("<td style='text-align:left'></td>").html(item.qitashuoming3.replace(/\n/g, '<br>')));
+                    if (item.qitashuoming1 == null) {
+                        tr.append($("<td style='text-align:left'></td>").html(item.qitashuoming3));
+                    } else {
+                        tr.append($("<td style='text-align:left'></td>").html(item.qitashuoming3.replace(/\n/g, '<br>')));
+                    }
+
+                    $("#dtl3-table tbody").append(tr);
+                })
+            }
+        })
+    }
+</script>

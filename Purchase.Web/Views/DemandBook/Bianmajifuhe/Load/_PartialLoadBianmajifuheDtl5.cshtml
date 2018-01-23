@@ -1,0 +1,116 @@
+﻿<div class="panel panel-default mt20">
+    <div class="panel-heading">
+        <strong style="line-height:35px;font-size:14px;">电话咨询与复核</strong>
+        <button class="btn btn-primary btn pull-right clearfix" onclick="addDtl5()">添加</button>
+        <button class="btn btn-primary btn pull-right" style="margin-right:5px;" onclick="delDemandBookDtl('5')">删除</button>
+    </div>
+    <div class="panel-body">
+        <div class="table-responsive">
+            <table id="dtl5-table" class="table table-bordered table-condensed table-hover text-center">
+                <thead>
+                    <tr>
+                        <th width="50">选择</th>
+                        <th width="50">
+                            复制
+                        </th>
+                        <th width="50">
+                            详细
+                        </th>
+                        <th>
+                            序号
+                        </th>
+                        <th>
+                            电话咨询要求
+                        </th>
+                        <th>
+                            电话咨询样本量或比例
+                        </th>
+                        <th>
+                            咨询复核要求
+                        </th>
+                        <th>
+                            咨询复核样本量或比例
+                        </th>
+                        <th>
+                            电话预约要求
+                        </th>
+                        <th>
+                            电话预约样本量或比例
+                        </th>
+                        <th>
+                            预约提醒复核
+                        </th>
+                        <th>
+                            预约提醒复核样本量或比例
+                        </th>
+
+                        <th>
+                            电话救援要求
+                        </th>
+                        <th>
+                            电话救援样本量或比例
+                        </th>
+                        <th>
+                            其他说明
+                        </th>
+                    </tr>
+                </thead>
+                <tbody></tbody>
+            </table>
+        </div>
+        </div>
+</div>
+<script>
+    var detailView5 = 'Bianmajifuhe/Detail/_PartialBianmajifuheDtl5';
+    var title5 = "电话咨询与复核";
+    function addDtl5() {
+        if (!CommitCheck()) {
+            alert("正在审核中或者非本人添加的项目");
+            return false;
+        }
+        setModal(title5, detailView5,undefined, true);
+        $("#myModal").modal("show");
+    }
+
+    function loadBianmajifuheDtl5() {
+        $.post("/DemandBook/LoadBianmajifuheDtl5", { RequirementId: $("#RequirementId").val() }, function (data) {
+            if (data) {
+                $("#dtl5-table tbody").empty();
+                $.each(data, function (index, item) {
+                    var tr = $("<tr>");
+
+                    tr.append($("<td></td>").append($("<input type='checkbox'>")));
+                    var copyBtn = $("<a class='btn btn-primary btn2'>").html("复制");
+                    copyBtn.click(function () {
+                        item.SeqNO = 0;
+                        setModal(title5, detailView5, item, true);
+                        $("#myModal").modal("show");
+                    })
+                    tr.append($("<td></td>").append(copyBtn));
+                    var editBtn = $("<a class='btn btn-primary btn2'>").html("详细");
+                    editBtn.click(function () {
+                        setModal(title5, detailView5, item, true);
+                        $("#myModal").modal("show");
+                    })
+                    tr.append($("<td></td>").append(editBtn));
+                    tr.append($("<td></td>").html(item.SeqNO));
+                    tr.append($("<td></td>").html(item.dianhuzixunyaoqiu));//电话咨询要求
+                    tr.append($("<td></td>").html(item.dianhuazixunyangbenlianghuobili));//电话咨询样本量或比例
+                    tr.append($("<td></td>").html(item.zixunfuheyaoqiu));//咨询复核要求
+                    tr.append($("<td></td>").html(item.zixunfuheyaoqiuyangbenlianghuobili));//咨询复核样本量或比例
+                    tr.append($("<td></td>").html(item.dianhuyuyueyaoqiu));//电话预约要求
+                    tr.append($("<td></td>").html(item.dianhuayuyueyangbenlianghuobili));//电话预约样本量或比例
+                    tr.append($("<td></td>").html(item.yuyuetixingfuhe));//预约提醒复核
+                    tr.append($("<td></td>").html(item.yuyuetingxingfuheyangbenlianghuobili));//预约提醒复核样本量或比例
+                    tr.append($("<td></td>").html(item.dianhuajiuyuanyaoqiu));//电话救援要求
+                    tr.append($("<td></td>").html(item.dianhuajiuyuanyangbenlianghuobili));//电话救援样本量或比例
+                    
+                    var qitashuoming5 = item.qitashuoming5 != null ? item.qitashuoming5.replace(/\n/g, '<br>') : "&nbsp;";
+                    tr.append($("<td style='text-align: left;'></td>").html(qitashuoming5));//其他说明
+                    
+                    $("#dtl5-table tbody").append(tr);
+                })
+            }
+        })
+    }
+</script>

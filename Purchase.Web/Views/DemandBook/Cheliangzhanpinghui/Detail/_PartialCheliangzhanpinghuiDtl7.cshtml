@@ -1,0 +1,64 @@
+﻿@using Purchase.Web.Common
+@model Purchase.DAL.Requirement_Cheliangzhanpinghui_RequirementDtl7
+
+<form id="Cheliangzhanpinghui-dtl7-form">
+    @Html.Hidden("SeqNO", 0)
+    <div class="form-horizontal">
+        <div class="form-group">
+            <label class="control-label col-md-2" for="">客户人数</label>
+            <div class="col-md-8">
+                @Html.TextBoxFor(m => m.kehurenshu, htmlAttributes: new { @class = "form-control", multiple="" })
+            </div>
+        </div>
+
+        <div class="form-group">
+            <label class="control-label col-md-2" for="RemarkDtl7">客户食品</label>
+            <div class="col-md-8">
+                @Html.TextBoxFor(m => m.kehushipin, htmlAttributes: new { @class = "form-control", multiple="" })
+            </div>
+        </div>
+        <div class="form-group">
+            <label class="control-label col-md-2" for="RemarkDtl7">客户餐饮</label>
+            <div class="col-md-8">
+                @Html.TextBoxFor(m => m.kehucanyin, htmlAttributes: new { @class = "form-control", multiple="" })
+            </div>
+        </div>
+        <div class="form-group">
+            <label class="control-label col-md-2" for="RemarkDtl7">会场食品</label>
+            <div class="col-md-8">
+                @Html.TextBoxFor(m => m.huichangshipin, htmlAttributes: new { @class = "form-control", multiple="" })
+            </div>
+        </div>
+        <div class="form-group">
+            <label class="control-label col-md-2" for="RemarkDtl7">其他说明</label>
+            <div class="col-md-8">
+                @Html.TextAreaFor(m => m.qitashuoming7, htmlAttributes: new { @class = "form-control", multiple="" })
+            </div>
+        </div>
+        <div class="form-group">
+            <div class="col-md-offset-2 col-md-10">
+                <input id="saveBtn" type="button" value="保存" class="btn btn-primary btn-check" data-loading-text="提交中..." style="width:100px;height:35px" />
+            </div>
+        </div>
+    </div>
+</form>
+<script>
+    $(function () {
+       
+        $("#Cheliangzhanpinghui-dtl7-form #saveBtn").click(function () {
+            if (!CommitCheck()) {
+                alert("正在审核中或者非本人添加的项目");
+                return false;
+            }
+            $(this).button("loading")
+            var params = $("#Cheliangzhanpinghui-dtl7-form").serializeJson('&');
+            params = $.extend(params, getMstObject());
+
+            $.post("/DemandBook/SaveCheliangzhanpinghuiDtl7", params, function (data) {
+                $("#RequirementId").val(data);
+                loadCheliangzhanpinghuiDtl7();
+                closeModal();
+            });
+        })
+    })
+</script>

@@ -1,0 +1,36 @@
+﻿@{
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+<div class="body inline-block-father">
+    <div class="menu inline-block">
+        <div class="panel panel-default">
+            <div class="panel-heading"><h4>合同模板管理</h4></div>
+            <div class="panel-body">
+                @*<a id="ConstractTemplateCreate" href="/ConstractTemplate/Create">合同模板信息登记</a>
+                <hr />*@
+                <a id="ConstractTemplateIndex" href="/ConstractTemplate/">合同模板登记及查询</a>
+            </div>
+        </div>
+        <div class="panel panel-default">
+            <div class="panel-heading"><h4>合同管理</h4></div>
+            <div class="panel-body">
+                @*<a id="ConstractCreate" href="/Constract/Create">合同登记</a>
+                <hr />*@
+                <a id="ConstractIndex" href="/Constract/Index">合同登记及查询</a>
+            </div>
+        </div>
+      
+        <div class="panel panel-default">
+            <div class="panel-heading"><h4>申请和审核管理</h4></div>
+            <div class="panel-body">
+                <a href="/ApplyCheck/MyApplySearch">我的申请</a>
+                <hr />
+                <a href="/ApplyCheck/MyNeedRecheckSearch" class="active">待我审核</a>
+                <hr />
+                <a href="/ApplyCheck/MyRecheckSearch">我的审核</a>
+            </div>
+        </div>
+    </div>
+    @RenderBody()
+    @RenderSection("scripts", required: false)
+</div>

@@ -1,0 +1,249 @@
+﻿@{
+    ViewBag.Title = "我的审核";
+    Layout = "~/Views/Shared/_TaskLayout.cshtml";
+}
+<div class="count inline-block">
+    <form id="search-form" class="form">
+        <table>
+            <tr>
+                <td colspan="11" style="text-align:right">
+                    <button id="btnQueryMyRecheck" type="button" class="btn btn-primary" style="width:100px">查 询</button>
+                </td>
+            </tr>
+            <tr>
+                <td>申请编号</td>
+                <td width="120">
+                    <input type="text" id="ApplyId" name="ApplyId" class="form-control">
+                    <input type="hidden" id="ApplyIdPopup" name="ApplyIdPopup" class="form-control">
+                </td>
+                <td>申请类型</td>
+                <td width="120">
+                    <select id="ApplyTypeId" name="ApplyTypeId" class="form-control">
+                        <option value="">全部</option>
+                        <option value="供应商">供应商</option>
+                        <option value="合同">合同</option>
+                        <option value="立项">立项</option>
+                        <option value="需求书">需求书</option>
+                        <option value="确认单">确认单</option>
+                        <option value="结算单">结算单</option>
+                        <option value="流转单">流转单</option>
+                    </select>
+                </td>
+                <td>申请人</td>
+                <td width="120">
+                    <input type="text" id="ApplyUserId" name="ApplyUserId" class="form-control" >
+                </td>
+
+                <td>申请日期</td>
+                <td width="140">
+                    <input id="StartDate" name="StartDate" onclick="WdatePicker()" class="form-control" >
+                </td>
+                <td width="20">至</td>                
+                <td width="140">
+                    <input id="EndDate" name="EndDate" onclick="WdatePicker()" class="form-control" >
+                </td>
+
+            </tr>
+            <tr>
+                <td>项目名称</td>
+                <td width="120">
+                    <input type="text" id="ProjectName" name="ProjectName" class="form-control" >
+                </td>
+                <td>项目简称</td>
+                <td width="120">
+                    <input type="text" id="ProjectShortName" name="ProjectShortName" class="form-control">
+                </td>
+                <td>审核状态</td>
+                <td width="120">
+                    <select id="RecheckStatusCode" name="RecheckStatusCode" class="form-control">
+                        <option value="">全部</option>
+                        <option value="同意">同意</option>
+                        <option value="拒绝">拒绝</option>
+                        <option value="终止">终止</option>
+                    </select>
+                </td>
+            </tr>
+        </table>
+    </form>
+    <table id="apply-table" class="table table-bordered table-condensed table-hover mt20 table-set">
+        <thead>
+            <tr>
+                <th style="width:60px">
+                    申请编号
+                </th>
+                <th style="width:50px">
+                    申请人
+                </th>
+                <th style="width:60px">
+                    申请类型
+                </th>
+                <th style="width:60px">
+                    流程状态
+                </th>
+                <th style="width:75px">
+                    申请日期
+                </th>
+                <th >
+                    申请理由
+                </th>
+                @*<th style="width: 180px">
+                    项目名称
+                </th>*@
+                <th style="width:100px">
+                    项目简称
+                </th>
+                <th style="width:200px">
+                    供应商名称
+                </th>
+                <th style="width:60px">
+                    申请详细
+                </th>
+                <th style="width:60px">
+                    审核详细
+                </th>
+                <th style="width:60px">
+                    审核状态
+                </th>
+                <th style="width:75px">
+                    审核日期
+                </th>
+            </tr>
+        </thead>
+        <tbody></tbody>
+    </table>
+    <div id="pagination" class="pull-right">
+        <ul id="pageUl"></ul>
+    </div>
+    <div id="apply-result"></div>
+</div>
+<div class="modal fade" id="recheckDtlModal" tabindex="-1" role="dialog" aria-hidden="false">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
+                <h4 class="modal-title"></h4>
+            </div>
+            <div class="modal-body">
+            </div>
+        </div>
+    </div>
+</div>
+<div class="modal fade" id="quotation-detail" tabindex="-1" role="dialog" aria-hidden="false">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
+                <h4 class="modal-title"></h4>
+            </div>
+            <div class="modal-body">
+                <div style="position:relative">
+                    <div id="detail-result" class="table-responsive"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="modal fade" id="settlementdlt-detail" tabindex="-1" role="dialog" aria-hidden="false">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
+                <h4 class="modal-title"></h4>
+            </div>
+            <div class="modal-body">
+            </div>
+        </div>
+    </div>
+</div>
+@section Scripts {
+    <script src="~/Content/My97DatePicker/WdatePicker.js"></script>
+    <script src="~/Scripts/custom/form-serialize.js"></script>
+    <script src="~/Scripts/custom/date-format.js"></script>
+    <script>
+        var curPageNum = 1;
+        $(function () {
+            loadMyRecheck();
+            $("#btnQueryMyRecheck").click(function () {
+                loadMyRecheck();
+            })
+        })
+
+        function loadMyRecheck(pageNum) {
+            $("#btnQueryMyRecheck").button("loading");
+
+            var params = $("#search-form").serializeJson();
+            if (params.StartDate == "") {
+                params.StartDate = "1900-01-01";
+            }
+            if (params.EndDate == "") {
+                params.EndDate = "2999-01-01";
+            }
+            params = $.extend(params, { pageSize: 10, pageNum: pageNum ? pageNum : 1 });
+            $.post("/ApplyCheck/MyRecheckSearch", params, function (data) {
+                if (data && data.List) {
+                    $("#apply-table tbody").empty();
+                    $.each(data.List, function (index, item) {
+                        var tr = $("<tr>");
+
+                        tr.append($("<td></td>").html(item.ApplyId));
+                        tr.append($("<td></td>").html(item.UserName));
+                        tr.append($("<td></td>").html(item.ApplyTypeId));
+                        tr.append($("<td></td>").html(item.ApplyStatusCode));
+                        
+                        tr.append($("<td></td>").html(item.InDateTime));
+                        tr.append($("<td></td>").html(item.ApplyReason).attr("title", item.ApplyReason));
+                        //tr.append($("<td></td>").html(item.ProjectName).attr("title", item.ProjectName));
+                        tr.append($("<td></td>").html(item.ProjectShortName).attr("title", item.ProjectShortName));
+                        tr.append($("<td></td>").html(item.SupplierName).attr("title", item.SupplierName));
+
+                        var applyLink = $("<a>").html("申请详细");
+                        applyLink.attr("style", "cursor: pointer;");
+                        applyLink.click(function () {
+                            applyDetail1(item.ApplyId, item.ApplyTypeId);
+                        })
+                        tr.append($("<td></td>").append(applyLink));
+
+                        var checkLink = $("<a>").html("审核详细");
+                        checkLink.attr("style", "cursor: pointer;");
+                        checkLink.click(function () {
+                            recheckDetail(item.ApplyId);
+                        })
+                        tr.append($("<td></td>").append(checkLink));
+
+                        tr.append($("<td></td>").html(item.RecheckStatusCode));
+                        tr.append($("<td></td>").html(item.RecheckDateTime));
+
+                        $("#apply-table tbody").append(tr);
+                    })
+
+                    curPageNum = data.CurPage;
+                    createPageNav({ $container: $("#pagination"), pageCount: data.PageCount, currentNum: data.CurPage, afterFun: loadMyRecheck });
+                }
+            }).complete(function () { $("#btnQueryMyRecheck").button("reset"); });
+        }
+        function recheckDetail(Id) {
+            $("#recheckDtlModal").modal("show");
+            $("#recheckDtlModal .modal-title").html("审核详细");
+            $("#recheckDtlModal .modal-body").load("/ApplyCheck/RecheckStatusDetail", { ApplyId: Id }, function () {
+                //$(this).append($("<input id='SupplierMngId' type='hidden'>").val(id));
+            });
+        }
+        function applyDetail1(Id, ApplyTypeId) {
+            $("#ApplyIdPopup").val(Id);
+            $("#quotation-detail").modal("show");
+            $("#quotation-detail .modal-title").html("申请详细");
+            $("#quotation-detail .modal-body").empty();
+            $("#quotation-detail .modal-body").load("/ApplyCheck/ApplyDetail", { ApplyId: Id, ApplyTypeId: ApplyTypeId }, function () {
+                if (ApplyTypeId == "确认单" && $("#UserRoleType").val().indexOf("确认单审核完毕后修改")==-1) {
+                    $("#search-project-form #btnSave").hide();
+                }
+            });
+        }
+        function applyDetail(Id, ApplyTypeId) {
+            $("#apply-result").show();
+            $("#apply-result").load("/ApplyCheck/ApplyDetail", { ApplyId: Id, ApplyTypeId: ApplyTypeId }, function () {
+                //$(this).show();
+            });
+        }
+    </script>
+}

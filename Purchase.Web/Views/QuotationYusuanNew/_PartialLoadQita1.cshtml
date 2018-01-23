@@ -1,0 +1,95 @@
+﻿<table id="quotation-table" class="table table-bordered table-condensed table-hover">
+    <thead>
+        <tr>
+            <th>
+                供应商名称
+            </th>
+            <th>
+                服务行业
+            </th>
+            <th>
+                采购分类
+            </th>
+            <th>
+                采购方式
+            </th>
+            <th>
+                提供服务
+            </th>
+            <th>
+                品名
+            </th>
+            <th>
+                规格
+            </th>
+            <th>
+                型号
+            </th>
+            <th>
+                参考价格
+            </th>
+            <th>
+                预算单价
+            </th>
+            <th>
+                单价
+            </th>
+            <th>
+                数量
+            </th>
+            <th>
+                预算小计
+            </th>
+            <th>
+                备注
+            </th>
+        </tr>
+    </thead>
+    <tbody></tbody>
+</table>
+
+<script>
+    $(function () {
+    })
+
+    function addQuotationTr_Qita1(item) {
+        var tr = $("<tr>");
+        tr.append($("<td></td>").html(item.SupplierName));
+        tr.append($("<td></td>").html(item.ServiceTrade));
+        tr.append($("<td></td>").html(item.caigoufenlei));
+        tr.append($("<td></td>").html(item.caigoufangshi));
+        tr.append($("<td></td>").html(item.tigongfuwu));
+        tr.append($("<td></td>").html(item.pinming));
+        tr.append($("<td></td>").html(item.guige));
+        tr.append($("<td></td>").html(item.xinghao));
+        tr.append($("<td></td>").html(item.cankaojiage));
+        //预算单价
+        var $ysdjInput = $("<input id='yusuandanjia_new'  class='form-control' style='width:60px'>").val(item.yusuandanjia_new);
+        ysdjOrysslBlur($ysdjInput, item);
+        tr.append($("<td class='input-td'></td>").append($ysdjInput));
+        //预算数量
+        var $ysslInput = $("<input id='yusuanshuliang' class='form-control' style='width:60px'>").val(item.yusuanshuliang);
+        ysdjOrysslBlur($ysslInput, item);
+        tr.append($("<td class='input-td'></td>").append($ysslInput));
+        //预算小计
+        var yusuanxiaoji = 0;
+         if (item.yusuandanjia_new && item.yusuanshuliang) {
+            yusuanxiaoji = parseFloat(item.yusuandanjia_new) * parseFloat(item.yusuanshuliang);
+        }
+        tr.append($("<td></td>").append($("<font id='yusuanxiaoji'></font >").text(yusuanxiaoji.toFixed(2))));
+
+        //单价 数量
+        tr.append($("<td></td>").html(item.danjia));
+        tr.append($("<td></td>").html(item.shuliang));
+        //小计
+        var xiaoji = 0;
+        if (item.danjia && !isEmptyOrNull(item.shuliang)) {
+            xiaoji = parseFloat(item.danjia) * parseFloat(item.shuliang);
+        }
+        tr.append($("<td></td>").text(xiaoji.toFixed(2)));
+
+        tr.append($("<td style='text-align:left'></td>").html(item.beizhu));
+
+        return tr;;
+    }
+</script>

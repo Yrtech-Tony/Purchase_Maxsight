@@ -1,0 +1,142 @@
+﻿@using Purchase.Service.DTO
+@model IEnumerable<SupplierEvaDto>
+<div style="position:relative">
+
+    <form id="supplierEva-create-form">
+        <input type="hidden" id="PopupProjectId" name="ProjectId" />
+        <table style="width:100%">
+            <tr>
+                <td style="text-align:right">
+                    <a id="btnSave" class="btn btn-primary" style="width:100px" onclick="">保存</a>
+                </td>
+            </tr>
+        </table>
+    </form>
+
+    <div class="table-responsive">
+        <div id="search-result" class="table-responsive" style="max-height:350px;overflow-y:auto;">
+            <table id="supplierEva-create-table" class="table table-bordered table-condensed table-hover">
+                <thead>
+                    <tr>
+                        <th width="80">
+                            评价表类型
+                        </th>
+                        <th>
+                            项目简称
+                        </th>
+                        <th width="200">
+                            供应商名称
+                        </th>
+                        <th width="80">
+                            省份
+                        </th>
+                        <th width="90">
+                            城市
+                        </th>
+                        <th width="100">
+                            运作部/PM
+                        </th>
+                        <th width="100">
+                            QC
+                        </th>
+                        <th width="100">
+                            研究部
+                        </th>
+                        <th width="100">
+                            供应商评价
+                        </th>
+                        <th width="200">
+                            备注
+                        </th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @if (Model != null)
+                    {
+                        foreach (SupplierEvaDto supplierEvaDto in Model)
+                        {
+                            <tr>
+                                <td style="display:none">
+                                    @Html.Hidden("Id", supplierEvaDto.AnswerId)
+                                    @Html.Hidden("ProjectId", supplierEvaDto.ProjectId)
+                                    @Html.Hidden("SupplierId", supplierEvaDto.SupplierId)
+                                    @Html.Hidden("EvaSubjectType", supplierEvaDto.SubjectType)
+                                    @Html.Hidden("ProjectName", supplierEvaDto.ProjectName)
+                                    @Html.Hidden("ProjectShortName", supplierEvaDto.ProjectShortName)
+                                    @Html.Hidden("SupplierName", supplierEvaDto.SupplierName)
+                                    @Html.Hidden("Province", supplierEvaDto.Province)
+                                    @Html.Hidden("City", supplierEvaDto.City)
+                                </td>
+                                <td>@Html.DisplayFor(m => supplierEvaDto.SubjectType)</td>
+                                <td>@Html.DisplayFor(m => supplierEvaDto.ProjectShortName)</td>
+                                <td>@Html.DisplayFor(m => supplierEvaDto.SupplierName)</td>
+                                <td>@Html.DisplayFor(m => supplierEvaDto.Province)</td>
+                                <td>@Html.DisplayFor(m => supplierEvaDto.City)</td>
+                                <td>@Html.TextBox("YunzuobuScore", supplierEvaDto.YunzuobuScore, new { @class = "form-control", type = "number" })</td>
+                                <td>@Html.TextBox("QCScore", supplierEvaDto.QCScore, new { @class = "form-control", type = "number" })</td>
+                                <td>@Html.TextBox("YanjiuScore", supplierEvaDto.YanjiuScore, new { @class = "form-control", type = "number" })</td>
+                                <td>@Html.TextBox("SupplierScore", supplierEvaDto.SupplierScore, new { @class = "form-control", type = "number",  @readonly = "readonly" })</td>
+                                <td>@Html.TextBox("Remark", supplierEvaDto.Remark, new { @class = "form-control", style = "width:200px" })</td>
+                            </tr>
+                        }
+                    }
+                </tbody>
+            </table>
+
+        </div>
+    </div>
+</div>
+
+<script>
+    $(function () {
+        $("#btnSave").click(function () {
+            var params = $("#supplierEva-create-form").serializeJson()
+            var items = [];
+            $("#supplierEva-create-table tbody tr").each(function () {
+                var form = $("<form>");
+                form.append($(this).find("input").clone());
+                var item = form.serializeJson();
+                items.push(item);
+            })
+            params.jsonArr = JSON.stringify(items);
+            $.post("/SupplierEva/Save", params, function () {
+                alert("保存成功");
+                load();
+                $("#myModal").modal("hide");
+            })
+        })
+
+        $("#supplierEva-create-table tbody tr").each(function () {
+            var textArr = $("input[type!='hidden']", this);
+            debugger
+            var SubjectType = $(this).find("td:eq(1)").text();
+            var change = function () {
+                var score = 0.0;
+                if (SubjectType == "暗访类") {
+                    score = transFloat(textArr.eq(0).val()) * 0.8 + transFloat(textArr.eq(1).val()) * 0.1 + transFloat(textArr.eq(2).val()) * 0.1;
+                }
+                else if (SubjectType == "车展类")
+                { score = transFloat(textArr.eq(0).val()) * 0.6 + transFloat(textArr.eq(1).val()) * 0.3 + transFloat(textArr.eq(2).val()) * 0.1; }
+                else if (SubjectType == "定量类")
+                { score = transFloat(textArr.eq(0).val()) * 0.5 + transFloat(textArr.eq(1).val()) * 0.4 + transFloat(textArr.eq(2).val()) * 0.1; }
+                else if (SubjectType == "定性类")
+                { score = transFloat(textArr.eq(0).val()) * 0.4 + transFloat(textArr.eq(1).val()) * 0.3 + transFloat(textArr.eq(2).val()) * 0.3; }
+                else if (SubjectType == "明检类")
+                { score = transFloat(textArr.eq(0).val()) * 0.8 + transFloat(textArr.eq(1).val()) * 0.1 + transFloat(textArr.eq(2).val()) * 0.1; }
+                textArr.eq(3).val(score.toFixed(2));
+            }
+            textArr.each(function (i) {
+                if (i < 3) {
+                    $(this).change(change);
+                }
+            });
+        })
+    })
+
+    function transFloat(valStr) {
+        if (valStr && valStr != "") {
+            return parseFloat(valStr);
+        }
+        return 0.0;
+    }
+</script>

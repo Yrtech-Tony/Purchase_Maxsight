@@ -1,0 +1,102 @@
+﻿<div class="panel panel-default mt20">
+    <div class="panel-heading">
+        <strong style="line-height:35px;font-size:14px;">资料提交</strong>
+        <button class="btn btn-primary btn pull-right clearfix" onclick="addDtl6()">添加</button>
+        <button class="btn btn-primary btn pull-right" style="margin-right:5px;" onclick="delDemandBookDtl('6')">删除</button>
+    </div>
+    <div class="panel-body">
+        <div class="table-responsive">
+            <table id="dtl6-table" class="table table-bordered table-condensed table-hover text-center">
+                <thead>
+                    <tr>
+                        <th width="50">选择</th>
+                        <th width="50">
+                            复制
+                        </th>
+                        <th width="50">
+                            详细
+                        </th>
+                        <th>
+                            序号
+                        </th>
+                        <th>
+                            录音类型
+                        </th>
+                        <th>
+                            合格录音比例
+                        </th>
+                        <th>
+                            证照类型
+                        </th>
+                        <th>
+                            合格证照比例
+                        </th>
+                        <th>
+                            现场到车率
+                        </th>
+                        <th>
+                            笔录
+                        </th>
+                        <th>
+                            笔录提交时间
+                        </th>
+
+                        <th>
+                            其他说明
+                        </th>
+                    </tr>
+                </thead>
+                <tbody></tbody>
+            </table>
+        </div>
+        </div>
+</div>
+<script>
+    var title6 = "资料提交";
+    var detailView6 = 'Zuotanhui/Detail/_PartialZuotanhuiDtl6';
+    function addDtl6() {
+        if (!CommitCheck()) {
+            alert("正在审核中或者非本人添加的项目");
+            return false;
+        }
+        setModal(title6, detailView6);
+        $("#myModal").modal("show");
+    }
+
+    function loadZuotanhuiDtl6() {
+        $.post("/DemandBook/LoadZuotanhuiDtl6", { RequirementId: $("#RequirementId").val() }, function (data) {
+            if (data) {
+                $("#dtl6-table tbody").empty();
+                $.each(data, function (index, item) {
+                    var tr = $("<tr>");
+                    tr.append($("<td></td>").append($("<input type='checkbox'>")));
+                    var copyBtn = $("<a class='btn btn-primary btn2'>").html("复制");
+                    copyBtn.click(function () {
+                        item.SeqNO = 0;
+                        setModal(title6, detailView6, item);
+                        $("#myModal").modal("show");
+                    })
+                    tr.append($("<td></td>").append(copyBtn));
+                    var editBtn = $("<a class='btn btn-primary btn2'>").html("详细");
+                    editBtn.click(function () {
+                        setModal(title6, detailView6, item);
+                        $("#myModal").modal("show");
+                    })
+                    tr.append($("<td></td>").append(editBtn));
+                    tr.append($("<td></td>").html(item.SeqNO));
+                    tr.append($("<td></td>").html(item.luyinleixing));//录音类型
+                    tr.append($("<td></td>").html(item.hegeluyinbili));//合格录音比例
+                    tr.append($("<td></td>").html(item.zhengzhaoleixing));//证照类型
+                    tr.append($("<td></td>").html(item.hegezhengzhaobili));//合格证照比例
+                    tr.append($("<td></td>").html(item.xianchangdaochelv));//现场到车率
+                    tr.append($("<td></td>").html(item.bilu));//笔录
+                    tr.append($("<td></td>").html(item.bilutijiaoshijian));//笔录提交时间
+                    var qitashuoming = item.qitashuoming != null ? item.qitashuoming.replace(/\n/g, '<br>') : "&nbsp;";
+                    tr.append($("<td style='text-align: left;'></td>").html(qitashuoming));//其他说明
+
+                    $("#dtl6-table tbody").append(tr);
+                })
+            }
+        })
+    }
+</script>

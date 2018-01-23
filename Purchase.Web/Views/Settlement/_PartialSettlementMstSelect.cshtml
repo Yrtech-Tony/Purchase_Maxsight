@@ -1,0 +1,90 @@
+﻿<form id="search-project-form">
+    <table>
+        <tr>
+            <td colspan="4" style="text-align:right">
+                <a id="btnCheckAll" class="btn btn-primary" style="width:100px">全选</a>
+                <a id="btnNotcheckAll" class="btn btn-primary" style="width:100px">反选</a>
+                <a id="btnSave" class="btn btn-primary" style="width:100px">保存</a>
+            </td>
+        </tr>
+    </table>
+</form>
+<div class="table-responsive" style="max-height:580px;overflow:auto">
+    <table id="SettlementMst-table" class="table table-bordered table-condensed table-hover">
+        <thead>
+            <tr>
+                <th>选择</th>
+                <th>项目名称</th>
+                <th>项目简称</th>
+                <th>供应商名称</th>
+                <th>序号</th>
+                <th>结算单金额</th>
+                <th>确认单组</th>                
+                <th>登记时间</th>
+                <th style="display:none">结算单Id</th>
+            </tr>
+        </thead>
+        <tbody></tbody>
+    </table>
+</div>
+<script src="~/Scripts/custom/form-serialize.js"></script>
+<script>
+    var SelectedGroup;
+    $(function () {
+        $("#btnCheckAll").click(function () {
+            $("#SettlementMst-table input[type=checkbox]").prop("checked", true);
+        })
+        $("#btnNotcheckAll").click(function () {
+            $("#SettlementMst-table input[type=checkbox]").prop("checked", false);
+        })
+        
+        loadDtl();
+        $("#btnSave").click(function () {
+            save();
+        })
+    })
+    function loadDtl() {
+        $.post("/Settlement/SettlementMstByGroupIdSearch", { projectId: $("#ProjectId").val(), groupId: $("#GroupId").val() }, function (data) {
+            if (data && data.List) {
+                $("#SettlementMst-table tbody").empty();
+                $.each(data.List, function (index, item) {
+                    $("#SettlementMst-table tbody").append(bindTr(item));
+                })
+            }
+        })
+    };
+    function bindTr(item) {
+        var tr = $("<tr>");
+        tr.append($("<td></td>").append($("<input id='SelectedChk' type='checkbox'>").attr("checked", item.SelectedChk)));
+        tr.append($("<td></td>").html(item.ProjectName));
+        tr.append($("<td></td>").html(item.ProjectShortName));
+        tr.append($("<td></td>").html(item.SupplierName));
+        tr.append($("<td></td>").html(item.SeqNO_Supplier));
+        tr.append($("<td></td>").html(item.SupplierAmt));
+        tr.append($("<td></td>").html(item.QuotationGroupName));        
+        tr.append($("<td></td>").html(item.InDateTime));
+        tr.append($("<td style='display:none'></td>").html(item.SettlementId));
+        return tr;
+    }
+    function save() {
+        if (!isApplyCheck(SelectedGroup)) {
+            alert("结算单组正在审核中，不能修改添加或修改结算单");
+            return false;
+        }
+        $("#btnSave").button("loading");
+
+        var lstStringId = '';
+        var checkbox = $("#SettlementMst-table input[type=checkbox]:checked");
+        $.each(checkbox, function (index, item) {
+            var tds= $(item).parents("tr:first").find("td:last-child");
+            lstStringId += tds.html() + ";";
+        });
+        if (lstStringId.length > 0) {
+            lstStringId = lstStringId.substr(0, lstStringId.length - 1);
+        }
+        $.post("/Settlement/SettlementGroupDtlSave", { settlementgroupId: $("#GroupId").val(), strselect: lstStringId }, function (data) {
+            alert("保存成功");
+            loadDtl();
+        }).complete(function () { $("#btnSave").button("reset"); });
+    }
+</script>

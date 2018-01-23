@@ -1,0 +1,224 @@
+﻿@{
+    ViewBag.Title = "供应商评分登记及查询";
+    Layout = "../SupplierMng/_SupplierMngLayout.cshtml";
+ }
+<div class="count inline-block">
+    <form id="search-form" class="form">
+        <table>
+            <tr>
+                <td colspan="11" style="text-align:right">
+                    <a id="btnCreate" class="btn btn-primary" style="width:100px" onclick="">评分登记</a>
+                    <a id="btnQuery" class="btn btn-primary" style="width:100px">查 询</a>                    
+                </td>
+            </tr>
+            <tr>
+                <td width="80">评价表类型</td>
+                <td width="100">
+                    <select id="SubjectType" name="SubjectType" class="form-control">
+                    </select>
+                </td>
+                <td width="70">项目名称</td>
+                <td width="240">
+                    <input id="ProjectId" name="ProjectId" class="form-control" type="hidden" />
+                    <input id="ProjectName" name="ProjectName" class="form-control" />
+                    <input id="ProjectCode" name="ProjectCode" class="form-control" type="hidden">
+                </td>
+                <td width="80">项目简称</td>
+                <td width="140">
+                    <input id="ProjectShortName" name="ProjectShortName" class="form-control" />
+                </td>
+                <td>
+                    <a id="btnProjectSelect" class="btn btn-primary" style="width:100px">选择项目</a>
+                </td>
+                <td></td>
+                <td width="90">供应商</td>
+                <td width="250">
+                    <input id="SupplierId" name="SupplierId" class="form-control" type="hidden" />
+                    <input id="SupplierName" name="SupplierName" class="form-control">
+                    <input id="SupplierCode" name="SupplierCode" class="form-control" type="hidden">
+                    <input id="SupplierShortName" name="SupplierShortName" class="form-control" type="hidden">
+                </td>
+                <td>
+                    <a id="btnSupplierSelect" class="btn btn-primary" style="width:100px">选择供应商</a>
+                </td>
+            </tr>
+
+        </table>
+    </form>
+    <div id="search-result" class="table-responsive">
+        <table id="supplierEva-table" class="table table-bordered table-condensed table-hover table-set">
+            <thead>
+                <tr>
+                    <th width="80">
+                        评价表类型
+                    </th>
+                    <th width="220">
+                        项目名称
+                    </th>
+                    <th width="100">
+                        项目简称
+                    </th>
+                    <th width="220">
+                        供应商名称
+                    </th>
+                    <th width="80">
+                        省份
+                    </th>
+                    <th width="90">
+                        城市
+                    </th>
+                    <th width="100">
+                        运作部/渠道PM
+                    </th>
+                    <th width="60">
+                        QC
+                    </th>
+                    <th width="80">
+                        研究部
+                    </th>
+                    <th width="80">
+                        供应商评价
+                    </th>
+                    <th>
+                        备注
+                    </th>
+                </tr>
+            </thead>
+            <tbody></tbody>
+        </table>
+    </div>
+    <div id="pagination" class="pull-right">
+        <ul id="pageUl"></ul>
+    </div>
+</div>
+
+<div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-hidden="false">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
+                <h4 class="modal-title"></h4>
+            </div>
+            <div class="modal-body">
+            </div>
+        </div>
+    </div>
+</div>
+@section Scripts {
+    <script src="~/Scripts/custom/form-serialize.js"></script>
+    <script>
+        $(function () {
+            SubjectTypeBind();
+            $("#btnQuery").click(function () {
+                load();
+            })
+
+            $("#btnProjectSelect").click(function () {
+                ProjectSelect();
+            })
+            $("#btnSupplierSelect").click(function () {
+                SupplierSelect(1);
+            })
+            
+            $("#btnCreate").click(function () {
+                if ($("#ProjectId").val() == null || $("#ProjectId").val() == "") {
+                    alert("请选择项目");
+                    return false;
+                }
+                var projectId = $("#ProjectId").val();
+                var supplierName = $("#SupplierName").val();
+                var subjectType = $("#SubjectType").val();
+                
+                $(".modal .modal-body").empty();
+                $("#myModal").modal("show");
+                $("#myModal .modal-title").html("供应商评分登记");
+                $("#myModal .modal-body").load("/SupplierEva/Create",
+                    { SubjectType: subjectType, ProjectId: projectId, SupplierName: supplierName }, function () {
+                        $("#myModal .modal-body #PopupProjectId").val(projectId);
+                    });
+            })
+            
+        })
+        function load(pageNum) {
+            $("#btnQuery").button("loading");
+
+            var params = $("#search-form").serializeJson();
+            params = $.extend(params, { pageSize: 20, pageNum: pageNum ? pageNum : 1 });
+            $.post("/SupplierEva/Load", params, function (data) {
+                if (data && data.List) {
+                    $("#supplierEva-table tbody").empty();
+                    $.each(data.List, function (index, item) {
+                        var tr = $("<tr>");
+                        
+                        tr.append($("<td></td>").html(item.SubjectType));
+                        tr.append($("<td></td>").html(item.ProjectName));
+                        tr.append($("<td></td>").html(item.ProjectShortName));
+                        tr.append($("<td></td>").html(item.SupplierName));
+                        tr.append($("<td></td>").html(item.Province));
+                        tr.append($("<td></td>").html(item.City));
+                        tr.append($("<td></td>").html(item.YunzuobuScore));
+                        tr.append($("<td></td>").html(item.QCScore));
+                        tr.append($("<td></td>").html(item.YanjiuScore));
+                        tr.append($("<td></td>").html(item.SupplierScore));
+                        tr.append($("<td style='text-align:left'></td>").html(item.Remark).attr("title", item.Remark));
+
+                        $("#supplierEva-table tbody").append(tr);
+                    })
+
+                    curPageNum = data.CurPage;
+                    createPageNav({ $container: $("#pagination"), pageCount: data.PageCount, currentNum: data.CurPage, afterFun: load });
+                }
+            }).complete(function () { $("#btnQuery").button("reset"); });
+        }
+        function ProjectSelect() {
+            $(".modal .modal-body").empty();
+            $("#myModal").modal("show");
+            $("#myModal .modal-title").html("选择项目");
+            $("#myModal .modal-body").load("/DemandBook/ProjectSelect", { ModelType: "", ProjectCode: "", ProjectName: "", ProjectShortName: "" }, function () {
+                //$(this).append($("<input id='SupplierMngId' type='hidden'>").val(id));
+            });
+        }
+        function SupplierSelect(type) {
+            $(".modal .modal-body").empty();
+            $("#myModal").modal("show");
+            $("#myModal .modal-title").html("选择供应商");
+            $("#myModal .modal-body").load("/Constract/SupplierMngSelect",
+                { SupplierCode: "", SupplierName: "", SupplierShortName: "", province: '', city: '' }, function () {
+                    $("#myModal .modal-body #Type").val(type)
+                });
+        }
+        function ProjectSelectCallback(args) {
+            $("#ProjectCode").val(args[0]);
+            $("#ProjectName").val(args[1]);
+            $("#ProjectShortName").val(args[2]);
+            $("#ProjectId").val(args[3]);
+            $("#myModal").modal("hide");
+        }
+        function SupplierSelectCallback1(args) {
+            
+            $("#SupplierId").val(args.SupplierId);
+            $("#SupplierCode").val(args.SupplierCode);
+            $("#SupplierName").val(args.SupplierName);
+            $("#SupplierShortName").val(args.SupplierShortName);
+            $("#myModal").modal("hide");
+        }
+        function SubjectTypeBind() {
+            var el = $("#SubjectType");
+            $.ajax({
+                type: 'post',
+                url: "/Base/LoadChildHiddenCode",
+                data: { type: "供应商评价-评价表类型" },
+                async: false,
+                success: function (data) {
+                    el.empty();
+                    if (data && data.length > 0) {
+                        for (i in data) {
+                            el.append($("<option>").html(data[i]).val(data[i]));
+                        }
+                    }
+                    el.data("live-search", true).prop("title", "").selectpicker("refresh");
+                }
+            });
+        }
+    </script>
+}

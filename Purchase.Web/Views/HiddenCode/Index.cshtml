@@ -1,0 +1,257 @@
+﻿@using Purchase.Web.Common;
+@model IEnumerable<Purchase.DAL.ConstractTemplate>
+
+@{
+    ViewBag.Title = "字典查询";
+    Layout = "~/Views/Shared/_SystemLayout.cshtml";
+}
+<div class="count inline-block">
+    <form id="search-form" class="form">
+        <table>
+            <tr>
+                <td width="80">字典类型</td>
+                <td width="400">
+                    @Html.DropDownList("Type", SelectListTool.HiddenCodeType, new { @class = "form-control" })
+                </td>
+                <td width="80">字典名称</td>
+                <td width="400">
+                    <input id="Code" name="Code" class="form-control">
+                </td>
+                <td style="text-align:right">
+                    <button id="btnAdd" onclick="addHiddenCode()" type="button" class="btn btn-primary" style="width:100px">保 存</button>
+                </td>
+            </tr>
+        </table>
+    </form>
+    <table id="HiddenCode-table" class="table table-bordered table-condensed table-hover">
+        <thead>
+            <tr>
+                <th width="80">详细</th>
+                <th>
+                    字典类型
+                </th>
+                <th>
+                    字典名称
+                </th>
+                <th>
+                    是否使用
+                </th>
+                <th>
+                    二级类型
+                </th>
+                <th>
+                    登记人
+                </th>
+                <th>登记时间</th>
+            </tr>
+        </thead>
+        <tbody></tbody>
+    </table>
+    <div id="pagination" class="pull-right">
+        <ul id="pageUl"></ul>
+    </div>
+
+    <div id="child-hidden-code" style="display:none">
+        <form id="search-child-form" class="form">
+            <table>
+                <tr>
+                    <td width="80">二级类型</td>
+                    <td width="400">
+                        <select id="ChildType" name="Type" class="form-control"></select>
+                    <td width="80">字典名称</td>
+                    <td width="400">
+                        <input id="ChildCode" name="Code" class="form-control">
+                    </td>
+                    <td style="text-align:right">
+                        <button id="btnAddChild" onclick="addChildHiddenCode()" type="button" class="btn btn-primary" style="width:100px">保 存</button>
+                    </td>
+                </tr>
+            </table>
+        </form>
+        <table id="child-hidden-code-table" class="table table-bordered table-condensed table-hover">
+            <thead>
+                <tr>
+                    <th width="80">详细</th>
+                    <th>
+                        字典类型
+                    </th>
+                    <th>
+                        字典名称
+                    </th>
+                    <th>
+                        是否使用
+                    </th>
+                    <th>
+                        登记人
+                    </th>
+                    <th>登记时间</th>
+                </tr>
+            </thead>
+            <tbody></tbody>
+        </table>
+    </div>
+</div>
+<div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-hidden="false">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
+                <h4 class="modal-title">字典编辑</h4>
+            </div>
+            <div class="modal-body">
+            </div>
+        </div>
+    </div>
+</div>
+@section Scripts {
+    <script src="~/Scripts/custom/form-serialize.js"></script>
+    <script src="~/Scripts/custom/date-format.js"></script>
+    <script>
+        var isChild = false;
+        $(function () {
+            $("#Type").change(function () {
+                $("#child-hidden-code").hide();
+                load();
+            }).change();
+
+            $("#ChildType").change(function () {
+                loadChild();
+            })
+
+        })
+
+        function load(pageNum) {
+            var params = $("#search-form").serializeJson();
+            params = $.extend(params, { pageSize: 10, pageNum: pageNum ? pageNum : 1 });
+            $.post("/HiddenCode/Load", params, function (data) {
+                if (data && data.List) {
+                    $("#HiddenCode-table tbody").empty();
+                    $.each(data.List, function (index, item) {
+                        var tr = $("<tr>");
+                        var codeLink = $("<a>").html("详细");
+                        codeLink.css("cursor", "pointer");
+                        codeLink.click(function () {
+                            isChild = false;
+                            edit(item.Type, item.Code);
+                        });
+                        tr.append($("<td></td>").append(codeLink));
+
+                        tr.append($("<td></td>").html(item.Type));
+                        tr.append($("<td></td>").html(item.Name));
+                        tr.append($("<td></td>").html(item.UseChk ? "是" : "否"));
+                        if (data.ChildChk) {
+                            var addChild = $("<a>").html("二级类型详细");
+                            addChild.css("cursor", 'pointer');
+                            addChild.click(function () {
+                                showChild(item.Type, item.Code);
+                            });
+                            tr.append($("<td></td>").append(addChild));
+                        } else {
+                            tr.append($("<td></td>").html(""));
+                        }
+                        tr.append($("<td></td>").html(item.InUserId));
+                        tr.append($("<td></td>").html(item.InDateTime));
+
+                        $("#HiddenCode-table tbody").append(tr);
+                    })
+
+                    createPageNav({ $container: $("#pagination"), pageCount: data.PageCount, currentNum: data.CurPage, afterFun: load });
+                }
+            })
+        }
+
+        function showChild(type, code) {
+            $("#child-hidden-code").show();
+            var childTypes = [];
+            if (type == '需求书-供应商差旅-差旅要求-分类') {
+                childTypes = ['类型/品牌', '规格/型号', '费用标准'];
+            } else if (type == "立项-内部-所属部门" || type == "立项-内部采购-所属部门" || type == "立项-其他-所属部门") {
+                type = type.replace('-所属部门', '');
+                childTypes = ['提供服务'];
+            } else if (type == "供应商-Max-推荐部门" || type == "供应商-Trip-推荐部门" || type == "供应商-Zebrac-推荐部门" || type == "供应商-Star-推荐部门") {
+                type = type.replace('-推荐部门', '');
+                childTypes = ['提供服务-内部采购', '提供服务-其他'];
+            } else if (type == "需求书-运输租车-展车租赁-分类")
+            {
+                childTypes = ['类型/品牌', '车辆类别', '车价范围'];
+            }
+            else {
+                childTypes = ['类型/品牌'];
+            }
+            $("#ChildType").empty();
+            for (i in childTypes) {
+                var cType = type + '-' + code + '-' + childTypes[i];
+                $("#ChildType").append($("<option>").val(cType).text(cType));
+                $("#ChildType").selectpicker('refresh');
+            }
+            $("#ChildType").change();
+        }
+
+        function loadChild(pageNum) {
+            var params = $("#search-child-form").serializeJson();
+            params = $.extend(params, { pageSize: 1000, pageNum: pageNum ? pageNum : 1 });
+            $.post("/HiddenCode/Load", params, function (data) {
+                if (data && data.List) {
+                    $("#child-hidden-code-table tbody").empty();
+                    $.each(data.List, function (index, item) {
+                        var tr = $("<tr>");
+                        var codeLink = $("<a>").html("详细");
+                        codeLink.css("cursor", "pointer");
+                        codeLink.click(function () {
+                            isChild = true;
+                            edit(item.Type, item.Code);
+                        });
+                        tr.append($("<td></td>").append(codeLink));
+
+                        tr.append($("<td></td>").html(item.Type));
+                        tr.append($("<td></td>").html(item.Name));
+                        tr.append($("<td></td>").html(item.UseChk ? "是" : "否"));
+                        tr.append($("<td></td>").html(item.InUserId));
+                        tr.append($("<td></td>").html(item.InDateTime));
+
+                        $("#child-hidden-code-table tbody").append(tr);
+                    })
+                }
+            })
+        }
+
+        function edit(type, code, url) {
+            type = type || '';
+            code = code || '';
+            url = url || '/HiddenCode/Edit';
+            $("#myModal").modal('show');
+            $("#myModal .modal-body").empty();
+            $("#myModal .modal-body").load(url, { type: type, code: code }, function (data) {
+            })
+        }
+        //function editChild(type, code) {
+        //    edit(type, code, "/HiddenCode/EditChild");
+        //}
+        function addHiddenCode() {
+            var params = $("#search-form").serializeJson();
+            params.UseChk = true;
+            $.post("/HiddenCode/Save", params, function (data) {
+                isChild = false;
+                load();
+            });
+        }
+
+        function addChildHiddenCode() {
+            var params = $("#search-child-form").serializeJson();
+            params.UseChk = true;
+            $.post("/HiddenCode/Save", params, function (data) {
+                loadChild();
+            });
+        }
+
+        function saveCallback() {
+            if (isChild) {
+                loadChild();
+            } else {
+                load();
+            }
+
+            $("#myModal").modal('hide');
+        }
+    </script>
+}

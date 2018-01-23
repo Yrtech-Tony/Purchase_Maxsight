@@ -1,0 +1,266 @@
+﻿<form id="ProjectsPersonForm">
+    @Html.Hidden("SeqNO", 0)
+    <table id="Person" style="width:90%">
+        <tr>
+            <td width="100" id="DepartmentCode_Edit">部门</td>
+            <td>
+                <select id="DepartmentCode" name="DepartmentCode" class="form-control">
+                    <option value=""></option>
+                    <option value="销售部">销售部</option>
+                    <option value="研究部">研究部</option>
+                    <option value="运作部">运作部</option>
+                    <option value="质控部">质控部</option>
+                    @*<option value="证券部">证券部</option>*@
+                    <option value="采购部">采购部</option>
+                </select>
+            </td>
+        </tr>
+        <tr>
+            <td id="PositionCode_Edit">职责</td>
+            <td>
+                <select id="PositionCode" name="PositionCode" class="form-control">
+                    <option value=""></option>
+                    <option value="销售">销售</option>
+                    <option value="项目总监">项目总监</option>
+                    <option value="项目经理">项目经理</option>
+                    <option value="研究员">研究员</option>
+                    <option value="PM">PM</option>
+                    <option value="总控督导">总控督导</option>
+                    <option value="定性督导">定性督导</option>
+                    <option value="定量督导">定量督导</option>
+                    <option value="复核督导">复核督导</option>
+                    <option value="编码督导">编码督导</option>
+                    <option value="录入督导">录入督导</option>
+                    <option value="采购专员">采购专员</option>
+                </select>
+            </td>
+        </tr>
+        <tr>
+            <td>姓名</td>
+            <td><input id="PersonName" name="PersonName" class="form-control"></td>
+        </tr>
+        <tr>
+            <td></td>
+            <td>
+                <button id="savePersonBtn" type="button" class="btn btn-primary">保 存</button>
+            </td>
+        </tr>
+    </table>
+</form>
+<script>
+    $(function () {
+        debugger
+        if ($("#ModelType").val() == "业务") {
+            $("#DepartmentCode_Edit").html("部门");
+            $("#PositionCode_Edit").html("职责");
+        }
+        else {
+            $("#DepartmentCode_Edit").html("部门分类");
+            $("#PositionCode_Edit").html("部门");
+        }
+        DepartmentBind();
+        PositionBind();
+        $("#savePersonBtn").click(function () {
+            if (!CommitCheck()) {
+                alert("正在审核中或者非本人添加的项目");
+                return false;
+            }
+            debugger
+            var params = $("#ProjectsPersonForm").serializeJson();
+            params.ProjectId = $("#Id").val();
+            //var departmentCode="";
+            //var positionCode="";
+            //var personName = "";
+            //if ($("#ModelType").val() == "业务") {
+            //    departmentCode = $("#Person_bussiness #DepartmentCode").val();
+            //    positionCode = $("#Person_bussiness #PositioniCode").val();
+            //    personName = $("#Person_bussiness #PersonName").val();
+            //}
+            //else
+            //{
+            //    departmentCode = $("#Person_inter #DepartmentCode").val();
+            //    positionCode = $("#Person_inter #PositioniCode").val();
+            //    personName = $("#Person_inter #PersonName").val();
+            //}
+
+            $.post("/Projects/SavePerson", params, function (data) {
+                loadProjectPerson();
+            });
+        })
+    })
+    function CommitCheck() {
+        debugger
+        var ApplyStatusCode = $("#ApplyStautCode").val();
+        var UserChk = $("#UserChk").val();
+        if (ApplyStatusCode == undefined) {
+            ApplyStatusCode = "";
+        }
+        if (UserChk == undefined) {
+            UserChk = "true";
+        }
+        if (UserChk == "true") {
+            if (ApplyStatusCode != "") {
+                if (ApplyStatusCode == "完成") {
+                    return true;
+                }
+                else {
+                    return false;
+                }
+            }
+            else {
+                return true;
+            }
+        }
+        else {
+            return false;
+        }
+    }
+    function DepartmentBind()
+    {
+        debugger
+        var el = $("#Person #DepartmentCode");
+        var modelType = $("#ModelType").val();
+        if (modelType.startsWith("其他")) {
+            modelType = "其他";
+        }
+        if ($("#ModelType").val() == "业务") {
+            $.ajax({
+                type: 'post',
+                url: "/Base/LoadChildHiddenCode",
+                data: { type: "立项-人员添加-" + modelType + "-部门" },
+                async: false,
+                success: function (data) {
+                    el.empty();
+                    if (data && data.length > 0) {
+                        for (i in data) {
+                            el.append($("<option>").html(data[i]).val(data[i]));
+                        }
+                    }
+                    el.data("live-search", true).prop("title", "").selectpicker("refresh");
+                }
+            });
+        }
+        else {
+            $.ajax({
+                type: 'post',
+                url: "/Base/LoadChildHiddenCode",
+                data: { type: "立项-人员添加-" + modelType + "-部门分类" },
+                async: false,
+                success: function (data) {
+                    el.empty();
+                    if (data && data.length > 0) {
+                        for (i in data) {
+                            el.append($("<option>").html(data[i]).val(data[i]));
+                        }
+                    }
+                    el.data("live-search", true).prop("title", "").selectpicker("refresh");
+                }
+            });
+        }
+
+        //var inter = ["", "需求部门", "协助部门", "采购部"];
+        //var business = ["", "销售部", "研究部", "运作部", "质控部", "采购部"];
+        //var el = $("#Person #DepartmentCode");
+        //var combo = $("<select id='DepartmentCode' name='DepartmentCode' class = 'form-control'> ");
+        //var input = $("<input id='DepartmentCode' name='DepartmentCode' class = 'form-control'> ");
+        //if ($("#ModelType").val() == "业务") {
+        //    el = changeSelectInput(el, combo, input, true);
+        //    for (i in business) {
+        //        el.append($("<option>").html(business[i]).val(business[i]));
+        //    }
+        //}
+        //else {
+        //    el = changeSelectInput(el, combo, input, true);
+        //    for (i in inter) {
+        //        el.append($("<option>").html(inter[i]).val(inter[i]));
+        //    }
+        //}
+    }
+    // 业务采购的部门按照立项模板里面的信息
+    // 内部采购的部门按照立项时的所属部门的逻辑
+    function PositionBind() {
+
+
+        var el = $("#Person #PositionCode");
+        var modelType = $("#ModelType").val();
+        if (modelType.startsWith("其他")) {
+            modelType = "其他";
+        }
+        if ($("#ModelType").val() == "业务") {
+            $.ajax({
+                type: 'post',
+                url: "/Base/LoadChildHiddenCode",
+                data: { type: "立项-人员添加-" + modelType + "-职责" },
+                async: false,
+                success: function (data) {
+                    el.empty();
+                    if (data && data.length > 0) {
+                        for (i in data) {
+                            el.append($("<option>").html(data[i]).val(data[i]));
+                        }
+                    }
+                    el.data("live-search", true).prop("title", "").selectpicker("refresh");
+                }
+            });
+        }
+        else 
+        {
+            $.ajax({
+                type: 'post',
+                url: "/Base/LoadChildHiddenCode",
+                data: { type: "立项-人员添加-" + modelType + "-部门" },
+                async: false,
+                success: function (data) {
+                    el.empty();
+                    if (data && data.length > 0) {
+                        for (i in data) {
+                            el.append($("<option>").html(data[i]).val(data[i]));
+                        }
+                    }
+                    el.data("live-search", true).prop("title", "").selectpicker("refresh");
+                }
+            });
+        }
+        //debugger
+        //var inter = ["", "采购部", "IT部", "人力资源部", "财务部", "证券部", "渠道诊断-北京", "渠道诊断-广州", "渠道咨询-北京", "渠道咨询-广州", "服务个案-北京", "服务个案-广州", "满意度-北京", "满意度-广州", "销售-北京", "销售-上海", "销售-广州", "管理部", "个案运作-北京", "个案运作-上海", "个案运作-广州", "个案研究-上海"];
+        //var qita = ["", "采购部", "IT部", "人力资源部", "产品部", "技术部"];
+
+        //var el = $("#Person #PositionCode");
+        //var combo = $("<select id='PositionCode' name='PositionCode' class = 'form-control'> ");
+        //var input = $("<input id='PositionCode' name='PositionCode' class = 'form-control'> ");
+        //// 根据模块类型显示所属部门
+        //if ($("#ModelType").val() == "内部采购") {
+        //    el = changeSelectInput(el, combo, input, true);
+        //    for (i in inter) {
+        //        el.append($("<option>").html(inter[i]).val(inter[i]));
+        //    }
+        //}
+        //else if ($("#ModelType").val() == "其他") {
+        //    el = changeSelectInput(el, combo, input, true);
+        //    for (i in qita) {
+        //        el.append($("<option>").html(qita[i]).val(qita[i]));
+        //    }
+        //}
+        //else if ($("#ModelType").val() == "其他") {
+        //    el = changeSelectInput(el, combo, input, true);
+        //    for (i in qita) {
+        //        el.append($("<option>").html(qita[i]).val(qita[i]));
+        //    }
+
+        //}
+      //  $("#Person PositionCode").data("live-search", true).prop("title", "").selectpicker("refresh");
+    }
+    function changeSelectInput(el, combo, input, isDropdown) {
+        var newEl;
+        if (isDropdown) {
+            newEl = combo;
+        } else {
+            newEl = input;
+        }
+        var parent = el.parent();
+        parent.empty();
+        parent.append(newEl);
+
+        return newEl;
+    }
+</script>

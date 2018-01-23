@@ -1,0 +1,68 @@
+﻿@using Purchase.Web.Common
+@model Purchase.DAL.Requirement_Mingjian_RequirementDtl4
+
+<form id="Mingjian-dtl4-form">
+    @Html.Hidden("SeqNO", 0)
+    <div class="form-horizontal">
+        <div class="form-group">
+            <label class="control-label col-md-2" for="Evaluator_Age">评估员条件-年龄</label>
+            <div class="col-md-8">
+                @Html.TextBoxFor(m => m.pingguyuantiaojiannianling, htmlAttributes: new { @class = "form-control", multiple = "" })
+            </div>
+        </div>
+        <div class="form-group">
+            <label class="control-label col-md-2" for="Evaluator_Education">评估员条件-学历</label>
+            <div class="col-md-8">
+                @Html.DropDownListFor(m => m.pingguyuantiaojianxueli, SelectListTool.HiddenCodeList("需求书-明检-人员要求-评估员条件(学历)"),
+                           htmlAttributes: new { @class = "form-control", multiple = "" })
+            </div>
+        </div>
+        <div class="form-group">
+            <label class="control-label col-md-2" for="Evaluator_StaffRate">评估员条件-人员备份比例</label>
+            <div class="col-md-8">
+                @Html.DropDownListFor(m => m.pingguyuantiaojianrenyuanbeifenbili, SelectListTool.HiddenCodeList("需求书-明检-人员要求-评估员条件(人员备份比例)"),
+                           htmlAttributes: new { @class = "form-control", multiple = "" })
+            </div>
+        </div>
+        <div class="form-group">
+            <label class="control-label col-md-2" for="Evaluator_Experience">评估员条件-执行经验</label>
+            <div class="col-md-8">
+                @Html.DropDownListFor(m => m.pingguyuantiaojianzhixingjingyan, SelectListTool.HiddenCodeList("需求书-明检-人员要求-评估员要求(执行经验)"),
+                                                                                                              
+                            htmlAttributes: new { @class = "form-control", multiple = "" })
+            </div>
+        </div>
+        <div class="form-group">
+
+            <label class="control-label col-md-2" for="qitashuoming4">其他说明</label>
+            <div class="col-md-8">
+                @Html.TextAreaFor(m => m.qitashuoming4, htmlAttributes: new { @class = "form-control", multiple="" })
+            </div>
+        </div>
+        <div class="form-group">
+            <div class="col-md-offset-2 col-md-10">
+                <input id="saveBtn" type="button" value="保存" class="btn btn-primary btn-check" data-loading-text="提交中..." style="width:100px;height:35px" />
+            </div>
+        </div>
+    </div>
+</form>
+<script>
+    $(function () {
+       
+        $("#Mingjian-dtl4-form #saveBtn").click(function () {
+            if (!CommitCheck()) {
+                alert("正在审核中或者非本人添加的项目");
+                return false;
+            }
+            $(this).button("loading")
+            var params = $("#Mingjian-dtl4-form").serializeJson('&');
+            params = $.extend(params, getMstObject());
+
+            $.post("/DemandBook/SaveMingjianDtl4", params, function (data) {
+                $("#RequirementId").val(data);
+                loadMingjianDtl4();
+                closeModal();
+            });
+        })
+    })
+</script>

@@ -1,0 +1,167 @@
+﻿@model Purchase.DAL.Requirement_Internal_Intangible_Qita2
+
+<form id="anfang-dtl1-form">
+    @Html.Hidden("SeqNO", 0)
+    <div class="form-horizontal">
+        <div class="form-group">
+            <label class="control-label col-md-2" for="AgeGroup">费用构成</label>
+            <div class="col-md-4">
+                @Html.TextBoxFor(m => m.CostStruct, htmlAttributes: new { @class = "form-control" })
+            </div>
+            @*<div class="col-md-4">
+                @Html.DropDownListFor(m => m.CostStruct, new List<SelectListItem> {new SelectListItem(){Text="",Value=""},
+                    new SelectListItem(){ Text="费用构成",Value="费用构成"},
+                    new SelectListItem(){ Text="不涉及",Value="不涉及"},
+                    new SelectListItem(){ Text="不限制",Value="不限制"}
+               }, htmlAttributes: new { @class = "form-control" })
+            </div>*@
+            <label class="control-label col-md-2" for="AgeGroup">品牌</label>
+            @*<div class="col-md-4">
+                @Html.DropDownListFor(m => m.Brand, new List<SelectListItem> {new SelectListItem(){Text="",Value=""},
+                    new SelectListItem(){ Text="品牌1",Value="品牌1"},
+                    new SelectListItem(){ Text="不涉及",Value="不涉及"},
+                    new SelectListItem(){ Text="不限制",Value="不限制"}
+               }, htmlAttributes: new { @class = "form-control" })
+            </div>*@
+            <div class="col-md-4">
+                @Html.TextBoxFor(m => m.Brand, htmlAttributes: new { @class = "form-control" })
+            </div>
+        </div>
+        <div class="form-group">
+            <label class="control-label col-md-2" for="EducationGroup">规格</label>
+            <div class="col-md-4">
+                @Html.TextBoxFor(m => m.Specification, htmlAttributes: new { @class = "form-control" })
+            </div>
+            @*<div class="col-md-4">
+                @Html.DropDownListFor(m => m.Specification, new List<SelectListItem> {new SelectListItem(){Text="",Value=""},
+                    new SelectListItem(){ Text="规格1",Value="规格1"},
+                    new SelectListItem(){ Text="不涉及",Value="不涉及"},
+                    new SelectListItem(){ Text="不限制",Value="不限制"}
+               }, htmlAttributes: new { @class = "form-control" })
+            </div>*@
+            <label class="control-label col-md-2" for="EducationGroup">型号</label>
+            <div class="col-md-4">
+                @Html.TextBoxFor(m => m.Model, htmlAttributes: new { @class = "form-control" })
+            </div>
+            @*<div class="col-md-4">
+                @Html.DropDownListFor(m => m.Model, new List<SelectListItem> {new SelectListItem(){Text="",Value=""},
+                    new SelectListItem(){ Text="型号1",Value="型号1"},
+                    new SelectListItem(){ Text="不涉及",Value="不涉及"},
+                    new SelectListItem(){ Text="不限制",Value="不限制"}
+               }, htmlAttributes: new { @class = "form-control" })
+            </div>*@
+        </div>
+        <div class="form-group">
+            <label class="control-label col-md-2" for="EducationGroup">配置</label>
+            <div class="col-md-4">
+                @Html.TextBoxFor(m => m.Configuration, htmlAttributes: new { @class = "form-control" })
+            </div>
+            <label class="control-label col-md-2" for="EducationGroup">售后服务内容</label>
+            <div class="col-md-4">
+                @Html.TextBoxFor(m => m.AfterSaleContent, htmlAttributes: new { @class = "form-control" })
+            </div>
+            @*<div class="col-md-4">
+                @Html.DropDownListFor(m => m.AfterSaleContent, new List<SelectListItem> {new SelectListItem(){Text="",Value=""},
+                    new SelectListItem(){ Text="售后服务内容",Value="售后服务内容"},
+                    new SelectListItem(){ Text="不涉及",Value="不涉及"},
+                    new SelectListItem(){ Text="不限制",Value="不限制"}
+               }, htmlAttributes: new { @class = "form-control" })
+            </div>*@
+        </div>
+        <div class="form-group">
+
+            <label class="control-label col-md-2" for="EducationGroup">售后服务期</label>
+            @*<div class="col-md-4">
+                @Html.DropDownListFor(m => m.AfterSalePeriod, new List<SelectListItem> {new SelectListItem(){Text="",Value=""},
+                    new SelectListItem(){ Text="包装要求1",Value="包装要求1"},
+                    new SelectListItem(){ Text="不涉及",Value="不涉及"},
+                    new SelectListItem(){ Text="不限制",Value="不限制"}
+               }, htmlAttributes: new { @class = "form-control" })
+            </div>*@
+            <div class="col-md-4">
+                @Html.TextBoxFor(m => m.AfterSalePeriod, htmlAttributes: new { @class = "form-control" })
+            </div>
+            <label class="control-label col-md-2" for="EducationGroup">质保期</label>
+            @*<div class="col-md-4">
+                @Html.DropDownListFor(m => m.Warranty, new List<SelectListItem> {new SelectListItem(){Text="",Value=""},
+                    new SelectListItem(){ Text="验货周期",Value="验货周期"},
+                    new SelectListItem(){ Text="不涉及",Value="不涉及"},
+                    new SelectListItem(){ Text="不限制",Value="不限制"}
+               }, htmlAttributes: new { @class = "form-control" })
+            </div>*@
+            <div class="col-md-4">
+                @Html.TextBoxFor(m => m.Warranty, htmlAttributes: new { @class = "form-control" })
+            </div>
+        </div>
+        <div class="form-group">
+            <label class="control-label col-md-2" for="EducationGroup">人员级别</label>
+            <div class="col-md-4">
+                @Html.TextBoxFor(m => m.StaffLevel, htmlAttributes: new { @class = "form-control" })
+            </div>
+            @*<div class="col-md-4">
+                @Html.DropDownListFor(m => m.StaffLevel, new List<SelectListItem> {new SelectListItem(){Text="",Value=""},
+                    new SelectListItem(){ Text="人员级别",Value="人员级别"},
+                    new SelectListItem(){ Text="不涉及",Value="不涉及"},
+                    new SelectListItem(){ Text="不限制",Value="不限制"}
+               }, htmlAttributes: new { @class = "form-control" })
+            </div>*@
+            <label class="control-label col-md-2" for="EducationGroup">下单日期</label>
+            <div class="col-md-4">
+                <input type="text" id="OrderDate" name="OrderDate" class="form-control" onclick="WdatePicker()" style="width:150px;float:left">
+            </div>
+        </div>
+        <div class="form-group">
+            <label class="control-label col-md-2" for="EducationGroup">交货日期</label>
+            <div class="col-md-4">
+                <input type="text" id="DeliveryDate" name="DeliveryDate" class="form-control" onclick="WdatePicker()" style="width:150px;float:left">
+            </div>
+            <label class="control-label col-md-2" for="EducationGroup">验收日期</label>
+            <div class="col-md-4">
+                <input type="text" id="AcceptanceDate" name="AcceptanceDate" class="form-control" onclick="WdatePicker()" style="width:150px;float:left">
+            </div>
+        </div>
+        <div class="form-group">
+            <label class="control-label col-md-2" for="TemplateName">样本量</label>
+            <div class="col-md-4">
+                @Html.TextBoxFor(m => m.Count, htmlAttributes: new { @class = "form-control" })
+            </div>
+            <label class="control-label col-md-2" for="TemplateName">其他说明</label>
+            <div class="col-md-4">
+                @Html.TextAreaFor(m => m.Remark, htmlAttributes: new { @class = "form-control" })
+            </div>
+        </div>
+        <div class="form-group">
+            <div class="col-md-offset-2 col-md-10">
+                <input id="saveBtn" type="button" value="保存" class="btn btn-primary btn-check" data-loading-text="提交中..." style="width:100px;height:35px" />
+            </div>
+        </div>
+    </div>
+</form>
+<script src="~/Content/My97DatePicker/WdatePicker.js"></script>
+<script src="~/Scripts/custom/form-serialize.js"></script>
+<script src="~/Scripts/custom/date-format.js"></script>
+<script>
+
+    $(function () {
+        $("#anfang-dtl1-form #saveBtn").click(function () {
+            if (!CommitCheck()) {
+                alert("正在审核中或者非本人添加的项目");
+                return false;
+            }
+            $(this).button("loading");
+            
+            var params = $("#anfang-dtl1-form").serializeJson('&');
+            params = $.extend(params, getMstObject());
+            debugger
+            params.RequirementGroupId = $("#GroupId").val();
+            $.post("/DemandBook/SaveWuxingshangpincaigouDtl1", params, function (data) {
+                if (window.opener && typeof window.opener.loadProjectCity != "undefined") {
+                    window.opener.loadProjectCity();
+                }
+                $("#RequirementId").val(data);
+                loadWuxingshangpincaigou1();
+                closeModal();
+            });
+        })
+    })
+</script>

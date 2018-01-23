@@ -1,0 +1,409 @@
+﻿@{
+    ViewBag.Title = "需求书登记";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+<style>
+    .table th {
+        text-align: center;
+    }
+</style>
+<div class="container">
+    <h4>@ViewBag.Title</h4>
+    <hr />
+    <form id="hidden-form">
+        <input id="RequirementType" name="RequirementType" type="hidden">
+        <input id="RequirementId" name="RequirementId" type="hidden" value="0">
+        <input id="ProjectId" name="ProjectId" type="hidden" value="0">
+        <input id="CitySeqNo" name="CitySeqNo" type="hidden" value="0">
+        <input id="HistoryChk" name="HistoryChk" type="hidden" value="0">
+        <input id="GroupId" name="GroupId" type="hidden" value="0">
+        <input id="ProjectApplyStatusCode" name="ProjectApplyStatusCode" class="form-control" type="hidden" />
+        <input id="ProjectUserChk" name="ProjectUserChk" class="form-control" type="hidden" />
+        <input id="ApplyStautCode" type="hidden" />
+    </form>
+    <table style="width:100%">
+        <tr>
+            <td colspan="10" style="text-align:right">
+                <a class="btn btn-primary" href="javascript:window.close()">关闭</a>
+            </td>
+        </tr>
+    </table>
+
+    <div id="DemandBookContent"></div>
+
+    <div id="qitashuoming-panel" class="panel panel-default mt20" style="display:none">
+        <div class="panel-heading">
+            <strong style="line-height:35px;font-size:14px;">其他说明</strong>
+            <button id="btnAddDtlLast" class="btn btn-primary pull-right clearfix" onclick="addDtlLast()">添加</button>
+            <button class="btn btn-primary btn pull-right" style="margin-right:5px;" onclick="delDemandBookDtl('999')">删除</button>
+        </div>
+        <div class="panel-body">
+            <table id="dtllast-table" class="table table-bordered table-condensed table-hover text-center">
+                <thead>
+                    <tr>
+                        <th width="50">选择</th>
+                        <th width="50">
+                            复制
+                        </th>
+                        <th width="50">
+                            详细
+                        </th>
+                        <th width="50">
+                            序号
+                        </th>
+                        <th style="text-align:left">
+                            其他说明
+                        </th>
+                    </tr>
+                </thead>
+                <tbody></tbody>
+            </table>
+        </div>
+    </div>
+</div>
+<style>
+    .modal-body form .form-horizontal {
+        max-height: 610px;
+        overflow-y: auto;
+        overflow-x: hidden;
+        padding-right: 5px;
+    }
+</style>
+<script src="~/Scripts/custom/form-serialize.js"></script>
+<script>
+    var sourceData = [];
+    var sourceData1 = [];
+    var sourceData2 = [];
+    $(function () {
+        debugger
+        var type = getQueryString("DemandBookType")
+        var partialView = type + "/_PartialDemandBook" + type;
+        $("#DemandBookContent").load("/DemandBook/LoadPartial", { partialView: partialView }, function () {
+            $('.modal').modal({ backdrop: 'static', show: false });
+            var RequirementId = getQueryString("RequirementId");
+            var GroupId = getQueryString("GroupId");
+            $("#GroupId").val(GroupId);
+            $("#ProjectId").val(getQueryString("ProjectId"));
+            $("#CitySeqNo").val(getQueryString("SeqNO"));
+            if (RequirementId) {
+                $("#RequirementId").val(RequirementId);
+            }
+            debugger
+            $("#RequirementType").val(getQueryString("DemandBookType"));
+            if (type == "Youxingshangpincaigou" || type == "Wuxingshangpincaigou") {
+                $("#table-details").show();
+                $("#qitashuoming-panel").show();
+            }
+            else if (RequirementId && RequirementId > 0) {
+                //有RequirementId才显示下边的表格
+                debugger
+                $("#table-details").show();
+                $("#qitashuoming-panel").show();
+            }
+            GetProjects();
+            GetBase();
+            debugger
+            if (type == "Anfang") {
+                loadAnfangDtl1();
+                loadAnfangDtl2();
+                loadAnfangDtl3();
+                loadAnfangDtl4();
+                loadAnfangDtl5();
+                loadAnfangDtl6();
+                loadAnfangDtl7();
+            } else if (type == "Mingjian") {
+                loadMingjianDtl1();
+                loadMingjianDtl2();
+                loadMingjianDtl3();
+                loadMingjianDtl4();
+                loadMingjianDtl5();
+            } else if (type == "Zuotanhui") {
+                loadZuotanhuiDtl1();
+                loadZuotanhuiDtl2();
+                loadZuotanhuiDtl3();
+                loadZuotanhuiDtl4();
+                loadZuotanhuiDtl5();
+                loadZuotanhuiDtl6();
+            } else if (type == "Yunshuzuche") {
+                loadYunshuzucheDtl1();
+                loadYunshuzucheDtl2();
+            }
+            else if (type == "Yanjiujishujufenxi") {
+                loadYanjiujishujufenxiDtl1();
+                loadYanjiujishujufenxiDtl2();
+            } else if (type == "Wangluodiaoyan") {
+                loadWangluodiaoyanDtl1();
+                loadWangluodiaoyanDtl2();
+                loadWangluodiaoyanDtl3();
+                loadWangluodiaoyanDtl4();
+            } else if (type == "Gongyingshangchailv") {
+                loadGongyingshangchailvDtl1();
+            }
+            else if (type == "Shenfangjirijiliuzhi") {
+                debugger
+                loadShenfangjirijiliuzhiDtl1();
+                loadShenfangjirijiliuzhiDtl2();
+                loadShenfangjirijiliuzhiDtl3();
+                loadShenfangjirijiliuzhiDtl4();
+                loadShenfangjirijiliuzhiDtl5();
+                loadShenfangjirijiliuzhiDtl6();
+            }
+            else if (type == "Changdibuzhan") {
+                loadChangdibuzhanDtl1();
+                loadChangdibuzhanDtl2();
+            } else if (type == "Mianfangjidianfang") {
+                loadMianfangjidianfangDtl1();
+                loadMianfangjidianfangDtl2();
+                loadMianfangjidianfangDtl3();
+                loadMianfangjidianfangDtl4();
+                loadMianfangjidianfangDtl5();
+            } else if (type == "Pankujijiagediaocha") {
+                loadPankujijiagediaochaDtl1();
+                loadPankujijiagediaochaDtl2();
+                loadPankujijiagediaochaDtl3();
+                loadPankujijiagediaochaDtl4();
+                loadPankujijiagediaochaDtl5();
+            }
+            else if (type == "Bianchengjibianji") {
+                loadBianchengjibianjiDtl1();
+                loadBianchengjibianjiDtl2();
+            }
+            else if (type == "Bianmajifuhe") {
+                loadBianmajifuheDtl1();
+                loadBianmajifuheDtl2();
+                loadBianmajifuheDtl3();
+                loadBianmajifuheDtl4();
+                loadBianmajifuheDtl5();
+                loadBianmajifuheDtl6();
+                loadBianmajifuheDtl7();
+                loadBianmajifuheDtl71();
+                loadBianmajifuheDtl8();
+                loadBianmajifuheDtl9();
+            }
+            else if (type == "Cheliangzhanpinghui") {
+                loadCheliangzhanpinghuiDtl1();
+                loadCheliangzhanpinghuiDtl2();
+                loadCheliangzhanpinghuiDtl3();
+                loadCheliangzhanpinghuiDtl31();
+                loadCheliangzhanpinghuiDtl4();
+                loadCheliangzhanpinghuiDtl5();
+                loadCheliangzhanpinghuiDtl6();
+                loadCheliangzhanpinghuiDtl7();
+                loadCheliangzhanpinghuiDtl71();
+                loadCheliangzhanpinghuiDtl8();
+                loadCheliangzhanpinghuiDtl9();
+                loadCheliangzhanpinghuiDtl10();
+                loadCheliangzhanpinghuiDtl11();
+                loadCheliangzhanpinghuiDtl12();
+                loadCheliangzhanpinghuiDtl13();
+            }
+            else if (type == "Guankong") {
+                loadGuankongDtl1();
+                loadGuankongDtl2();
+                loadGuankongDtl3();
+            }
+            else if (type == "Youxingshangpincaigou") {
+
+                loadYouxingshangpincaigou1();
+            } else if (type == "Wuxingshangpincaigou") {
+                debugger
+                loadWuxingshangpincaigou1();
+            }
+            loadDtlLast();
+        });
+
+    })
+
+    function getMstObject() {
+        return $("#hidden-form").serializeJson();
+    }
+    function saveBase() {
+        debugger
+        if (!CommitCheck()) {
+            alert("正在审核中或者非本人添加的项目");
+            return false;
+        }
+        var params = $("#requirement-base-form").serializeJson();
+        params = $.extend(params, getMstObject());
+        params.RequirementGroupId = $("#GroupId").val();
+        $("#btnSaveBase").button("loading");
+        $.post("/DemandBook/SaveBase", params, function (data) {
+            if (window.opener && typeof window.opener.loadProjectCity != "undefined") {
+                window.opener.loadProjectCity();
+            }
+
+            if ($("#RequirementId").val() != data) {
+                window.location.href = window.location.href + "&RequirementId=" + data;
+            } else {
+                alert("保存成功！");
+            }
+        }).complete(function () { $("#btnSaveBase").button("reset"); });
+    }
+    function loadDtlLast() {
+        $.post("/DemandBook/LoadDtlLast", { RequirementId: $("#RequirementId").val() }, function (data) {
+            if (data) {
+                $("#dtllast-table tbody").empty();
+                $.each(data, function (index, item) {
+                    var tr = $("<tr>");
+
+                    tr.append($("<td></td>").append($("<input type='checkbox'>")));
+                    var copyBtn = $("<a class='btn btn-primary btn2'>").html("复制");
+                    copyBtn.click(function () {
+                        if (!CommitCheck()) {
+                            alert("正在审核中或者非本人添加的项目");
+                            return false;
+                        }
+                        item.SeqNO = 0;
+                        setModal("其他要求", "_PartialDtlLast", item);
+                        $("#myModal").modal("show");
+                    })
+                    tr.append($("<td></td>").append(copyBtn));
+                    var editBtn = $("<a class='btn btn-primary btn2'>").html("详细");
+                    editBtn.click(function () {
+                        setModal("其他要求", "_PartialDtlLast", item);
+                        $("#myModal").modal("show");
+                    })
+                    tr.append($("<td></td>").append(editBtn));
+                    tr.append($("<td></td>").html(item.SeqNO));
+                    if (item.OtherRemark == null) {
+                        item.OtherRemark = "";
+                    }
+                    tr.append($("<td  style='text-align:left'></td>").html(item.OtherRemark.replace(/\n/g, '<br>')));
+
+                    $("#dtllast-table tbody").append(tr);
+                })
+            }
+        })
+    }
+    function addDtlLast() {
+        if (!CommitCheck()) {
+            alert("正在审核中或者非本人添加的项目");
+            return false;
+        }
+        setModal("其他要求", "_PartialDtlLast", undefined);
+        $("#myModal").modal("show");
+    }
+    function GetProjects() {
+        $.get("/Projects/FindOne", { id: $("#ProjectId").val() }, function (obj) {
+            debugger
+            $("#ProjectApplyStatusCode").val(obj.ApplyStatusCode);
+            $("#ProjectUserChk").val(obj.UserChk);
+        })
+    }
+    function GetBase() {
+        $.post("/DemandBook/FindBase", { ProjectId: $("#ProjectId").val(), SeqNo: $("#CitySeqNo").val(), GroupId: $("#GroupId").val() }, function (data) {
+            if (data && data.length > 0) {
+                $("#RequirementBase").setForm(data[0]);
+            }
+        })
+    }
+    function CommitCheck() {
+        var ApplyStatusCode = $("#ProjectApplyStatusCode").val();
+        var UserChk = $("#ProjectUserChk").val();
+        if (ApplyStatusCode == undefined) {
+            ApplyStatusCode = "";
+        }
+        if (UserChk == undefined) {
+            UserChk = "true";
+        }
+        if (UserChk == "true") {
+            if (ApplyStatusCode != "") {
+                if (ApplyStatusCode == "完成") {
+                    return true;
+                }
+                else {
+                    return false;
+                }
+            }
+            else {
+                return false;
+            }
+        }
+        else {
+            return false;
+        }
+    }
+    function FloatAdd(arg1, arg2) {
+        var r1, r2, m;
+        try { r1 = arg1.toString().split(".")[1].length } catch (e) { r1 = 0 }
+        try { r2 = arg2.toString().split(".")[1].length } catch (e) { r2 = 0 }
+        m = Math.pow(10, Math.max(r1, r2));
+        return (arg1 * m + arg2 * m) / m;
+    }
+
+    function delDemandBookPeiE(dtl, type) {
+        var sData = sourceData;
+        if (type) {
+            if (type == "1") {
+                sData = sourceData1;
+            } else if (type == "2") {
+                sData = sourceData2;
+            }
+        }
+
+        delDemandBookDtl(dtl, function () {
+            $("#dtl" + dtl + "-table input[type=checkbox]:checked").each(function () {
+                var seqno = $(this).parents("tr").find("td:eq(3)").text();
+                for (i in sData) {
+                    if (sData[i].SeqNO == seqno) {
+                        sData.splice(i, 1);
+                        i--;
+                    }
+                }
+            });
+            if (type) {
+                if (type == "1") {
+                    loadpage1();
+                } else if (type == "2") {
+                    loadpage2();
+                }
+            } else {
+                loadpage();
+            }
+        });
+    }
+
+    //删除详细信息
+    function delDemandBookDtl(dtl, callback) {
+
+        var SeqNOs = '';
+        var table = "dtl" + dtl + "-table";
+        if (dtl == "999") {
+            table = "dtllast-table";
+        }
+        $("#" + table + " input[type=checkbox]:checked").each(function () {
+            var seqno = $(this).parents("tr").find("td:eq(3)").text();
+            SeqNOs += seqno + ",";
+        });
+        if (SeqNOs.length > 0) {
+            SeqNOs = SeqNOs.substr(0, SeqNOs.length - 1);
+        } else {
+            alert("请至少勾选一条记录");
+            return;
+        }
+        confirm("确定要删除勾选的记录吗？", function () {
+            $.post("/DemandBook/DeleteDtl", {
+                RequirementId: $("#RequirementId").val(),
+                RequirementType: $("#RequirementType").val(),
+                Dtl: dtl,
+                SeqNOs: SeqNOs,
+                GroupId: $("#GroupId").val(),
+                ProjectId: $("#ProjectId").val()
+            }, function () {
+                if (callback) {
+                    callback();
+                } else {
+                    if (dtl == "999") {
+                        loadDtlLast();
+                    } else if ($("#RequirementType").val() == "Wuxingshangpincaigou") {
+                        eval("loadWuxingshangpincaigou1").apply(this);
+                    }
+                    else {
+                        debugger
+                        eval("load" + $("#RequirementType").val() + "Dtl" + dtl).apply(this);
+                    }
+                }
+            });
+        });
+    }
+</script>

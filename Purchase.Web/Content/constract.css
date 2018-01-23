@@ -1,0 +1,115 @@
+﻿body {
+    margin: 0;   
+}
+
+.option-div {
+    position: fixed;
+    background: #eee;
+    height: auto;
+    width: 100%;
+    text-align: right;
+}
+
+    .option-div .nav {
+        padding-right: 30px;
+        line-height: 45px;
+    }
+
+    .option-div .btn {
+        padding: 6px 12px;
+        border-radius: 4px;
+        color: #fff;
+        display: inline-block;
+        padding: 6px 12px;
+        font-size: 14px;
+        font-weight: normal;
+        line-height: 1.42857143;
+        text-align: center;
+        white-space: nowrap;
+        vertical-align: middle;
+        background-color: #337ab7;
+        border-color: #2e6da4;
+        cursor: pointer;
+    }
+
+.container {
+    width: 870px;
+    margin: 0 auto;
+    padding-top: 70px;
+    font-family:'宋体';
+    font-size: 16px;
+}
+
+.text-center {
+    text-align: center;
+}
+
+.title-p3 {
+    font-size: 18px;
+    font-weight: 600;
+}
+
+p {
+    margin: 10px 0;
+    text-indent: 2em;
+    text-align: Justify;
+    text-justify: inter-ideograph;
+    line-height: 25px;
+}
+
+h4 {
+    font-size: 16px !important;
+    font-weight: 600;
+    margin: 20px 0;
+}
+
+h5 {
+    font-size: 16px !important;
+    font-weight: 100;
+}
+
+.table-div table {
+    width: 100%;
+    border-spacing: 0;
+    border-collapse: collapse !important;
+}
+
+    .table-div table th {
+        text-align: center;
+    }
+
+    .table-div table td,
+    .table-div table th {
+        padding: 6px;
+        background-color: #fff !important;
+        border: 1px solid #ddd !important;
+    }
+
+.table th, .table td {
+    /*word-break: keep-all;*/
+}
+
+#TemplateContent .fix-content {
+    padding-left: 25px;
+    text-indent: -24px;
+    line-height: 25px;
+}
+
+#TemplateContent .table-div {
+    padding-left: 30px;
+}
+
+#quotation-table {
+    font-size: 13px;
+    margin-bottom: 5px;
+}
+
+    #quotation-table td, #quotation-table th {
+        padding: 2px 3px;
+        text-align: center;
+        vertical-align:middle;
+    }
+
+    #quotation-table th {
+        
+    }

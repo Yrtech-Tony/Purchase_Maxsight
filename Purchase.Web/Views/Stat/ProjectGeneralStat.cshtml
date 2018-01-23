@@ -1,0 +1,1019 @@
+﻿@using Purchase.Web.Common
+@{
+    ViewBag.Title = "项目情况统计-自定义";
+    Layout = "../FlowOrder/_FlowOrderLayout.cshtml";
+}
+<style>
+    .count .panel-heading {
+        background: #eee;
+    }
+
+    .checkbox, .radio {
+        display: inline-block;
+        margin-right: 5px !important;
+    }
+
+    .panel {
+        border-radius: 0;
+    }
+
+    .bootstrap-select {
+        min-width: 100%;
+    }
+
+    a.btn-primary {
+        color: #fff;
+    }
+
+        a.btn-primary:hover {
+            color: #fff;
+        }
+</style>
+<div class="count inline-block">
+    <form id="search-form" class="form">
+        <table>
+            <tr>
+                <td colspan="5" style="text-align:right">
+                    <a id="btnQuery" class="btn btn-primary" style="width:100px">统  计</a>
+                </td>
+            </tr>
+        </table>
+        <div class="panel panel-default" style="margin-bottom:0px;">
+            <div class="panel-heading">
+                <h4 class="panel-title">
+                    <a data-toggle="collapse" href="#collapse-table-main">
+                        <i class="glyphicon glyphicon-minus"></i> 常用信息
+                    </a>
+                </h4>
+            </div>
+            <div id="collapse-table-main" class="panel-collapse collapse in">
+                <div class="panel-body">
+                    <table>
+                        <tr>
+                            <td width="80">项目</td>
+                            <td width="460" colspan="3">
+                                <div style="width: 75%; float: left">
+                                    <input id="ProjectName" name="ProjectName" class="form-control" disabled />
+                                    <input id="ProjectId" name="ProjectId" type="hidden" />                                    
+                                </div>
+                                <div style="width: 25%; float:right; text-align: right">
+                                    <a id="btnProjectSelect" class="btn btn-primary" style="width:100px">选择项目</a>
+                                </div>
+                            </td>
+                            <td width="80">供应商</td>
+                            <td width="460" colspan="3">
+                                <div style="width: 75%; float: left">
+                                    <input id="SupplierName" name="SupplierName" class="form-control" disabled />
+                                    <input id="SupplierId" name="SupplierId" type="hidden" />  
+                                </div>
+                                <div style="width: 25%; float: right; text-align: right; ">
+                                    <a id="btnSupplierSelect" class="btn btn-primary" style="width:100px;">选择供应商</a>
+                                </div>
+                            </td>
+
+                        </tr>
+                        <tr>
+                            <td width="80">期间</td>
+                            <td width="180">
+                                <input id="StartDate" name="StartDate" class="form-control" onclick="WdatePicker()" />
+                            </td>
+                            <td width="80">至</td>
+                            <td width="180">
+                                <input id="EndDate" name="EndDate" class="form-control" onclick="WdatePicker()" />
+                            </td>
+                            <td width="80">模块</td>
+                            <td width="180">
+                                <select id="ModelType" name="ModelType" class="form-control" multiple>
+                                    <option value=""></option>
+                                    <option value="业务">业务采购</option>
+                                    <option value="内部采购">内部采购</option>
+                                    <option value="其他">其他</option>
+                                </select>
+                            </td>
+                            <td width="80">分类</td>
+                            <td width="180">
+                                @{
+                                    List<SelectListItem> fenleiList = SelectListTool.UnionListAndDistinct(
+                                        SelectListTool.HiddenCodeList("需求书-场地布展-场地要求-分类"),
+                                        SelectListTool.HiddenCodeList("需求书-场地布展-布展要求-分类"),
+                                        SelectListTool.HiddenCodeList("需求书-供应商差旅-差旅要求-分类"),
+                                        SelectListTool.HiddenCodeList("需求书-运输租车-展车租赁-分类"),
+                                        SelectListTool.HiddenCodeList("需求书-运输租车-展车运输-分类")
+                                        );
+                                }
+                                @Html.DropDownList("fenlei", fenleiList, htmlAttributes: new { @class = "form-control", multiple = "" })
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>项目类型</td>
+                            <td>
+                                @Html.DropDownList("ProjectType", SelectListTool.HiddenCodeList("立项-样本量-项目类型"), htmlAttributes: new { @class = "form-control", @multiple = "multiple" })
+                            </td>
+                            <td>执行方式</td>
+                            <td>
+                                @Html.DropDownList("ExcuteMode", SelectListTool.HiddenCodeList("立项-样本量-执行方式"), htmlAttributes: new { @class = "form-control", @multiple = "multiple" })
+                            </td>
+                            <td>采购分类</td>
+                            <td>
+                                @Html.DropDownList("PurchaseType", SelectListTool.HiddenCodeList("立项-样本量-采购分类"), htmlAttributes: new { @class = "form-control", @multiple = "multiple" })
+                            </td>
+                            <td>采购方式</td>
+                            <td>
+                                @Html.DropDownList("PurchaseMode", SelectListTool.HiddenCodeList("立项-样本量-采购方式"), htmlAttributes: new { @class = "form-control", @multiple = "multiple" })
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>提供服务</td>
+                            <td>
+                                @Html.DropDownList("SupplyService", SelectListTool.HiddenCodeList("立项-业务-提供服务"), htmlAttributes: new { @class = "form-control", @multiple = "multiple" })
+                            </td>
+                            <td>品名</td>
+                            <td>
+                                <input id="ItemName" name="ItemName" class="form-control" />
+                            </td>
+                            <td>执行省份</td>
+                            <td>
+                                <select id="Province" name="zhixingshengfen" class="form-control"></select>
+                            </td>
+                            <td>执行城市</td>
+                            <td>
+                                <select id="City" name="zhixingchengshi" class="form-control" multiple></select>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>工作分类</td>
+                            <td>
+                                <input id="gongzuofenlei" name="gongzuofenlei" class="form-control" />
+                            </td>
+                            <td>执行分类</td>
+                            <td>
+                                @{
+                                    List<SelectListItem> zhixingfenleiList = SelectListTool.UnionListAndDistinct(
+                                        SelectListTool.HiddenCodeList("需求书-暗访-配额要求-执行分类"),
+                                        SelectListTool.HiddenCodeList("需求书-车辆展评会-定量-配额要求-执行分类"),
+                                        SelectListTool.HiddenCodeList("需求书-车辆展评会-深访及日记留置-配额要求-执行分类"),
+                                        SelectListTool.HiddenCodeList("需求书-车辆展评会-座谈会-配额要求-执行分类"),
+                                        SelectListTool.HiddenCodeList("需求书-管控-配额要求-执行分类"),
+                                        SelectListTool.HiddenCodeList("需求书-面访及电访-配额要求-执行分类"),
+                                        SelectListTool.HiddenCodeList("需求书-明检-配额要求-执行分类"),
+                                        SelectListTool.HiddenCodeList("需求书-盘库及价格调查-配额要求-执行分类"),
+                                        SelectListTool.HiddenCodeList("需求书-深访及日记留置-配额要求-执行分类"),
+                                        SelectListTool.HiddenCodeList("需求书-网络调研-配额要求-执行分类"),
+                                        SelectListTool.HiddenCodeList("需求书-座谈会-配额要求-执行分类")
+                                        );
+                                }
+                                @Html.DropDownList("zhixingfenlei", zhixingfenleiList, htmlAttributes: new { @class = "form-control", multiple = "" })
+                            </td>
+                            <td>客户分类</td>
+                            <td>
+                                @{
+                                    List<SelectListItem> kehufenleiList = SelectListTool.UnionListAndDistinct(
+                                        SelectListTool.HiddenCodeList("需求书-暗访-配额要求-客户分类"),
+                                        SelectListTool.HiddenCodeList("需求书-车辆展评会-定量-配额要求-客户分类"),
+                                        SelectListTool.HiddenCodeList("需求书-车辆展评会-深访及日记留置-配额要求-客户分类"),
+                                        SelectListTool.HiddenCodeList("需求书-车辆展评会-座谈会-配额要求-客户分类"),
+                                        SelectListTool.HiddenCodeList("需求书-面访及电访-配额要求-客户分类"),
+                                        SelectListTool.HiddenCodeList("需求书-盘库及价格调查-配额要求-客户分类"),
+                                        SelectListTool.HiddenCodeList("需求书-深访及日记留置-配额要求-客户分类"),
+                                        SelectListTool.HiddenCodeList("需求书-网络调研-配额要求-客户分类"),
+                                        SelectListTool.HiddenCodeList("需求书-座谈会-配额要求-客户分类")
+
+                                        );
+                                }
+                                @Html.DropDownList("kehufenlei", kehufenleiList, htmlAttributes: new { @class = "form-control", multiple = "" })
+                            </td>
+                            <td>用户分类</td>
+                            <td>
+                                @{
+                                    List<SelectListItem> yonghufenleiList = SelectListTool.UnionListAndDistinct(
+                                        SelectListTool.HiddenCodeList("需求书-车辆展评会-定量-配额要求-用户分类"),
+                                        SelectListTool.HiddenCodeList("需求书-车辆展评会-深访及日记留置-配额要求-用户分类"),
+                                        SelectListTool.HiddenCodeList("需求书-车辆展评会-座谈会-配额要求-用户分类"),
+                                        SelectListTool.HiddenCodeList("需求书-面访及电访-配额要求-用户分类"),
+                                        SelectListTool.HiddenCodeList("需求书-深访及日记留置-配额要求-用户分类"),
+                                        SelectListTool.HiddenCodeList("需求书-网络调研-配额要求-用户分类"),
+                                        SelectListTool.HiddenCodeList("需求书-座谈会-配额要求-用户分类")
+                                        );
+                                }
+                                @Html.DropDownList("yonghufenlei", yonghufenleiList, htmlAttributes: new { @class = "form-control", multiple = "" })
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>品牌分类</td>
+                            <td>
+                                @{
+                                    List<SelectListItem> pinpaifenleiList = SelectListTool.UnionListAndDistinct(
+                                        SelectListTool.HiddenCodeList("需求书-暗访-配额要求-品牌分类"),
+                                        SelectListTool.HiddenCodeList("需求书-车辆展评会-定量-配额要求-品牌分类"),
+                                        SelectListTool.HiddenCodeList("需求书-车辆展评会-深访及日记留置-配额要求-品牌分类"),
+                                        SelectListTool.HiddenCodeList("需求书-车辆展评会-座谈会-配额要求-品牌分类"),
+                                        SelectListTool.HiddenCodeList("需求书-面访及电访-配额要求-品牌分类"),
+                                        SelectListTool.HiddenCodeList("需求书-明检-配额要求-品牌分类"),
+                                        SelectListTool.HiddenCodeList("需求书-盘库及价格调查-配额要求-品牌分类"),
+                                        SelectListTool.HiddenCodeList("需求书-深访及日记留置-配额要求-品牌分类"),
+                                        SelectListTool.HiddenCodeList("需求书-网络调研-配额要求-品牌分类"),
+                                        SelectListTool.HiddenCodeList("需求书-座谈会-配额要求-品牌分类")
+                                        );
+                                }
+                                @Html.DropDownList("pinpaifenlei", pinpaifenleiList, htmlAttributes: new { @class = "form-control", multiple = "" })
+                            </td>
+                            <td>现有或潜在</td>
+                            <td>
+                                @{
+                                    List<SelectListItem> xianyouhuoqianzaiList = SelectListTool.UnionListAndDistinct(
+                                        SelectListTool.HiddenCodeList("需求书-车辆展评会-定量-配额要求-现有或潜在"),
+                                        SelectListTool.HiddenCodeList("需求书-车辆展评会-深访及日记留置-配额要求-现有或潜在"),
+                                        SelectListTool.HiddenCodeList("需求书-车辆展评会-座谈会-配额要求-现有或潜在"),
+                                        SelectListTool.HiddenCodeList("需求书-面访及电访-配额要求-现有或潜在"),
+                                        SelectListTool.HiddenCodeList("需求书-深访及日记留置-配额要求-现有或潜在"),
+                                        SelectListTool.HiddenCodeList("需求书-网络调研-配额要求-现有或潜在"),
+                                        SelectListTool.HiddenCodeList("需求书-座谈会-配额要求-现有或潜在")
+                                        );
+                                }
+                                @Html.DropDownList("xianyouhuoqianzai", xianyouhuoqianzaiList, htmlAttributes: new { @class = "form-control", multiple = "" })
+
+                            </td>
+                            <td>工作职责 </td>
+                            <td>
+                                @{
+                                    List<SelectListItem> gongzuozhizeList = SelectListTool.UnionListAndDistinct(
+                                        SelectListTool.HiddenCodeList("需求书-车辆展评会-定量-配额要求-工作职责"),
+                                        SelectListTool.HiddenCodeList("需求书-车辆展评会-深访及日记留置-配额要求-工作职责"),
+                                        SelectListTool.HiddenCodeList("需求书-车辆展评会-座谈会-配额要求-工作职责"),
+                                        SelectListTool.HiddenCodeList("需求书-面访及电访-配额要求-工作职责"),
+                                        SelectListTool.HiddenCodeList("需求书-深访及日记留置-配额要求-工作职责"),
+                                        SelectListTool.HiddenCodeList("需求书-网络调研-配额要求-工作职责"),
+                                        SelectListTool.HiddenCodeList("需求书-座谈会-配额要求-工作职责")
+                                        );
+                                }
+                                @Html.DropDownList("gongzuozhize", gongzuozhizeList, htmlAttributes: new { @class = "form-control", multiple = "" })
+                            </td>
+                            <td>车辆类别</td>
+                            <td>
+                                @{
+                                    List<SelectListItem> cheliangleibieList = SelectListTool.UnionListAndDistinct(
+                                        SelectListTool.HiddenCodeList("需求书-暗访-配额要求-车辆类别"),
+                                        SelectListTool.HiddenCodeList("需求书-车辆展评会-定量-配额要求-车辆类别"),
+                                        SelectListTool.HiddenCodeList("需求书-车辆展评会-深访及日记留置-配额要求-车辆类别"),
+                                        SelectListTool.HiddenCodeList("需求书-车辆展评会-座谈会-配额要求-车辆类别"),
+                                        SelectListTool.HiddenCodeList("需求书-面访及电访-配额要求-车辆类别"),
+                                        SelectListTool.HiddenCodeList("需求书-盘库及价格调查-配额要求-车辆类别"),
+                                        SelectListTool.HiddenCodeList("需求书-深访及日记留置-配额要求-车辆类别"),
+                                        SelectListTool.HiddenCodeList("需求书-网络调研-配额要求-车辆类别"),
+                                        SelectListTool.HiddenCodeList("需求书-座谈会-配额要求-车辆类别")
+                                        );
+                                }
+                                @Html.DropDownList("cheliangleibie", cheliangleibieList, htmlAttributes: new { @class = "form-control", multiple = "" })
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>车价范围</td>
+                            <td>
+                                @{
+                                    List<SelectListItem> chejiafanweiList = SelectListTool.UnionListAndDistinct(
+                                        SelectListTool.HiddenCodeList("需求书-暗访-配额要求-车价范围"),
+                                        SelectListTool.HiddenCodeList("需求书-车辆展评会-深访及日记留置-配额要求-车价范围"),
+                                        SelectListTool.HiddenCodeList("需求书-车辆展评会-定量-配额要求-车价范围"),
+                                        SelectListTool.HiddenCodeList("需求书-车辆展评会-座谈会-配额要求-车价范围"),
+                                        SelectListTool.HiddenCodeList("需求书-面访及电访-配额要求-车价范围"),
+                                        SelectListTool.HiddenCodeList("需求书-盘库及价格调查-配额要求-车价范围"),
+                                        SelectListTool.HiddenCodeList("需求书-深访及日记留置-配额要求-车价范围"),
+                                        SelectListTool.HiddenCodeList("需求书-网络调研-配额要求-车价范围"),
+                                        SelectListTool.HiddenCodeList("需求书-座谈会-配额要求-车价范围")
+                                        );
+                                }
+                                @Html.DropDownList("chejiafanwei", chejiafanweiList, htmlAttributes: new { @class = "form-control", multiple = "" })
+                            </td>
+                            <td>进店方式</td>
+                            <td>
+                                @{
+                                    List<SelectListItem> jindianfangshiList = SelectListTool.UnionListAndDistinct(
+                                        SelectListTool.HiddenCodeList("需求书-暗访-配额要求-进店方式"),
+                                        SelectListTool.HiddenCodeList("需求书-明检-配额要求-进店方式"),
+                                        SelectListTool.HiddenCodeList("需求书-盘库及价格调查-配额要求-进店方式")
+                                        );
+                                }
+                                @Html.DropDownList("jindianfangshi", jindianfangshiList, htmlAttributes: new { @class = "form-control", multiple = "" })
+                            </td>
+                            <td>费用构成</td>
+                            <td>
+                                <input id="feiyonggoucheng" name="feiyonggoucheng" class="form-control" />
+                            </td>
+                        </tr>
+                    </table>
+                </div>
+
+            </div>
+        </div>
+
+        <div class="panel panel-default" style="margin-bottom:0px;">
+            <div class="panel-heading">
+                <h4 class="panel-title">
+                    <a data-toggle="collapse" href="#collapse-table-normal">
+                        <i class="glyphicon glyphicon-minus"></i> 基本信息
+                    </a>
+                </h4>
+            </div>
+            <div id="collapse-table-normal" class="panel-collapse collapse in">
+                <div class="panel-body">
+                    <table id="query-quotation-table">
+                        <tr>
+                            <td width="100">工作内容</td>
+                            <td width="180">
+                                <input id="gongzuoneirong" name="gongzuoneirong" class="form-control" />
+                            </td>
+                            <td width="100">服务地区</td>
+                            <td width="180">
+                                @Html.DropDownList("ServiceRegion", SelectListTool.HiddenCodeList("立项-服务地区"), htmlAttributes: new { @class = "form-control", @multiple = "multiple" })
+                            </td>
+                            <td width="100">所属部门</td>
+                            <td width="180">
+                                @{
+                                    List<SelectListItem> DepartmentCodeList = SelectListTool.UnionListAndDistinct(
+                                        SelectListTool.HiddenCodeList("立项-业务-所属部门"),
+                                        SelectListTool.HiddenCodeList("立项-内部采购-所属部门"),
+                                        SelectListTool.HiddenCodeList("立项-其他-所属部门")
+                                        );
+                                }
+                                @Html.DropDownList("DepartmentCode", DepartmentCodeList, htmlAttributes: new { @class = "form-control", multiple = "" })
+                            </td>
+                            <td width="100">费用所属<br/>部门</td>
+                            <td width="180">
+                                @{
+                                    List<SelectListItem> CostDepartmentList = SelectListTool.UnionListAndDistinct(
+                                        SelectListTool.HiddenCodeList("立项-业务-费用所属部门"),
+                                        SelectListTool.HiddenCodeList("立项-内部采购-费用所属部门"),
+                                        SelectListTool.HiddenCodeList("立项-其他-费用所属部门")
+                                        );
+                                }
+                                @Html.DropDownList("CostDepartment", CostDepartmentList, htmlAttributes: new { @class = "form-control", multiple = "" })
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>核算单位</td>
+                            <td>
+                                <input id="hesuandanwei" name="hesuandanwei" class="form-control" />
+                            </td>
+                            <td>参会人数</td>
+                            <td>
+                                @{
+                                    List<SelectListItem> canhuirenshuList = SelectListTool.UnionListAndDistinct(
+                                        SelectListTool.HiddenCodeList("需求书-车辆展评会-深访及日记留置-配额要求-参会人数"),
+                                        SelectListTool.HiddenCodeList("需求书-车辆展评会-座谈会-配额要求-参会人数"),
+                                        SelectListTool.HiddenCodeList("需求书-深访及日记留置-配额要求-参会人数")
+                                        );
+                                }
+                                @Html.DropDownList("canhuirenshu", canhuirenshuList, htmlAttributes: new { @class = "form-control", multiple = "" })
+                            </td>
+                            <td>单独邀约</td>
+                            <td>
+                                @{
+                                    List<SelectListItem> danduyaoyueList = SelectListTool.UnionListAndDistinct(
+                                        SelectListTool.HiddenCodeList("需求书-车辆展评会-深访及日记留置-配额要求-单独邀约"),
+                                        SelectListTool.HiddenCodeList("需求书-车辆展评会-座谈会-配额要求-单独邀约"),
+                                        SelectListTool.HiddenCodeList("需求书-深访及日记留置-配额要求-单独邀约"),
+                                        SelectListTool.HiddenCodeList("需求书-座谈会-配额要求-单独邀约")
+                                        );
+                                }
+                                @Html.DropDownList("danduyaoyue", danduyaoyueList, htmlAttributes: new { @class = "form-control", multiple = "" })
+                            </td>
+                            <td>具体购车<br/>时间</td>
+                            <td>
+                                <input id="jutigoucheshijian" name="jutigoucheshijian" class="form-control" />
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>复核要求</td>
+                            <td>
+                                @Html.DropDownList("fuheyaoqiu", SelectListTool.HiddenCodeList("需求书-编码及复核-配额要求-复核要求"),
+                        htmlAttributes: new { @class = "form-control", multiple = "" })
+                            </td>
+                            <td>电话咨询</td>
+                            <td>
+                                @Html.DropDownList("dianhuazixun", SelectListTool.HiddenCodeList("需求书-编码及复核-配额要求-电话咨询"),
+                        htmlAttributes: new { @class = "form-control", multiple = "" })
+                            </td>
+                            <td>电话回访</td>
+                            <td>
+                                @Html.DropDownList("dianhuhuifang", SelectListTool.HiddenCodeList("需求书-编码及复核-配额要求-电话回访"),
+                        htmlAttributes: new { @class = "form-control", multiple = "" })
+                            </td>
+                            <td>问卷编程</td>
+                            <td>
+                                @Html.DropDownList("wenjuanbiancheng", SelectListTool.HiddenCodeList("需求书-编码及复核-配额要求-问卷编程"),
+                        htmlAttributes: new { @class = "form-control", multiple = "" })
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>品牌</td>
+                            <td>
+                                <input id="Brand" name="Brand" class="form-control" />
+                            </td>
+
+                            <td>规格</td>
+                            <td>
+                                <input id="guige" name="guige" class="form-control" />
+                            </td>
+                            <td>型号 </td>
+                            <td>
+                                <input id="xinghao" name="xinghao" class="form-control" />
+                            </td>
+                            <td>配置</td>
+                            <td>
+                                <input id="Configuration" name="Configuration" class="form-control" />
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>进店规避<br/>要求</td>
+                            <td>
+                                @{
+                                    List<SelectListItem> jindianguibiyaoqiuList = SelectListTool.UnionListAndDistinct(
+                                        SelectListTool.HiddenCodeList("需求书-暗访-配额要求-进店规避要求"),
+                                        SelectListTool.HiddenCodeList("需求书-明检-配额要求-进店规避要求")
+                                        );
+                                }
+                                @Html.DropDownList("jindianguibiyaoqiu", jindianguibiyaoqiuList, htmlAttributes: new { @class = "form-control", multiple = "" })
+                            </td>
+                            <td>二次进店</td>
+                            <td>
+                                @{
+                                    List<SelectListItem> ercijindianList = SelectListTool.UnionListAndDistinct(
+                                        SelectListTool.HiddenCodeList("需求书-暗访-配额要求-二次进店")
+                                        );
+                                }
+                                @Html.DropDownList("ercijindian", ercijindianList, htmlAttributes: new { @class = "form-control", multiple = "" })
+
+                            </td>
+                            <td>访问时长</td>
+                            <td>
+                                @{
+                                    List<SelectListItem> fangwenshichangList = SelectListTool.UnionListAndDistinct(
+                                        SelectListTool.HiddenCodeList("需求书-明检-配额要求-访问时长"),
+                                        SelectListTool.HiddenCodeList("需求书-面访及电访-配额要求-访问时长"),
+                                        SelectListTool.HiddenCodeList("需求书-深访及日记留置-配额要求-访问时长"),
+                                        SelectListTool.HiddenCodeList("需求书-网络调研-配额要求-访问时长")
+                                        );
+                                }
+                                @Html.DropDownList("fangwenshichang", fangwenshichangList, htmlAttributes: new { @class = "form-control", multiple = "" })
+
+                            </td>
+                        </tr>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <div class="panel panel-default" style="margin-bottom:0px;">
+            <div class="panel-heading">
+                <h4 class="panel-title">
+                    <a data-toggle="collapse" href="#collapse-table-other">
+                        <i class="glyphicon glyphicon-minus"></i> 其他信息
+                    </a>
+                </h4>
+            </div>
+            <div id="collapse-table-other" class="panel-collapse collapse in">
+                <div class="panel-body">
+                    <table id="query-quotation-table">
+                        <tr>
+                            <td width="100">规格/要求</td>
+                            <td width="180">
+                                <input id="guigeyaoqiu" name="guigeyaoqiu" class="form-control">
+                            </td>
+                            <td width="100">质量标准</td>
+                            <td width="180">
+                                <input id="zhiliangbiaozhun" name="zhiliangbiaozhun" class="form-control" />
+                            </td>
+                            <td width="100">报酬方式</td>
+                            <td width="180">
+                                @{
+                                    List<SelectListItem> baochoufangshiList = SelectListTool.UnionListAndDistinct(
+                                        SelectListTool.HiddenCodeList("需求书-车辆展评会-定量-配额要求-报酬方式"),
+                                        SelectListTool.HiddenCodeList("需求书-车辆展评会-深访及日记留置-配额要求-报酬方式"),
+                                        SelectListTool.HiddenCodeList("需求书-车辆展评会-座谈会-配额要求-报酬方式"),
+                                        SelectListTool.HiddenCodeList("需求书-面访及电访-配额要求-报酬方式"),
+                                        SelectListTool.HiddenCodeList("需求书-深访及日记留置-配额要求-报酬方式"),
+                                        SelectListTool.HiddenCodeList("需求书-网络调研-配额要求-报酬方式"),
+                                        SelectListTool.HiddenCodeList("需求书-座谈会-配额要求-报酬方式")
+                                        );
+                                }
+                                @Html.DropDownList("baochoufangshi", baochoufangshiList, htmlAttributes: new { @class = "form-control", multiple = "" })
+                            </td>
+
+                            <td width="100">售后维修/<br>保养时间</td>
+                            <td width="180">
+                                @{
+                                    List<SelectListItem> shouhouweixiubaoyangshijianList = SelectListTool.UnionListAndDistinct(
+                                        SelectListTool.HiddenCodeList("需求书-车辆展评会-定量-配额要求-售后维修/保养时间"),
+                                        SelectListTool.HiddenCodeList("需求书-车辆展评会-深访及日记留置-配额要求-售后维修/保养时间"),
+                                        SelectListTool.HiddenCodeList("需求书-车辆展评会-座谈会-配额要求-售后维修/保养时间"),
+                                        SelectListTool.HiddenCodeList("需求书-面访及电访-配额要求-售后维修/保养时间"),
+                                        SelectListTool.HiddenCodeList("需求书-深访及日记留置-配额要求-售后维修/保养时间"),
+                                        SelectListTool.HiddenCodeList("需求书-网络调研-配额要求-售后维修/保养时间"),
+                                        SelectListTool.HiddenCodeList("需求书-座谈会-配额要求-售后维修/保养时间")
+                                        );
+                                }
+                                @Html.DropDownList("shouhouweixiubaoyangshijian", shouhouweixiubaoyangshijianList, htmlAttributes: new { @class = "form-control", multiple = "" })
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>样本编辑</td>
+                            <td>
+                                @Html.DropDownList("yanbenbianji", SelectListTool.HiddenCodeList("需求书-编码及复核-配额要求-样本编辑"),
+                        htmlAttributes: new { @class = "form-control", multiple = "" })
+                            </td>
+                            <td>辅助用品</td>
+                            <td>
+                                @Html.DropDownList("fuzhuyongpin", SelectListTool.HiddenCodeList("需求书-编码及复核-配额要求-辅助用品"),
+                        htmlAttributes: new { @class = "form-control", multiple = "" })
+                            </td>
+                            <td>编码类型</td>
+                            <td>
+                                @Html.DropDownList("bianmaleixing", SelectListTool.HiddenCodeList("需求书-编码及复核-配额要求-编码类型"),
+                        htmlAttributes: new { @class = "form-control", multiple = "" })
+                            </td>
+
+                            <td>题目数量</td>
+                            <td>
+                                @Html.DropDownList("timushuliang", SelectListTool.HiddenCodeList("需求书-编码及复核-配额要求-题目数量"),
+                        htmlAttributes: new { @class = "form-control", multiple = "" })
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>字数数量</td>
+                            <td>
+                                @Html.DropDownList("zishushuliang", SelectListTool.HiddenCodeList("需求书-编码及复核-配额要求-字数数量"),
+                        htmlAttributes: new { @class = "form-control", multiple = "" })
+                            </td>
+                            <td>颜色</td>
+                            <td>
+                                <input id="Color" name="Color" class="form-control" />
+                            </td>
+                            <td>材料</td>
+                            <td>
+                                <input id="Material" name="Material" class="form-control" />
+                            </td>
+
+                            <td>物流要求</td>
+                            <td>
+                                <input id="LogisticsRequirements" name="LogisticsRequirements" class="form-control" />
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>包装要求</td>
+                            <td>
+                                <input id="PackagingRequirements" name="PackagingRequirements" class="form-control" />
+                            </td>
+                            <td>验货周期</td>
+                            <td>
+                                <input id="InspectionCycle" name="InspectionCycle" class="form-control" />
+                            </td>
+                            <td>售后服务期</td>
+                            <td>
+                                <input id="AfterSalePeriod" name="AfterSalePeriod" class="form-control" />
+                            </td>
+
+                            <td>质保期</td>
+                            <td>
+                                <input id="Warranty" name="Warranty" class="form-control" />
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>售后服务内容</td>
+                            <td>
+                                <input id="AfterSaleContent" name="AfterSaleContent" class="form-control" />
+                            </td>
+                            <td>人员级别</td>
+                            <td>
+                                <input id="StaffLevel" name="StaffLevel" class="form-control" />
+                            </td>
+                            <td>下单日期</td>
+                            <td>
+                                <input id="OrderDate" name="OrderDate" class="form-control" onclick="WdatePicker()" />
+                            </td>
+
+                            <td>交货日期</td>
+                            <td>
+                                <input id="DeliveryDate" name="DeliveryDate" class="form-control" onclick="WdatePicker()" />
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>验收日期</td>
+                            <td>
+                                <input id="AcceptanceDate" name="AcceptanceDate" class="form-control" onclick="WdatePicker()" />
+                            </td>
+                            <td>类型/品牌</td>
+                            <td>
+                                <input id="leixingpinpai" name="leixingpinpai" class="form-control" />
+                            </td>
+                            <td>规格/型号</td>
+                            <td>
+                                <input id="guigexinghao" name="guigexinghao" class="form-control" />
+                            </td>
+
+                            <td>数量/面积</td>
+                            <td>
+                                <input id="shuliangmianji" name="shuliangmianji" class="form-control" />
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>使用时间</td>
+                            <td>
+                                @{
+                                    List<SelectListItem> shiyongshijianList = SelectListTool.UnionListAndDistinct(
+                                        SelectListTool.HiddenCodeList("需求书-运输租车-展车租赁-使用时间"),
+                                        SelectListTool.HiddenCodeList("需求书-运输租车-展车运输-使用时间")
+                                        );
+                                }
+                                @Html.DropDownList("shiyongshijian", shiyongshijianList, htmlAttributes: new { @class = "form-control", multiple = "" })
+                            </td>
+                        </tr>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </form>
+    <div class="panel panel-default" style="margin-bottom:0px;">
+        <div class="panel-heading">
+            <h4 class="panel-title">
+                <a data-toggle="collapse" href="#collapse-table-result-main">
+                    <i class="glyphicon glyphicon-minus"></i> 统计结果-常用
+                </a>
+            </h4>
+        </div>
+        <div id="collapse-table-result-main" class="panel-collapse collapse in">
+            <div class="panel-body row">
+            </div>
+        </div>
+    </div>
+    <div class="panel panel-default" style="margin-bottom:0px;">
+        <div class="panel-heading">
+            <h4 class="panel-title">
+                <a data-toggle="collapse" href="#collapse-table-result-normal">
+                    <i class="glyphicon glyphicon-minus"></i> 统计结果-基本
+                </a>
+            </h4>
+        </div>
+        <div id="collapse-table-result-normal" class="panel-collapse collapse in">
+            <div class="panel-body row">
+            </div>
+        </div>
+    </div>
+    <div class="panel panel-default" style="margin-bottom:0px;">
+        <div class="panel-heading">
+            <h4 class="panel-title">
+                <a data-toggle="collapse" href="#collapse-table-result-other">
+                    <i class="glyphicon glyphicon-minus"></i> 统计结果-其他
+                </a>
+            </h4>
+        </div>
+        <div id="collapse-table-result-other" class="panel-collapse collapse in">
+            <div class="panel-body row">
+            </div>
+        </div>
+    </div>
+    <div class="panel panel-default" style="margin-bottom:0px;">
+        <div class="panel-heading">
+            <h4 class="panel-title">
+                <a data-toggle="collapse" href="#collapse-table-statmode">
+                    <i class="glyphicon glyphicon-minus"></i> 统计方式
+                </a>
+            </h4>
+        </div>
+        <div id="collapse-table-statmode" class="panel-collapse collapse in">
+            <div class="panel-body row">
+                <div class="col-md-1">
+                    <input type="checkbox" class="radio" id="StatModeList" name="StatMode" value="List" />列表
+                </div>
+                <div class="col-md-1">
+                    <input type="checkbox" class="checkbox" id="StatModeCount" name="StatMode" value="Count" />Count
+                </div>
+
+                <div style="width:45px;float:left;position:relative;z-index:999">
+                    <input type="checkbox" class="radio" id="StatModeSum" name="StatMode" value="Sum" />Sum
+                </div>
+                <div class="col-md-3">
+                    <select id="SumTypeSel" multiple disabled>
+                        <option value="shuliang">确认单数量</option>
+                        <option value="jiesuanshuliang">结算单数量</option>
+                        <option value="chengshiyangbenliang">立项城市样本量</option>
+                        @*<option value="peieshuliang">配额</option>*@
+                    </select>
+                </div>
+
+                <div style="width:85px;float:left;position:relative;z-index:999">
+                    <input type="checkbox" class="checkbox" id="StatModeDistinctCount" name="StatMode" value="DistinctCount" />Count(去重)
+                </div>
+                <div class="col-md-3">
+                    <select id="CountTypeSel" disabled></select>
+                </div>
+            </div>
+        </div>
+    </div>
+    <table>
+        <tr>
+            <td colspan="5" style="text-align:right">
+                <a id="btnQuery2" class="btn btn-primary" style="width:100px">统  计</a>
+            </td>
+        </tr>
+    </table>
+    <p style="height:200px"></p>
+</div>
+<div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-hidden="false">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
+                <h4 class="modal-title"></h4>
+            </div>
+            <div class="modal-body">
+            </div>
+        </div>
+    </div>
+</div>
+@section Scripts {
+    <script src="~/Content/My97DatePicker/WdatePicker.js"></script>
+    <script src="~/Scripts/custom/form-serialize.js"></script>
+    <script src="~/Scripts/custom/province_city.js?1"></script>
+    <script>
+        var selectedProjects = [], selectedSuppliers = [];
+        $(function () {
+            $('.collapse').on('hide.bs.collapse', function () {
+                // do something…
+                var i = $(this).parent().find("a i");
+                i.removeClass("glyphicon-minus");
+                i.addClass("glyphicon-plus");
+            })
+            $('.collapse').on('show.bs.collapse', function () {
+                // do something…
+                var i = $(this).parent().find("a i");
+                i.removeClass("glyphicon-plus");
+                i.addClass("glyphicon-minus");
+            })
+
+            $("#btnQuery,#btnQuery2").click(function () {
+                loadStat();
+            })
+
+            $("select").data("live-search", true).prop("title", "").selectpicker({ width: 200 }).selectpicker("refresh");
+            //$.post("/DemandBook/ProjectSelectSearch", {
+            //    modelType: "",
+            //    projectCode: "",
+            //    projectName: "",
+            //    projectShortName: "",
+            //    serviceTrade: ""
+            //}, function (data) {
+            //    var el = $("#ProjectName");
+            //    if (data.List) {
+            //        el.empty();
+            //        $.each(data.List, function (i, item) {
+            //            el.append($("<option>").html(item.ProjectName).val(item.ProjectName));
+            //        });
+            //        el.data("live-search", true).prop("title", "").selectpicker({ 'min-width': "100%", width: 440 }).selectpicker("refresh");
+            //    }
+            //})
+
+            //$.post("/SupplierMng/GetAllSuppliers", {}, function (data) {
+            //    var el = $("#SupplierName");
+            //    if (data) {
+            //        el.empty();
+            //        $.each(data, function (i, item) {
+            //            el.append($("<option>").html(item.SupplierName).val(item.SupplierName));
+            //        });
+            //        el.data("live-search", true).prop("title", "").selectpicker({ width: 440 }).selectpicker("refresh");
+            //    }
+            //})
+
+            $.post("/Stat/GetCustomerColumns", {}, function (data) {
+                var rowMain = $("#collapse-table-result-main .row");
+                var rowNormal = $("#collapse-table-result-normal .row");
+                var rowOther = $("#collapse-table-result-other .row");
+                if (data) {
+                    rowMain.empty();
+                    rowNormal.empty();
+                    rowOther.empty();
+
+                    var colArr = [];
+                    $.each(data, function (i, item) {
+                        if ($.inArray(item.ColumnName, colArr) < 0) {
+                            var chkDiv = $('<div class="col-md-2">');
+                            var chk = $('<input type="checkbox" class="checkbox">').val(item.ColumnName);
+                            chkDiv.append(chk).append(item.ColumnName_CN);
+
+                            if (item.ShowType == "01") {
+                                rowMain.append(chkDiv);
+                            } else if (item.ShowType == "02") {
+                                rowNormal.append(chkDiv);
+                            } else {
+                                rowOther.append(chkDiv);
+                            }
+                        }
+
+                        colArr.push(item.ColumnName);
+                    });
+
+                    //bind count type
+                    $("#CountTypeSel").append($('<option>'));
+                    $.each(data, function (i, item) {
+                        var option = $('<option>');
+                        option.val(item.ColumnName).text(item.ColumnName_CN);
+                        $("#CountTypeSel").append(option);
+                    });
+                    $("#CountTypeSel").data("live-search", true).prop("title", "").selectpicker({ width: 200 }).selectpicker("refresh");
+                }
+            })
+
+            $("#StatModeSum").change(function () {
+                if ($(this).is(":checked")) {
+                    $("#SumTypeSel").prop("disabled", false).selectpicker('refresh');
+                } else {
+                    $("#SumTypeSel").prop("disabled", true).selectpicker('refresh');
+                }
+            });
+            $("#StatModeDistinctCount").change(function () {
+                if ($(this).is(":checked")) {
+                    $("#CountTypeSel").prop("disabled", false).selectpicker('refresh');
+                } else {
+                    $("#CountTypeSel").prop("disabled", true).selectpicker('refresh');
+                }
+            });
+
+            //项目选择
+            $("#btnProjectSelect").click(function () {
+                ProjectSelect();
+            })
+            //供应商选择
+            $("#btnSupplierSelect").click(function () {
+                SupplierSelect();
+            })
+        })
+
+        var requestList = [];
+        function loadStat() {
+            if (requestList.length > 0) {
+                for (i in requestList) {
+                    requestList[i].abort();
+                }
+            }
+            var params = $("#search-form").serializeJson();
+            for (pro in params) {
+                if (!params[pro]) {
+                    delete params[pro];
+                }
+            }
+
+            var showColumns = [];
+            var statResult = [];
+            $("[id^=collapse-table-result-] input:checked").each(function () {
+                statResult.push($(this).val());
+                showColumns.push($(this).parent().text());
+            })
+
+            var statModeChks = $("[name=StatMode]:checked");
+            if (statModeChks.length == 0) {
+                alert("请至少选择一个统计方式");
+                return;
+            }
+            debugger
+            var hasList = $("#StatModeList").is(":checked");
+            var hasCount = $("#StatModeCount").is(":checked");
+            
+            if (hasList || hasCount) {
+                if (showColumns.length == 0) {
+                    alert("请至少选择一个统计结果");
+                    return;
+                }
+            }
+
+            $("#myModal").modal("show");
+            $("#myModal .modal-title").html("统计结果");
+            $("#myModal .modal-body").empty();
+            $("#myModal .modal-body").load("/Stat/LoadPartial", { partialView: "_PartialGeneralStatResult" }, function () {
+                var modalBody = $(this);
+                var reaultSource = modalBody.find("#search-result");
+                //var statMode = $("[name=StatMode]:checked").val();
+
+                var times = statModeChks.length;
+                var index = 0;
+                var maxHeight = 550 / statModeChks.length - 10;
+                $(".loading").show();
+                statModeChks.each(function (i) {
+                    var statMode = $(this).val();
+                    var reault = reaultSource.clone().show().attr("id", reaultSource.attr("id") + "-" + i);
+                    reault.css("maxHeight", maxHeight);
+
+                    //加载单个查询方式
+                    var loadTable = function (resultDiv) {
+                        var headTr = $("<tr>");
+                        for (i in showColumns) {
+                            headTr.append($("<th>").html(showColumns[i]));
+                        }
+                        var countTypes = $("#CountTypeSel").val();
+                        var sumTypes = $("#SumTypeSel").val();
+                        if (statMode == "Count") {
+                            headTr.append($("<th>").html("Count"));
+                        } else if (statMode == "DistinctCount") {
+                            if (countTypes) {
+                                headTr.append($("<th>").html("Count"));
+                            } else {
+                                alert("需要选择一个Count的统计方式");
+                                return;
+                            }
+                        } else if (statMode == "Sum") {
+                            if (sumTypes) {
+                                for (i in sumTypes) {
+                                    var sumType = sumTypes[i];
+                                    if (sumType == "shuliang") {
+                                        headTr.append($("<th>").html("Sum(确认单数量)"));
+                                    } else if (sumType == "jiesuanshuliang") {
+                                        headTr.append($("<th>").html("Sum(结算单数量)"));
+                                    } else if (sumType == "chengshiyangbenliang") {
+                                        headTr.append($("<th>").html("Sum(立项城市样本量)"));
+                                    }
+                                    //else if (sumType == "peieshuliang") {
+                                    //    headTr.append($("<th>").html("Sum(配额)"));
+                                    //}
+                                }
+                            } else {
+                                alert("需要选择一个Sum的统计方式");
+                                return;
+                            }
+                        }
+                        resultDiv.find("table thead").append(headTr);
+
+                        var req = $.post("/Stat/GeneralStat", {
+                            condition: JSON.stringify(params),
+                            statResult: JSON.stringify(statResult),
+                            statMode: statMode,
+                            countType: JSON.stringify(countTypes),
+                            sumType: JSON.stringify(sumTypes)
+                        }, function (data) {
+                            index++;
+                            reaultSource.after(reault);
+                            if (data) {
+                                $.each(data, function (i, item) {
+                                    var tr = $("<tr>");
+
+                                    for (j in statResult) {
+                                        for (pro in item) {
+                                            if (pro == statResult[j]) {
+                                                tr.append($("<td>").html(item[pro]));
+                                            }
+                                        }
+                                    }
+                                    if (statMode == "Count") {
+                                        tr.append($("<td>").html(item["shuliang"]));
+                                    }
+                                    if (statMode == "DistinctCount") {
+                                        tr.append($("<td>").html(item["shuliang"]));
+                                    }
+                                    if (statMode == "Sum") {
+                                        for (i in sumTypes) {
+                                            var sumType = sumTypes[i];
+                                            tr.append($("<td>").html(item[sumType]));
+                                        }
+                                    }
+
+                                    resultDiv.find("table tbody").append(tr);
+                                })
+
+                                if (data.length > 0) {
+                                    //modalBody.find("#search-result").fixHeadColumn({ fixColumnIndex: 0 });
+                                }
+                            }
+                            if (index == times) {
+                                $(".loading").hide();
+                            }
+                        });
+                        requestList.push(req);
+                    }
+                    loadTable(reault);
+                })
+            });
+
+        }
+
+        function ProjectSelect() {
+            $("#myModal .modal-body").empty();
+            $("#myModal").modal("show");
+            $("#myModal .modal-title").html("选择项目");
+            $("#myModal .modal-body").load("/Stat/ProjectSelect", {
+                ProjectCode: "",
+                ProjectName: "",
+                ProjectShortName: ""
+            }, function () {
+
+            });
+        }
+        function SupplierSelect() {
+            $("#myModal .modal-body").empty();
+            $("#myModal").modal("show");
+            $("#myModal .modal-title").html("选择供应商");
+            $("#myModal .modal-body").load("/Stat/SupplierMngSelect",
+                { SupplierCode: "", SupplierName: "", SupplierShortName: "", province: '', city: '' }, function () {
+
+                });
+        }
+
+
+    </script>
+}

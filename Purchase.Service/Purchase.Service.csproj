@@ -1,0 +1,190 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="12.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProjectGuid>{81BBFCFC-FFE9-46F6-B5D8-D01D42809702}</ProjectGuid>
+    <OutputType>Library</OutputType>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <RootNamespace>Purchase.Service</RootNamespace>
+    <AssemblyName>Purchase.Service</AssemblyName>
+    <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
+    <FileAlignment>512</FileAlignment>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\Debug\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>bin\Release\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="EntityFramework">
+      <HintPath>..\packages\EntityFramework.6.1.3\lib\net45\EntityFramework.dll</HintPath>
+    </Reference>
+    <Reference Include="EntityFramework.SqlServer">
+      <HintPath>..\packages\EntityFramework.6.1.3\lib\net45\EntityFramework.SqlServer.dll</HintPath>
+    </Reference>
+    <Reference Include="System" />
+    <Reference Include="System.ComponentModel.DataAnnotations" />
+    <Reference Include="System.Core" />
+    <Reference Include="System.Xml.Linq" />
+    <Reference Include="System.Data.DataSetExtensions" />
+    <Reference Include="Microsoft.CSharp" />
+    <Reference Include="System.Data" />
+    <Reference Include="System.Xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="AccountService.cs" />
+    <Compile Include="CapitalRequirementService.cs" />
+    <Compile Include="ApplyService.cs" />
+    <Compile Include="DTO\CustomerColumnDto.cs" />
+    <Compile Include="DTO\CommitCheckDto.cs" />
+    <Compile Include="DTO\ConstractCommonTextDto.cs" />
+    <Compile Include="DTO\ConstractTemplateDto.cs" />
+    <Compile Include="DTO\ConstractDto.cs" />
+    <Compile Include="DTO\MyApplyDto.cs" />
+    <Compile Include="DTO\ProjectCityDto.cs" />
+    <Compile Include="DTO\ProjectDto.cs" />
+    <Compile Include="DTO\QuotationDto.cs" />
+    <Compile Include="DTO\QuotationDtoComparer.cs" />
+    <Compile Include="DTO\QuotationMstDto.cs" />
+    <Compile Include="DTO\Quotation_ZhiChi02Dto.cs" />
+    <Compile Include="DTO\Quotation_ZhiChi01Dto.cs" />
+    <Compile Include="DTO\Quotation_QiTa2Dto.cs" />
+    <Compile Include="DTO\Quotation_QiTa1Dto.cs" />
+    <Compile Include="DTO\Quotation_FuHeDto.cs" />
+    <Compile Include="DTO\Quotation_BianChengDto.cs" />
+    <Compile Include="DTO\Quotation_YanJiuDto.cs" />
+    <Compile Include="DTO\Quotation_CheZhanDto.cs" />
+    <Compile Include="DTO\Quotation_ZhiXingDto.cs" />
+    <Compile Include="DTO\RecheckStatusDtlDto.cs" />
+    <Compile Include="DTO\RecheckUserSelectDto.cs" />
+    <Compile Include="DTO\RemindDto.cs" />
+    <Compile Include="DTO\RequirementDtl0Dto.cs" />
+    <Compile Include="DTO\RequirementEmailSendDto.cs" />
+    <Compile Include="DTO\RequirementInternalIntangibleDto.cs" />
+    <Compile Include="DTO\RequirementInternalTangibleDto.cs" />
+    <Compile Include="DTO\RequiremetMstDto.cs" />
+    <Compile Include="DTO\SupplierDto.cs" />
+    <Compile Include="DTO\UserInfoDto.cs" />
+    <Compile Include="DTO\不可预见费\ContingencyDto.cs" />
+    <Compile Include="DTO\价格统计表\Jiagetongjibiao_Data_Shoudong_Dto.cs" />
+    <Compile Include="DTO\价格统计表\Jiagetongjibiao_Data_Zhixing_Dto.cs" />
+    <Compile Include="DTO\价格统计表\Jiagetongjibiao_Left_Shoudong_Dto.cs" />
+    <Compile Include="DTO\价格统计表\Jiagetongjibiao_Left_Zhichi_Dto.cs" />
+    <Compile Include="DTO\价格统计表\Jiagetongjibiao_Data_Zhichi_Dto.cs" />
+    <Compile Include="DTO\价格统计表\Jiagetongjibiao_Left_Yanjiu_Dto.cs" />
+    <Compile Include="DTO\价格统计表\Jiagetongjibiao_Data_Yanjiu_Dto.cs" />
+    <Compile Include="DTO\价格统计表\Jiagetongjibiao_Left_Fuhe_Dto.cs" />
+    <Compile Include="DTO\价格统计表\Jiagetongjibiao_Data_Fuhe_Dto.cs" />
+    <Compile Include="DTO\价格统计表\Jiagetongjibiao_Data_Chezhan_Dto.cs" />
+    <Compile Include="DTO\价格统计表\Jiagetongjibiao_Data_Biancheng_Dto.cs" />
+    <Compile Include="DTO\价格统计表\Jiagetongjibiao_Left_Chezhan_Dto.cs" />
+    <Compile Include="DTO\价格统计表\Jiagetongjibiao_Left_Biancheng_Dto.cs" />
+    <Compile Include="DTO\价格统计表\Jiagetongjibiao_HeaderDto.cs" />
+    <Compile Include="DTO\价格统计表\Jiagetongjibiao_Left_Zhixing_Dto.cs" />
+    <Compile Include="DTO\价格统计表\Jiagetongjibiao_Qita1_Dto.cs" />
+    <Compile Include="DTO\价格统计表\Jiagetongjibiao_Qita2_Dto.cs" />
+    <Compile Include="DTO\供应商评分\SupplierEvaAnaDto.cs" />
+    <Compile Include="DTO\供应商评分\SupplierEvaDto.cs" />
+    <Compile Include="DTO\决算统计表\Juesuantongjibiao1_Shoudong_LeftDto.cs" />
+    <Compile Include="DTO\决算统计表\Juesuantongjibiao1_Shoudong_DataDto.cs" />
+    <Compile Include="DTO\决算统计表\Juesuantongjibiao1_Shoudong_HeaderDto.cs" />
+    <Compile Include="DTO\决算统计表\Juesuantongjibiao1_inter_HeaderDto.cs" />
+    <Compile Include="DTO\决算统计表\Juesuantongjibiao1_inter_DataDto.cs" />
+    <Compile Include="DTO\决算统计表\Juesuantongjibiao1_inter_LeftDto.cs" />
+    <Compile Include="DTO\决算统计表\Juesuantongjibiao2_ShoudongDto.cs" />
+    <Compile Include="DTO\决算统计表\Juesuantongjibiao2_interDto.cs" />
+    <Compile Include="DTO\决算统计表\Juesuantongjibiao2Dto.cs" />
+    <Compile Include="DTO\决算统计表\Juesuantongjibiao1_DataDto.cs" />
+    <Compile Include="DTO\决算统计表\Juesuantongjibiao1_HeaderDto.cs" />
+    <Compile Include="DTO\决算统计表\Juesuantongjibiao1_LeftDto.cs" />
+    <Compile Include="DTO\应付流转单\FlowOrderBugetDto.cs" />
+    <Compile Include="DTO\应付流转单\PaymentListDto.cs" />
+    <Compile Include="DTO\应付流转单\FlowOrderDto.cs" />
+    <Compile Include="DTO\汇总表\HuizongbiaoSaveDto.cs" />
+    <Compile Include="DTO\汇总表\Huizongbiao_ShoudongDto.cs" />
+    <Compile Include="DTO\汇总表\Huizongbiao_Qita2.cs" />
+    <Compile Include="DTO\汇总表\Huizongbiao_Qita1.cs" />
+    <Compile Include="DTO\汇总表\Huizongbiao_ZhixingDto.cs" />
+    <Compile Include="DTO\汇总表\Huizongbiao_ZhichiDto.cs" />
+    <Compile Include="DTO\汇总表\Huizongbiao_YanjiuDto.cs" />
+    <Compile Include="DTO\汇总表\Huizongbiao_FuheDto.cs" />
+    <Compile Include="DTO\汇总表\Huizongbiao_ChezhanDto.cs" />
+    <Compile Include="DTO\汇总表\Huizongbiao_BianchengDto.cs" />
+    <Compile Include="DTO\确认单\QuotationPerQuotationTypeSum_Data_Dto.cs" />
+    <Compile Include="DTO\确认单\QuotationExport_Left_Dto.cs" />
+    <Compile Include="DTO\确认单\QuotationPerQuotationTypeSum_Head_Dto.cs" />
+    <Compile Include="DTO\确认单\QuotationExport_Head_Dto.cs" />
+    <Compile Include="DTO\确认单\QuotationPerQuotationTypeSum_Left_Dto.cs" />
+    <Compile Include="DTO\确认单\QuotationExport_Data_Dto.cs" />
+    <Compile Include="DTO\确认单\QuotationTypeDto.cs" />
+    <Compile Include="DTO\确认单\QuotationGroupDto.cs" />
+    <Compile Include="DTO\结算单\SettlementDtlDto.cs" />
+    <Compile Include="DTO\结算单\SettlementGroupDtlDto.cs" />
+    <Compile Include="DTO\结算单\SettlementBugetAmtDto.cs" />
+    <Compile Include="DTO\结算单\SettlementGroupDto.cs" />
+    <Compile Include="DTO\结算单\SettlementMstDto.cs" />
+    <Compile Include="DTO\资金计提\AccruedChargesDto.cs" />
+    <Compile Include="DTO\资金需求\CapitalRequirementDto.cs" />
+    <Compile Include="DTO\资金需求\LeftDto.cs" />
+    <Compile Include="DTO\资金需求\HeaderDto.cs" />
+    <Compile Include="DTO\资金需求\DataDto.cs" />
+    <Compile Include="DTO\需求书\RequirementGroupDto.cs" />
+    <Compile Include="AccruedChargeService.cs" />
+    <Compile Include="DTO\预算确认单\Group_YusuanDto.cs" />
+    <Compile Include="JiagetongjiebiaoService.cs" />
+    <Compile Include="JuesuantongjiebiaoService.cs" />
+    <Compile Include="HuizongbiaoService.cs" />
+    <Compile Include="SettlementService.cs" />
+    <Compile Include="FlowOrderService.cs" />
+    <Compile Include="MasterService.cs" />
+    <Compile Include="obj\Debug\TemporaryGeneratedFile_036C0B5B-1481-4323-8D20-8F5ADCB23D92.cs" />
+    <Compile Include="obj\Debug\TemporaryGeneratedFile_5937a670-0e60-4077-877b-f7221da3dda1.cs" />
+    <Compile Include="obj\Debug\TemporaryGeneratedFile_E7A71F73-0F8D-4B9B-B56E-8E70B10BC5D3.cs" />
+    <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="QuotationService.cs" />
+    <Compile Include="RequirementService.cs" />
+    <Compile Include="SupplierEvaService.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\Purchase.Common\Purchase.Common.csproj">
+      <Project>{4043fe37-4916-49b0-af33-be411992a084}</Project>
+      <Name>Purchase.Common</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Purchase.DAL\Purchase.DAL.csproj">
+      <Project>{ad554284-6875-4e12-936f-9bc7325d3042}</Project>
+      <Name>Purchase.DAL</Name>
+    </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="obj\Debug\DesignTimeResolveAssemblyReferencesInput.cache" />
+    <None Include="obj\Debug\Purchase.Service.csprojResolveAssemblyReference.cache" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="obj\Debug\Purchase.Service.csproj.FileListAbsolute.txt" />
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="obj\Debug\TempPE\" />
+  </ItemGroup>
+  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+  <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
+       Other similar extension points exist, see Microsoft.Common.targets.
+  <Target Name="BeforeBuild">
+  </Target>
+  <Target Name="AfterBuild">
+  </Target>
+  -->
+</Project>

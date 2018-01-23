@@ -1,0 +1,1024 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="12.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProductVersion>
+    </ProductVersion>
+    <SchemaVersion>2.0</SchemaVersion>
+    <ProjectGuid>{25DE01D1-E6B2-4D68-BBE4-DCA62A0FB54C}</ProjectGuid>
+    <ProjectTypeGuids>{349c5851-65df-11da-9384-00065b846f21};{fae04ec0-301f-11d3-bf4b-00c04f79efbc}</ProjectTypeGuids>
+    <OutputType>Library</OutputType>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <RootNamespace>Purchase.Web</RootNamespace>
+    <AssemblyName>Purchase.Web</AssemblyName>
+    <TargetFrameworkVersion>v4.5.1</TargetFrameworkVersion>
+    <MvcBuildViews>false</MvcBuildViews>
+    <UseIISExpress>true</UseIISExpress>
+    <IISExpressSSLPort />
+    <IISExpressAnonymousAuthentication />
+    <IISExpressWindowsAuthentication />
+    <IISExpressUseClassicPipelineMode />
+    <TargetFrameworkProfile />
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>bin\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="AutoMapper">
+      <HintPath>..\packages\AutoMapper.3.3.1\lib\net40\AutoMapper.dll</HintPath>
+    </Reference>
+    <Reference Include="AutoMapper.Net4">
+      <HintPath>..\packages\AutoMapper.3.3.1\lib\net40\AutoMapper.Net4.dll</HintPath>
+    </Reference>
+    <Reference Include="Common.Logging, Version=2.1.1.0, Culture=neutral, PublicKeyToken=af08829b84f0328e, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>PechkinDLLs\Common.Logging.dll</HintPath>
+    </Reference>
+    <Reference Include="EntityFramework">
+      <HintPath>..\packages\EntityFramework.6.1.3\lib\net45\EntityFramework.dll</HintPath>
+    </Reference>
+    <Reference Include="EntityFramework.SqlServer">
+      <HintPath>..\packages\EntityFramework.6.1.3\lib\net45\EntityFramework.SqlServer.dll</HintPath>
+    </Reference>
+    <Reference Include="ICSharpCode.SharpZipLib, Version=0.86.0.518, Culture=neutral, PublicKeyToken=1b03e6acf1164f73, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>.\ICSharpCode.SharpZipLib.dll</HintPath>
+    </Reference>
+    <Reference Include="Infragistics3.Documents.Excel.v11.1">
+      <HintPath>..\packages\Infragistics.Excel.10.2\Infragistics3.Documents.Excel.v11.1.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.CSharp" />
+    <Reference Include="Microsoft.Office.Interop.Excel, Version=15.0.0.0, Culture=neutral, PublicKeyToken=71e9bce111e9429c, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <EmbedInteropTypes>True</EmbedInteropTypes>
+      <HintPath>.\Microsoft.Office.Interop.Excel.dll</HintPath>
+    </Reference>
+    <Reference Include="OFFICE, Version=12.0.0.0, Culture=neutral, PublicKeyToken=71e9bce111e9429c">
+      <SpecificVersion>False</SpecificVersion>
+      <EmbedInteropTypes>True</EmbedInteropTypes>
+      <HintPath>.\OFFICE.DLL</HintPath>
+    </Reference>
+    <Reference Include="Pechkin, Version=0.5.8.1, Culture=neutral, processorArchitecture=x86">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>PechkinDLLs\Pechkin.dll</HintPath>
+      <EmbedInteropTypes>False</EmbedInteropTypes>
+    </Reference>
+    <Reference Include="SevenZipSharp">
+      <HintPath>.\SevenZipSharp.dll</HintPath>
+    </Reference>
+    <Reference Include="System" />
+    <Reference Include="System.Data" />
+    <Reference Include="System.Drawing" />
+    <Reference Include="System.Web.DynamicData" />
+    <Reference Include="System.Web.Entity" />
+    <Reference Include="System.Web.ApplicationServices" />
+    <Reference Include="System.ComponentModel.DataAnnotations" />
+    <Reference Include="System.Web" />
+    <Reference Include="System.Web.Abstractions" />
+    <Reference Include="System.Web.Routing" />
+    <Reference Include="System.Xml" />
+    <Reference Include="System.Configuration" />
+    <Reference Include="System.Web.Services" />
+    <Reference Include="System.EnterpriseServices" />
+    <Reference Include="Microsoft.Web.Infrastructure, Version=1.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <Private>True</Private>
+      <HintPath>..\packages\Microsoft.Web.Infrastructure.1.0.0.0\lib\net40\Microsoft.Web.Infrastructure.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Net.Http">
+    </Reference>
+    <Reference Include="System.Net.Http.WebRequest">
+    </Reference>
+    <Reference Include="System.Web.Helpers, Version=3.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <Private>True</Private>
+      <HintPath>..\packages\Microsoft.AspNet.WebPages.3.0.0\lib\net45\System.Web.Helpers.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Web.Mvc, Version=5.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <Private>True</Private>
+      <HintPath>..\packages\Microsoft.AspNet.Mvc.5.0.0\lib\net45\System.Web.Mvc.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Web.Optimization">
+      <HintPath>..\packages\Microsoft.AspNet.Web.Optimization.1.1.1\lib\net40\System.Web.Optimization.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Web.Razor, Version=3.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <Private>True</Private>
+      <HintPath>..\packages\Microsoft.AspNet.Razor.3.0.0\lib\net45\System.Web.Razor.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Web.WebPages, Version=3.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <Private>True</Private>
+      <HintPath>..\packages\Microsoft.AspNet.WebPages.3.0.0\lib\net45\System.Web.WebPages.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Web.WebPages.Deployment, Version=3.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <Private>True</Private>
+      <HintPath>..\packages\Microsoft.AspNet.WebPages.3.0.0\lib\net45\System.Web.WebPages.Deployment.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Web.WebPages.Razor, Version=3.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <Private>True</Private>
+      <HintPath>..\packages\Microsoft.AspNet.WebPages.3.0.0\lib\net45\System.Web.WebPages.Razor.dll</HintPath>
+    </Reference>
+    <Reference Include="Newtonsoft.Json">
+      <Private>True</Private>
+      <HintPath>..\packages\Newtonsoft.Json.5.0.6\lib\net45\Newtonsoft.Json.dll</HintPath>
+    </Reference>
+    <Reference Include="WebGrease">
+      <Private>True</Private>
+      <HintPath>..\packages\WebGrease.1.5.2\lib\WebGrease.dll</HintPath>
+    </Reference>
+    <Reference Include="Antlr3.Runtime">
+      <Private>True</Private>
+      <HintPath>..\packages\Antlr.3.4.1.9004\lib\Antlr3.Runtime.dll</HintPath>
+    </Reference>
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="App_Data\" />
+    <Folder Include="Export\DemandBook\" />
+    <Folder Include="Export\Quotation\" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="App_Start\BundleConfig.cs" />
+    <Compile Include="App_Start\FilterConfig.cs" />
+    <Compile Include="App_Start\RouteConfig.cs" />
+    <Compile Include="Attributes\AuthenAdminAttribute.cs" />
+    <Compile Include="Attributes\CustomHandleErrorAttribute.cs" />
+    <Compile Include="Attributes\RequirementSaveFilter.cs" />
+    <Compile Include="Attributes\LogFilter.cs" />
+    <Compile Include="Common\ConstractTemplateExport.cs" />
+    <Compile Include="Common\EmailSend\ConfigHost.cs" />
+    <Compile Include="Common\EmailSend\ConfigMail.cs" />
+    <Compile Include="Common\EmailSend\ISendMail.cs" />
+    <Compile Include="Common\EmailSend\UseNetMail.cs" />
+    <Compile Include="Common\JiagetongjiebiaoExport.cs" />
+    <Compile Include="Common\HuizongbiaoExport.cs" />
+    <Compile Include="Common\CapitalRequirementExport.cs" />
+    <Compile Include="Common\QuotationHorExport.cs" />
+    <Compile Include="Common\QuotationQueryExport.cs" />
+    <Compile Include="Common\SettlementExport.cs" />
+    <Compile Include="Common\QuotationExport.cs" />
+    <Compile Include="Common\DemandBookExport.cs" />
+    <Compile Include="Common\EmailService.cs" />
+    <Compile Include="Common\JsonNetResult.cs" />
+    <Compile Include="Common\MSExcelUtil.cs" />
+    <Compile Include="Common\SelectListTool.cs" />
+    <Compile Include="Common\JuesuantongjiebiaoExport.cs" />
+    <Compile Include="Common\AccruedChargesExport.cs" />
+    <Compile Include="Common\SupplierMngExport.cs" />
+    <Compile Include="Controllers\AccountController.cs" />
+    <Compile Include="Controllers\MstUserInfoController.cs" />
+    <Compile Include="Controllers\QuotationCopyController.cs" />
+    <Compile Include="Controllers\QuotationYusuanGroupController.cs" />
+    <Compile Include="Controllers\QuotationYusuanNewController.cs" />
+    <Compile Include="Controllers\SettlementExportController.cs" />
+    <Compile Include="Controllers\RecheckProcessController.cs" />
+    <Compile Include="Controllers\StatController.cs" />
+    <Compile Include="Controllers\SupplierEvaOldController.cs" />
+    <Compile Include="Controllers\SupplierEvaController.cs" />
+    <Compile Include="Controllers\AccruedChargesController.cs" />
+    <Compile Include="Controllers\ApplyCheckController.cs" />
+    <Compile Include="Controllers\BaseController.cs" />
+    <Compile Include="Controllers\CapitalRequirementController.cs" />
+    <Compile Include="Controllers\ConstractController.cs" />
+    <Compile Include="Controllers\ConstractTemplateController.cs" />
+    <Compile Include="Controllers\DemandBookController.cs" />
+    <Compile Include="Controllers\FlowOrderController.cs" />
+    <Compile Include="Controllers\HuizongbiaoController.cs" />
+    <Compile Include="Controllers\JiagetongjiebiaoController.cs" />
+    <Compile Include="Controllers\JuesuantongjiebiaoController.cs" />
+    <Compile Include="Controllers\PaymentController.cs" />
+    <Compile Include="Controllers\QuotationGroupController.cs" />
+    <Compile Include="Controllers\DemandBookGroupController.cs" />
+    <Compile Include="Controllers\QuotationNewController.cs" />
+    <Compile Include="Controllers\QuotationYusuanController.cs" />
+    <Compile Include="Controllers\QuotationExportController.cs" />
+    <Compile Include="Controllers\DemandBookExportController.cs" />
+    <Compile Include="Controllers\HiddenCodeController.cs" />
+    <Compile Include="Controllers\HomeController.cs" />
+    <Compile Include="Controllers\ProjectsController.cs" />
+    <Compile Include="Controllers\QuotationController.cs" />
+    <Compile Include="Controllers\QuotationImportController.cs" />
+    <Compile Include="Controllers\SettlementController.cs" />
+    <Compile Include="Controllers\SupplierMngController.cs" />
+    <Compile Include="Global.asax.cs">
+      <DependentUpon>Global.asax</DependentUpon>
+    </Compile>
+    <Compile Include="Common\HtmlToPDFTool.cs" />
+    <Compile Include="Models\ColumModel.cs" />
+    <Compile Include="Models\QuotationYusan.cs" />
+    <Compile Include="Models\QuotationDtlBase.cs" />
+    <Compile Include="Models\SupplierMngModel.cs" />
+    <Compile Include="Properties\AssemblyInfo.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="403.html" />
+    <Content Include="404.html" />
+    <Content Include="404_bg.png" />
+    <Content Include="7z.dll">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="7z64.dll">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Content\bootstrap.css" />
+    <Content Include="Content\bootstrap1.css" />
+    <Content Include="Content\bootstrap.min.css" />
+    <Content Include="Content\constract.css" />
+    <Content Include="Content\fix-column-head.css" />
+    <Content Include="Content\font-awesome-ie7.min.css" />
+    <Content Include="Content\font-awesome.min.css" />
+    <Content Include="Content\highcharts\highcharts.css" />
+    <Content Include="Content\highcharts\highcharts.js" />
+    <Content Include="Content\highcharts\themes\avocado.js" />
+    <Content Include="Content\highcharts\themes\avocado.src.js" />
+    <Content Include="Content\highcharts\themes\dark-blue.js" />
+    <Content Include="Content\highcharts\themes\dark-blue.src.js" />
+    <Content Include="Content\highcharts\themes\dark-green.js" />
+    <Content Include="Content\highcharts\themes\dark-green.src.js" />
+    <Content Include="Content\highcharts\themes\dark-unica.js" />
+    <Content Include="Content\highcharts\themes\dark-unica.src.js" />
+    <Content Include="Content\highcharts\themes\gray.js" />
+    <Content Include="Content\highcharts\themes\gray.src.js" />
+    <Content Include="Content\highcharts\themes\grid-light.js" />
+    <Content Include="Content\highcharts\themes\grid-light.src.js" />
+    <Content Include="Content\highcharts\themes\grid.js" />
+    <Content Include="Content\highcharts\themes\grid.src.js" />
+    <Content Include="Content\highcharts\themes\sand-signika.js" />
+    <Content Include="Content\highcharts\themes\sand-signika.src.js" />
+    <Content Include="Content\highcharts\themes\skies.js" />
+    <Content Include="Content\highcharts\themes\skies.src.js" />
+    <Content Include="Content\highcharts\themes\sunset.js" />
+    <Content Include="Content\highcharts\themes\sunset.src.js" />
+    <Content Include="Content\login.css" />
+    <Content Include="Content\My97DatePicker\calendar.js" />
+    <Content Include="Content\My97DatePicker\lang\en.js" />
+    <Content Include="Content\My97DatePicker\lang\zh-cn.js" />
+    <Content Include="Content\My97DatePicker\lang\zh-tw.js" />
+    <Content Include="Content\My97DatePicker\skin\datePicker.gif" />
+    <Content Include="Content\My97DatePicker\skin\default\datepicker.css" />
+    <Content Include="Content\My97DatePicker\skin\default\img.gif" />
+    <Content Include="Content\My97DatePicker\skin\WdatePicker.css" />
+    <Content Include="Content\My97DatePicker\skin\whyGreen\bg.jpg" />
+    <Content Include="Content\My97DatePicker\skin\whyGreen\datepicker.css" />
+    <Content Include="Content\My97DatePicker\skin\whyGreen\img.gif" />
+    <Content Include="Content\My97DatePicker\WdatePicker.js" />
+    <Content Include="Content\My97DatePicker\开发包\lang\en.js" />
+    <Content Include="Content\My97DatePicker\开发包\lang\zh-cn.js" />
+    <Content Include="Content\My97DatePicker\开发包\lang\zh-tw.js" />
+    <Content Include="Content\My97DatePicker\开发包\readme.txt" />
+    <Content Include="Content\My97DatePicker\开发包\skin\datePicker.gif" />
+    <Content Include="Content\My97DatePicker\开发包\skin\default\datepicker.css" />
+    <Content Include="Content\My97DatePicker\开发包\skin\default\img.gif" />
+    <Content Include="Content\My97DatePicker\开发包\skin\WdatePicker.css" />
+    <Content Include="Content\My97DatePicker\开发包\skin\whyGreen\bg.jpg" />
+    <Content Include="Content\My97DatePicker\开发包\skin\whyGreen\datepicker.css" />
+    <Content Include="Content\My97DatePicker\开发包\skin\whyGreen\img.gif" />
+    <Content Include="Content\select\css\bootstrap-select.css" />
+    <Content Include="Content\select\css\bootstrap-select.min.css" />
+    <Content Include="Content\select\js\bootstrap-select.js" />
+    <Content Include="Content\select\js\bootstrap-select.min.js" />
+    <Content Include="Content\select\js\i18n\defaults-bg_BG.js" />
+    <Content Include="Content\select\js\i18n\defaults-bg_BG.min.js" />
+    <Content Include="Content\select\js\i18n\defaults-cs_CZ.js" />
+    <Content Include="Content\select\js\i18n\defaults-cs_CZ.min.js" />
+    <Content Include="Content\select\js\i18n\defaults-da_DK.js" />
+    <Content Include="Content\select\js\i18n\defaults-da_DK.min.js" />
+    <Content Include="Content\select\js\i18n\defaults-de_DE.js" />
+    <Content Include="Content\select\js\i18n\defaults-de_DE.min.js" />
+    <Content Include="Content\select\js\i18n\defaults-en_US.js" />
+    <Content Include="Content\select\js\i18n\defaults-en_US.min.js" />
+    <Content Include="Content\select\js\i18n\defaults-es_CL.js" />
+    <Content Include="Content\select\js\i18n\defaults-es_CL.min.js" />
+    <Content Include="Content\select\js\i18n\defaults-eu.js" />
+    <Content Include="Content\select\js\i18n\defaults-eu.min.js" />
+    <Content Include="Content\select\js\i18n\defaults-fa_IR.js" />
+    <Content Include="Content\select\js\i18n\defaults-fa_IR.min.js" />
+    <Content Include="Content\select\js\i18n\defaults-fr_FR.js" />
+    <Content Include="Content\select\js\i18n\defaults-fr_FR.min.js" />
+    <Content Include="Content\select\js\i18n\defaults-hu_HU.js" />
+    <Content Include="Content\select\js\i18n\defaults-hu_HU.min.js" />
+    <Content Include="Content\select\js\i18n\defaults-it_IT.js" />
+    <Content Include="Content\select\js\i18n\defaults-it_IT.min.js" />
+    <Content Include="Content\select\js\i18n\defaults-ko_KR.js" />
+    <Content Include="Content\select\js\i18n\defaults-ko_KR.min.js" />
+    <Content Include="Content\select\js\i18n\defaults-nl_NL.js" />
+    <Content Include="Content\select\js\i18n\defaults-nl_NL.min.js" />
+    <Content Include="Content\select\js\i18n\defaults-pl_PL.js" />
+    <Content Include="Content\select\js\i18n\defaults-pl_PL.min.js" />
+    <Content Include="Content\select\js\i18n\defaults-pt_BR.js" />
+    <Content Include="Content\select\js\i18n\defaults-pt_BR.min.js" />
+    <Content Include="Content\select\js\i18n\defaults-pt_PT.js" />
+    <Content Include="Content\select\js\i18n\defaults-pt_PT.min.js" />
+    <Content Include="Content\select\js\i18n\defaults-ro_RO.js" />
+    <Content Include="Content\select\js\i18n\defaults-ro_RO.min.js" />
+    <Content Include="Content\select\js\i18n\defaults-ru_RU.js" />
+    <Content Include="Content\select\js\i18n\defaults-ru_RU.min.js" />
+    <Content Include="Content\select\js\i18n\defaults-sk_SK.js" />
+    <Content Include="Content\select\js\i18n\defaults-sk_SK.min.js" />
+    <Content Include="Content\select\js\i18n\defaults-sl_SI.js" />
+    <Content Include="Content\select\js\i18n\defaults-sl_SI.min.js" />
+    <Content Include="Content\select\js\i18n\defaults-sv_SE.js" />
+    <Content Include="Content\select\js\i18n\defaults-sv_SE.min.js" />
+    <Content Include="Content\select\js\i18n\defaults-tr_TR.js" />
+    <Content Include="Content\select\js\i18n\defaults-tr_TR.min.js" />
+    <Content Include="Content\select\js\i18n\defaults-ua_UA.js" />
+    <Content Include="Content\select\js\i18n\defaults-ua_UA.min.js" />
+    <Content Include="Content\select\js\i18n\defaults-zh_CN.js" />
+    <Content Include="Content\select\js\i18n\defaults-zh_CN.min.js" />
+    <Content Include="Content\select\js\i18n\defaults-zh_TW.js" />
+    <Content Include="Content\select\js\i18n\defaults-zh_TW.min.js" />
+    <Content Include="Content\style.css" />
+    <Content Include="ContractTemplate.html" />
+    <Content Include="EmailSign\kongshengbei-emailsign.png" />
+    <Content Include="EmailSign\lipengna-emailSign.png" />
+    <Content Include="EmailSign\gaolei-emailSign.png" />
+    <Content Include="EmailSign\xuweijia-emailsign.png" />
+    <Content Include="EmailSign\zhangqianqian-emailsign.png" />
+    <Content Include="EmailSign\zhengzilong-emailsign.png" />
+    <Content Include="favicon.ico" />
+    <Content Include="fonts\glyphicons-halflings-regular.svg" />
+    <Content Include="font\fontawesome-webfont.svg" />
+    <Content Include="GenericErrorPage.html" />
+    <Content Include="Global.asax" />
+    <Content Include="Content\Site.css" />
+    <Content Include="HtmlPage1.html" />
+    <Content Include="HtmlPage2.html" />
+    <Content Include="images\business.png" />
+    <Content Include="images\businessx.png" />
+    <Content Include="images\contract-table.png" />
+    <Content Include="images\contract.png" />
+    <Content Include="images\default.jpg" />
+    <Content Include="images\exit.png" />
+    <Content Include="images\help.png" />
+    <Content Include="images\ilink.png" />
+    <Content Include="images\infobg.png" />
+    <Content Include="images\loader.gif" />
+    <Content Include="images\login-bg.jpg" />
+    <Content Include="images\login-bg.png" />
+    <Content Include="images\login.png" />
+    <Content Include="images\logo.png" />
+    <Content Include="images\other1.png" />
+    <Content Include="images\other1s.png" />
+    <Content Include="images\other2.png" />
+    <Content Include="images\other2x.png" />
+    <Content Include="images\public.png" />
+    <Content Include="images\publicx.png" />
+    <Content Include="images\purchase.png" />
+    <Content Include="images\purchasex.png" />
+    <Content Include="images\setup.png" />
+    <Content Include="images\statistics.png" />
+    <Content Include="images\statisticsx.png" />
+    <Content Include="images\supplier.png" />
+    <Content Include="images\supplierx.png" />
+    <Content Include="images\top.jpg" />
+    <Content Include="OFFICE.DLL" />
+    <Content Include="PechkinDLLs\Common.Logging.dll" />
+    <Content Include="libeay32.dll">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="libgcc_s_dw2-1.dll">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="mingwm10.dll">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="PechkinDLLs\Pechkin.dll" />
+    <Content Include="PechkinDLLs\Pechkin.pdb" />
+    <Content Include="Scripts\custom\comm.js" />
+    <Content Include="Scripts\custom\fix-column-head.js" />
+    <Content Include="Scripts\jquery-ui.min.js" />
+    <Content Include="Scripts\upload\uploader.tools.js" />
+    <Content Include="SevenZipSharp.dll" />
+    <Content Include="ssleay32.dll">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="TestExport.html" />
+    <Content Include="wkhtmltox0.dll">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Scripts\bootstrap-paginator.js" />
+    <Content Include="Scripts\bootstrap.js" />
+    <Content Include="Scripts\bootstrap.min.js" />
+    <Content Include="font\fontawesome-webfont.eot" />
+    <Content Include="font\fontawesome-webfont.ttf" />
+    <Content Include="font\fontawesome-webfont.woff" />
+    <Content Include="font\FontAwesome.otf" />
+    <Content Include="data\city.json" />
+    <Content Include="data\province.json" />
+    <Content Include="DemandBookTemplate\Gongyingshangchailv.xlsx" />
+    <Content Include="DemandBookTemplate\Changdibuzhan.xlsx" />
+    <Content Include="DemandBookTemplate\Zuotanhui.xlsx" />
+    <Content Include="DemandBookTemplate\Mingjian.xlsx" />
+    <Content Include="DemandBookTemplate\Anfang.xlsx" />
+    <Content Include="DemandBookTemplate\Shenfangjirijiliuzhi.xlsx" />
+    <Content Include="DemandBookTemplate\Pankujijiagediaocha.xlsx" />
+    <Content Include="DemandBookTemplate\Yanjiujishujufenxi.xlsx" />
+    <Content Include="DemandBookTemplate\Guankong.xlsx" />
+    <Content Include="DemandBookTemplate\Bianmajifuhe.xlsx" />
+    <Content Include="DemandBookTemplate\Bianchengjibianji.xlsx" />
+    <Content Include="DemandBookTemplate\Wangluodiaoyan.xlsx" />
+    <Content Include="DemandBookTemplate\Chezhanzhanpinghui.xlsx" />
+    <Content Include="DemandBookTemplate\Yunshuzuche.xlsx" />
+    <Content Include="DemandBookTemplate\Mianfangjidianfang.xlsx" />
+    <Content Include="fonts\glyphicons-halflings-regular.eot" />
+    <Content Include="fonts\glyphicons-halflings-regular.ttf" />
+    <Content Include="fonts\glyphicons-halflings-regular.woff" />
+    <Content Include="fonts\glyphicons-halflings-regular.woff2" />
+    <Content Include="data\citycode.json" />
+    <Content Include="DemandBookTemplate\Wuxingshangpincaigou.xlsx" />
+    <Content Include="DemandBookTemplate\Youxingshangpincaigou.xlsx" />
+    <Content Include="Content\select\css\bootstrap-select.css.map" />
+    <Content Include="Content\select\js\bootstrap-select.js.map" />
+    <Content Include="CommonTemplate\供应商.xls" />
+    <Content Include="CommonTemplate\供应商银行信息.xls" />
+    <Content Include="CommonTemplate\应付流转单.xlsx" />
+    <Content Include="CommonTemplate\决算统计报表1-业务采购.xlsx" />
+    <Content Include="CommonTemplate\对公付款汇总.xlsx" />
+    <Content Include="CommonTemplate\决算统计报表2-业务采购.xlsx" />
+    <Content Include="CommonTemplate\决算统计报表1-内部采购.xlsx" />
+    <Content Include="CommonTemplate\决算统计报表1-其他.xlsx" />
+    <Content Include="CommonTemplate\决算统计报表2-内部采购.xlsx" />
+    <Content Include="CommonTemplate\决算统计报表2-其他.xlsx" />
+    <Content Include="CommonTemplate\huizongbiao\Qita1.xlsx" />
+    <Content Include="CommonTemplate\huizongbiao\Qita2.xlsx" />
+    <Content Include="CommonTemplate\huizongbiao\Fuhe.xlsx" />
+    <Content Include="CommonTemplate\huizongbiao\Zhixing.xlsx" />
+    <Content Include="CommonTemplate\huizongbiao\Zhichi.xlsx" />
+    <Content Include="CommonTemplate\huizongbiao\Yanjiu.xlsx" />
+    <Content Include="CommonTemplate\huizongbiao\Biancheng.xlsx" />
+    <Content Include="CommonTemplate\huizongbiao\Chezhan.xlsx" />
+    <Content Include="CommonTemplate\huizongbiao\Wuxingshangpincaigou.xlsx" />
+    <Content Include="CommonTemplate\huizongbiao\Youxingshangpincaigou.xlsx" />
+    <Content Include="CommonTemplate\huizongbiao\zhuijia.xlsx" />
+    <Content Include="CommonTemplate\决算统计报表1-追加.xlsx" />
+    <Content Include="CommonTemplate\决算统计报表2-追加.xlsx" />
+    <Content Include="CommonTemplate\资金计提.xlsx" />
+    <Content Include="CommonTemplate\资金需求表.xlsx" />
+    <Content Include="CommonTemplate\jiagetongjiebiao\Biancheng.xlsx" />
+    <Content Include="CommonTemplate\jiagetongjiebiao\Chezhan.xlsx" />
+    <Content Include="CommonTemplate\jiagetongjiebiao\Fuhe.xlsx" />
+    <Content Include="CommonTemplate\jiagetongjiebiao\Qita1.xlsx" />
+    <Content Include="CommonTemplate\jiagetongjiebiao\Qita2.xlsx" />
+    <Content Include="CommonTemplate\jiagetongjiebiao\Yanjiu.xlsx" />
+    <Content Include="CommonTemplate\jiagetongjiebiao\Zhichi.xlsx" />
+    <Content Include="CommonTemplate\jiagetongjiebiao\Zhixing.xlsx" />
+    <Content Include="CommonTemplate\jiagetongjiebiao\zhuijia.xlsx" />
+    <Content Include="CommonTemplate\应付流转单付款申请.xlsx" />
+    <None Include="Properties\PublishProfiles\aa.pubxml" />
+    <Content Include="QuotationTemplate\Biancheng.xlsx" />
+    <Content Include="QuotationTemplate\Chezhan.xlsx" />
+    <Content Include="QuotationTemplate\Fuhe.xlsx" />
+    <Content Include="QuotationTemplate\Qita1.xlsx" />
+    <Content Include="QuotationTemplate\Qita2.xlsx" />
+    <Content Include="QuotationTemplate\Yanjiu.xlsx" />
+    <Content Include="QuotationTemplate\Zhichi.xlsx" />
+    <Content Include="QuotationTemplate\Zhixing.xlsx" />
+    <Content Include="QuotationTemplate\Wuxingshangpincaigou.xlsx" />
+    <Content Include="QuotationTemplate\Youxingshangpincaigou.xlsx" />
+    <Content Include="Scripts\custom\bs.modal.expend.js" />
+    <Content Include="QuotationTemplate\横向确认单\Biancheng.xlsx" />
+    <Content Include="QuotationTemplate\横向确认单\Fuhe.xlsx" />
+    <Content Include="QuotationTemplate\横向确认单\Yanjiu.xlsx" />
+    <Content Include="QuotationTemplate\横向确认单\Zhixing.xlsx" />
+    <Content Include="QuotationTemplate\横向确认单\Qita1.xlsx" />
+    <Content Include="QuotationTemplate\横向确认单\Qita2.xlsx" />
+    <None Include="Properties\PublishProfiles\Purchase.pubxml" />
+    <None Include="Scripts\jquery-1.10.2.intellisense.js" />
+    <Content Include="Scripts\custom\date-format.js" />
+    <Content Include="Scripts\custom\form-serialize.js" />
+    <Content Include="Scripts\custom\freezeTable.js" />
+    <Content Include="Scripts\custom\province_city.js" />
+    <Content Include="Scripts\html5shiv.min.js" />
+    <Content Include="Scripts\jquery-1.10.2.js" />
+    <Content Include="Scripts\jquery-1.10.2.min.js" />
+    <Content Include="Scripts\modernizr-2.6.2.js" />
+    <Content Include="Scripts\respond.js" />
+    <Content Include="Scripts\respond.min.js" />
+    <Content Include="Scripts\upload\Uploader.swf" />
+    <Content Include="Scripts\upload\webuploader.css" />
+    <Content Include="Scripts\upload\webuploader.nolog.js" />
+    <Content Include="Scripts\_references.js" />
+    <Content Include="Web.config" />
+    <Content Include="Web.Debug.config">
+      <DependentUpon>Web.config</DependentUpon>
+    </Content>
+    <Content Include="Web.Release.config">
+      <DependentUpon>Web.config</DependentUpon>
+    </Content>
+    <Content Include="Views\Web.config" />
+    <Content Include="Views\_ViewStart.cshtml" />
+    <Content Include="Views\Shared\Error.cshtml" />
+    <Content Include="Views\Shared\_Layout.cshtml" />
+    <Content Include="Views\Home\Index.cshtml" />
+    <Content Include="Scripts\jquery-1.10.2.min.map" />
+    <Content Include="Views\Account\ChangePassword.cshtml" />
+    <Content Include="Views\Account\Login.cshtml" />
+    <Content Include="Views\SupplierMng\Edit.cshtml" />
+    <Content Include="Views\SupplierMng\Index.cshtml" />
+    <Content Include="Views\Projects\Create.cshtml" />
+    <Content Include="Views\Projects\Edit.cshtml" />
+    <Content Include="Views\Projects\Index.cshtml" />
+    <Content Include="Views\SupplierMng\_SupplierMngLayout.cshtml" />
+    <Content Include="Views\ConstractTemplate\Create.cshtml" />
+    <Content Include="Views\ConstractTemplate\Edit.cshtml" />
+    <Content Include="Views\ConstractTemplate\Index.cshtml" />
+    <Content Include="Views\Shared\_CommonLayout.cshtml" />
+    <Content Include="Views\ConstractTemplate\_PartialEdit.cshtml" />
+    <Content Include="Views\SupplierMng\BankInfo.cshtml" />
+    <Content Include="Views\SupplierMng\Create.cshtml" />
+    <Content Include="Views\SupplierMng\_PartialEdit.cshtml" />
+    <Content Include="Views\Projects\_PartialEdit.cshtml" />
+    <Content Include="Views\Projects\_PartialCity.cshtml" />
+    <Content Include="Views\Projects\_PartialPerson.cshtml" />
+    <Content Include="Views\SupplierMng\_PartialRecheckUserSelect.cshtml" />
+    <Content Include="Views\ApplyCheck\MyApplySearch.cshtml" />
+    <Content Include="Views\ApplyCheck\MyRecheckSearch.cshtml" />
+    <Content Include="Views\ApplyCheck\MyNeedRecheckSearch.cshtml" />
+    <Content Include="Views\Shared\_PurchaseLayout.cshtml" />
+    <Content Include="Views\Quotation\Index.cshtml" />
+    <Content Include="Views\DemandBook\Anfang\_PartialDemandBookAnfang.cshtml" />
+    <Content Include="Views\DemandBook\Create.cshtml" />
+    <Content Include="Views\Projects\_PartialDemandBookType.cshtml" />
+    <Content Include="Views\DemandBook\Mingjian\_PartialDemandBookMingjian.cshtml" />
+    <Content Include="Views\DemandBook\Anfang\Detail\_PartialAnfangDtl1.cshtml" />
+    <Content Include="Views\DemandBook\Anfang\Load\_PartialLoadAnfangDtl2.cshtml" />
+    <Content Include="Views\DemandBook\Anfang\Load\_PartialLoadAnfangDtl1.cshtml" />
+    <Content Include="Views\DemandBook\Index.cshtml" />
+    <Content Include="Views\DemandBook\_PartialDemandBookProjectSelect.cshtml" />
+    <Content Include="Views\Projects\_PartialRecheckUserSelect.cshtml" />
+    <Content Include="Views\DemandBook\Anfang\Load\_PartialLoadAnfangDtl7.cshtml" />
+    <Content Include="Views\DemandBook\Anfang\Detail\_PartialAnfangDtl7.cshtml" />
+    <Content Include="Views\DemandBook\Anfang\Detail\_PartialAnfangDtl2.cshtml" />
+    <Content Include="Views\DemandBook\Anfang\Detail\_PartialAnfangDtl5.cshtml" />
+    <Content Include="Views\DemandBook\Anfang\Detail\_PartialAnfangDtl6.cshtml" />
+    <Content Include="Views\DemandBook\Anfang\Load\_PartialLoadAnfangDtl4.cshtml" />
+    <Content Include="Views\DemandBook\Anfang\Load\_PartialLoadAnfangDtl5.cshtml" />
+    <Content Include="Views\DemandBook\Anfang\Load\_PartialLoadAnfangDtl6.cshtml" />
+    <Content Include="Views\DemandBook\Anfang\Detail\_PartialAnfangDtl4.cshtml" />
+    <Content Include="Views\DemandBook\Anfang\Load\_PartialLoadAnfangDtl3.cshtml" />
+    <Content Include="Views\DemandBook\Anfang\Detail\_PartialAnfangDtl3.cshtml" />
+    <Content Include="Views\ApplyCheck\_PartialApplyCheckRecheckStatusDetail.cshtml" />
+    <Content Include="Views\ApplyCheck\_PartialApplyCheckApplyDtlSupplier.cshtml" />
+    <Content Include="Views\ApplyCheck\_PartialApplyCheckApplyDtlProject.cshtml" />
+    <Content Include="Views\ApplyCheck\_PartialApplyCheckApplyDtlRequirement.cshtml" />
+    <Content Include="Views\Constract\Index.cshtml" />
+    <Content Include="Views\ConstractTemplate\_PartialConstractTemplateDtl.cshtml" />
+    <Content Include="Views\Constract\Edit.cshtml" />
+    <Content Include="Views\Constract\_PartialEdit.cshtml" />
+    <Content Include="Views\Constract\Create.cshtml" />
+    <Content Include="Views\Constract\_PartialSupplierMngSelect.cshtml" />
+    <Content Include="Views\DemandBook\Mingjian\Load\_PartialLoadMingjianDtl1.cshtml" />
+    <Content Include="Views\DemandBook\Mingjian\Detail\_PartialMingjianDtl1.cshtml" />
+    <Content Include="Views\DemandBook\Mingjian\Detail\_PartialMingjianDtl2.cshtml" />
+    <Content Include="Views\DemandBook\Mingjian\Detail\_PartialMingjianDtl3.cshtml" />
+    <Content Include="Views\DemandBook\Mingjian\Detail\_PartialMingjianDtl4.cshtml" />
+    <Content Include="Views\DemandBook\Mingjian\Detail\_PartialMingjianDtl5.cshtml" />
+    <Content Include="Views\DemandBook\Mingjian\Load\_PartialLoadMingjianDtl2.cshtml" />
+    <Content Include="Views\DemandBook\Mingjian\Load\_PartialLoadMingjianDtl3.cshtml" />
+    <Content Include="Views\DemandBook\Mingjian\Load\_PartialLoadMingjianDtl4.cshtml" />
+    <Content Include="Views\DemandBook\Mingjian\Load\_PartialLoadMingjianDtl5.cshtml" />
+    <Content Include="Views\Constract\_PartialTemplateSelect.cshtml" />
+    <Content Include="Views\DemandBook\Zuotanhui\Load\_PartialLoadZuotanhuiDtl1.cshtml" />
+    <Content Include="Views\DemandBook\Zuotanhui\Detail\_PartialZuotanhuiDtl1.cshtml" />
+    <Content Include="Views\DemandBook\Zuotanhui\_PartialDemandBookZuotanhui.cshtml" />
+    <Content Include="Views\DemandBook\Zuotanhui\Detail\_PartialZuotanhuiDtl2.cshtml" />
+    <Content Include="Views\DemandBook\Zuotanhui\Detail\_PartialZuotanhuiDtl3.cshtml" />
+    <Content Include="Views\DemandBook\Zuotanhui\Detail\_PartialZuotanhuiDtl4.cshtml" />
+    <Content Include="Views\DemandBook\Zuotanhui\Detail\_PartialZuotanhuiDtl5.cshtml" />
+    <Content Include="Views\DemandBook\Zuotanhui\Detail\_PartialZuotanhuiDtl6.cshtml" />
+    <Content Include="Views\DemandBook\Zuotanhui\Load\_PartialLoadZuotanhuiDtl2.cshtml" />
+    <Content Include="Views\DemandBook\Zuotanhui\Load\_PartialLoadZuotanhuiDtl3.cshtml" />
+    <Content Include="Views\DemandBook\Zuotanhui\Load\_PartialLoadZuotanhuiDtl4.cshtml" />
+    <Content Include="Views\DemandBook\Zuotanhui\Load\_PartialLoadZuotanhuiDtl5.cshtml" />
+    <Content Include="Views\DemandBook\Zuotanhui\Load\_PartialLoadZuotanhuiDtl6.cshtml" />
+    <Content Include="Views\DemandBook\Yunshuzuche\_PartialDemandBookYunshuzuche.cshtml" />
+    <Content Include="Views\DemandBook\Yunshuzuche\Detail\_PartialYunshuzucheDtl1.cshtml" />
+    <Content Include="Views\DemandBook\Yunshuzuche\Detail\_PartialYunshuzucheDtl2.cshtml" />
+    <Content Include="Views\DemandBook\Yunshuzuche\Load\_PartialLoadYunshuzucheDtl1.cshtml" />
+    <Content Include="Views\DemandBook\Yunshuzuche\Load\_PartialLoadYunshuzucheDtl2.cshtml" />
+    <Content Include="Views\DemandBook\Yanjiujishujufenxi\Detail\_PartialYanjiujishujufenxiDtl1.cshtml" />
+    <Content Include="Views\DemandBook\Yanjiujishujufenxi\Detail\_PartialYanjiujishujufenxiDtl2.cshtml" />
+    <Content Include="Views\DemandBook\Yanjiujishujufenxi\Load\_PartialLoadYanjiujishujufenxiDtl1.cshtml" />
+    <Content Include="Views\DemandBook\Yanjiujishujufenxi\Load\_PartialLoadYanjiujishujufenxiDtl2.cshtml" />
+    <Content Include="Views\DemandBook\Yanjiujishujufenxi\_PartialDemandBookYanjiujishujufenxi.cshtml" />
+    <Content Include="Views\DemandBook\Wangluodiaoyan\_PartialDemandBookWangluodiaoyan.cshtml" />
+    <Content Include="Views\DemandBook\Wangluodiaoyan\Detail\_PartialWangluodiaoyanDtl1.cshtml" />
+    <Content Include="Views\DemandBook\Wangluodiaoyan\Detail\_PartialWangluodiaoyanDtl2.cshtml" />
+    <Content Include="Views\DemandBook\Wangluodiaoyan\Detail\_PartialWangluodiaoyanDtl3.cshtml" />
+    <Content Include="Views\DemandBook\Wangluodiaoyan\Detail\_PartialWangluodiaoyanDtl4.cshtml" />
+    <Content Include="Views\DemandBook\Wangluodiaoyan\Load\_PartialLoadWangluodiaoyanDtl1.cshtml" />
+    <Content Include="Views\DemandBook\Wangluodiaoyan\Load\_PartialLoadWangluodiaoyanDtl2.cshtml" />
+    <Content Include="Views\DemandBook\Wangluodiaoyan\Load\_PartialLoadWangluodiaoyanDtl3.cshtml" />
+    <Content Include="Views\DemandBook\Wangluodiaoyan\Load\_PartialLoadWangluodiaoyanDtl4.cshtml" />
+    <Content Include="Views\DemandBook\Gongyingshangchailv\_PartialDemandBookGongyingshangchailv.cshtml" />
+    <Content Include="Views\DemandBook\Gongyingshangchailv\Detail\_PartialGongyingshangchailvDtl1.cshtml" />
+    <Content Include="Views\DemandBook\Gongyingshangchailv\Load\_PartialLoadGongyingshangchailvDtl1.cshtml" />
+    <Content Include="Views\DemandBook\Guankong\Detail\_PartialGuankongDtl1.cshtml" />
+    <Content Include="Views\DemandBook\Guankong\Detail\_PartialGuankongDtl2.cshtml" />
+    <Content Include="Views\DemandBook\Guankong\Detail\_PartialGuankongDtl3.cshtml" />
+    <Content Include="Views\DemandBook\Guankong\Load\_PartialLoadGuankongDtl1.cshtml" />
+    <Content Include="Views\DemandBook\Guankong\Load\_PartialLoadGuankongDtl2.cshtml" />
+    <Content Include="Views\DemandBook\Guankong\Load\_PartialLoadGuankongDtl3.cshtml" />
+    <Content Include="Views\DemandBook\Guankong\_PartialDemandBookGuankong.cshtml" />
+    <Content Include="Views\DemandBook\Mianfangjidianfang\Detail\_PartialMianfangjidianfangDtl1.cshtml" />
+    <Content Include="Views\DemandBook\Mianfangjidianfang\Detail\_PartialMianfangjidianfangDtl2.cshtml" />
+    <Content Include="Views\DemandBook\Mianfangjidianfang\Detail\_PartialMianfangjidianfangDtl3.cshtml" />
+    <Content Include="Views\DemandBook\Mianfangjidianfang\Detail\_PartialMianfangjidianfangDtl4.cshtml" />
+    <Content Include="Views\DemandBook\Mianfangjidianfang\Detail\_PartialMianfangjidianfangDtl5.cshtml" />
+    <Content Include="Views\DemandBook\Mianfangjidianfang\Load\_PartialLoadMianfangjidianfangDtl1.cshtml" />
+    <Content Include="Views\DemandBook\Mianfangjidianfang\Load\_PartialLoadMianfangjidianfangDtl2.cshtml" />
+    <Content Include="Views\DemandBook\Mianfangjidianfang\Load\_PartialLoadMianfangjidianfangDtl3.cshtml" />
+    <Content Include="Views\DemandBook\Mianfangjidianfang\Load\_PartialLoadMianfangjidianfangDtl4.cshtml" />
+    <Content Include="Views\DemandBook\Mianfangjidianfang\Load\_PartialLoadMianfangjidianfangDtl5.cshtml" />
+    <Content Include="Views\DemandBook\Mianfangjidianfang\_PartialDemandBookMianfangjidianfang.cshtml" />
+    <Content Include="Views\DemandBook\PanKuJiJiaGeDiaoCha\Detail\_PartialPanKuJiJiaGeDiaoChaDtl1.cshtml" />
+    <Content Include="Views\DemandBook\PanKuJiJiaGeDiaoCha\Detail\_PartialPanKuJiJiaGeDiaoChaDtl2.cshtml" />
+    <Content Include="Views\DemandBook\PanKuJiJiaGeDiaoCha\Detail\_PartialPanKuJiJiaGeDiaoChaDtl3.cshtml" />
+    <Content Include="Views\DemandBook\PanKuJiJiaGeDiaoCha\Detail\_PartialPanKuJiJiaGeDiaoChaDtl4.cshtml" />
+    <Content Include="Views\DemandBook\PanKuJiJiaGeDiaoCha\Detail\_PartialPanKuJiJiaGeDiaoChaDtl5.cshtml" />
+    <Content Include="Views\DemandBook\PanKuJiJiaGeDiaoCha\Load\_PartialLoadPanKuJiJiaGeDiaoChaDtl1.cshtml" />
+    <Content Include="Views\DemandBook\PanKuJiJiaGeDiaoCha\Load\_PartialLoadPanKuJiJiaGeDiaoChaDtl2.cshtml" />
+    <Content Include="Views\DemandBook\PanKuJiJiaGeDiaoCha\Load\_PartialLoadPanKuJiJiaGeDiaoChaDtl3.cshtml" />
+    <Content Include="Views\DemandBook\PanKuJiJiaGeDiaoCha\Load\_PartialLoadPanKuJiJiaGeDiaoChaDtl4.cshtml" />
+    <Content Include="Views\DemandBook\PanKuJiJiaGeDiaoCha\Load\_PartialLoadPanKuJiJiaGeDiaoChaDtl5.cshtml" />
+    <Content Include="Views\DemandBook\PanKuJiJiaGeDiaoCha\_PartialDemandBookPanKuJiJiaGeDiaoCha.cshtml" />
+    <Content Include="Views\DemandBook\Shenfangjirijiliuzhi\_PartialDemandBookShenfangjirijiliuzhi.cshtml" />
+    <Content Include="Views\DemandBook\Shenfangjirijiliuzhi\Detail\_PartialShenfangjirijiliuzhiDtl1.cshtml" />
+    <Content Include="Views\DemandBook\Shenfangjirijiliuzhi\Detail\_PartialShenfangjirijiliuzhiDtl2.cshtml" />
+    <Content Include="Views\DemandBook\Shenfangjirijiliuzhi\Detail\_PartialShenfangjirijiliuzhiDtl3.cshtml" />
+    <Content Include="Views\DemandBook\Shenfangjirijiliuzhi\Detail\_PartialShenfangjirijiliuzhiDtl4.cshtml" />
+    <Content Include="Views\DemandBook\Shenfangjirijiliuzhi\Detail\_PartialShenfangjirijiliuzhiDtl5.cshtml" />
+    <Content Include="Views\DemandBook\Shenfangjirijiliuzhi\Detail\_PartialShenfangjirijiliuzhiDtl6.cshtml" />
+    <Content Include="Views\DemandBook\Shenfangjirijiliuzhi\Load\_PartialLoadShenfangjirijiliuzhiDtl1.cshtml" />
+    <Content Include="Views\DemandBook\Shenfangjirijiliuzhi\Load\_PartialLoadShenfangjirijiliuzhiDtl2.cshtml" />
+    <Content Include="Views\DemandBook\Shenfangjirijiliuzhi\Load\_PartialLoadShenfangjirijiliuzhiDtl3.cshtml" />
+    <Content Include="Views\DemandBook\Shenfangjirijiliuzhi\Load\_PartialLoadShenfangjirijiliuzhiDtl4.cshtml" />
+    <Content Include="Views\DemandBook\Shenfangjirijiliuzhi\Load\_PartialLoadShenfangjirijiliuzhiDtl5.cshtml" />
+    <Content Include="Views\DemandBook\Shenfangjirijiliuzhi\Load\_PartialLoadShenfangjirijiliuzhiDtl6.cshtml" />
+    <Content Include="Views\DemandBook\Changdibuzhan\_PartialDemandBookChangdibuzhan.cshtml" />
+    <Content Include="Views\DemandBook\Changdibuzhan\Detail\_PartialChangdibuzhanDtl1.cshtml" />
+    <Content Include="Views\DemandBook\Changdibuzhan\Detail\_PartialChangdibuzhanDtl2.cshtml" />
+    <Content Include="Views\DemandBook\Changdibuzhan\Load\_PartialLoadChangdibuzhanDtl1.cshtml" />
+    <Content Include="Views\DemandBook\Changdibuzhan\Load\_PartialLoadChangdibuzhanDtl2.cshtml" />
+    <Content Include="Views\Constract\_PartialConstractDtl.cshtml" />
+    <Content Include="Views\Quotation\_PartialBiancheng.cshtml" />
+    <Content Include="Views\Quotation\_PartialLoadBiancheng.cshtml" />
+    <Content Include="Views\Quotation\_PartialLoadZhixing.cshtml" />
+    <Content Include="Views\Quotation\_PartialZhixing.cshtml" />
+    <Content Include="Views\Projects\_PartialCopyDamandBookSelect.cshtml" />
+    <Content Include="Views\DemandBook\_PartialDtlLast.cshtml" />
+    <Content Include="Views\Quotation\Create.cshtml" />
+    <Content Include="Views\Shared\_ConstractLayout.cshtml" />
+    <Content Include="Views\Shared\_TaskLayout.cshtml" />
+    <Content Include="Views\Quotation\_PartialLoadFuhe.cshtml" />
+    <Content Include="Views\Quotation\_PartialLoadYanjiu.cshtml" />
+    <Content Include="Views\Quotation\_PartialLoadQita1.cshtml" />
+    <Content Include="Views\Quotation\_PartialQita2.cshtml" />
+    <Content Include="Views\Quotation\_PartialLoadQita2.cshtml" />
+    <Content Include="Views\DemandBook\Bianchengjibianji\_PartialDemandBookBianchengjibianji.cshtml" />
+    <Content Include="Views\DemandBook\Bianchengjibianji\Detail\_PartialBianchengjibianjiDtl1.cshtml" />
+    <Content Include="Views\DemandBook\Bianchengjibianji\Detail\_PartialBianchengjibianjiDtl2.cshtml" />
+    <Content Include="Views\DemandBook\Bianchengjibianji\Load\_PartialLoadBianchengjibianjiDtl1.cshtml" />
+    <Content Include="Views\DemandBook\Bianchengjibianji\Load\_PartialLoadBianchengjibianjiDtl2.cshtml" />
+    <Content Include="Views\DemandBook\Bianmajifuhe\_PartialDemandBookBianmajifuhe.cshtml" />
+    <Content Include="Views\DemandBook\Bianmajifuhe\Detail\_PartialBianmajifuheDtl1.cshtml" />
+    <Content Include="Views\DemandBook\Bianmajifuhe\Detail\_PartialBianmajifuheDtl2.cshtml" />
+    <Content Include="Views\DemandBook\Bianmajifuhe\Detail\_PartialBianmajifuheDtl3.cshtml" />
+    <Content Include="Views\DemandBook\Bianmajifuhe\Detail\_PartialBianmajifuheDtl4.cshtml" />
+    <Content Include="Views\DemandBook\Bianmajifuhe\Detail\_PartialBianmajifuheDtl5.cshtml" />
+    <Content Include="Views\DemandBook\Bianmajifuhe\Detail\_PartialBianmajifuheDtl6.cshtml" />
+    <Content Include="Views\DemandBook\Bianmajifuhe\Detail\_PartialBianmajifuheDtl7.cshtml" />
+    <Content Include="Views\DemandBook\Bianmajifuhe\Load\_PartialLoadBianmajifuheDtl1.cshtml" />
+    <Content Include="Views\DemandBook\Bianmajifuhe\Load\_PartialLoadBianmajifuheDtl2.cshtml" />
+    <Content Include="Views\DemandBook\Bianmajifuhe\Load\_PartialLoadBianmajifuheDtl3.cshtml" />
+    <Content Include="Views\DemandBook\Bianmajifuhe\Load\_PartialLoadBianmajifuheDtl4.cshtml" />
+    <Content Include="Views\DemandBook\Bianmajifuhe\Load\_PartialLoadBianmajifuheDtl5.cshtml" />
+    <Content Include="Views\DemandBook\Bianmajifuhe\Load\_PartialLoadBianmajifuheDtl6.cshtml" />
+    <Content Include="Views\DemandBook\Bianmajifuhe\Load\_PartialLoadBianmajifuheDtl7.cshtml" />
+    <Content Include="Views\DemandBook\Bianmajifuhe\Load\_PartialLoadBianmajifuheDtl9.cshtml" />
+    <Content Include="Views\DemandBook\Bianmajifuhe\Load\_PartialLoadBianmajifuheDtl8.cshtml" />
+    <Content Include="Views\DemandBook\Bianmajifuhe\Detail\_PartialBianmajifuheDtl8.cshtml" />
+    <Content Include="Views\DemandBook\Bianmajifuhe\Detail\_PartialBianmajifuheDtl9.cshtml" />
+    <Content Include="Views\DemandBook\Cheliangzhanpinghui\_PartialDemandBookCheliangzhanpinghui.cshtml" />
+    <Content Include="Views\DemandBook\Cheliangzhanpinghui\Detail\_PartialCheliangzhanpinghuiDtl1.cshtml" />
+    <Content Include="Views\DemandBook\Cheliangzhanpinghui\Detail\_PartialCheliangzhanpinghuiDtl2.cshtml" />
+    <Content Include="Views\DemandBook\Cheliangzhanpinghui\Detail\_PartialCheliangzhanpinghuiDtl3.cshtml" />
+    <Content Include="Views\DemandBook\Cheliangzhanpinghui\Detail\_PartialCheliangzhanpinghuiDtl4.cshtml" />
+    <Content Include="Views\DemandBook\Cheliangzhanpinghui\Detail\_PartialCheliangzhanpinghuiDtl5.cshtml" />
+    <Content Include="Views\DemandBook\Cheliangzhanpinghui\Detail\_PartialCheliangzhanpinghuiDtl6.cshtml" />
+    <Content Include="Views\DemandBook\Cheliangzhanpinghui\Detail\_PartialCheliangzhanpinghuiDtl7.cshtml" />
+    <Content Include="Views\DemandBook\Cheliangzhanpinghui\Detail\_PartialCheliangzhanpinghuiDtl8.cshtml" />
+    <Content Include="Views\DemandBook\Cheliangzhanpinghui\Detail\_PartialCheliangzhanpinghuiDtl9.cshtml" />
+    <Content Include="Views\DemandBook\Cheliangzhanpinghui\Load\_PartialLoadCheliangzhanpinghuiDtl1.cshtml" />
+    <Content Include="Views\DemandBook\Cheliangzhanpinghui\Load\_PartialLoadCheliangzhanpinghuiDtl2.cshtml" />
+    <Content Include="Views\DemandBook\Cheliangzhanpinghui\Load\_PartialLoadCheliangzhanpinghuiDtl3.cshtml" />
+    <Content Include="Views\DemandBook\Cheliangzhanpinghui\Load\_PartialLoadCheliangzhanpinghuiDtl4.cshtml" />
+    <Content Include="Views\DemandBook\Cheliangzhanpinghui\Load\_PartialLoadCheliangzhanpinghuiDtl5.cshtml" />
+    <Content Include="Views\DemandBook\Cheliangzhanpinghui\Load\_PartialLoadCheliangzhanpinghuiDtl6.cshtml" />
+    <Content Include="Views\DemandBook\Cheliangzhanpinghui\Load\_PartialLoadCheliangzhanpinghuiDtl7.cshtml" />
+    <Content Include="Views\DemandBook\Cheliangzhanpinghui\Load\_PartialLoadCheliangzhanpinghuiDtl8.cshtml" />
+    <Content Include="Views\DemandBook\Cheliangzhanpinghui\Load\_PartialLoadCheliangzhanpinghuiDtl9.cshtml" />
+    <Content Include="Views\DemandBook\Cheliangzhanpinghui\Load\_PartialLoadCheliangzhanpinghuiDtl13.cshtml" />
+    <Content Include="Views\DemandBook\Cheliangzhanpinghui\Load\_PartialLoadCheliangzhanpinghuiDtl10.cshtml" />
+    <Content Include="Views\DemandBook\Cheliangzhanpinghui\Load\_PartialLoadCheliangzhanpinghuiDtl11.cshtml" />
+    <Content Include="Views\DemandBook\Cheliangzhanpinghui\Load\_PartialLoadCheliangzhanpinghuiDtl12.cshtml" />
+    <Content Include="Views\DemandBook\Cheliangzhanpinghui\Detail\_PartialCheliangzhanpinghuiDtl13.cshtml" />
+    <Content Include="Views\DemandBook\Cheliangzhanpinghui\Detail\_PartialCheliangzhanpinghuiDtl10.cshtml" />
+    <Content Include="Views\DemandBook\Cheliangzhanpinghui\Detail\_PartialCheliangzhanpinghuiDtl11.cshtml" />
+    <Content Include="Views\DemandBook\Cheliangzhanpinghui\Detail\_PartialCheliangzhanpinghuiDtl12.cshtml" />
+    <Content Include="Views\Quotation\_PartialFuhe.cshtml">
+      <SubType>Code</SubType>
+    </Content>
+    <Content Include="Views\Quotation\_PartialYanjiu.cshtml" />
+    <Content Include="Views\Quotation\QuotationForSupplier.cshtml" />
+    <Content Include="Views\DemandBook\Youxingshangpincaigou\_PartialDemandBookYouxingshangpincaigou.cshtml" />
+    <Content Include="Views\DemandBook\Youxingshangpincaigou\Detail\_PartialYouxingshangpincaigouDtl1.cshtml" />
+    <Content Include="Views\DemandBook\Youxingshangpincaigou\Load\_PartialLoadYouxingshangpincaigouDtl1.cshtml" />
+    <Content Include="Views\DemandBook\EmailSend.cshtml" />
+    <Content Include="Views\Constract\_PartialRecheckUserSelect.cshtml" />
+    <Content Include="Views\HiddenCode\Index.cshtml" />
+    <Content Include="Views\Quotation\_PartialQita1.cshtml" />
+    <Content Include="Views\ApplyCheck\_PartialRecheck.cshtml" />
+    <Content Include="Views\SupplierMng\_PartialProvideServiceSelect.cshtml" />
+    <Content Include="Views\SupplierMng\_PartialNotServiceTypeSelect.cshtml" />
+    <Content Include="Views\ApplyCheck\_PartialApplyCheckApplyDtlConstract.cshtml" />
+    <Content Include="Views\ApplyCheck\_PartialApplyCheckApplyDtlQuotation.cshtml" />
+    <Content Include="Views\DemandBook\_PartialRecheckUserSelect.cshtml" />
+    <Content Include="Views\Quotation\_PartialRecheckUserSelect.cshtml" />
+    <Content Include="Views\DemandBook\_PartialDemandBookSelect.cshtml" />
+    <Content Include="Views\ApplyCheck\_PartialRecheckList.cshtml" />
+    <Content Include="Views\DemandBook\Wuxingshangpincaigou\_PartialDemandBookWuxingshangpincaigou.cshtml" />
+    <Content Include="Views\DemandBook\Wuxingshangpincaigou\Detail\_PartialWuxingshangpincaigouDtl1.cshtml" />
+    <Content Include="Views\DemandBook\Wuxingshangpincaigou\Load\_PartialLoadWuxingshangpincaigouDtl1.cshtml" />
+    <Content Include="Views\HiddenCode\_PartialEdit.cshtml" />
+    <Content Include="Views\Shared\_SystemLayout.cshtml" />
+    <Content Include="Views\DemandBook\_PartialDemandBookSendDetail.cshtml" />
+    <Content Include="Views\DemandBookGroup\Index.cshtml" />
+    <Content Include="Views\DemandBookGroup\ProjectCityIndex.cshtml" />
+    <Content Include="Views\DemandBookGroup\_PartialGroupDtlRequirement.cshtml" />
+    <Content Include="Views\DemandBookGroup\_PartialEdit.cshtml" />
+    <Content Include="Views\DemandBookGroup\_PartialCity.cshtml" />
+    <Content Include="Views\Constract\PartialQuotation\_PartialLoadBiancheng.cshtml" />
+    <Content Include="Views\Constract\PartialQuotation\_PartialLoadFuhe.cshtml" />
+    <Content Include="Views\Constract\PartialQuotation\_PartialLoadQita1.cshtml" />
+    <Content Include="Views\Constract\PartialQuotation\_PartialLoadQita2.cshtml" />
+    <Content Include="Views\Constract\PartialQuotation\_PartialLoadYanjiu.cshtml" />
+    <Content Include="Views\Constract\PartialQuotation\_PartialLoadZhixing.cshtml" />
+    <Content Include="Views\QuotationGroup\_PartialEdit.cshtml" />
+    <Content Include="Views\QuotationGroup\_PartialGroupDtlQuotation.cshtml" />
+    <Content Include="Views\QuotationGroup\Index.cshtml" />
+    <Content Include="Views\Constract\_PartialConstractQuotations.cshtml" />
+    <Content Include="Views\DemandBook\Cheliangzhanpinghui\Detail\_PartialCheliangzhanpinghuiDtl31.cshtml" />
+    <Content Include="Views\DemandBook\Cheliangzhanpinghui\Load\_PartialLoadCheliangzhanpinghuiDtl31.cshtml" />
+    <Content Include="Views\DemandBookGroup\_PartialDemandBookSelect.cshtml" />
+    <Content Include="Views\DemandBook\_PartialDemandBookGroupSelect.cshtml" />
+    <Content Include="Views\QuotationYusuan\_PartialLoadBiancheng.cshtml" />
+    <Content Include="Views\QuotationYusuan\_PartialLoadFuhe.cshtml" />
+    <Content Include="Views\QuotationYusuan\_PartialLoadQita1.cshtml" />
+    <Content Include="Views\QuotationYusuan\_PartialLoadQita2.cshtml" />
+    <Content Include="Views\QuotationYusuan\_PartialLoadYanjiu.cshtml" />
+    <Content Include="Views\QuotationYusuan\_PartialLoadZhixing.cshtml" />
+    <Content Include="Views\QuotationYusuan\Index.cshtml" />
+    <Content Include="Views\Quotation\_PartialLoadChezhan.cshtml" />
+    <Content Include="Views\Quotation\_PartialLoadZhichi.cshtml" />
+    <Content Include="Views\Quotation\_PartialChezhan.cshtml" />
+    <Content Include="Views\Quotation\_PartialZhichi.cshtml" />
+    <Content Include="Views\Constract\EmailSend.cshtml" />
+    <Content Include="Views\QuotationGroup\_PartialQuotationType.cshtml" />
+    <Content Include="Views\Constract\PartialQuotation\_PartialLoadChezhan.cshtml" />
+    <Content Include="Views\Constract\PartialQuotation\_PartialLoadZhichi.cshtml" />
+    <Content Include="Views\FlowOrder\Index.cshtml" />
+    <Content Include="Views\FlowOrder\_FlowOrderLayout.cshtml" />
+    <Content Include="Views\FlowOrder\_PartialEdit.cshtml" />
+    <Content Include="Views\FlowOrder\_PartialRecheckUserSelect.cshtml" />
+    <Content Include="Views\ApplyCheck\_PartialApplyCheckApplyDtlFlowOrder.cshtml" />
+    <Content Include="Views\QuotationYusuan\_PartialLoadZhichi.cshtml" />
+    <Content Include="Views\QuotationYusuan\_PartialLoadChezhan.cshtml" />
+    <Content Include="Views\Payment\Index.cshtml" />
+    <Content Include="Views\Payment\_PartialEdit.cshtml" />
+    <Content Include="Views\Settlement\SettlementMst.cshtml" />
+    <Content Include="Views\Settlement\SettlementDtl.cshtml" />
+    <Content Include="Views\AccruedCharges\Index.cshtml" />
+    <Content Include="Views\AccruedCharges\_PartialEdit.cshtml" />
+    <Content Include="Views\Payment\FinanceIndex.cshtml" />
+    <Content Include="Views\Payment\_PartialFinanceEdit.cshtml" />
+    <Content Include="Views\CapitalRequirement\Index.cshtml" />
+    <Content Include="Views\CapitalRequirement\_PartialEdit.cshtml" />
+    <Content Include="Views\ApplyCheck\PartialQuotation\_PartialApplyCheckLoadBiancheng.cshtml" />
+    <Content Include="Views\ApplyCheck\PartialQuotation\_PartialApplyCheckLoadChezhan.cshtml" />
+    <Content Include="Views\ApplyCheck\PartialQuotation\_PartialApplyCheckLoadFuhe.cshtml" />
+    <Content Include="Views\ApplyCheck\PartialQuotation\_PartiallApplyCheckLoadQita1.cshtml" />
+    <Content Include="Views\ApplyCheck\PartialQuotation\_PartialApplyCheckLoadQita2.cshtml" />
+    <Content Include="Views\ApplyCheck\PartialQuotation\_PartialApplyCheckLoadYanjiu.cshtml" />
+    <Content Include="Views\ApplyCheck\PartialQuotation\_PartialApplyCheckLoadZhichi.cshtml" />
+    <Content Include="Views\ApplyCheck\PartialQuotation\_PartialApplyCheckLoadZhixing.cshtml" />
+    <Content Include="Views\ApplyCheck\_PartialApplyCheckLoadBiancheng.cshtml" />
+    <Content Include="Views\ApplyCheck\_PartialApplyCheckLoadChezhan.cshtml" />
+    <Content Include="Views\ApplyCheck\_PartialApplyCheckLoadFuhe.cshtml" />
+    <Content Include="Views\ApplyCheck\_PartialApplyCheckLoadQita2.cshtml" />
+    <Content Include="Views\ApplyCheck\_PartialApplyCheckLoadYanjiu.cshtml" />
+    <Content Include="Views\ApplyCheck\_PartialApplyCheckLoadZhichi.cshtml" />
+    <Content Include="Views\ApplyCheck\_PartialApplyCheckLoadZhixing.cshtml" />
+    <Content Include="Views\ApplyCheck\_PartialApplyCheckLoadQita1.cshtml" />
+    <Content Include="Views\QuotationNew\Index.cshtml" />
+    <Content Include="Views\QuotationNew\_PartialLoadZhixing.cshtml" />
+    <Content Include="Views\QuotationNew\_PartialLoadZhichi.cshtml" />
+    <Content Include="Views\QuotationNew\_PartialLoadYanjiu.cshtml" />
+    <Content Include="Views\QuotationNew\_PartialLoadQita2.cshtml" />
+    <Content Include="Views\QuotationNew\_PartialLoadQita1.cshtml" />
+    <Content Include="Views\QuotationNew\_PartialLoadFuhe.cshtml" />
+    <Content Include="Views\QuotationNew\_PartialLoadChezhan.cshtml" />
+    <Content Include="Views\QuotationNew\_PartialLoadBiancheng.cshtml" />
+    <Content Include="Views\Settlement\SettlementGroup.cshtml" />
+    <Content Include="Views\Settlement\_PartialRecheckUserSelect.cshtml" />
+    <Content Include="Views\Settlement\_PartialEdit.cshtml" />
+    <Content Include="Views\Settlement\_PartialSettlementMstSelect.cshtml" />
+    <Content Include="Views\ApplyCheck\_PartialApplyCheckApplyDtlSettlement.cshtml" />
+    <Content Include="Views\ApplyCheck\_PartialApplyCheckApplyDtlSettlementDtl.cshtml" />
+    <Content Include="Views\Quotation\_PartialQuotationGroupSelect.cshtml" />
+    <Content Include="Views\DemandBook\Cheliangzhanpinghui\Detail\_PartialCheliangzhanpinghuiDtl71.cshtml" />
+    <Content Include="Views\DemandBook\Cheliangzhanpinghui\Load\_PartialLoadCheliangzhanpinghuiDtl71.cshtml" />
+    <Content Include="Views\Huizongbiao\Index.cshtml" />
+    <Content Include="Views\Huizongbiao\_PartialHuizongbiaoBiancheng.cshtml" />
+    <Content Include="Views\Huizongbiao\_PartialHuizongbiaoZhixing.cshtml" />
+    <Content Include="Views\Huizongbiao\_PartialHuizongbiaoFuhe.cshtml" />
+    <Content Include="Views\Huizongbiao\_PartialHuizongbiaoYanjiu.cshtml" />
+    <Content Include="Views\Huizongbiao\_PartialHuizongbiaoQita1.cshtml" />
+    <Content Include="Views\Huizongbiao\_PartialHuizongbiaoQita2.cshtml" />
+    <Content Include="Views\Huizongbiao\_PartialHuizongbiaoZhichi.cshtml" />
+    <Content Include="Views\Huizongbiao\_PartialHuizongbiaoChezhan.cshtml" />
+    <Content Include="Views\Juesuantongjiebiao\yewucaigoubiao1.cshtml" />
+    <Content Include="Views\Juesuantongjiebiao\yewucaigoubiao2.cshtml" />
+    <Content Include="Views\Juesuantongjiebiao\neibucaigoubiao1.cshtml" />
+    <Content Include="Views\Juesuantongjiebiao\neibucaigoubiao2.cshtml" />
+    <Content Include="Views\Jiagetongjiebiao\Index.cshtml" />
+    <Content Include="Views\Jiagetongjiebiao\_PartialJiagetongjiebiaoBiancheng.cshtml" />
+    <Content Include="Views\Jiagetongjiebiao\_PartialJiagetongjiebiaoChezhan.cshtml" />
+    <Content Include="Views\Jiagetongjiebiao\_PartialJiagetongjiebiaoFuhe.cshtml" />
+    <Content Include="Views\Jiagetongjiebiao\_PartialJiagetongjiebiaoQita1.cshtml" />
+    <Content Include="Views\Jiagetongjiebiao\_PartialJiagetongjiebiaoQita2.cshtml" />
+    <Content Include="Views\Jiagetongjiebiao\_PartialJiagetongjiebiaoYanjiu.cshtml" />
+    <Content Include="Views\Jiagetongjiebiao\_PartialJiagetongjiebiaoZhichi.cshtml" />
+    <Content Include="Views\Jiagetongjiebiao\_PartialJiagetongjiebiaoZhixing.cshtml" />
+    <Content Include="Views\Huizongbiao\NeibuIndex.cshtml" />
+    <Content Include="Views\Jiagetongjiebiao\NeibuIndex.cshtml" />
+    <Content Include="Views\FlowOrder\ApplyPayIndex.cshtml" />
+    <Content Include="Views\Settlement\EmailSend.cshtml" />
+    <Content Include="Views\Constract\_PartialQuotationSelect.cshtml" />
+    <Content Include="Views\RecheckProcess\Index.cshtml" />
+    <Content Include="Views\RecheckProcess\_PartialEditRecheckProcess.cshtml" />
+    <Content Include="Views\RecheckProcess\_PartialEditRecheckProcessExcept.cshtml" />
+    <Content Include="Views\MstUserInfo\Index.cshtml" />
+    <Content Include="Views\MstUserInfo\_PartialEdit.cshtml" />
+    <Content Include="SettlementTemplate\SettlementTemplate.xlsx" />
+    <Content Include="Views\ApplyCheck\_PartialApplyCheckApplyDtlFlowOrderDtlEdit.cshtml" />
+    <Content Include="Views\QuotationNew\_PartialDemandBookSelect.cshtml" />
+    <Content Include="SettlementTemplate\SettlementTemplate_Neibu.xlsx" />
+    <Content Include="Views\Huizongbiao\QitaIndex.cshtml" />
+    <Content Include="Views\Jiagetongjiebiao\QitaIndex.cshtml" />
+    <Content Include="Views\Juesuantongjiebiao\qitacaigoubiao1.cshtml" />
+    <Content Include="Views\Juesuantongjiebiao\qitacaigoubiao2.cshtml" />
+    <Content Include="Views\QuotationGroup\_PartialDemandBookGroupSelect.cshtml" />
+    <Content Include="Views\DemandBookGroup\_PartialDemandBookGroupCopy.cshtml" />
+    <Content Include="Views\DemandBookGroup\_PartialDemandBooksByGroup.cshtml" />
+    <Content Include="Views\Settlement\_PartialQuotationGroupSelect.cshtml" />
+    <Content Include="Views\DemandBook\Bianmajifuhe\Detail\_PartialBianmajifuheDtl71.cshtml" />
+    <Content Include="Views\DemandBook\Bianmajifuhe\Load\_PartialLoadBianmajifuheDtl71.cshtml" />
+    <Content Include="Views\ApplyCheck\_PartialApplyCheckApplyDtlSupplierEdit.cshtml" />
+    <Content Include="Views\ApplyCheck\_PartialApplyCheckApplyDtlSupplierEditDtl.cshtml" />
+    <Content Include="Views\HiddenCode\_PartialChildEdit.cshtml" />
+    <Content Include="Views\DemandBookGroup\_PartialDemandBookProjectSelect.cshtml" />
+    <Content Include="Views\Projects\_PartialCopyProject.cshtml" />
+    <Content Include="Views\DemandBookGroup\_PartialDemandBookGroupSelect.cshtml" />
+    <Content Include="Views\QuotationGroup\_PartialQuotationGroupSelect.cshtml" />
+    <Content Include="Views\Settlement\ZhuijiaIndex.cshtml" />
+    <Content Include="Views\Settlement\_PartialZhuijia.cshtml" />
+    <Content Include="Views\ApplyCheck\_PartialApplyCheckZhuijia.cshtml" />
+    <Content Include="Views\Settlement\_PartialSettlementDtl.cshtml" />
+    <Content Include="Views\Huizongbiao\ZhuijiaIndex.cshtml" />
+    <Content Include="Views\Juesuantongjiebiao\zhuijiaJuesuan1.cshtml" />
+    <Content Include="Views\Juesuantongjiebiao\zhuijiaJuesuan2.cshtml" />
+    <Content Include="Views\Jiagetongjiebiao\ZhuijiaIndex.cshtml" />
+    <Content Include="Views\SupplierEva\Index.cshtml" />
+    <Content Include="Views\SupplierEvaOld\Index.cshtml" />
+    <Content Include="Views\SupplierEvaOld\SupplierEvaAna.cshtml" />
+    <Content Include="Views\SupplierEva\_PartialCreate.cshtml" />
+    <Content Include="Views\DemandBookGroup\_PartialDemandBooksByGroupCurrent.cshtml" />
+    <Content Include="Views\QuotationCopy\_PartialDemandBookSelect.cshtml" />
+    <Content Include="Views\QuotationCopy\_PartialLoadBiancheng.cshtml" />
+    <Content Include="Views\QuotationCopy\_PartialLoadChezhan.cshtml" />
+    <Content Include="Views\QuotationCopy\_PartialLoadFuhe.cshtml" />
+    <Content Include="Views\QuotationCopy\_PartialLoadQita1.cshtml" />
+    <Content Include="Views\QuotationCopy\_PartialLoadQita2.cshtml" />
+    <Content Include="Views\QuotationCopy\_PartialLoadYanjiu.cshtml" />
+    <Content Include="Views\QuotationCopy\_PartialLoadZhichi.cshtml" />
+    <Content Include="Views\QuotationCopy\_PartialLoadZhixing.cshtml" />
+    <Content Include="Views\QuotationCopy\Index.cshtml" />
+    <Content Include="Views\Shared\_PartialRecheckAttach.cshtml" />
+    <Content Include="Views\Shared\_PartialAttachShow.cshtml" />
+    <Content Include="Views\Quotation\_PartialPerQuotationTypeSum.cshtml" />
+    <Content Include="Views\Settlement\_PartialSettlementAdd.cshtml" />
+    <Content Include="Views\QuotationYusuanGroup\Index.cshtml" />
+    <Content Include="Views\QuotationYusuanGroup\_PartialEdit.cshtml" />
+    <Content Include="Views\QuotationYusuanNew\Index.cshtml" />
+    <Content Include="Views\QuotationYusuanNew\_PartialLoadBiancheng.cshtml" />
+    <Content Include="Views\QuotationYusuanNew\_PartialLoadChezhan.cshtml" />
+    <Content Include="Views\QuotationYusuanNew\_PartialLoadFuhe.cshtml" />
+    <Content Include="Views\QuotationYusuanNew\_PartialLoadQita1.cshtml" />
+    <Content Include="Views\QuotationYusuanNew\_PartialLoadQita2.cshtml" />
+    <Content Include="Views\QuotationYusuanNew\_PartialLoadYanjiu.cshtml" />
+    <Content Include="Views\QuotationYusuanNew\_PartialLoadZhichi.cshtml" />
+    <Content Include="Views\QuotationYusuanNew\_PartialLoadZhixing.cshtml" />
+    <Content Include="Views\Settlement\_PartialFlowOrderBySupplier.cshtml" />
+    <Content Include="Views\Stat\ProjectGeneralStat.cshtml" />
+    <Content Include="Views\MstUserInfo\_PartialAccredit.cshtml" />
+    <Content Include="Views\MstUserInfo\_PartialAccreditResult.cshtml" />
+    <Content Include="Views\Stat\_PartialGeneralStatResult.cshtml" />
+    <Content Include="Views\Stat\_PartialProjectSelect.cshtml" />
+    <Content Include="Views\Stat\_PartialSupplierMngSelect.cshtml" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\Purchase.Common\Purchase.Common.csproj">
+      <Project>{4043fe37-4916-49b0-af33-be411992a084}</Project>
+      <Name>Purchase.Common</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Purchase.DAL\Purchase.DAL.csproj">
+      <Project>{ad554284-6875-4e12-936f-9bc7325d3042}</Project>
+      <Name>Purchase.DAL</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Purchase.Service\Purchase.Service.csproj">
+      <Project>{81bbfcfc-ffe9-46f6-b5d8-d01d42809702}</Project>
+      <Name>Purchase.Service</Name>
+    </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="packages.config" />
+    <None Include="Project_Readme.html" />
+  </ItemGroup>
+  <PropertyGroup>
+    <VisualStudioVersion Condition="'$(VisualStudioVersion)' == ''">10.0</VisualStudioVersion>
+    <VSToolsPath Condition="'$(VSToolsPath)' == ''">$(MSBuildExtensionsPath32)\Microsoft\VisualStudio\v$(VisualStudioVersion)</VSToolsPath>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Debug|x86'">
+    <DebugSymbols>true</DebugSymbols>
+    <OutputPath>bin\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <DebugType>full</DebugType>
+    <PlatformTarget>AnyCPU</PlatformTarget>
+    <ErrorReport>prompt</ErrorReport>
+    <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Release|x86'">
+    <OutputPath>bin\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <Optimize>true</Optimize>
+    <DebugType>pdbonly</DebugType>
+    <PlatformTarget>x86</PlatformTarget>
+    <ErrorReport>prompt</ErrorReport>
+    <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
+  </PropertyGroup>
+  <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
+  <Import Project="$(VSToolsPath)\WebApplications\Microsoft.WebApplication.targets" Condition="'$(VSToolsPath)' != ''" />
+  <Import Project="$(MSBuildExtensionsPath32)\Microsoft\VisualStudio\v10.0\WebApplications\Microsoft.WebApplication.targets" Condition="false" />
+  <Target Name="MvcBuildViews" AfterTargets="AfterBuild" Condition="'$(MvcBuildViews)'=='true'">
+    <AspNetCompiler VirtualPath="temp" PhysicalPath="$(WebProjectOutputDir)" />
+  </Target>
+  <ProjectExtensions>
+    <VisualStudio>
+      <FlavorProperties GUID="{349c5851-65df-11da-9384-00065b846f21}">
+        <WebProjectProperties>
+          <UseIIS>True</UseIIS>
+          <AutoAssignPort>True</AutoAssignPort>
+          <DevelopmentServerPort>43279</DevelopmentServerPort>
+          <DevelopmentServerVPath>/</DevelopmentServerVPath>
+          <IISUrl>http://localhost:43279/</IISUrl>
+          <NTLMAuthentication>False</NTLMAuthentication>
+          <UseCustomServer>False</UseCustomServer>
+          <CustomServerUrl>
+          </CustomServerUrl>
+          <SaveServerSettingsInUserFile>False</SaveServerSettingsInUserFile>
+        </WebProjectProperties>
+      </FlavorProperties>
+      <UserProperties data_2city_1json__JSONSchema="" />
+    </VisualStudio>
+  </ProjectExtensions>
+  <Import Project="..\packages\AutoMapper.3.3.1\tools\AutoMapper.targets" Condition="Exists('..\packages\AutoMapper.3.3.1\tools\AutoMapper.targets')" />
+  <!-- To modify your build process, add your task inside one of the targets below and uncomment it.
+       Other similar extension points exist, see Microsoft.Common.targets.
+  <Target Name="BeforeBuild">
+  </Target>
+  <Target Name="AfterBuild">
+  </Target> -->
+</Project>

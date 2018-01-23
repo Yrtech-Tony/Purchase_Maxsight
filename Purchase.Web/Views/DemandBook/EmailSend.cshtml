@@ -1,0 +1,300 @@
+﻿@model Purchase.Service.DTO.RequiremetMstDto
+@{
+    ViewBag.Title = "发送邮件";
+    Layout = "~/Views/Shared/_PurchaseLayout.cshtml";
+    var emailTitle=string.Format("{0}项目-需求书-{1}-{2}-{3}",Model.ProjectShortName,Model.Province,Model.City,DateTime.Now.ToString("yyyy-MM-dd"));
+}
+<div class="count inline-block">
+    <form id="sendemail-form">
+        <input id="ModelType" name="ModelType" type="hidden" value="@Model.ModelType" / >
+        <input id="RequirementId" name="RequirementId" type="hidden" value="@Model.RequirementId" />
+        <input id="RequirementType" name="RequirementType" type="hidden" value="@Model.RequirementType" />
+        <input id="ProjectName" name="ProjectName" type="hidden" value="@Model.ProjectName" />
+        <input id="ProjectCode" name="ProjectName" type="hidden" value="@Model.ProjectCode" />
+        <input id="ProjectId" name="ProjectId" type="hidden" value="@Model.ProjectId" />
+        <input id="ProjectShortName" name="ProjectShortName" type="hidden" value="@Model.ProjectShortName" />
+        <input id="Province" name="Province" type="hidden" value="@Model.Province" />
+        <input id="City" name="City" type="hidden" value="@Model.City" />
+        <input id="SupplierId" name="SupplierId" type="hidden" />
+        <input id="SupplierName" name="SupplierName" type="hidden" />
+        <input id="Responsibilites" name="Responsibilites" type="hidden" value="@Model.Responsibilites" />
+        <input id="RequirementGroupId" name="RequirementGroupId" type="hidden" value="@Model.RequirementGroupId" /> 
+
+        <div class="form-horizontal">
+            <div class="form-group">
+                <div class="col-md-offset-10 col-md-2">
+                    <input id="sendBtn" type="button" value="发送" class="btn btn-primary btn-check" data-loading-text="发送中..." style="width:100px;height:35px" />
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="control-label col-md-2" for="Recipients">收件人</label>
+                <div class="col-md-8">
+                    <input id="Recipients" name="Recipients" class="form-control" readonly="readonly"/>
+                </div>
+                <div class="col-md-2">
+                    <a id="btnSupplierSelect" class="btn btn-primary" style="width:100px">选择供应商</a>
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="control-label col-md-2" for="CCPerson">抄送</label>
+                <div class="col-md-8">
+                    <input id="CCPerson" name="CCPerson" class="form-control" />
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="control-label col-md-2" for="Title">主题</label>
+                <div class="col-md-8">
+                    <input id="Title" name="Title" class="form-control" />
+                </div>
+            </div>
+            <div class="form-group" style="margin-bottom:10px;">
+                <label class="control-label col-md-2" for="TemplateName">已选需求书</label>
+                <div class="col-md-6">
+                    <label id="requirementSelected" class="control-label"></label>
+                    <label id="requirementIdSelected" class="control-label" style="display:none"></label>
+                </div>
+                <div class="col-md-2" style="text-align: right;">
+                    <a id="btnDemandBookSelect" class="btn btn-primary" style="width: 120px;">选择需求书</a>
+                </div>
+            </div>
+            <div class="form-group" style="margin-bottom:10px;">
+                <label class="control-label col-md-2" for="TemplateName">需求书附件</label>
+                <div id="attachs-div" class="col-md-6">
+                </div>
+                <div class="col-md-2" style="text-align: right;">
+                    <a id="btnDemandBookCreate" class="btn btn-primary" data-loading-text="生成中..." style=" width:120px;">生成需求书</a>
+                </div>
+            </div>
+
+            <div class="form-group" style="margin-bottom:10px">
+                <label class="control-label col-md-2">其他附件</label>
+                <div id="otherAttachs-div" class="col-md-6">
+                </div>
+                <div class="col-md-2" style="text-align: right;">
+                    <a id="filePicker" class="btn btn-primary" style=" width: 120px;">选择其他附件</a>
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="control-label col-md-2" for="TemplateName">邮件内容</label>
+                <div class="col-md-8">
+                    <textarea id="EmailContent" name="EmailContent" class="form-control" rows="10"></textarea>
+                </div>
+            </div>
+        </div>
+    </form>
+    <iframe name="upload-ifrm" style="display:none"></iframe>
+    <form id="file-form" enctype="multipart/form-data" action="/DemandBook/SaveOtherAttachs" method="post" target="upload-ifrm">
+        <input id="otherAttachs" name="otherAttachs" type="file" multiple class="form-control" style="display:none;" />
+    </form>
+</div>
+<div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-hidden="false">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
+                <h4 class="modal-title"></h4>
+            </div>
+            <div class="modal-body">
+            </div>
+        </div>
+    </div>
+</div>
+<script src="~/Scripts/custom/form-serialize.js"></script>
+<link href="/Scripts/upload/webuploader.css" rel="stylesheet" />
+<script src="/Scripts/upload/webuploader.nolog.js"></script>
+<script>
+    $(function () {
+        var type = getQueryString("ModelType");
+        // Web Uploader实例
+        var uploader = WebUploader.create({
+            // swf文件路径
+            swf: '/Scripts/upload/Uploader.swf',
+            // 文件接收服务端。
+            server: '/DemandBook/SaveOtherAttachs',
+            // 选择文件的按钮。可选。
+            // 内部根据当前运行是创建，可能是input元素，也可能是flash.
+            pick: '#filePicker',
+            auto: true
+        });
+        // 文件上传成功，给item添加成功class, 用样式标记上传成功。
+        uploader.on('uploadSuccess', function (file, retData) {
+            $.each(retData, function (i, item) {
+                var attEl = $('<span class="attach-el"></span>');
+                attEl.append($("<input name='otherAttachs' type='hidden'>").val(item.fileName));
+                attEl.append($("<i class='glyphicon glyphicon-paperclip'></i>"));
+                var link = $("<a>").html(item.fileName);
+                link.attr("href", "/DemandBook/DownloadFile?fileName=" + item.fileFullName);
+                attEl.append(link);
+                attEl.append($("<a onclick='delAttach(this);return false' class='btn att_del'>删除</a>"));
+
+                $("#otherAttachs-div").append(attEl);
+            })
+        });
+
+        $("#requirementSelected").html($("#RequirementId").val() + " " + $("#Province").val() + " " + $("#City").val());
+        $("#requirementIdSelected").html($("#RequirementId").val() + "," + $("#RequirementType").val() + "," + $("#Province").val() + "," + $("#City").val() + ","
+            + $("#ProjectShortName").val() + "," + $("#Responsibilites").val());
+
+        $("#sendBtn").click(function () {
+            $(this).button('loading');
+            if ($("#Recipients").val() == "") {
+                alert("收件人不能为空！");
+                return false;
+            }
+
+            if ($("#attachs-div").html().trim() == "") {
+                alert("请生成需求书");
+                return false;
+            }
+            var params = $("#sendemail-form").serializeJson();
+            $.post("/DemandBook/RequirementSaveEmail", params, function () {
+                $(this).button('reset');
+                // window.location.href = "/DemandBook" + window.location.search;
+                window.location.href = "/DemandBook" + "?ModelType=" + type;
+            })
+        })
+        $("#btnSupplierSelect").click(function () {
+            debugger
+            SupplierSelect(1);
+        })
+        $("#btnDemandBookSelect").click(function () {
+            RequirementSelect();
+        })
+
+        $("#btnDemandBookCreate").click(function () {
+            RequirementCreate();
+        })
+        $("#Title").val('@emailTitle');
+    })
+
+    function SupplierSelect(type) {
+        $("#myModal .modal-body").empty();
+        $("#myModal").modal("show");
+        $("#myModal .modal-title").html("选择供应商");
+        $("#myModal .modal-body").load("/Constract/SupplierMngSelect",
+            { SupplierCode: "", SupplierName: "", SupplierShortName: "", province: '', city: '' }, function () {
+                $("#myModal .modal-body #Type").val(type);
+            });
+    }
+    function SupplierSelectCallback1(args) {
+        var email = '';
+        if (args.BussinessMainEmail != null && args.BussinessMainEmail != "") {
+            email += args.BussinessMainEmail.replace(/;/g, ',') + ',';
+        }
+        if (args.BussinessSecondEmail != null && args.BussinessSecondEmail != "") {
+            email += args.BussinessSecondEmail.replace(/;/g, ',') + ',';
+        }
+        if (email.length > 0) {
+            email = email.substr(0, email.length - 1);
+        }
+        $("#Recipients").val(email);
+        $("#SupplierId").val(args.SupplierId);
+        $("#SupplierName").val(args.SupplierName);
+        $("#myModal").modal("hide");
+    }
+
+    function delAttach(el) {
+        $(el).parent().remove();
+    }
+
+    function RequirementCreate() {
+        if ($("#SupplierName").val() == "") {
+            alert("请先选择供应商");
+            return;
+        }
+        if ($("#requirementSelected").html() == "" || $("#requirementSelected").html() == null) {
+            alert("请选择需求书");
+            return;
+        }
+
+        $("#btnDemandBookCreate").button('loading');
+        var list = $("#requirementIdSelected").html();
+        $("#attachs-div").empty();
+        $.post("/DemandBookExport/ExportList", { list: list, modelType: $("#ModelType").val() }, function (data) {
+            if (data && data.length > 0) {
+                var fileNameList = data.split(";");
+                for (var i = 0; i < fileNameList.length; i++) {
+                    var fileName = fileNameList[i].split(",")[0];
+                    var fileFullName = fileNameList[i].split(",")[1];
+                    var attEl = $('<span class="attach-el"></span>');
+                    attEl.append($("<input name='attachs' type='hidden'>").val(fileName));
+
+                    var link = $("<a>").html(fileName);
+                    link.attr("href", "/DemandBookExport/DownloadFile?fileName=" + fileFullName);
+                    attEl.append(link);
+                    attEl.append($("<a onclick='delAttach(this);return false' class='btn att_del'>删除</a>"));
+                    $("#attachs-div").append(attEl);
+                }
+            }
+
+            //$.post("/QuotationExport/ExportList", {
+            //    list: list,
+            //    ProjectCode: $("#ProjectCode").val(),
+            //    ProjectName: $("#ProjectName").val(),
+            //    ProjectShortName: $("#ProjectShortName").val(),
+            //    SupplierName: $("#SupplierName").val(),
+            //    modelType: $("#ModelType").val()
+            //}, function (data) {
+            //    if (data && data.length > 0) {
+            //        var fileNameList = data.split(";");
+            //        for (var i = 0; i < fileNameList.length; i++) {
+            //            var fileName = fileNameList[i].split(",")[0];
+            //            var fileFullName = fileNameList[i].split(",")[1];
+            //            var attEl = $('<span class="attach-el"></span>');
+            //            attEl.append($("<input name='attachs' type='hidden'>").val(fileName));
+
+            //            var link = $("<a>").html(fileName);
+            //            link.attr("href", "/QuotationExport/DownloadFile?fileName=" + fileFullName);
+            //            attEl.append(link);
+            //            attEl.append($("<a onclick='delAttach(this);return false' class='btn att_del'>删除</a>"));
+            //            $("#attachs-div").append(attEl);
+            //        }
+            //    }
+            //}).complete(function () { $("#btnDemandBookCreate").button('reset'); })
+        }).complete(function () { $("#btnDemandBookCreate").button('reset'); });
+    }
+
+    function RequirementSelect() {
+        $("#myModal .modal-body").empty();
+        $("#myModal").modal("show");
+        $("#myModal .modal-title").html("选择需求书");
+        $("#myModal .modal-body").load("/DemandBook/RequirementSearchByProjectId",
+            {
+                ProjectId: $("#ProjectId").val(),
+                Province: "",
+                City: "",
+                GroupId: $("#sendemail-form #RequirementGroupId").val()
+            }, function () {
+
+            });
+    }
+</script>
+<style>
+    .attach-el {
+        display: inline-block;
+        margin-right: 5px;
+        line-height: 30px;
+        cursor: pointer;
+    }
+
+    .att_del {
+        margin-left: 5px;
+        width: auto;
+        height: auto;
+        font-size: 12px;
+        background: #f5f5f5;
+        color: #1267ac;
+        border: 1px #337ab7 solid;
+        padding: 2px 5px;
+        color: #2a6496;
+    }
+
+        .att_del:hover {
+            color: #333;
+            text-decoration: none;
+        }
+
+    i {
+        padding-right: 3px;
+    }
+</style>

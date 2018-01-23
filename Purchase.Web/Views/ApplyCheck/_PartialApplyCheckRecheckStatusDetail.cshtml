@@ -1,0 +1,38 @@
+﻿@using Purchase.Service.DTO
+@model IEnumerable<RecheckStatusDtlDto>
+
+<div class="count2">
+    <div class="table-responsive" style="max-height:550px;overflow:auto;">
+        <table id="RecheckUserSelect-table" class="table table-bordered table-condensed table-hover">
+            <thead>
+                <tr>
+                    <th>申请编号</th>
+                    <th>审核序号</th>
+                    <th>审核人</th>
+                    <th>审核状态</th>
+                    <th>理由</th>
+                    <th>审核时间</th>
+                </tr>
+            </thead>
+            <tbody>
+                @if (Model != null)
+                {
+                    foreach (RecheckStatusDtlDto item in Model)
+                    {
+                        <tr>
+                            <td>@item.ApplyId</td>
+                            <td>@item.SeqNO</td>
+                            <td>@item.UserName</td>
+                            <td>@item.RecheckStatusCode</td>
+                            <td>@item.RecheckReason</td>
+                            <td>@item.InDateTime</td>
+                        </tr>
+                    }
+                }
+            </tbody>
+        </table>
+    </div>
+</div>
+<script>
+
+</script>

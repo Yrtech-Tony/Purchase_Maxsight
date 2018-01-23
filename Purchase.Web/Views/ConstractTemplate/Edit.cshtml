@@ -1,0 +1,198 @@
+﻿@model Purchase.DAL.ConstractTemplate
+
+@{
+    ViewBag.Title = "合同模板编辑";
+    Layout = "~/Views/Shared/_ConstractLayout.cshtml";
+}
+<div class="count inline-block">
+    <h4>@ViewBag.Title</h4>
+    <hr />
+    @using (Html.BeginForm("Edit", "ConstractTemplate", FormMethod.Post, new
+    {
+        Id = "ConstractTemplateForm"
+    }))
+    {
+        @Html.AntiForgeryToken()
+        @Html.ValidationSummary(false)
+        @Html.HiddenFor(x => x.Id)
+        @Html.Hidden("QueryParams", (string)ViewBag.queryParams)
+
+        @Html.Partial("_PartialEdit", Model)
+    }
+    <div class="form-horizontal">
+        <table class="mt20">
+            <tr>
+                <td>
+                    <h4 class="title">合同模板详细信息</h4>
+                </td>
+                <td style="text-align: right;">
+                    <button onclick="openReview()" type="button" class="btn btn-primary btn-sm">
+                        合同模板预览
+                    </button>
+                    <button id="addDtlBtn" type="button" class="btn btn-primary btn-sm"
+                            data-toggle="modal" data-target="#myModal">
+                        添加合同模板详细
+                    </button>
+                    <button id="exportBtn" type="button" class="btn btn-primary btn-sm"
+                            data-toggle="modal" data-target="#exportModal">
+                        导入合同模板
+                    </button>
+                </td>
+            </tr>
+            <tr>
+                <td valign="top" colspan="2">
+                    <table id="ConstractTemplateDtl-table" class="table table-bordered table-condensed table-hover">
+                        <thead>
+                            <tr>
+                                <th width="50">详细</th>
+                                <th width="50">插入</th>
+                                <th width="50">删除</th>
+                                <th>序号</th>
+                                <th>类型</th>
+                                <th>内容类型</th>
+                                <th>内容</th>
+                            </tr>
+                        </thead>
+                        <tbody></tbody>
+                    </table>
+                </td>
+            </tr>
+        </table>
+
+    </div>
+</div>
+<div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-hidden="false">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
+                <h4 class="modal-title"></h4>
+            </div>
+            <div class="modal-body">
+            </div>
+        </div>
+    </div>
+</div>
+<div class="modal fade" id="exportModal" tabindex="-1" role="dialog" aria-hidden="false">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
+                <h4 class="modal-title">导入模板</h4>
+            </div>
+            <div class="modal-body">
+                <form id="ExportConstractTemplateForm" enctype="multipart/form-data"
+                      method="post" action="/ConstractTemplate/ExportConstractTemplate">
+                    <input id="ConstractTemplateId" name="ConstractTemplateId" type="hidden"/>
+                    <table style="width:100%">
+                        <tr>
+                            <td width="80">文件</td>
+                            <td>
+                                <input type="file" name="export">
+                            </td>
+                            <td>
+                                <input type="submit" class="btn btn-primary" value="导 入" data-loading-text="导入中..." onclick="javascript: $(this).button('loading');"/>
+                            </td>
+                        </tr>
+                    </table>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+@section Scripts {
+    <script src="~/Scripts/custom/form-serialize.js"></script>
+    <script>
+        $(function () {
+            // 如果没有权限隐藏新增按钮
+            if ('@ViewBag.UserRoleType'.indexOf("合同模板添加") == -1) {
+                $("#addDtlBtn").hide();
+                $("#exportBtn").hide();
+            }
+            $("#addDtlBtn").click(function () {
+                $("#myModal .modal-dialog").removeClass("modal-lg");
+                setModal("添加合同模板详细", "_PartialConstractTemplateDtl")
+            })
+            $("#exportBtn").click(function () {
+                $("#ConstractTemplateId").val($("#Id").val());                
+            })
+            
+            loadDtls();
+        })
+        function openReview() {
+            window.open('/ContractTemplate.html?TemplateId=' + $("#Id").val());
+        }
+
+        function setModal(title, body, obj) {
+            $("#myModal .modal-title").html(title);
+            $("#myModal .modal-body").load("/ConstractTemplate/LoadPartial", { partialView: body }, function () {
+                $("#myModal .modal-body form #ConstractTemplateId").val($("#Id").val());
+                if (obj) {
+                    $("#ContentType").val(obj.ContentType).change();
+                    $("#myModal .modal-body form").setForm(obj);
+                    if (obj.ContentType == "表格-模板") {
+                        setTableTemplates(obj.TemplateContent);
+                    }
+                }
+            });
+        }
+
+        function loadDtls() {
+            var id = $("#Id").val();
+            //绑定模板详细
+            $.post("/ConstractTemplate/GetConstractTemplateDtls", { Id: id }, function (data) {
+                $("#ConstractTemplateDtl-table tbody").empty();
+                $.each(data.List, function (index, item) {
+                    addDtlTr(item);
+                })
+            })
+        }
+
+        function addDtlTr(dtl) {
+            var tr = $("<tr>");
+            var editBtn = $("<a class='btn btn-primary btn2'>").html("详细");
+            editBtn.click(function () {
+                setModal("编辑合同模板详细", '_PartialConstractTemplateDtl', dtl);
+                $("#myModal").modal("show");
+            })
+            tr.append($("<td>").append(editBtn));
+
+            var insertBtn = $("<a class='btn btn-primary btn2'>").html("插入");
+            insertBtn.click(function () {
+                if ('@ViewBag.UserRoleType'.indexOf("合同模板添加") == -1) {
+                    alert("没有权限修改");
+                    return;
+                }
+                setModal("编辑合同模板详细", '_PartialConstractTemplateDtl', { OrderNO: dtl.OrderNO, IsInsert: 1 });
+                $("#myModal").modal("show");
+            })
+            tr.append($("<td>").append(insertBtn));
+
+            var deleteBtn = $("<a class='btn btn-primary btn2'>").html("删除");
+            deleteBtn.click(function () {
+                if ('@ViewBag.UserRoleType'.indexOf("合同模板添加") == -1) {
+                    alert("没有权限修改");
+                    return;
+                }
+                deleteDtl(dtl);
+            })
+            tr.append($("<td>").append(deleteBtn));
+
+            tr.append($("<td width='40'>").html(dtl.OrderNO));
+            tr.append($("<td width='100'>").append(dtl.ContentType));
+            tr.append($("<td width='100'>").append(dtl.ContentType2));
+            tr.append($("<td style='white-space:normal'>").append(dtl.TemplateContent));
+
+            $("#ConstractTemplateDtl-table tbody").append(tr);
+
+            $("#myModal").modal("hide");
+        }
+        function deleteDtl(dtl) {
+            confirm("您确定要删除吗？", function () {
+                $.post("/ConstractTemplate/DeleteConstractTemplateDtl", dtl, function (data) {
+                    loadDtls();
+                })
+            });
+        }
+    </script>
+}

@@ -1,0 +1,373 @@
+﻿@{
+    ViewBag.Title = "待我审核";
+    Layout = "~/Views/Shared/_TaskLayout.cshtml";
+}
+
+<div class="count inline-block">
+    <form id="search-form" class="form">
+        <table>
+            <tr>
+                <td colspan="11" style="text-align:right">
+                    <a id="btnCheckAll" class="btn btn-primary" style="width:100px">全选</a>
+                    <a id="btnNotcheckAll" class="btn btn-primary" style="width:100px">反选</a>
+                    <button id="btnQueryMyNeedRecheck" type="button" class="btn btn-primary" style="width:100px">查 询</button>
+                    <button id="btnRecheckCommitList" type="button" class="btn btn-primary" style="width:100px">批量同意 </button>
+                </td>
+            </tr>
+            <tr>
+                <td width="80">申请编号</td>
+                <td width="120">
+                    <input type="text" id="ApplyId" name="ApplyId" class="form-control">
+                </td>
+                <td width="80">申请类型</td>
+                <td width="120">
+                    <select id="ApplyTypeId" name="ApplyTypeId" class="form-control">
+                        <option value="">全部</option>
+                        <option value="供应商">供应商</option>
+                        <option value="合同">合同</option>
+                        <option value="立项">立项</option>
+                        <option value="需求书">需求书</option>
+                        <option value="确认单">确认单</option>
+                        <option value="结算单">结算单</option>
+                        <option value="流转单">流转单</option>
+
+                    </select>
+                </td>
+                <td width="80">申请人</td>
+                <td width="120">
+                    <input type="text" id="ApplyUserId" name="ApplyUserId" class="form-control">
+                </td>
+                <td width="80">申请日期</td>
+                <td width="140">
+                    <input id="StartDate" name="StartDate" onclick="WdatePicker()" class="form-control">
+                </td>
+                <td width="10">至</td>
+                <td width="140">
+                    <input id="EndDate" name="EndDate" onclick="WdatePicker()" class="form-control">
+                </td>
+            </tr>
+        </table>
+    </form>
+    <table id="apply-table" class="table table-bordered table-condensed table-hover mt20 table-set">
+        <thead>
+            <tr>
+                <th style="width:40px">
+                    选择
+                </th>
+                <th style="width:40px">
+                    审核
+                </th>
+                <th style="width:60px">
+                    申请编号
+                </th>
+                <th style="width:50px">
+                    申请人
+                </th>
+                <th style="width:60px">
+                    申请类型
+                </th>
+                <th style="width:60px">
+                    流程状态
+                </th>
+                <th style="width:80px">
+                    申请日期
+                </th>
+                <th>
+                    申请理由
+                </th>
+                @*<th style="width: 180px">
+                    项目名称
+                </th>*@
+                <th style="width:100px">
+                    项目简称
+                </th>
+                <th style="width:200px">
+                    供应商名称
+                </th>
+                <th style="width:60px">
+                    申请详细
+                </th>
+                <th style="width:60px">
+                    审核详细
+                </th>
+            </tr>
+        </thead>
+        <tbody></tbody>
+    </table>
+    <div id="pagination" class="pull-right">
+        <ul id="pageUl"></ul>
+    </div>
+    <div id="apply-result"></div>
+    <input type="hidden" id="ApplyIdList" name="ApplyIdList" />
+    <input type="hidden" id="QuotationId" name="QuotationId" />
+    <input type="hidden" id="SelectChk" name="SelectChk" />
+    <input type="hidden" id="ApplyIdPopup" name="ApplyIdPopup" />
+    <input type="hidden" id="ApplyTypeIdPopup" name="ApplyTypeIdPopup" />   
+    <input type="hidden" id="ApplyTypeIdForRecheck" name="ApplyTypeIdForRecheck" />   
+
+</div>
+
+<div class="modal fade" id="recheckDtlModal" tabindex="-1" role="dialog" aria-hidden="false">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
+                <h4 class="modal-title"></h4>
+            </div>
+            <div class="modal-body">
+            </div>
+        </div>
+    </div>
+</div>
+<div class="modal fade" id="quotation-detail" tabindex="-1" role="dialog" aria-hidden="false">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
+                <h4 class="modal-title"></h4>
+            </div>
+            <div class="modal-body">
+                <div style="position:relative">
+                    <div id="detail-result" class="table-responsive"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="modal fade" id="settlementdlt-detail" tabindex="-1" role="dialog" aria-hidden="false">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
+                <h4 class="modal-title"></h4>
+            </div>
+            <div class="modal-body">
+            </div>
+        </div>
+    </div>
+</div>
+@section Scripts {
+    <script src="~/Content/My97DatePicker/WdatePicker.js"></script>
+    <script src="~/Scripts/custom/form-serialize.js"></script>
+    <script src="~/Scripts/custom/date-format.js"></script>
+    <script>
+        var curPageNum = 1;
+        $(function () {
+            loadMyNeedRecheck();
+            $("#btnQueryMyNeedRecheck").click(function () {
+                loadMyNeedRecheck();
+            })
+            $("#btnRecheckCommitList").click(function () {
+                recheckList();
+            })
+            $("#btnSelect").click(function () {
+                quotationSelect($("#QuotationId").val(), true);
+            })
+            $("#btnNotSelect").click(function () {
+                quotationSelect($("#QuotationId").val(), false);
+            })
+
+            $("#btnCheckAll").click(function () {
+                $("#apply-table input[type=checkbox]").prop("checked", true);
+            })
+            $("#btnNotcheckAll").click(function () {
+                $("#apply-table input[type=checkbox]").prop("checked", false);
+            })
+        })
+        function loadMyNeedRecheck(pageNum) {
+            $("#btnQueryMyNeedRecheck").button("loading");
+
+            var params = $("#search-form").serializeJson();
+            if (params.StartDate == "") {
+                params.StartDate = "1900-01-01";
+            }
+            if (params.EndDate == "") {
+                params.EndDate = "2999-01-01";
+            }
+            params = $.extend(params, { pageSize: 10, pageNum: pageNum ? pageNum : 1 });
+            $.post("/ApplyCheck/MyNeedRecheckSearch", params, function (data) {
+                if (data && data.List) {
+                    $("#apply-table tbody").empty();
+                    $.each(data.List, function (index, item) {
+                        var tr = $("<tr>");
+                        tr.append($("<td>").append($("<input id='Id' type='checkbox'>").val(item.applyId)));
+                        var check = $("<a>").html("审核");
+                        check.attr("style", "cursor: pointer;");
+                        check.click(function () {
+                            recheck(item);
+                        })
+                        tr.append($("<td></td>").append(check));
+
+                        tr.append($("<td></td>").html(item.ApplyId));
+                        tr.append($("<td style='display:none'></td>").html(item.SeqNO));
+                        tr.append($("<td></td>").html(item.UserName));
+                        //tr.append($("<td></td>").html(item.PositionName));
+                        tr.append($("<td></td>").html(item.ApplyTypeId));
+                        tr.append($("<td></td>").html(item.ApplyStatusCode));
+                        tr.append($("<td></td>").html(item.InDateTime));
+                        tr.append($("<td></td>").html(item.ApplyReason).attr("title", item.ApplyReason));
+                        //tr.append($("<td></td>").html(item.ProjectName));
+                        tr.append($("<td></td>").html(item.ProjectShortName));
+                        tr.append($("<td></td>").html(item.SupplierName));
+
+                        var applyLink = $("<a>").html("申请详细");
+                        applyLink.attr("style", "cursor: pointer;");
+                        applyLink.click(function () {
+                            // applyDetail(item.ApplyId, item.ApplyTypeId);
+                            applyDetail1(item.ApplyId, item.ApplyTypeId);
+                        })
+                        tr.append($("<td></td>").append(applyLink));
+
+                        var checkLink = $("<a>").html("审核详细");
+                        checkLink.attr("style", "cursor: pointer;");
+                        checkLink.click(function () {
+                            recheckDetail(item.ApplyId);
+                        })
+                        tr.append($("<td></td>").append(checkLink));
+
+                        $("#apply-table tbody").append(tr);
+                    })
+
+                    curPageNum = data.CurPage;
+                    createPageNav({ $container: $("#pagination"), pageCount: data.PageCount, currentNum: data.CurPage, afterFun: loadMyNeedRecheck });
+                }
+            }).complete(function () { $("#btnQueryMyNeedRecheck").button("reset"); });
+
+        }
+        function recheckDetail(Id) {
+            $("#recheckDtlModal").modal("show");
+            $("#recheckDtlModal .modal-title").html("审核详细");
+            $("#recheckDtlModal .modal-body").empty();
+            $("#recheckDtlModal .modal-body").load("/ApplyCheck/RecheckStatusDetail", { ApplyId: Id }, function () {
+
+            });
+        }
+        function applyDetail1(Id, ApplyTypeId) {
+            $("#ApplyIdPopup").val(Id);
+            $("#ApplyTypeIdPopup").val(ApplyTypeId);
+            $("#quotation-detail").modal("show");
+            $("#quotation-detail .modal-title").html("申请详细");
+            $("#quotation-detail .modal-body").empty();
+            $("#quotation-detail .modal-body").load("/ApplyCheck/ApplyDetail", { ApplyId: Id, ApplyTypeId: ApplyTypeId }, function () {
+
+            });
+        }
+        function applyDetail(Id, ApplyTypeId) {
+            $("#apply-result").show();
+            $("#apply-result").load("/ApplyCheck/ApplyDetail", { ApplyId: Id, ApplyTypeId: ApplyTypeId }, function () {
+                $("#ApplyIdPopup").val(Id);
+                $("#ApplyTypeIdPopup").val(ApplyTypeId);
+            });
+
+        }
+        function recheck(item) {
+            debugger
+            $("#ApplyTypeIdForRecheck").val(item.ApplyTypeId);
+            var recheckType = item.ApplyTypeId;
+            //if (recheckType == "确认单") {
+            //    $.post("/ApplyCheck/ApplyDetail_Quotation_CheckSelect", { ApplyId: item.ApplyId }, function (data) {
+            //        //if (parseInt(data) == 0) {
+            //        //    alert("未勾选终版确认单，请先勾选");
+            //        //    return false;
+            //        //}
+            //        var SeqNO = item.SeqNO;
+            //        var applyId = item.ApplyId;
+            //        $("#recheckDtlModal").modal("show");
+            //        $("#recheckDtlModal .modal-title").html("审核选择");
+            //        $("#recheckDtlModal .modal-body").empty();
+            //        $("#recheckDtlModal .modal-body").load("/ApplyCheck/RecheckSelect", { recheckType: recheckType }, function () {
+            //            $("#recheck-form").setForm(item);
+            //        });
+            //    });
+            //}
+            //else {
+                var SeqNO = item.SeqNO;
+                var applyId = item.ApplyId;
+                $("#recheckDtlModal").modal("show");
+                $("#recheckDtlModal .modal-title").html("审核选择");
+                $("#recheckDtlModal .modal-body").empty();
+                $("#recheckDtlModal .modal-body").load("/ApplyCheck/RecheckSelect", { recheckType: recheckType }, function () {
+                    $("#recheck-form").setForm(item);
+                });
+            //}
+
+        }
+        function recheckList() {
+            var checkbox = $("#apply-table input[type=checkbox]:checked");
+            var recheckType = "";
+            var recheckTypeChk = true; // 勾选的类型是否相同
+            var applyId = "";
+
+            if (checkbox.length < 1) {
+                alert("请勾选需要审核的申请");
+                return false;
+            }
+            $.each(checkbox, function (index, item) {
+
+                var tds = $(item).parents("tr:first").find("td");
+                if (index == 0) {
+                    recheckType = tds.eq(5).html(); //获取第一个勾选的值
+                }
+                if (recheckType != tds.eq(5).html()) {
+                    recheckTypeChk = false;
+                    return false;
+                }
+
+            });
+            if (!recheckTypeChk) {
+                alert("请勾选相同的申请类型");
+                return false;
+            }
+            $.each(checkbox, function (index, item) {
+
+                var tds = $(item).parents("tr:first").find("td");
+                applyId += tds.eq(2).html() + "," + tds.eq(3).html() + ";"
+            });
+            if (applyId.length > 0) {
+                applyId = applyId.substring(0, applyId.length - 1);
+            }
+            $("#ApplyIdList").val(applyId);//用于批量审核的全局变量
+            $("#ApplyTypeIdForRecheck").val(recheckType);
+            //if (recheckType == "确认单") {
+            //    $.post("/ApplyCheck/ApplyDetail_QuotationList_CheckSelect", { ApplyIdList: $("#ApplyIdList").val() }, function (data) {
+            //        //if (!data) {
+            //        //    alert("未勾选终版确认单，请先勾选");
+            //        //    return false;   
+            //        //}
+                   
+            //        $("#recheckDtlModal").modal("show");
+            //        $("#recheckDtlModal .modal-title").html("审核选择");
+            //        $("#recheckDtlModal .modal-body").empty();
+            //        $("#recheckDtlModal .modal-body").load("/ApplyCheck/RecheckListSelect", { recheckType: recheckType }, function () {
+            //            $("#recheck-form").setForm(item);
+            //        });
+            //    });
+            //}
+            //else {
+                debugger
+                $("#recheckDtlModal").modal("show");
+                $("#recheckDtlModal .modal-title").html("审核选择");
+                $("#recheckDtlModal .modal-body").empty();
+                debugger
+                $("#recheckDtlModal .modal-body").load("/ApplyCheck/RecheckListSelect", { recheckType: recheckType }, function () {
+                });
+            //}
+        }
+        function recheckFinish() {
+            $("#recheckDtlModal").modal("hide");
+            $("#apply-result").hide();
+            loadMyNeedRecheck(curPageNum);
+
+        }
+        function quotationSelect(QuotationId, SelectChk) {
+            $.post("/Quotation/QuotationMstUpdate", { id: QuotationId, selectChk: SelectChk }, function (data) {
+                $("#quotation-detail").modal("hide");
+                applyDetail($("#ApplyId").val(),
+                $("#ApplyTypeId").val())
+            })
+
+        }
+
+
+    </script>
+}

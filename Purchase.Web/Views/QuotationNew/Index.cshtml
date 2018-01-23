@@ -1,0 +1,350 @@
+﻿
+<div class="count2 inline-block" style="width: 100%;">
+    <form id="search-quotation-form" class="form">
+        <input id="GroupId" name="GroupId" type="hidden">
+        <input id="ProjectId" name="ProjectId" type="hidden">
+        <input id="RequirementGroupId" name="RequirementGroupId" class="form-control" type="hidden">
+        <table style="width:99%">
+            <tr>
+                <td>确认单组名</td>
+                <td style="text-align:left"><input id="QuotationGroupNameSpan" type="text" class="form-control" readonly="readonly" /></td>
+                <td colspan="6" style="text-align:right">
+                    <button id="btnQueryQuotation" type="button" class="btn btn-primary" style="width:100px">查 询</button>
+                    <button id="btnSave2" type="button" class="btn btn-primary" style="width:100px">保 存</button>
+                </td>
+            </tr>
+            <tr>
+                <td>确认单类型</td>
+                <td>
+                    <select id="QuotationType" name="QuotationType" class="form-control">
+                        <option value="Biancheng">编程</option>
+                        <option value="Zhixing">执行</option>
+                        <option value="Fuhe">复核</option>
+                        <option value="Yanjiu">研究</option>
+                        <option value="Qita1">其他1</option>
+                        <option value="Qita2">其他2</option>
+                        <option value="Chezhan">车展</option>
+                        <option value="Zhichi">支持</option>
+                        <option value="Qita1">有形商品采购</option>
+                        <option value="Qita2">无形商品采购</option>
+                    </select>
+                </td>
+                <td></td>
+                <td></td>
+                <td>省份</td>
+                <td width="130">
+                    <select id="Province" name="Province" class="form-control"></select>
+                </td>
+                <td>城市</td>
+                <td width="130">
+                    <select id="City" name="City" class="form-control"></select>
+                </td>
+            </tr>
+            <tr>
+                <td>需求书</td>
+                <td>
+                    <input id="RequirementId" name="RequirementId" class="form-control" readonly>
+                </td>
+                <td></td>
+                <td>
+                    <a id="btnDemandBookSelect" class="btn btn-primary" style="width:100px;">选择需求书</a>
+                </td>
+                <td>供应商</td>
+                <td colspan="2">
+                    <input id="SupplierId" name="SupplierId" class="form-control" type="hidden">
+                    <input id="SupplierName" name="SupplierName" class="form-control" readonly>
+                </td>
+                <td>
+                    <a id="btnSupplierSelect" class="btn btn-primary" style="width:100px">选择供应商</a>
+                </td>
+            </tr>
+        </table>
+    </form>
+    <div style="position:relative">
+        <div id="search-result" class="table-responsive" style="max-height:350px;overflow: auto;"></div>
+    </div>
+</div>
+<style>
+    .quotation-table-input {
+        width: 100px;
+        border-radius: 4px;
+        border: solid 1px #ddd;
+        font-size: 12px;
+        padding: 3px;
+        height: 25px !important;
+    }
+</style>
+<script src="~/Scripts/custom/form-serialize.js"></script>
+<script src="~/Scripts/custom/province_city.js"></script>
+<script>
+    var ModelType, QuotationType, sourceData;
+    $(function () {
+        BindQuotation();
+        //获取QuotationType
+        QuotationType = '@ViewBag.QuotationType';
+        if (QuotationType != "") {
+            $("#QuotationType").val(QuotationType);
+        }
+        $("#btnQueryQuotation").click(function () {
+            loadQuotation();
+        })
+        $("#btnDemandBookSelect").click(function () {
+            RequirementSelect();
+        })
+
+        $("#QuotationType").change(function () {
+            var type = $(this).val();
+            debugger
+            if (type == null || type == "") {
+                return false;
+            }
+            if (type == "Youxingshangpincaigou") {
+                type = "Qita1";
+            }
+            if (type == "Wuxingshangpincaigou") {
+                type = "Qita2";
+            }
+            var view = "_PartialLoad" + type;
+            debugger
+            $("#search-result").empty();
+            $("#search-result").load("/QuotationNew/LoadPartial", { partialView: view });
+        }).trigger("change");
+
+        $("#btnSupplierSelect").click(function () {
+            SupplierSelect(1);
+        })
+        $("#btnRequirementGroupSelect").click(function () {
+            GroupSelect();
+        })
+
+        $("#btnSave2").click(function () {
+            if (!CommitCheck()) {
+                alert("正在审核中或者非本人添加的项目");
+                return false;
+            }
+
+            if ($("#quotation-table tbody").is(":empty")) {
+                alert("没有可以保存的数据");
+                return false;
+            }
+            if ($("#SupplierId").val() == null || $("#SupplierId").val() == "") {
+                alert("请选择供应商");
+                return false;
+            }
+
+            if (sourceData) {
+                $("#quotation-table tbody tr").each(function (i, tr) {
+                    if (i == $("#quotation-table tbody tr").length - 1) {
+                        //最后一行是合计，不保存
+                        return;
+                    }
+                    var inputs = $(tr).find("input");
+                    if ($("#QuotationType").val() == "Zhixing") {
+                        sourceData[i].AccountUnit = inputs.eq(0).val();
+                        sourceData[i].UnitPrice = inputs.eq(1).val();
+                        sourceData[i].Count = inputs.eq(2).val();
+                        sourceData[i].Remark = inputs.eq(4).val();
+                    } else if ($("#QuotationType").val() == "Qita1" || $("#QuotationType").val() == "Qita2") {
+                        sourceData[i].danjia = inputs.eq(0).val();
+                        sourceData[i].shuliang = inputs.eq(1).val();
+                        sourceData[i].beizhu = inputs.eq(3).val();
+                    } else {
+                        sourceData[i].hesuandanwei = inputs.eq(0).val();
+                        sourceData[i].danjia = inputs.eq(1).val();
+                        sourceData[i].shuliang = inputs.eq(2).val();
+                        sourceData[i].beizhu = inputs.eq(4).val();
+                    }
+                })
+
+                for (i in sourceData) {
+                    debugger
+                    if ($("#QuotationType").val() == "Zhixing") {
+                        if ((sourceData[i].UnitPrice == "0" || sourceData[i].Count == "0")
+                            && (!sourceData[i].Remark || sourceData[i].Remark.trim() == "")) {
+                            alert("单价或数量为0，必须添加备注");
+                            return false;
+                        }
+                    } else {
+                        if ((sourceData[i].danjia == "0" || sourceData[i].shuliang == "0")
+                            && (!sourceData[i].beizhu || sourceData[i].beizhu.trim() == "")) {
+                            alert("单价或数量为0，必须添加备注");
+                            return false;
+                        }
+                    }
+                }
+
+                $("#btnSave2").button("loading");
+                $.post("/QuotationNew/Save" + $("#QuotationType").val(), {
+                    jsonArr: JSON.stringify(sourceData),
+                    ProjectId: $("#search-quotation-form #ProjectId").val(),
+                    SupplierId: $("#search-quotation-form #SupplierId").val(),
+                    GroupId: $("#search-quotation-form #GroupId").val(),
+                }, function (data) {
+                    loadQuotation();
+                    alert("保存成功！");
+                })
+            }
+        })
+    })
+
+    function loadQuotation() {
+        if ($("#SupplierId").val() == null || $("#SupplierId").val() == "") {
+            alert("请选择供应商");
+            return false;
+        }
+        if ($("#Province").val() == null || $("#Province").val() == "") {
+            alert("请选择省份");
+            return false;
+        }
+        if (($("#City").val() == null || $("#City").val() == "")
+            && $("#Province").val() != "全国") {
+            alert("请选择城市");
+            return false;
+        }
+        if ($("#RequirementId").val() == null || $("#RequirementId").val() == "") {
+            alert("请选择需求书");
+            return false;
+        }
+        var type = $("#QuotationType").val();
+        if (type == null || type == "") {
+            alert("请选择确认单类型");
+            return false;
+        }
+        var params = $("#search-quotation-form").serializeJson();
+
+        $("#btnQueryQuotation").button("loading");
+        $.post("/QuotationNew/Load" + type, params, function (data) {
+            if (data && data.List) {
+                sourceData = data.List;
+                $("#quotation-table tbody").empty();
+                $.each(data.List, function (index, item) {
+                    addQuotationTr(item);
+                    $(this).find(".quotation-table-input:eq(3)").change(function () {
+
+                    })
+                })
+            }
+            if (data && data.List && data.List.length > 0) {
+                //金额合计
+                var tdCount = $("#quotation-table th").length;
+                var tr = $("<tr>");
+                for (var i = 0; i < tdCount; i++) {
+                    if (i == tdCount - 3) {
+                        tr.append($("<td>").append($("<strong>").text("合计")));
+                    } else {
+                        tr.append($("<td>").text(""));
+                    }
+                }
+                $("#quotation-table tbody").append(tr);
+                calHeji();
+            }
+
+            $("#btnSave2").button("reset");
+        }).complete(function () { $("#btnQueryQuotation").button("reset"); })
+    }
+
+    function calHeji() {
+        var tdCount = $("#quotation-table th").length;
+        var jinerheji = 0;
+        $("#quotation-table tbody tr").each(function () {
+            var xiaoji = $(this).find("td:eq(" + (tdCount - 2) + ") input").val();
+            if (xiaoji) {
+                jinerheji += xiaoji.length > 0 ? parseFloat(xiaoji) : 0;
+            }
+        })
+        $("#quotation-table tbody tr:last-child").find("td").eq(tdCount - 2).empty().append($("<strong>").text(jinerheji.toFixed(2)));
+    }
+
+    function SupplierSelect(type) {
+        $("#supplierModal .modal-body").empty();
+        $("#supplierModal").modal("show");
+        $("#supplierModal .modal-title").html("选择供应商");
+        $("#supplierModal .modal-body").load("/Constract/SupplierMngSelect",
+            { SupplierCode: "", SupplierName: "", SupplierShortName: "", province: '', city: '' }, function () {
+                $("#myModal .modal-body #Type").val(type)
+            });
+    }
+    function SupplierSelectCallback1(args) {
+        $("#SupplierName").val(args.SupplierName);
+        $("#SupplierId").val(args.SupplierId);
+        $("#supplierModal").modal("hide");
+        //loadQuotation();
+    }
+    function GroupSelect() {
+        //if (isEmpty($("#ProjectId").val())) {
+        //    alert("请选择项目");
+        //    return
+        //}
+        debugger
+        $("#supplierModal").modal("show");
+        $("#supplierModal .modal-title").html("选择需求书组");
+        $("#supplierModal .modal-body").empty();
+        $("#supplierModal .modal-body").load("/DemandBook/GroupSelect", { ProjectId: $("#ProjectId").val() }, function () {
+
+        });
+    }
+    function GroupSelectCallback(args) {
+        debugger
+        $("#search-quotation-form #RequirementGroupName").val(args[0]);
+        $("#search-quotation-form #RequirementGroupId").val(args[1]);
+        $("#supplierModal").modal("hide");
+    }
+
+    function RequirementSelect() {
+        $("#RequirementModal .modal-body").empty();
+        $("#RequirementModal").modal("show");
+        $("#RequirementModal .modal-title").html("选择需求书");
+        $("#RequirementModal .modal-body").load("/QuotationNew/RequirementSelect",
+            {
+                ProjectId: $("#ProjectId").val(),
+                Province: $("#Province").val(),
+                City: $("#City").val(),
+                GroupId: $("#RequirementGroupId").val(),
+                ModelType: $("#ModelType").val(),
+                QuotationType: $("#QuotationType").val()
+            }, function () {
+                $("#ProvincePopup").val($("#Province").val());
+                $("#CityPopup").val($("#City").val());
+            });
+    }
+    function RequirementSelectCallback(ids) {
+        $("#RequirementId").val(ids);
+        $("#RequirementModal").modal("hide");
+    }
+
+    function BindQuotation() {
+        var bussiness = ["", "编程", "执行", "复核", "研究", "其他1", "其他2", "车展", "支持"];
+        var bussinessEn = ["", "Biancheng", "Zhixing", "Fuhe", "Yanjiu", "Qita1", "Qita2", "Chezhan", "Zhichi"];
+        var inter = ["", "有形商品采购", "无形商品采购"]
+        var interrEn = ["", "Qita1", "Qita2"]
+        var el = $("#QuotationType");
+        var combo = $("<select id='QuotationType' name='QuotationType' class = 'form-control'> ");
+        var input = $("<input id='QuotationType' name='QuotationType' class = 'form-control'> ");
+
+        if ($("#ModelType").val() == "业务") {
+            el = changeSelectInput(el, combo, input, true);
+            for (i in bussiness) {
+                el.append($("<option>").html(bussiness[i]).val(bussinessEn[i]));
+            }
+        } else {
+            el = changeSelectInput(el, combo, input, true);
+            for (i in inter) {
+                el.append($("<option>").html(inter[i]).val(interrEn[i]));
+            }
+        }
+        $("#QuotationType").data("live-search", true).prop("title", "").selectpicker("refresh");
+    }
+    function changeSelectInput(el, combo, input, isDropdown) {
+        var newEl;
+        if (isDropdown) {
+            newEl = combo;
+        } else {
+            newEl = input;
+        }
+        var parent = el.parent();
+        parent.empty();
+        parent.append(newEl);
+
+        return newEl;
+    }
+</script>

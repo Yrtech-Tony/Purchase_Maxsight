@@ -1,0 +1,235 @@
+﻿@using Purchase.Service.DTO
+@model IEnumerable<QuotationMstDto>
+ 
+<style>
+    .modal-body{
+        padding-top:10px;
+    }
+    #search-result > div:last-child .table-responsive{
+        margin-bottom:0;
+    }
+</style>
+<form id="search-project-form">
+    <table style="width:100%;">
+        <tr>
+            <td colspan="10" style="text-align:right">
+                <a class="btn btn-primary" href="javascript:showAttachList(@ViewBag.ApplyId)">查看附件</a>
+                <a id="btnSave" class="btn btn-primary" style="width:100px">保 存</a>
+                <a id="btnExport" onclick="exportExcel()" class="btn btn-primary" style="width:100px" data-loading-text="正在导出...">导出Excel</a>
+            </td>
+        </tr>
+    </table>
+</form>
+<div class="count2">
+    <input id="UserRoleType" name="UserRoleType" type="hidden" value="@ViewBag.UserRoleType" />
+    <input id="ApplyId_OpenWin" type="hidden" value="@ViewBag.ApplyId" />
+    <table id="RecheckUserSelect-table" class="table table-bordered table-condensed table-hover hidden">
+        <thead>
+            <tr>
+                <th>申请编号</th>
+                <th>确认单类型</th>
+                <th>项目编号</th>
+                <th>项目名称</th>
+                <th>项目简称</th>
+            </tr>
+        </thead>
+        <tbody>
+            @if (Model != null)
+            {
+                foreach (QuotationMstDto item in Model)
+                {
+                    <tr>
+                        <td>@item.ApplyId</td>
+                        <td><a href="javascript:void(0)" onclick="QuotationDtl('@item.ApplyId', '@item.QuotationType', '@item.QuotationTypeTxt')">@item.QuotationTypeTxt</a></td>
+                        <td>@item.ProjectCode</td>
+                        <td>@item.ProjectName</td>
+                        <td>@item.ProjectShortName</td>
+                    </tr>
+                }
+            }
+        </tbody>
+    </table>
+</div>
+<div id="sub-result-source" class="sub-result-source" style="display:none">
+    <table style="width: 100%; padding-bottom:3px">
+        <tr>
+            <td style="width:250px; text-align:left">
+                <strong>确认单类型：</strong>
+                <span id="QuotationType"></span>
+            </td>
+            <td style="width:200px; text-align:left">
+                <strong>合计：</strong>
+                <span id="heji" class="heji"></span>
+            </td>           
+            <td style="text-align:right">               
+                <a id="btnCheckAll" class="btn btn-primary" style="width:100px" onclick="btnCheckAll(this)">全选</a>
+                <a id="btnNotcheckAll" class="btn btn-primary" style="width:100px" onclick="btnNotcheckAll(this)">反选</a>
+            </td>
+        </tr>
+    </table>
+    <div class="data table-responsive" style="max-height:250px;overflow:auto;"></div>
+</div>
+<table style="width: 100%; padding-bottom:3px">
+    <tr>
+        <td style=" text-align:left">
+            <strong>总合计：</strong>
+            <span id="heji_total"></span>
+        </td>
+    </tr>
+</table>
+<div id="search-result" style="position:relative; max-height:520px;overflow-y:auto">
+</div>
+
+<script src="~/Scripts/custom/bs.modal.expend.js"></script>
+<script>
+    
+    function btnCheckAll(btn) {
+        $(btn).parents("table").next().find("input[type=checkbox]").prop("checked", true).change();
+    }
+
+    function btnNotcheckAll(btn) {
+        $(btn).parents("table").next().find("input[type=checkbox]").prop("checked", false).change();
+    }
+
+    $("#btnSave").click(function () {
+        QuotationSelectSave();
+    });
+
+    $("#RecheckUserSelect-table a").each(function () {
+        $(this).trigger("click");
+    });
+
+    function exportExcel() {
+        debugger
+        if ($("#search-result .table tbody tr").length == 0) {
+            alert("没有数据可以导出");
+            return false;
+        }
+        var params = { ApplyId: $("#ApplyId_OpenWin").val() };
+        $("#btnExport").button("loading");
+        alert("正在导出...");
+        $.post("/ApplyCheck/ExportApplyDetailQuotation", params, function (data) {
+            window.location.href = "/ApplyCheck/DownloadFile?fileName=" + data.ExportPath;
+        }).complete(function () {
+            $("#btnExport").button("reset");
+            closealert();
+        });
+    }
+
+    function QuotationDtl(ApplyId, QuotationType, QuotationTypeTxt) {
+        if (QuotationType == "Youxingshangpincaigou") {
+            QuotationType = "Qita1";
+        }
+        if (QuotationType == "Wuxingshangpincaigou") {
+            QuotationType = "Qita2";
+        }
+        var view = "_PartialApplyCheckLoad" + QuotationType;
+        
+        var subResult = $('#sub-result-source').clone().show();
+        subResult.find(".data").load("/ApplyCheck/ApplyDetail_Quotation", { ApplyId: ApplyId, QuotationType: QuotationType }, function () {
+            subResult.find("#QuotationType").html(QuotationTypeTxt);
+
+            $("input[type=checkbox]", subResult).change(function () {
+                calaHeji(subResult);
+            })
+            //计算合计
+            calaHeji(subResult);
+        });
+        $("#search-result").append(subResult);
+    }
+    function calaHeji(subResult) {
+        var heji = 0;
+        subResult.find(".data tbody tr").each(function (i, tr) {
+            var chk = $(tr).find("input[type=checkbox]").eq(0);
+            if (chk && chk.is(":checked")) {
+                var xiaoji = $(tr).find("td:last-child").prev().text();
+                if (xiaoji && xiaoji.length > 0 && !isNaN(parseFloat(xiaoji))) {
+                    heji += parseFloat(xiaoji);
+                }
+            }
+        });
+        subResult.find("#heji").text(parseFloat(heji).toFixed(2));
+
+        //总合计
+        var heji_total = 0;
+        $("#search-result .heji").each(function () {
+            heji_total += parseFloat($(this).text());
+        })
+        $("#heji_total").text(parseFloat(heji_total).toFixed(2));
+    }
+
+    function QuotationSelectSave() {
+        var lstStringId = "";
+        var checkbox = $("#quotation-table input[type=checkbox]");
+        $.each(checkbox, function (index, item) {
+            var checked = $(item).is(":checked");
+            var tds = $(item).parents("tr:first").find("td");
+            lstStringId += tds.eq(1).html() + "," + tds.eq(2).html() + "," + tds.eq(3).html() + "," + checked + ";";
+        });
+        if (lstStringId.length > 0) {
+            lstStringId = lstStringId.substr(0, lstStringId.length - 1);
+        }
+        $.post("/ApplyCheck/ApplyDetail_QuotationSelect", { resultList: lstStringId }, function (data) {
+            alert("保存完毕");
+        })
+    }
+    //function openQuotationDetail(ModelType, type, ProjectCode,ProjectName,ProjectShortName) {
+    //    debugger
+    //    $("#QuotationId").val(QuotationId);
+    //    $("#SelectChk").val(Chk);
+
+    //    $("#quotation-detail .modal-body #detail-result").empty();
+    //    $("#quotation-detail").modal("show");
+    //    $("#quotation-detail .modal-title").html("确认单详细");
+    //    $("#QuotationType_Hidden").val(type);
+    //    var view = "_PartialLoad" + type;
+    //    $("#quotation-detail .modal-body #detail-result").load("/Quotation/LoadPartial", { partialView: view }
+    //    , function () {
+    //        loadByApplyIdAndType(ModelType, type, ProjectCode, ProjectName, ProjectShortName);
+    //        debugger
+    //        if (Chk == "是") {
+    //            $("#btnSelect").hide();
+    //            $("#btnNotSelect").show();
+    //        }
+    //        else {
+    //            $("#btnSelect").show();
+    //            $("#btnNotSelect").hide();
+
+    //        }
+    //    });
+    //}
+    //function loadByApplyIdAndType(ModelType, type, ProjectCode, ProjectName, ProjectShortName) {
+
+    //    params = $.extend(params, { pageSize: 20, pageNum: pageNum ? pageNum : 1, QuotationType: type });
+    //    $.post("/Quotation/Load" + type, {ModelType:ModelType,projectCode:ProjectCode,ProjectName:ProjectName,ProjectShortName:ProjectShortName,SupplierCode:"",SupplierName:"",SupplierShortName:"",lastChk:"初版"}, function (data) {
+    //        if (data && data.List) {
+    //            $("#quotation-table tbody").empty();
+    //            $.each(data.List, function (index, item) {
+    //                addQuotationTr(item);
+    //            })
+
+    //           createPageNav({ $container: $("#pagination"), pageCount: data.PageCount, currentNum: data.CurPage, afterFun: load });
+    //        }
+    //    })
+
+    //    $.post("/Quotation/LoadDetailByQuotationId", { QuotationId: QuotationId, QuotationType: type }, function (data) {
+    //        if (data) {
+    //            $("#quotation-table tbody").empty();
+    //            $.each(data, function (index, item) {
+    //                item.SupplierName = SupplierName;
+    //                item.QuotationType = type;
+    //                addQuotationTr(item);
+    //            })
+    //        }
+    //    })
+    //}
+
+    function showAttachList(ApplyId) {
+        var bsWindow = createBSWindow({
+            title: "附件"
+        });
+        $(".modal-body", bsWindow).load("/ApplyCheck/AttachShow", { applyId: ApplyId }, function () {
+
+        });
+    }
+</script>

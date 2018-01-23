@@ -1,0 +1,53 @@
+﻿@using Purchase.Web.Common
+@model Purchase.DAL.Requirement_Cheliangzhanpinghui_RequirementDtl12
+
+<form id="Cheliangzhanpinghui-dtl12-form">
+    @Html.Hidden("SeqNO", 0)
+    <div class="form-horizontal">
+        <div class="form-group">
+            <label class="control-label col-md-2" for="">陪访人员</label>
+            <div class="col-md-8">
+                @Html.DropDownListFor(m => m.peifangrenyuan, SelectListTool.HiddenCodeList("需求书-车辆展评会-深访及日记留置-人员要求-陪访人员"),
+                   htmlAttributes: new { @class = "form-control", multiple = "" })
+            </div>
+        </div>
+        <div class="form-group">
+            <label class="control-label col-md-2" for="">数量</label>
+            <div class="col-md-8">
+                @Html.DropDownListFor(m => m.shuliang, SelectListTool.HiddenCodeList("需求书-车辆展评会-深访及日记留置-人员要求-数量"),
+                   htmlAttributes: new { @class = "form-control", multiple = "" })
+            </div>
+        </div>
+        <div class="form-group">
+            <label class="control-label col-md-2" for="RemarkDtl7">其他说明</label>
+            <div class="col-md-8">
+                @Html.TextAreaFor(m => m.qitashuoming12, htmlAttributes: new { @class = "form-control", multiple="" })
+            </div>
+        </div>
+        <div class="form-group">
+            <div class="col-md-offset-2 col-md-10">
+                <input id="saveBtn" type="button" value="保存" class="btn btn-primary btn-check" data-loading-text="提交中..." style="width:100px;height:35px" />
+            </div>
+        </div>
+    </div>
+</form>
+<script>
+    $(function () {
+        
+        $("#Cheliangzhanpinghui-dtl12-form #saveBtn").click(function () {
+            if (!CommitCheck()) {
+                alert("正在审核中或者非本人添加的项目");
+                return false;
+            }
+            $(this).button("loading")
+            var params = $("#Cheliangzhanpinghui-dtl12-form").serializeJson('&');
+            params = $.extend(params, getMstObject());
+
+            $.post("/DemandBook/SaveCheliangzhanpinghuiDtl12", params, function (data) {
+                $("#RequirementId").val(data);
+                loadCheliangzhanpinghuiDtl12();
+                closeModal();
+            });
+        })
+    })
+</script>

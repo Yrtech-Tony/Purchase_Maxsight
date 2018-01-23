@@ -1,0 +1,137 @@
+﻿@using Purchase.Web.Common
+@model Purchase.DAL.Requirement_Yunshuzuche_RequirementDtl2
+
+<form id="Yunshuzuche-dtl2-form">
+    @Html.Hidden("SeqNO", 0)
+    <div class="form-horizontal">
+        <div class="form-group">
+            <label class="control-label col-md-2" for="">分类</label>
+            <div class="col-md-8">
+                @Html.DropDownListFor(m => m.fenlei, SelectListTool.HiddenCodeList("需求书-运输租车-展车运输-分类"), htmlAttributes: new { @class = "form-control" })
+            </div>
+        </div>
+        <div class="form-group">
+            <label class="control-label col-md-2" for="">类型/品牌</label>
+            <div class="col-md-8">
+                @Html.DropDownListFor(m => m.leixingpinpai, new List<SelectListItem> { }, htmlAttributes: new { @class = "form-control" })
+            </div>
+        </div>
+        <div class="form-group">
+            <label class="control-label col-md-2" for="TemplateName">规格/型号</label>
+            <div class="col-md-8">
+                @Html.TextBoxFor(m => m.guigexinghao, htmlAttributes: new { @class = "form-control" })
+            </div>
+        </div>
+        <div class="form-group">
+            <label class="control-label col-md-2" for="TemplateName">接车日期/还车日期</label>
+            <div class="col-md-8">
+                @Html.TextBoxFor(m => m.jiecheriqihuancheriqi, htmlAttributes: new { @class = "form-control" })
+            </div>
+        </div>
+        <div class="form-group">
+            <label class="control-label col-md-2" for="">装卸要求</label>
+            <div class="col-md-8">
+                @Html.DropDownListFor(m => m.zhuangxieyaoqiu, SelectListTool.HiddenCodeList("需求书-运输租车-展车运输-装卸要求"), htmlAttributes: new { @class = "form-control", multiple = "" })
+            </div>
+        </div>
+        <div class="form-group">
+            <label class="control-label col-md-2" for="">装卸次数</label>
+            <div class="col-md-8">
+                @Html.DropDownListFor(m => m.zhuangxiecishu, SelectListTool.HiddenCodeList("需求书-运输租车-展车运输-装卸次数"), htmlAttributes: new { @class = "form-control", multiple = "" })
+            </div>
+        </div>
+        <div class="form-group">
+            <label class="control-label col-md-2" for="TemplateName">运输路线</label>
+            <div class="col-md-8">
+                @Html.TextBoxFor(m => m.yunshuluxian, htmlAttributes: new { @class = "form-control" })
+            </div>
+        </div>
+        <div class="form-group">
+            <label class="control-label col-md-2" for="">数量/面积</label>
+            <div class="col-md-8">
+                @Html.TextBoxFor(m => m.shuliangmianji, htmlAttributes: new { @class = "form-control" })
+            </div>
+        </div>
+        <div class="form-group">
+            <label class="control-label col-md-2" for="">使用时间</label>
+            <div class="col-md-8">
+                @Html.DropDownListFor(m => m.shiyongshijian, SelectListTool.HiddenCodeList("需求书-运输租车-展车运输-使用时间"), htmlAttributes: new { @class = "form-control", multiple = "" })
+            </div>
+        </div>
+
+        <div class="form-group">
+            <label class="control-label col-md-2" for="TemplateName">其他说明</label>
+            <div class="col-md-8">
+                @Html.TextAreaFor(m => m.qitashuoming2, htmlAttributes: new { @class = "form-control" })
+            </div>
+        </div>
+        <div class="form-group">
+            <div class="col-md-offset-2 col-md-10">
+                <input id="saveBtn" type="button" value="保存" class="btn btn-primary btn-check" data-loading-text="提交中..." style="width:100px;height:35px" />
+            </div>
+        </div>
+    </div>
+</form>
+<script>
+    $(function () {
+        $("#Yunshuzuche-dtl2-form #saveBtn").click(function () {
+            if (!CommitCheck()) {
+                alert("正在审核中或者非本人添加的项目");
+                return false;
+            }
+            $(this).button("loading");
+            var params = $("#Yunshuzuche-dtl2-form").serializeJson('&');
+            params = $.extend(params, getMstObject());
+
+            $.post("/DemandBook/SaveYunshuzuchedtl2", params, function (data) {
+                $("#RequirementId").val(data);
+                loadYunshuzucheDtl2();
+                closeModal();
+            });
+        })
+        //var leixingpinpai1 = ["", "封闭厢式货车", "气垫车", "温控车", "板车", "不涉及", "不限制"];
+        //var leixingpinpai2 = ["", "原装车衣", "不涉及", "不限制"];
+        //var leixingpinpai3 = ["", "量产车", "油泥模车", "模型车", "不涉及", "不限制"];
+        $("#Yunshuzuche-dtl2-form #fenlei").change(function () {
+            var el = $("#leixingpinpai");
+            var feileiEl = $("#Yunshuzuche-dtl2-form #fenlei");
+            var combo = $("<select id='leixingpinpai' name='leixingpinpai' class = 'form-control'> ");
+            var input = $("<input id='leixingpinpai' name='leixingpinpai' class = 'form-control'> ");
+
+
+            $.ajax({
+                type: 'post',
+                url: "/Base/LoadChildHiddenCode",
+                data: { type: "需求书-运输租车-展车运输-分类-" + feileiEl.val() + "-类型/品牌" },
+                async: false,
+                success: function (data) {
+                    el.empty();
+                    if (data && data.length > 1) {
+                        el = changeSelectInput(el, combo, input, true);
+                        for (i in data) {
+                            el.append($("<option>").html(data[i]).val(data[i]));
+                        }
+                    } else {
+                        el = changeSelectInput(el, combo, input, false);
+                    }
+
+                    el.data("live-search", true).prop("title", "").selectpicker("refresh");
+                }
+            });
+        })
+
+        function changeSelectInput(el, combo, input, isDropdown) {
+            var newEl;
+            if (isDropdown) {
+                newEl = combo;
+            } else {
+                newEl = input;
+            }
+            var parent = el.parent();
+            parent.empty();
+            parent.append(newEl);
+
+            return newEl;
+        }
+    })
+</script>

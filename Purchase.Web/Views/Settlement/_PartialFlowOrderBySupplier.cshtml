@@ -1,0 +1,291 @@
+﻿@using Purchase.Service.DTO
+@model IEnumerable<FlowOrderDto>
+
+<div style="position:relative" class="count2">
+    @Html.Hidden("AllotSettlementId", "0")
+    <table style="width:100%">
+        <tr>
+            <td></td>
+            <td style="width:150px; text-align:right">
+                最后一次结算单：<input name="SettleChk" id="SettleChk" type="checkbox" />
+            </td>
+            <td style="width: 400px; text-align: right">
+                结算单金额：<input name="SupplierAmt" id="SupplierAmt" readonly />
+                <a id="btnSaveFlowOrder" class="btn btn-primary" style="width:100px">保存</a>
+            </td>
+        </tr>
+    </table>
+    <div class="table-responsive">
+        <table id="flowOrder-table" class="table table-bordered table-condensed table-hover">
+            <thead>
+                <tr>
+                    <th>项目简称</th>
+                    <th>供应商名称</th>
+                    <th>执行开始时间</th>
+                    <th>执行结束时间</th>
+                    <th>支出用途</th>
+                    <th>支出方式</th>
+                    <th>付款类型</th>
+                    <th>付款公司</th>
+                    <th>预计付款时间</th>
+                    <th>预计付款金额</th>
+                    <th>实际付款时间</th>
+                    <th>实际付款金额</th>
+                    <th>收款人</th>
+                    <th>备注</th>
+                </tr>
+            </thead>
+            <tbody>
+                @if (Model != null)
+                {
+                    foreach (FlowOrderDto item in Model)
+                    {
+                        <tr>
+                            <td>
+                                @Html.Hidden("FlowOrderId", item.FlowOrderId)
+                                @item.ProjectShortName
+                            </td>
+                            <td>@item.SupplierName</td>
+                            <td>@Html.Raw(item.ExecuteCycleStartDate.HasValue ? item.ExecuteCycleStartDate.Value.ToString("yyyy-MM-dd") : "")</td>
+                            <td>@Html.Raw(item.ExecuteCycleEndDate.HasValue ? item.ExecuteCycleEndDate.Value.ToString("yyyy-MM-dd") : "")</td>
+                            <td>@item.ExpendType</td>
+                            <td>@item.ExpendPattern</td>
+                            <td>@item.PaymentType</td>
+                            <td>@item.PaymentCompany</td>
+                            <td>@Html.Raw(item.EstimatedPaymentTime.HasValue ? item.EstimatedPaymentTime.Value.ToString("yyyy-MM-dd") : "")</td>
+                            <td>@item.EstimatePaymentAmt</td>
+                            <td>@Html.TextBox("FactPaymentTime", item.FactPaymentTime.HasValue ? item.FactPaymentTime.Value.ToString("yyyy-MM-dd") : "", new { @class = "form-control", onclick = "WdatePicker()", style = "width:100px;" })</td>
+                            <td>@Html.TextBox("FactPaymentAmt", item.FactPaymentAmt, new { @class = "form-control" })</td>
+                            <td>@item.Payee</td>
+                            <td>@item.Remark</td>
+                        </tr>
+                    }
+                }
+            </tbody>
+        </table>
+    </div>
+</div>
+<script src="~/Content/My97DatePicker/WdatePicker.js"></script>
+
+<script>
+    var SelectItem;
+    $(function () {
+        addFlowOrderHejiTr();
+        $("#flowOrder-table tbody tr input").change(function () {
+            calaFlowOrderHeji();
+        })
+        $("#SettleChk").change(function () {
+            if (SelectItem) {
+                $("#btnSaveFlowOrder").button('loading');//禁用按钮并显示提交中
+                loadFlowOrderBySettleChange();
+            }
+        })
+
+        $("#btnSaveFlowOrder").click(function () {
+            var msg = "";
+            debugger
+            var jsonArr = [];
+            var totalAmt = 0;
+            $("#flowOrder-table tbody tr:not(:last-child)").each(function () {
+                debugger
+                var tr = $(this);
+                var flowOrderId = tr.find("#FlowOrderId").val();
+                var factPaymentTime = tr.find("#FactPaymentTime").val();
+                var factPaymentAmt = tr.find("#FactPaymentAmt").val();
+
+                if (!isEmptyOrNull(factPaymentAmt)) {
+                    totalAmt += parseFloat(factPaymentAmt);
+                }
+                jsonArr.push([flowOrderId, factPaymentTime, factPaymentAmt, $("#AllotSettlementId").val()]);
+            });
+            $.each(jsonArr, function (i, arr) {
+                if ((!isEmptyOrNull(arr[1]) && isEmptyOrNull(arr[2]))
+                || (isEmptyOrNull(arr[1]) && !isEmptyOrNull(arr[2]))) {
+                    msg += "实际付款时间和实际付款金额必须同时填写！";
+                    return false;
+                }
+                if (!isEmptyOrNull(arr[2])
+                    && parseFloat(arr[2])==0) {
+                    msg += "实际付款金额不能填写0";
+                    return false;
+                }
+            })
+            var SupplierAmt = $("#SupplierAmt").val();
+            if (!isEmptyOrNull(SupplierAmt)) {
+                SupplierAmt = parseFloat(SupplierAmt);
+                if (msg.length == 0
+                    && totalAmt != 0
+                    && totalAmt != SupplierAmt
+                    && jsonArr.length > 0 // 没有数据的时候不需要弹出提示
+                    ) {
+                    msg += "流转单付款总金额跟结算单金额不一致！";
+                }
+            }
+            if (msg.length > 0) {
+                alert(msg);
+                return;
+            }
+            var settleChkValue = $("input[name='SettleChk']").is(':checked');
+            if (settleChkValue) {
+                $("#flowOrder-table tbody tr:not(:last-child)").each(function () {
+                    var type = $(this).find("td:eq(6)").text();
+                    if (type == "押金" || type == '	预付款') {
+                        var factPaymentTime = $(this).find("#FactPaymentTime").val();
+                        var factPaymentAmt = $(this).find("#FactPaymentAmt").val();
+                        if (isEmptyOrNull(factPaymentTime) && isEmptyOrNull(factPaymentAmt)) {
+                            msg = "最后一次结算单必须填写押金和预付款";
+                            return false;
+                        }
+                    }
+                });
+                if (msg.length > 0) {
+                    alert(msg);
+                    return;
+                }
+            }
+            SelectItem.SettleChk = settleChkValue;
+            $(this).button('loading');//禁用按钮并显示提交中
+            $.post("/Settlement/AllotFlowOrderSave", {
+                settlementId: SelectItem.SettlementId,
+                //settleChk: SelectItem.SettleChk,
+                settleChk: settleChkValue,
+                delChk: SelectItem.DelChk,
+                jsonArr: JSON.stringify(jsonArr)
+            }, function () {
+                alert("保存成功");
+                if (SelectItem) {
+                    loadFlowOrderBySettleAfterSave();
+                    load();
+                }
+            }).complete(function () { $("#btnSaveFlowOrder").button("reset"); });
+        })
+    });
+
+    //增加合计行
+    function addFlowOrderHejiTr() {
+        var tr = $("<tr>");
+        var tdCount = $("#flowOrder-table thead tr:first-child th").length;
+        for (var i = 0; i < tdCount; i++) {
+            if (i == tdCount - 4) {
+                tr.append($("<td>").append($("<strong>").text("合计")));
+            } else if (i == tdCount - 3) {
+                tr.append($("<td>").append($("<strong>").text(0)));
+            } else {
+                tr.append($("<td>").text(""));
+            }
+        }
+        $("#flowOrder-table tbody").append(tr);
+        calaFlowOrderHeji();
+    }
+    //计算合计
+    function calaFlowOrderHeji() {
+        var totalAmt = 0;
+        $("#flowOrder-table tbody tr").each(function () {
+            var tr = $(this);
+            debugger
+            var factPaymentAmt = tr.find("#FactPaymentAmt").val();
+            if (!factPaymentAmt) return;
+            if (isEmptyOrNull(factPaymentAmt)) {
+                return;
+            }
+            totalAmt += parseFloat(factPaymentAmt);
+        });
+        var tr = $("#flowOrder-table tbody tr:last-child");
+        var tdCount = $("#flowOrder-table thead tr:first-child th").length;
+        tr.find("td").each(function (i) {
+            if (i == tdCount - 3) {
+                $(this).empty();
+                $(this).append($("<strong>").text(totalAmt));
+            }
+        })
+    }
+    function loadFlowOrderBySettleChange() {
+        var settleChkValue = $("input[name='SettleChk']").is(':checked');
+        $.post("/Settlement/SettlementMstUpldate", {
+            settlementId: SelectItem.SettlementId,
+            //settleChk: SelectItem.SettleChk
+            delChk: SelectItem.DelChk,
+            settleChk: settleChkValue
+        }, function () {
+            $.post("/Settlement/LoadFlowOrderBySettle", {
+                projectId: SelectItem.ProjectId,
+                supplierId: SelectItem.SupplierId,
+                settlementId: SelectItem.SettlementId,
+                //settleChk: SelectItem.SettleChk
+                delChk: SelectItem.DelChk,
+                settleChk: settleChkValue
+            }, function (data) {
+                if (data) {
+                    $("#flowOrder-table tbody").empty();
+                    $.each(data, function (i, item) {
+                        var tr = $("<tr>");
+
+                        tr.append($("<td></td>").html(item.ProjectShortName)
+                            .append($("<input type='hidden'id='FlowOrderId' name='FlowOrderId'>").val(item.FlowOrderId)));
+                        tr.append($("<td></td>").html(item.SupplierName));
+                        tr.append($("<td></td>").html(item.ExecuteCycleStartDate));
+                        tr.append($("<td></td>").html(item.ExecuteCycleEndDate));
+                        tr.append($("<td></td>").html(item.ExpendType));
+                        tr.append($("<td></td>").html(item.ExpendPattern));
+                        tr.append($("<td></td>").html(item.PaymentType));
+                        tr.append($("<td></td>").html(item.PaymentCompany));
+                        tr.append($("<td></td>").html(item.EstimatedPaymentTime));
+                        tr.append($("<td></td>").html(item.EstimatePaymentAmt));
+                        var FactPaymentTimeInput = $("<input id='FactPaymentTime' name='FactPaymentTime' class='form-control' onclick='WdatePicker()' style='width:100px;'>").val(item.FactPaymentTime);
+                        tr.append($("<td></td>").append(FactPaymentTimeInput));
+                        var FactPaymentAmtInput = $("<input id='FactPaymentAmt' name='FactPaymentAmt' class='form-control'>").val(item.FactPaymentAmt);
+                        tr.append($("<td></td>").append(FactPaymentAmtInput));
+                        tr.append($("<td></td>").html(item.Payee));
+                        tr.append($("<td></td>").html(item.Remark));
+
+                        $("#flowOrder-table tbody").append(tr);
+
+                    })
+                }
+                //增加合计行
+                addFlowOrderHejiTr();
+            }).complete(function () { $("#btnSaveFlowOrder").button("reset"); });
+        }).complete(function () { $("#btnSaveFlowOrder").button("reset"); });
+    }
+    function loadFlowOrderBySettleAfterSave() {
+        var settleChkValue = $("input[name='SettleChk']").is(':checked');
+        $.post("/Settlement/LoadFlowOrderBySettle", {
+            projectId: SelectItem.ProjectId,
+            supplierId: SelectItem.SupplierId,
+            settlementId: SelectItem.SettlementId,
+            //settleChk: SelectItem.SettleChk
+            delChk: SelectItem.DelChk,
+            settleChk: settleChkValue
+        }, function (data) {
+            if (data) {
+                $("#flowOrder-table tbody").empty();
+                $.each(data, function (i, item) {
+                    var tr = $("<tr>");
+
+                    tr.append($("<td></td>").html(item.ProjectShortName)
+                        .append($("<input type='hidden'id='FlowOrderId' name='FlowOrderId'>").val(item.FlowOrderId)));
+                    tr.append($("<td></td>").html(item.SupplierName));
+                    tr.append($("<td></td>").html(item.ExecuteCycleStartDate));
+                    tr.append($("<td></td>").html(item.ExecuteCycleEndDate));
+                    tr.append($("<td></td>").html(item.ExpendType));
+                    tr.append($("<td></td>").html(item.ExpendPattern));
+                    tr.append($("<td></td>").html(item.PaymentType));
+                    tr.append($("<td></td>").html(item.PaymentCompany));
+                    tr.append($("<td></td>").html(item.EstimatedPaymentTime));
+                    tr.append($("<td></td>").html(item.EstimatePaymentAmt));
+                    var FactPaymentTimeInput = $("<input id='FactPaymentTime' name='FactPaymentTime' class='form-control' onclick='WdatePicker()' style='width:100px;'>").val(item.FactPaymentTime);
+                    tr.append($("<td></td>").append(FactPaymentTimeInput));
+                    var FactPaymentAmtInput = $("<input id='FactPaymentAmt' name='FactPaymentAmt' class='form-control'>").val(item.FactPaymentAmt);
+                    tr.append($("<td></td>").append(FactPaymentAmtInput));
+                    tr.append($("<td></td>").html(item.Payee));
+                    tr.append($("<td></td>").html(item.Remark));
+
+                    $("#flowOrder-table tbody").append(tr);
+
+                })
+            }
+            //增加合计行
+            addFlowOrderHejiTr();
+        }).complete(function () { $("#btnSaveFlowOrder").button("reset"); });
+    }
+</script>

@@ -1,0 +1,62 @@
+﻿@using Purchase.Service.DTO
+@model IEnumerable<ProjectDto>
+<div class="count2">
+    <div style="position:relative">
+        <div id="search-result" class="table-responsive" style="max-height:550px;overflow-y:auto;">
+            <table id="RecheckUserSelect-table" class="table table-bordered table-condensed table-hover">
+                <thead>
+                    <tr>
+                        <th>申请编号</th>
+                        <th>模块类型</th>
+                        <th>项目编号</th>
+                        <th>项目名称</th>
+                        <th>项目简称</th>
+                        <th>所属部门</th>
+                        <th>所属年份</th>
+                        <th>开始时间</th>
+                        <th>结束时间</th>
+                        <th>查看附件</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @if (Model != null)
+                    {
+                        foreach (ProjectDto item in Model)
+                        {
+                            <tr>
+                                <td>@item.ApplyId</td>
+                                <td>@item.ModelType</td>
+                                <td><a href="javascript:openProjectDetail(@item.ProjectId,'@item.ModelType')">@item.ProjectCode</a></td>
+                                <td>@item.ProjectName</td>
+                                <td>@item.ProjectShortName</td>
+                                <td>@item.DepartmentCode</td>
+                                <td>@item.Year</td>
+                                <td>@item.StartDate</td>
+                                <td>@item.EndDate</td>
+                                <td><a href="javascript:showAttachList(@item.ApplyId)">查看附件</a></td>
+                            </tr>
+                        }
+                    }
+                </tbody>
+            </table>
+        </div>
+    </div>    
+</div>
+
+<script src="~/Scripts/custom/bs.modal.expend.js"></script>
+<script>
+    function openProjectDetail(ProjectId, ModelType) {
+        var modeltypes = ["业务", "内部采购", "其他"];
+        var url = "/Projects/Edit?id=" + ProjectId + "&ModelType=" + modeltypes.indexOf(ModelType);
+        window.open(url);
+    }
+
+    function showAttachList(ApplyId) {
+        var bsWindow = createBSWindow({
+            title: "附件"
+        });
+        $(".modal-body", bsWindow).load("/ApplyCheck/AttachShow", { applyId: ApplyId }, function () {
+
+        });
+    }
+</script>

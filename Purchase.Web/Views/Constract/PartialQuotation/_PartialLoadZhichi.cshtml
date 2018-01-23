@@ -1,0 +1,69 @@
+﻿@using Purchase.DAL
+@using Purchase.Common
+@model IEnumerable<Quotation_Zhichi_Dtl>
+
+<table id="quotation-table" class="table table-bordered table-condensed table-hover">
+    <thead>
+        <tr>
+            <th style="width: 45px">
+                选择
+            </th>
+            <th style="width: 80px">
+                执行省份
+            </th>
+            <th style="width: 80px">
+                执行城市
+            </th>
+            <th style="width:100px">分类</th>
+            <th>类型/品牌</th>
+            <th style="width: 100px;">
+                次/天/个/小时
+            </th>
+            <th style="width: 80px">
+                单价/标准
+            </th>
+            <th style="width: 80px">
+                数量/人数
+            </th>
+            <th style="width: 60px">
+                小计
+            </th>
+            @*<th>
+                备注
+            </th>*@
+        </tr>
+    </thead>
+    <tbody>
+        @if (Model != null)
+        {
+            foreach (var item in Model)
+            {
+                if (!(Utils.Decimal2Double(item.danjia) == 0 && Utils.Decimal2Double(item.shuliang) == 0))
+                {
+                    var xiaoji = Utils.Decimal2Double(item.danjia) * Utils.Decimal2Double(item.shuliang);
+                    <tr>
+                        <td><input type="checkbox" value="@Json.Encode(item)"></td>
+                        <td>@item.zhixingshengfen</td>
+                        <td>@item.zhixingchengshi</td>
+                        <td>@item.fenlei</td>
+                        <td>@item.leixingpinpai</td>
+                        <td>@item.hesuandanwei</td>
+                        <td>@item.danjia</td>
+                        <td>@item.shuliang</td>
+                        <td>@Utils.DoubleFormat(Math.Round(xiaoji, 2))</td>
+                        @*<td style="text-align:left">@item.beizhu</td>*@
+                    </tr>
+                }
+            }
+
+            <tr>
+                <td></td>
+                <td colspan="5"></td>
+                <td>合计</td>
+                <td>@Model.Sum(x => x.shuliang)</td>
+                <td>@Utils.DoubleFormat(Model.Sum(x => Utils.Decimal2Double(x.danjia) * Utils.Decimal2Double(x.shuliang)))</td>
+                @*<td></td>*@
+            </tr>
+        }
+    </tbody>
+</table>

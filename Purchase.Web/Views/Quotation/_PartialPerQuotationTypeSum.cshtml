@@ -1,0 +1,114 @@
+﻿
+<label>初版</label>  
+<div class="table-responsive" style="max-height:300px;overflow:auto"> 
+    <table id="per-quotation-type-sum-table" class="table table-bordered table-condensed table-hover">
+        <thead>
+            <tr>
+                <th>供应商简称</th>
+            </tr>
+        </thead>
+        <tbody></tbody>
+    </table>
+</div>
+<label>终版</label> 
+<div class="table-responsive" style="max-height:250px;overflow:auto">
+    <table id="last-per-quotation-type-sum-table" class="table table-bordered table-condensed table-hover">
+        <thead>
+            <tr>
+                <th>供应商简称</th>
+            </tr>
+        </thead>
+        <tbody></tbody>
+    </table>
+</div>
+<script>
+    function PerQuotationTypeSumSearch(params) {
+        $.post("/Quotation/PerQuotationTypeSumSearch", params, function (data) {
+            bindTable($("#per-quotation-type-sum-table"),data.PerQuotationTypeSumList);
+            bindTable($("#last-per-quotation-type-sum-table"), data.LastPerQuotationTypeSumList);
+
+            calaHeji($("#per-quotation-type-sum-table"));
+            calaHeji($("#last-per-quotation-type-sum-table"));
+        });
+    };
+
+    function bindTable(table,data) {
+        if (data && data.HeaderDtoList && data.LeftDtoList && data.DataDtoList) {
+            //增加动态列头  
+            var headTr = $("thead tr", table).eq(0);
+            $.each(data.HeaderDtoList, function (index, item) {
+                headTr.append($("<th></th>").html(item.QuotationType));
+            })
+            $.each(data.LeftDtoList, function (index, leftItem) {
+                var tr = $("<tr>");
+
+                tr.append($("<td></td>").html(leftItem.SupplierShortName));
+
+                $.each(data.HeaderDtoList, function (index, item) {
+                    tr.append($("<td></td>").html(""));
+                })
+                //动态绑定值
+                $.each(data.DataDtoList, function (i, dataItem) {
+                    if (dataItem.SupplierId == leftItem.SupplierId) {
+                        var bindThIndex = 0;
+                        $.each(headTr.find("th"), function (thi, headTh) {
+                            if ($(this).text() == dataItem.QuotationType) {
+                                bindThIndex = thi;
+                                return false;
+                            }
+                        });
+                        $.each(tr.find("td"), function (tdi, bodyTd) {
+                            if (tdi == bindThIndex) {
+                                $(bodyTd).text(parseFloat(dataItem.SumAmt).toFixed(2));
+                                return false;
+                            }
+                        })
+                    }
+                })
+
+                $("tbody", table).append(tr);
+            })
+
+        }
+    }
+
+    function calaHeji(table) {
+        var headTr = $("thead tr", table).eq(0);
+        headTr.append($("<th></th>").html("小计"));
+        //小计
+        $("tbody tr", table).each(function () {
+            var tr = $(this);
+            var xiaoji = 0;
+            $("td", tr).each(function (j) {
+                if (j < 1) return;
+                var value = $(this).text();
+                if (value != "") {
+                    xiaoji += parseFloat(value);
+                }               
+            });
+            tr.append($("<td>").html(xiaoji));
+        });
+        //合计      
+        
+        var hejiArr = [];
+        $("tbody tr", table).each(function (i) {
+            var tr = $(this);
+            $("td", tr).each(function (j) {
+                if (j < 1) return;
+                var value = $(this).text();
+                if (value != "") {
+                    if (!hejiArr[j]) hejiArr[j] = 0;
+                    hejiArr[j] += parseFloat(value);
+                }
+            });
+        });
+        var hejiTr = $("<tr>");
+        hejiTr.append($("<td>").html("<strong>合计</strong>"));
+        for (j in hejiArr) {
+            if (j < 1) continue;
+            hejiTr.append($("<td>").html(hejiArr[j]));
+        }
+
+        $("tbody",table).append(hejiTr);
+    }
+</script>

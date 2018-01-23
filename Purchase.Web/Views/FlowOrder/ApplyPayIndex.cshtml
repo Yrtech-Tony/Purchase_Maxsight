@@ -1,0 +1,277 @@
+﻿@{
+    ViewBag.Title = "应付流转单付款申请";
+    Layout = "../FlowOrder/_FlowOrderLayout.cshtml";
+}
+<style>
+    td.piao {
+        line-height:25px !important;
+    }
+
+    .table td input {
+        padding: 2px 3px !important;
+    }
+</style>
+<div class="count inline-block">
+    <form id="search-form" class="form">
+        <table>
+            <tr>
+                <td colspan="10" style="text-align:right">
+
+                    <button id="btnQuery" type="button" class="btn btn-primary" style="width:100px">查 询</button>
+                    <button id="btnApplyPay" onclick="openNew()" type="button" class="btn btn-primary" style="width:100px">申请付款</button>
+                    <button id="btnSave" type="button" class="btn btn-primary" style="width:100px">保 存</button>
+                    <button id="btnExcelExport" type="button" class="btn btn-primary" style="width:100px" data-loading-text="正在导出...">导出Excel</button>
+                </td>
+            </tr>
+            <tr>
+                <td width="80">服务行业</td>
+                <td width="100">
+                    <select id="ServiceTrade" name="ServiceTrade" class="form-control"></select>
+                </td>
+                <td width="60">项目名称</td>
+                <td width="240">
+                    <input id="ProjectId" name="ProjectId" class="form-control" type="hidden" />
+                    <input id="ProjectName" name="ProjectName" class="form-control" />
+                </td>
+                <td width="60">项目简称</td>
+                <td width="140">
+                    <input id="ProjectShortName" name="ProjectShortName" class="form-control" />
+                </td>
+                <td>
+                    <a id="btnProjectSelect" class="btn btn-primary" style="width:100px">选择项目</a>
+                </td>
+
+                <td width="90">供应商</td>
+                <td width="250">
+                    <input id="SupplierId" name="SupplierId" class="form-control" type="hidden" />
+                    <input id="SupplierName" name="SupplierName" class="form-control">
+                </td>
+                <td>
+                    <a id="btnSupplierSelect" class="btn btn-primary" style="width:100px">选择供应商</a>
+                </td>
+            </tr>
+        </table>
+    </form>
+    <div class="table-responsive">
+        <table id="flowOrder-table" class="table table-bordered table-condensed table-hover">
+            <thead>
+                <tr>
+                    <th class="piao">申请付款</th>
+                    <th><div class="pzhan"></div></th>
+                    <th>服务行业</th>
+                    <th>预算归属部门</th>
+                    <th>项目名称</th>
+                    <th>项目简称</th>
+                    <th>项目编号</th>
+                    <th>执行开始时间</th>
+                    <th>执行结束时间</th>
+                    <th>供应商名称</th>
+                    <th>预算金额</th>
+                    <th>预算剩余金额</th>
+                    <th>支出用途</th>
+                    <th>支出方式</th>
+                    <th>付款类型</th>
+                    <th>付款公司</th>
+                    @*<th>预计付款时间</th>
+                    <th>预计付款金额</th>*@
+                    <th>实际付款时间</th>
+                    <th>实际付款金额</th>
+                    <th>发票冲抵金额</th>
+                    <th>收款人</th>
+                    <th>备注</th>
+                    <th>付款状态</th>
+                </tr>
+            </thead>
+            <tbody></tbody>
+        </table>
+    </div>
+
+    <div id="pagination" class="pull-right">
+        <ul id="pageUl"></ul>
+    </div>
+</div>
+<div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-hidden="false">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
+                <h4 class="modal-title"></h4>
+            </div>
+            <div class="modal-body">
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="modal fade" id="supplierModal" tabindex="-1" role="dialog" aria-hidden="false" style="z-index:1060">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
+                <h4 class="modal-title"></h4>
+            </div>
+            <div class="modal-body">
+            </div>
+        </div>
+    </div>
+</div>
+@section Scripts {
+    <script src="~/Content/My97DatePicker/WdatePicker.js"></script>
+    <script src="~/Scripts/custom/form-serialize.js"></script>
+    <script>
+        var curPageNum = 1;
+        $(function () {
+            ServiceTradeBind();// 绑定服务行业
+            $("#btnQuery").click(function () {
+                load();
+            })
+
+            $("#btnProjectSelect").click(function () {
+                ProjectSelect();
+            })
+            $("#btnSupplierSelect").click(function () {
+                SupplierSelect(1);
+            })
+
+            $("#btnApplyPay").click(function () {
+                confirm("确定要申请付款吗？", function () {
+                    payApply();
+                });
+            });
+
+            $("#btnSave").click(function () {
+                $("#btnSave").button("loading");
+
+                var jsonArr = [];
+                $("#flowOrder-table tbody tr").each(function (i, tr) {
+                    var form = $("<form>").append($(tr).clone());
+                    var obj = form.serializeJson();
+                    jsonArr.push(obj);
+                });
+                $.post("/FlowOrder/InvoiceAmtUpdate", {
+                    jsonArr: JSON.stringify(jsonArr)
+                }, function () {
+                    load(curPageNum);
+                    alert("保存成功！");
+                }).complete(function () { $("#btnSave").button("reset"); });
+            })
+
+            $("#btnExcelExport").click(function () {
+                ExportExcel();
+            })
+        })
+        function ExportExcel() {
+            $("#btnExcelExport").button("loading");
+            alert("正在导出...");
+            var params = $("#search-form").serializeJson();
+            $.post("/FlowOrder/ApplyPayExport", params, function (data) {
+                window.location.href = "/FlowOrder/DownloadFile?fileName=" + data.ExportPath;
+            }).complete(function () { $("#btnExcelExport").button("reset"); closealert(); })
+        }
+        function load(pageNum) {
+            $("#btnQuery").button("loading");
+
+            var params = $("#search-form").serializeJson();
+            params = $.extend(params, { pageSize: 10, pageNum: pageNum ? pageNum : 1 });
+            $.post("/FlowOrder/LoadApplyPay", params, function (data) {
+                if (data && data.List) {
+                    $("#flowOrder-table tbody").empty();
+                    $.each(data.List, function (index, item) {
+                        var tr = $("<tr>");
+
+                        if (!item.ApplyPayChk) {
+                            var pay = $("<input type='checkbox' style='margin:0'>").val(item.FlowOrderId);
+                            tr.append($("<td class='piao'></td>").append(pay));
+                        } else {
+                            tr.append($("<td class='piao'></td>").html("已申请付款"));
+                        }
+
+                        tr.append($('<td><div class="pzhan"></div></td>'));
+
+                        tr.append($("<td></td>").html(item.ServiceTrade));
+                        tr.append($("<td></td>").html(item.CostDepartment));
+                        tr.append($("<td></td>").html(item.ProjectName));
+                        tr.append($("<td></td>").html(item.ProjectShortName));
+                        tr.append($("<td></td>").html(item.ProjectCode));
+                        tr.append($("<td></td>").html(item.ExecuteCycleStartDate));
+                        tr.append($("<td></td>").html(item.ExecuteCycleEndDate));
+                        tr.append($("<td></td>").html(item.SupplierName));
+                        tr.append($("<td></td>").html(item.BudgetAmt));
+                        tr.append($("<td></td>").html(item.BudgetLeftAmt));
+                        tr.append($("<td></td>").html(item.ExpendType));
+                        tr.append($("<td></td>").html(item.ExpendPattern));
+                        tr.append($("<td></td>").html(item.PaymentType));
+                        tr.append($("<td></td>").html(item.PaymentCompany));
+                        //tr.append($("<td></td>").html(item.EstimatedPaymentTime));
+                        //tr.append($("<td></td>").html(item.EstimatePaymentAmt));
+                        tr.append($("<td></td>").html(item.FactPaymentTime));
+                        tr.append($("<td></td>").html(item.FactPaymentAmt));
+                        //tr.append($("<td></td>").html(item.InvoiceAmt));
+                        var inputInvoiceAmt = $("<input type='number' name='InvoiceAmt' class='form-control'>").val(item.InvoiceAmt);
+                        var floworderidHidden = $("<input type='hidden' id='FlowOrderId' name='FlowOrderId'>").val(item.FlowOrderId);
+                        tr.append($("<td></td>").append(inputInvoiceAmt).append(floworderidHidden));
+
+                        tr.append($("<td></td>").html(item.Payee));
+                        tr.append($("<td></td>").html(item.Remark));
+                        tr.append($("<td></td>").html(item.Finance_PaymentStatus));
+
+                        $("#flowOrder-table tbody").append(tr);
+                    })
+                    curPageNum = data.CurPage;
+                    createPageNav({ $container: $("#pagination"), pageCount: data.PageCount, currentNum: data.CurPage, afterFun: load });
+                }
+            }).complete(function () { $("#btnQuery").button("reset"); });
+        };
+
+        function ProjectSelect() {
+            $("#myModal .modal-body").empty();
+            $("#myModal").modal("show");
+            $("#myModal .modal-title").html("选择项目");
+            $("#myModal .modal-body").load("/DemandBook/ProjectSelect", { ModelType: "", ProjectCode: "", ProjectName: "", ProjectShortName: "", ServiceTrade: $("#ServiceTrade").val() }, function () {
+                //$(this).append($("<input id='FlowOrderId' type='hidden'>").val(id));
+            });
+        }
+        function SupplierSelect(type) {
+            $("#myModal .modal-body").empty();
+            $("#myModal").modal("show");
+            $("#myModal .modal-title").html("选择供应商");
+            $("#myModal .modal-body").load("/Constract/SupplierMngSelect",
+                { SupplierCode: "", SupplierName: "", SupplierShortName: "", province: '', city: '' }, function () {
+                    $("#myModal .modal-body #Type").val(type)
+                });
+        }
+        function ProjectSelectCallback(args) {
+            $("#ProjectName").val(args[1]);
+            $("#ProjectShortName").val(args[2]);
+            $("#ProjectId").val(args[3]);
+            $("#myModal").modal("hide");
+        }
+        function SupplierSelectCallback1(args) {
+            $("#SupplierName").val(args.SupplierName);
+            $("#SupplierId").val(args.SupplierId);
+            $("#myModal").modal("hide");
+        }
+
+        function payApply() {
+            var checkeds = $("#flowOrder-table input[type=checkbox]:checked");
+            var args = [];
+            checkeds.each(function (i, chk) {
+                args.push($(chk).val());
+            })
+            $.post("/FlowOrder/ApplyPayUpdate", { jsonArr: JSON.stringify(args) }, function (data) {
+                alert("申请完毕");
+                load();
+            })
+        }
+        function ServiceTradeBind() {
+            var el = $("#ServiceTrade");
+            el.append($("<option>").html("Max").val("Max"));
+            el.append($("<option>").html("Trip").val("Trip"));
+            el.append($("<option>").html("Zebrac").val("Zebrac"));
+            el.append($("<option>").html("Star").val("Star"));
+
+            el.data("live-search", true).prop("title", "").selectpicker("refresh");
+        }
+
+    </script>
+}

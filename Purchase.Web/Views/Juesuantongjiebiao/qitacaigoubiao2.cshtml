@@ -1,0 +1,195 @@
+﻿@{
+    ViewBag.Title = "决算统计表2查询-其他";
+    Layout = "../FlowOrder/_FlowOrderLayout.cshtml";
+}
+<div class="count inline-block">
+    <form id="search-form" class="form">
+        <table>
+            <tr>
+                <td colspan="10" style="text-align:right">
+                    <button id="btnQuery" type="button" class="btn btn-primary" style="width:100px">查 询</button>
+                    <button id="btnExport" onclick="exportExcel()" type="button" class="btn btn-primary" style="width:100px" data-loading-text="正在导出...">导出Excel</button>
+
+                </td>
+            </tr>
+            <tr>
+                <td width="70">模块</td>
+                <td width="120">
+                    <select id="ModelType" name="ModelType" class="form-control">
+                        <option value="其他">其他</option>
+                    </select>
+                </td>
+                <td width="80">服务行业</td>
+                <td>
+                    <select id="ServiceTrade" name="ServiceTrade" class="form-control">
+                        <option value="Trip">Trip</option>
+                        <option value="Zebrac">Zebrac</option>
+                        <option value="Star">Star</option>
+                    </select>
+                </td>
+                <td width="80">采购类型</td>
+                <td width="220">
+                    <select id="PurchaseType" name="PurchaseType" class="form-control">
+                        <option value="有形商品采购">有形商品采购</option>
+                        <option value="无形商品采购">无形商品采购</option>
+                    </select>
+                </td>
+                <td width="80">期间</td>
+                <td width="150">
+                    <input id="StartDate" name="StartDate" class="form-control" onclick="WdatePicker()" />
+                </td>
+                <td width="20" style="text-align:center">至</td>
+                <td width="150">
+                    <input id="EndDate" name="EndDate" class="form-control" onclick="WdatePicker()" />
+                </td>
+            </tr>
+        </table>
+    </form>
+    <div style="position:relative">
+        <div id="search-result" class="table-responsive fix-table-div">
+            <table id="Juesuantongjiebiao-table" class="table table-bordered table-condensed table-hover">
+                <thead>
+                    <tr>
+                        <th width="150">提供服务</th>
+                        <th width="150" class="show-choice-column" style="display:none">费用构成</th>
+                        <th width="200">金额</th>
+                        <th width="200">样本量</th>
+                        <th width="200">均值</th>
+                    </tr>
+                </thead>
+                <tbody></tbody>
+            </table>
+        </div>
+    </div>
+
+    <div id="pagination" class="pull-right">
+        <ul id="pageUl"></ul>
+    </div>
+</div>
+@section Scripts {
+    <script src="~/Content/My97DatePicker/WdatePicker.js"></script>
+    <script src="~/Scripts/custom/form-serialize.js"></script>
+    <script>
+        $(function () {
+            $("#btnQuery").click(function () {
+                load();
+            })
+
+            $("#PurchaseType").change(function () {
+                $("#search-result").clearFixLayout();
+                $("#Juesuantongjiebiao-table tbody").empty();
+                $("#pagination").empty();
+                if ($(this).val() == "无形商品采购") {
+                    $(".show-choice-column").show();
+                } else {
+                    $(".show-choice-column").hide();
+                }
+            });
+        })
+        function exportExcel() {
+            $("#btnExport").button("loading");
+            alert("正在导出...");
+
+            var params = $("#search-form").serializeJson();
+            if (params.StartDate == "") {
+                params.StartDate = "1900-01-01";
+            }
+            if (params.EndDate == "") {
+                params.EndDate = "2999-01-01";
+            }
+            $.post("/Juesuantongjiebiao/ExportNeibugoubiao2", params, function (data) {
+                window.location.href = "/Juesuantongjiebiao/DownloadFile?fileName=" + data.ExportPath;
+            }).complete(function () {
+                $("#btnExport").button("reset");
+                closealert();
+            });
+        }
+        function load(pageNum) {
+            $("#btnQuery").button("loading");
+            $("#search-result").clearFixLayout();
+            var params = $("#search-form").serializeJson();
+            if (params.StartDate == "") {
+                params.StartDate = "1900-01-01";
+            }
+            if (params.EndDate == "") {
+                params.EndDate = "2999-01-01";
+            }
+            params = $.extend(params, { pageSize: 10, pageNum: pageNum ? pageNum : 1 });
+
+            $.post("/Juesuantongjiebiao/LoadNeibugoubiao2", params, function (data) {
+                if (data && data.List) {
+                    $("#Juesuantongjiebiao-table tbody").empty();
+                    
+                    $.each(data.List, function (index, leftItem) {
+                        var tr = $("<tr>");
+
+                        //tr.append($("<td></td>").html(leftItem.ExecuteMode));
+                        //tr.append($("<td></td>").html(leftItem.ExecuteModeSumAmt));
+                        //tr.append($("<td></td>").html(leftItem.SettleCount));
+                        //tr.append($("<td></td>").html(leftItem.Execute_Avg));
+                        
+                        //$("#Juesuantongjiebiao-table tbody").append(tr);
+                        tr.append($("<td></td>").html(leftItem.SupplyService));
+                        if ($("#PurchaseType").val() == "无形商品采购") {
+                            tr.append($("<td></td>").html(leftItem.ExcuteType));
+                        }
+                        tr.append($("<td></td>").html(leftItem.SupplyServiceSumAmt));
+                        tr.append($("<td></td>").html(leftItem.SettleCount));
+                        tr.append($("<td></td>").html(leftItem.SupplyService_Avg));
+
+                        $("#Juesuantongjiebiao-table tbody").append(tr);
+                    })
+
+                    if (data.List.length > 0) {
+                        //增加合计
+                        if (showColumn) {
+                            calHeji(2, 2);
+                        } else {
+                            calHeji(1, 2);
+                        }
+                        $("#search-result").fixHeadColumn({ fixColumnIndex: 3 });
+                    }
+                }
+
+                createPageNav({ $container: $("#pagination"), pageCount: data.PageCount, currentNum: data.CurPage, afterFun: load });
+            }).complete(function () { $("#btnQuery").button("reset"); });
+        };
+
+        //增加合计
+        function calHeji(thcount, dynamicCount) {
+
+            //预算小计合计
+            var tr = $("<tr>");
+
+            var tdCount = thcount + dynamicCount;
+            var hejiArr = new Array(dynamicCount);
+            for (var i = 0; i < dynamicCount; i++) {
+                hejiArr[i] = 0;
+            }
+            $("#Juesuantongjiebiao-table tbody tr").each(function () {
+                var tds = $(this).find("td");
+                for (var i = 0; i < dynamicCount; i++) {
+                    var v = parseFloat(tds.eq(thcount + i).text());
+                    if (!isNaN(v)) {
+                        hejiArr[i] += v;
+                    }
+                }
+            })
+            for (var i = 0; i < tdCount; i++) {
+                var td = $("<td>");
+                if (i == 0) {
+                    tr.append($("<td><strong>合计<strong></td>"));
+                    continue;
+                }
+                for (var j = 0; j < dynamicCount; j++) {
+                    if (j + thcount == i) {
+                        td.html(hejiArr[j].toFixed(2));
+                    }
+                }
+                tr.append(td);
+            }
+
+            $("#Juesuantongjiebiao-table tbody").append(tr);
+        }
+    </script>
+}

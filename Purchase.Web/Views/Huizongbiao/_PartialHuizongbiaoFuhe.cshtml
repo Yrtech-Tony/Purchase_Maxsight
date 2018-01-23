@@ -1,0 +1,139 @@
+﻿
+
+<table id="huizongbiao-table-Fuhe" class="table table-bordered table-condensed table-hover">
+    <thead>
+        <tr>	
+            <th>
+                供应商名称
+            </th>
+            <th>
+                项目名称
+            </th>
+            <th>
+                项目简称
+            </th>
+            <th>
+                项目经理
+            </th>
+            <th>
+                执行省份
+            </th>
+            <th>
+                执行城市
+            </th>
+            <th>
+                执行周期
+            </th>
+            <th>
+                项目类型
+            </th>
+            <th>
+                复核要求
+            </th>
+            <th>
+                AB卷
+            </th>
+            <th>
+                问卷作答录音复核
+            </th>
+            <th>
+                电话咨询
+            </th>
+            <th>
+                电话回访
+            </th>
+            <th>
+                样本编辑
+            </th>
+            <th>
+                编码类型
+            </th>
+            <th>
+                题目数量
+            </th>
+            <th>
+                字数数量
+            </th>
+            <th>
+                问卷编程
+            </th>
+           
+            <th>
+                辅助用品
+            </th>                      
+            <th>
+                核算单位
+            </th>
+            <th>
+                单价
+            </th>
+            <th>
+                数量
+            </th>
+            <th>
+                合计
+            </th>
+            <th width="200">
+                备注
+            </th>
+            @*<th>
+                供应商评分类别
+            </th>
+            <th>
+                供应商评分
+            </th>*@
+        </tr>
+    </thead>
+    <tbody></tbody>
+</table>
+
+<script>
+    function addHuizongbiaoTr_Fuhe(item) {
+        var tr = $("<tr>");
+        addHiddenField(tr, item);
+
+        tr.append($("<td></td>").html(item.SupplierName));
+        tr.append($("<td></td>").html(item.ProjectName));
+        tr.append($("<td></td>").html(item.ProjectShortName));
+        tr.append($("<td></td>").html(item.xiangmujingli));//项目经理？
+
+        tr.append($("<td></td>").html(item.zhixingshengfen));
+        tr.append($("<td></td>").html(item.zhixingchengshi));
+
+        tr.append($("<td></td>").html(item.ExecuteCycle));
+        tr.append($("<td></td>").html(item.ProjectType));
+
+        tr.append($("<td></td>").html(item.fuheyaoqiu));
+        tr.append($("<td></td>").html(item.abjuan));
+        //tr.append($("<td></td>").html(item.jishuwenjuanfuhe));
+        tr.append($("<td></td>").html(item.wenjuanzuodaluyinfuhe));
+        //tr.append($("<td></td>").html(item.fuheyaoqiu1));
+        //tr.append($("<td></td>").html(item.fuheneirong));
+        //tr.append($("<td></td>").html(item.fuheshijian));
+
+        tr.append($("<td></td>").html(item.dianhuazixun));
+        tr.append($("<td></td>").html(item.dianhuhuifang));
+        tr.append($("<td></td>").html(item.yanbenbianji));
+        tr.append($("<td></td>").html(item.bianmaleixing));
+        tr.append($("<td></td>").html(item.timushuliang));
+        tr.append($("<td></td>").html(item.zishushuliang));
+        //tr.append($("<td></td>").html(item.dianhuyuyueyaoqiu));
+        tr.append($("<td></td>").html(item.wenjuanbiancheng));
+        //tr.append($("<td></td>").html(item.yangbenluru));
+        //tr.append($("<td></td>").html(item.luruguanli));
+
+        tr.append($("<td></td>").html(item.fuzhuyongpin));        
+        tr.append($("<td></td>").html(item.hesuandanwei));
+        tr.append($("<td></td>").html(item.danjia));
+        tr.append($("<td></td>").html(item.shuliang));
+        tr.append($("<td></td>").html(item.heji));
+
+        var remark = $("<input name='Remark' class='form-control' style='width:150px'>").val(item.Remark);
+        tr.append($("<td></td>").append(remark));
+
+        //tr.append($("<td></td>").html(""));
+        //tr.append($("<td></td>").html(""));
+
+        $("#huizongbiao-table-Fuhe tbody").append(tr);
+    }
+</script>

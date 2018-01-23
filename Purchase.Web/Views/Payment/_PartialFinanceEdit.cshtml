@@ -1,0 +1,109 @@
+﻿@using Purchase.Service.DTO
+@model FlowOrderDto
+
+<div class="count2 inline-block" style="line-height:40px">
+    @using (Html.BeginForm("", "", FormMethod.Post, new { Id = "PaymentForm" }))
+    {
+        @Html.HiddenFor(m => m.FlowOrderId)
+        @Html.HiddenFor(m => m.ProjectId)
+        @Html.HiddenFor(m => m.SupplierId)
+        
+        <div class="form-horizontal">
+            <table>
+                <tr>
+                    <td colspan="4" style="text-align:right">
+                        <a id="btnSave" class="btn btn-primary" data-loading-text="提交中...">保 存</a>
+                    </td>
+                </tr>
+                <tr>
+                    <td width="160px">财务反馈-付款状态</td>
+                    <td width="240px">
+                        @Html.DropDownListFor(m => m.Finance_PaymentStatus, new List<SelectListItem> {
+                            new SelectListItem(){Text="",Value=""},
+                            new SelectListItem(){ Text="是",Value="是"},
+                            new SelectListItem(){ Text="否",Value="否"},
+                       }, htmlAttributes: new { @class = "form-control" })
+                    </td>
+                    <td width="160px">财务反馈-实际付款金额</td>
+                    <td width="240px">
+                        @Html.TextBoxFor(m => m.Finance_PaymentAmt, htmlAttributes: new { @class = "form-control", type = "number" })
+                    </td>
+                </tr>
+                <tr>
+                    <td>财务反馈-未付款原因</td>
+                    <td>
+                        @Html.TextBoxFor(m => m.Finance_NotPayReason, htmlAttributes: new { @class = "form-control" })
+                        
+                    </td>
+                    <td>财务反馈-合同</td>
+                    <td>
+                        @Html.DropDownListFor(m => m.Finance_Constract, new List<SelectListItem> {
+                            new SelectListItem(){Text="",Value=""},
+                            new SelectListItem(){ Text="是",Value="是"},
+                            new SelectListItem(){ Text="否",Value="否"},
+                       }, htmlAttributes: new { @class = "form-control" })
+                    </td>
+                </tr>
+                <tr>
+                    <td> 财务反馈-结算单</td>
+                    <td>
+                        @Html.DropDownListFor(m => m.Finance_SettlementChk, new List<SelectListItem> {
+                            new SelectListItem(){Text="",Value=""},
+                            new SelectListItem(){ Text="是",Value="是"},
+                            new SelectListItem(){ Text="否",Value="否"},
+                       }, htmlAttributes: new { @class = "form-control" })
+                    </td>
+                    <td>财务反馈-往期发票</td>
+                    <td>
+                        @Html.TextBoxFor(m => m.Finance_InvoceAmt, htmlAttributes: new { @class = "form-control", type = "number" })
+                    </td>
+                </tr>
+                <tr>
+                    <td>财务反馈-本期发票</td>
+                    <td>
+                        @Html.TextBoxFor(m => m.Finance_InvoceAmtThis, htmlAttributes: new { @class = "form-control", type = "number" })
+                    </td>
+                    <td></td>
+                    <td>
+                    </td>
+                </tr>
+            </table>
+        </div>
+    }
+</div>
+<script>
+    var validArray = [{ proName: 'Finance_PaymentStatus', msg: '财务反馈-付款状态不能为空！<br>' },
+        //{ proName: 'Finance_PaymentAmt', msg: '财务反馈-实际付款金额不能为空！<br>' },
+        { proName: 'Finance_Constract', msg: '财务反馈-合同不能为空！<br>' },
+        { proName: 'Finance_SettlementChk', msg: '财务反馈-结算单不能为空！<br>' },
+        //{ proName: 'Finance_InvoceAmt', msg: '财务反馈-往期发票不能为空！<br>' },
+        //{ proName: 'Finance_InvoceAmtThis', msg: '财务反馈-本期发票不能为空！<br>' }
+    ];
+    var valid1 = { proName: 'Finance_NotPayReason', msg: '财务反馈-未付款原因不能为空！<br>' };
+    $("#btnSave").click(function () {
+        $(this).button('loading');
+        var msg = '';
+        if ($("#Finance_PaymentStatus").val() != "是") {
+            validArray.push(valid1);
+        }
+        for (i in validArray) {
+            var valid = validArray[i];
+            if ($("#" + valid.proName).length > 0) {
+                if ($("#" + valid.proName).val() == "") {
+                    msg += valid.msg;
+                }
+            }
+        }
+        if (msg.length > 0) {
+            alert(msg);
+            $(this).button('reset');
+            return;
+        }
+
+        var params = $("#PaymentForm").serializeJson();
+        $.post("/Payment/FinanceSave", params, function () {
+            load();
+            $("#myModal").modal("hide");
+        })
+    })
+</script>

@@ -1,0 +1,25 @@
+﻿<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+    <title></title>
+    <script src="Scripts/jquery-1.10.2.js"></script>
+    <script src="Scripts/custom/form-serialize.js"></script>
+</head>
+<body>
+    <form>
+        <input type="hidden" name="id" value="55" />
+        <input type="hidden" name="type" value="Mianfangjidianfang" />
+        <input type="button" value="导  出" onclick="exportDemand()">
+    </form>   
+    <script>
+        function exportDemand(){
+            $.post("/DemandBookExport/Export", $("form").serializeJson(), function (file) {
+                window.location.href = "/DemandBookExport/DownloadFile?fileName=" + file;
+            })
+        }
+        var arr = "aa,bb".split(",");
+        alert(arr[0]);
+    </script>
+</body>
+</html>

@@ -1,0 +1,92 @@
+﻿@using Purchase.Web.Common
+@model Purchase.DAL.Requirement_Guangkong_RequirementDtl2
+
+<form id="Guankong-dtl2-form">
+    @Html.Hidden("SeqNO", 0)
+    <div class="form-horizontal">
+        <div class="form-group">
+            <label class="control-label col-md-2" for="jinchudianbaoshi">进出店报时</label>
+            <div class="col-md-4">
+                @Html.DropDownListFor(m => m.jinchudianbaoshi, SelectListTool.HiddenCodeList("需求书-管控-渠道平台管控-进出店报时"),
+                    htmlAttributes: new { @class = "form-control", multiple = "" })
+            </div>
+            <label class="control-label col-md-2" for="duanxindingweigpsdingwei">短信定位/GPS定位</label>
+            <div class="col-md-4">
+                @Html.DropDownListFor(m => m.duanxindingweigpsdingwei, SelectListTool.HiddenCodeList("需求书-管控-渠道平台管控-短信定位/GPS定位"),
+                     htmlAttributes: new { @class = "form-control", multiple = "" })
+            </div>
+        </div>
+        <div class="form-group">
+            <label class="control-label col-md-2" for="jizhongjieting">集中接听</label>
+            <div class="col-md-4">
+                @Html.DropDownListFor(m => m.jizhongjieting, SelectListTool.HiddenCodeList("需求书-管控-渠道平台管控-集中接听"),
+                     htmlAttributes: new { @class = "form-control", multiple = "" })
+            </div>
+            <label class="control-label col-md-2" for="jindianqianyuyue">进店前预约</label>
+            <div class="col-md-4">
+                @Html.DropDownListFor(m => m.jindianqianyuyue, SelectListTool.HiddenCodeList("需求书-管控-渠道平台管控-进店前预约"),
+                     htmlAttributes: new { @class = "form-control", multiple = "" })
+            </div>
+        </div>
+        <div class="form-group">
+            <label class="control-label col-md-2" for="shouhouchezhuhuifang">售后车主回访</label>
+            <div class="col-md-4">
+                @Html.DropDownListFor(m => m.shouhouchezhuhuifang, SelectListTool.HiddenCodeList("需求书-管控-渠道平台管控-售后车主回访"),
+                     htmlAttributes: new { @class = "form-control", multiple = "" })
+            </div>
+            <label class="control-label col-md-2" for="kefuzhuanxinjieting">客服专线接听</label>
+            <div class="col-md-4">
+                @Html.DropDownListFor(m => m.kefuzhuanxinjieting, SelectListTool.HiddenCodeList("需求书-管控-渠道平台管控-客服专线接听"),
+                     htmlAttributes: new { @class = "form-control", multiple = "" })
+            </div>
+        </div>
+        <div class="form-group">
+            <label class="control-label col-md-2" for="huishouziliaojinduhecha">回收资料进度核查</label>
+            <div class="col-md-4">
+                @Html.DropDownListFor(m => m.huishouziliaojinduhecha, SelectListTool.HiddenCodeList("需求书-管控-渠道平台管控-回收资料进度核查"),
+                     htmlAttributes: new { @class = "form-control", multiple = "" })
+            </div>
+            <label class="control-label col-md-2" for="huishouziliaozhengli">回收资料整理</label>
+            <div class="col-md-4">
+                @Html.DropDownListFor(m => m.huishouziliaozhengli, SelectListTool.HiddenCodeList("需求书-管控-渠道平台管控-回收资料整理"),
+                     htmlAttributes: new { @class = "form-control", multiple = "" })
+            </div>
+        </div>
+        <div class="form-group">
+            <label class="control-label col-md-2" for="yaoyueluyinjianji">邀约录音剪辑</label>
+            <div class="col-md-4">
+                @Html.DropDownListFor(m => m.yaoyueluyinjianji, SelectListTool.HiddenCodeList("需求书-管控-渠道平台管控-邀约录音剪辑"),
+                     htmlAttributes: new { @class = "form-control", multiple = "" })
+            </div>
+            <label class="control-label col-md-2" for="qitashuoming2">其他说明</label>
+            <div class="col-md-4">
+                @Html.TextAreaFor(m => m.qitashuoming2, htmlAttributes: new { @class = "form-control", multiple="" })
+            </div>
+        </div>
+        <div class="form-group">
+            <div class="col-md-offset-2 col-md-10">
+                <input id="saveBtn" type="button" value="保存" class="btn btn-primary btn-check" data-loading-text="提交中..." style="width:100px;height:35px" />
+            </div>
+        </div>
+    </div>
+</form>
+<script>
+    $(function () {
+
+        $("#Guankong-dtl2-form #saveBtn").click(function () {
+            if (!CommitCheck()) {
+                alert("正在审核中或者非本人添加的项目");
+                return false;
+            }
+            $(this).button("loading")
+            var params = $("#Guankong-dtl2-form").serializeJson('&');
+            params = $.extend(params, getMstObject());
+
+            $.post("/DemandBook/SaveGuankongDtl2", params, function (data) {
+                $("#RequirementId").val(data);
+                loadGuankongDtl2();
+                closeModal();
+            });
+        })
+    })
+</script>

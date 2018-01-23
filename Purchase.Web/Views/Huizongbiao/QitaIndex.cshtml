@@ -1,0 +1,217 @@
+﻿@{
+    ViewBag.Title = "汇总表查询-其他";
+    Layout = "../FlowOrder/_FlowOrderLayout.cshtml";
+}
+<div class="count inline-block">
+    <form id="search-form" class="form">
+        <table>
+            <tr>
+                <td colspan="12" style="text-align:right">
+                    <a id="btnQuery" class="btn btn-primary" style="width:100px">查 询</a>
+                    <a id="btnSave" class="btn btn-primary" style="width:100px" onclick="">保存</a>
+                    <a id="btnExport" onclick="exportExcel()" class="btn btn-primary" style="width:100px" data-loading-text="正在导出...">导出Excel</a>
+
+                </td>
+            </tr>
+            <tr>
+                <td width="70">模块类型</td>
+                <td width="100">
+                    <select id="ModelType" name="ModelType" class="form-control">
+                        <option value="其他">其他</option>
+                    </select>
+                </td>
+                <td width="80">确认单类型</td>
+                <td width="150">
+                    <select id="QuotationType" name="QuotationType" class="form-control">
+                        <option value="Qita1">有形商品采购</option>
+                        <option value="Qita2">无形商品采购</option>
+                    </select>
+                </td>
+                <td width="60">项目名称</td>
+                <td width="240">
+                    <input id="ProjectId" name="ProjectId" class="form-control" type="hidden" />
+                    <input id="ProjectName" name="ProjectName" class="form-control"  />
+                    <input id="ProjectCode" name="ProjectCode" class="form-control" type="hidden">
+                </td>
+                <td width="60">项目简称</td>
+                <td width="200">
+                    <input id="ProjectShortName" name="ProjectShortName" class="form-control" />
+                </td>
+                <td>
+                    <a id="btnProjectSelect" class="btn btn-primary" style="width:100px">选择项目</a>
+                </td>
+            </tr>
+            <tr>
+                <td >服务行业</td>
+                <td >
+                    <select id="ServiceTrade" name="ServiceTrade" class="form-control">
+                        <option value="Trip">Trip</option>
+                        <option value="Zebrac">Zebrac</option>
+                        <option value="Star">Star</option>
+                    </select>
+                </td>
+                <td width="60">供应商</td>
+                <td width="500" colspan="3">
+                    <input id="SupplierId" name="SupplierId" class="form-control" type="hidden" />
+                    <input id="SupplierName" name="SupplierName" class="form-control">
+                    <input id="SupplierCode" name="SupplierCode" class="form-control" type="hidden">
+                    <input id="SupplierShortName" name="SupplierShortName" class="form-control" type="hidden">
+                </td>
+                <td width="100">
+                    <a id="btnSupplierSelect" class="btn btn-primary" style="width:100px">选择供应商</a>
+                </td>
+            </tr>
+        </table>
+    </form>
+    <div style="position:relative">
+        <div id="search-result" class="table-responsive"></div>
+        <div id="pagination" class="pull-right">
+            <ul id="pageUl"></ul>
+        </div>
+    </div>    
+</div>
+<div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-hidden="false">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
+                <h4 class="modal-title"></h4>
+            </div>
+            <div class="modal-body">
+            </div>
+        </div>
+    </div>
+</div>
+@section Scripts {
+    <script src="~/Scripts/custom/form-serialize.js"></script>
+    <script>
+        $(function () {
+            $("#btnQuery").click(function () {
+                load();
+            })
+            $("#btnSave").click(function () {
+                save();
+            })
+            
+            $("#QuotationType").change(function () {
+                var type = $(this).val();
+                if (type == "Youxingshangpincaigou") {
+                    type = "Qita1";
+                }
+                if (type == "Wuxingshangpincaigou") {
+                    type = "Qita2";
+                }
+                var view = "_PartialHuizongbiao" + type;
+                
+                $("#search-result").empty();
+                $("#search-result").load("/Huizongbiao/LoadPartial", { partialView: view });
+            }).trigger("change");
+
+            $("#btnProjectSelect").click(function () {
+                ProjectSelect();
+            })
+            $("#btnSupplierSelect").click(function () {
+                SupplierSelect(1);
+            })
+        })
+        
+        function ProjectSelect() {
+            $(".modal .modal-body").empty();
+            $("#myModal").modal("show");
+            $("#myModal .modal-title").html("选择项目");
+            $("#myModal .modal-body").load("/DemandBook/ProjectSelect", { ModelType: $("#ModelType").val(), ProjectCode: "", ProjectName: "", ProjectShortName: "" }, function () {
+                //$(this).append($("<input id='SupplierMngId' type='hidden'>").val(id));
+            });
+        }
+        function SupplierSelect(type) {
+            $(".modal .modal-body").empty();
+            $("#myModal").modal("show");
+            $("#myModal .modal-title").html("选择供应商");
+            $("#myModal .modal-body").load("/Constract/SupplierMngSelect",
+                { SupplierCode: "", SupplierName: "", SupplierShortName: "", province: '', city: '' }, function () {
+                    $("#myModal .modal-body #Type").val(type)
+                });
+        }
+        function ProjectSelectCallback(args) {
+            $("#ProjectCode").val(args[0]);
+            $("#ProjectName").val(args[1]);
+            $("#ProjectShortName").val(args[2]);
+            $("#ProjectId").val(args[3]);
+            $("#myModal").modal("hide");
+        }
+        function SupplierSelectCallback1(args) {
+            $("#SupplierCode").val(args.SupplierCode);
+            $("#SupplierName").val(args.SupplierName);
+            $("#SupplierShortName").val(args.SupplierShortName);
+            $("#SupplierId").val(args.SupplierId);
+            $("#myModal").modal("hide");
+        }
+
+        function exportExcel() {
+            $("#btnExport").button("loading");
+            alert("正在导出...");
+
+            var type = $("#QuotationType").val();
+            var params = $("#search-form").serializeJson();
+            params = $.extend(params, { QuotationType: type });
+            $.post("/Huizongbiao/ExportHuizongbiao", params, function (data) {
+                window.location.href = "/Huizongbiao/DownloadFile?fileName=" + data.ExportPath;
+            }).complete(function () {
+                $("#btnExport").button("reset");
+                closealert();
+            });
+        }
+
+        function load(pageNum) {
+            $("#btnQuery").button("loading");
+
+            var type = $("#QuotationType").val();
+            var params = $("#search-form").serializeJson();
+            params = $.extend(params, { QuotationType: type, pageSize: 10, pageNum: pageNum ? pageNum : 1 });
+            $.post("/Huizongbiao/Load" + type, params, function (data) {
+                if (data && data.List) {
+                    if (type == "Youxingshangpincaigou") {
+                        type = "Qita1";
+                    }
+                    if (type == "Wuxingshangpincaigou") {
+                        type = "Qita2";
+                    }
+
+                    $("#huizongbiao-table tbody").empty();
+                    $.each(data.List, function (index, item) {
+                        var func = eval("addHuizongbiaoTr_" + qtype);
+                        new func(item);
+                    })
+                    createPageNav({ $container: $("#pagination"), pageCount: data.PageCount, currentNum: data.CurPage, afterFun: load });
+                }
+            }).complete(function () { $("#btnQuery").button("reset"); });
+        }
+        function addHiddenField(tr, item) {
+            var td = $("<td style='display:none'></td>");
+            var args = {
+                HuizongbiaoId: item.HuizongbiaoId,
+                ProjectId: item.ProjectId,
+                SupplierId: item.SupplierId,
+                SettlementId: item.SettlementId,
+                SettlementSeqNO: item.SettlementSeqNO
+            }
+            for (pro in args) {
+                td.append($("<input type='hidden'>").val(args[pro]).attr("name",pro));
+            }
+            tr.append(td);
+        }
+        function save() {
+            var params = [];
+            $("#huizongbiao-table tbody tr").each(function () {
+                debugger
+                var tds = $(this).find("td");
+                var form = $("<form>").clone().append(tds.clone());
+                params.push(form.serializeJson());
+            })
+            $.post("/Huizongbiao/Save", { jsonArr: JSON.stringify(params) }, function (data) {
+               alert("保存成功！")
+            })
+        }
+
+    </script>
+}

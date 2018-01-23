@@ -1,0 +1,68 @@
+﻿@using Purchase.Service.DTO
+@model IEnumerable<RecheckUserSelectDto>
+
+<div class="count2">
+    <table id="RecheckUserSelect-table" class="table table-bordered table-condensed table-hover">
+        @if (Model.Count() != 0)
+        {
+        <thead>
+            <tr>
+                <th width="40">选择</th>
+                <th>姓名</th>
+                <th>部门</th>
+                <th>职位</th>
+            </tr>
+        </thead>
+        }
+        <tbody>
+            @if (Model != null)
+            {
+                foreach (RecheckUserSelectDto item in Model)
+                {
+                    <tr>
+                        <td>@Html.RadioButton("RecheckUserId", item.RecheckUserId)</td>
+                        <td>@item.UserName</td>
+                        <td>@item.DepartmentName</td>
+                        <td>@item.PositionName</td>
+                    </tr>
+                }
+            }
+        </tbody>
+    </table>
+    @Html.Partial("_PartialRecheckAttach")
+    <div class="mt10">
+        <label>申请原因：</label>
+        <textarea id="ApplyReason" name="ApplyReason" class="form-control" rows="3"></textarea>
+    </div>
+    <div class="mt20" style="text-align:right;">
+        <button id="btnApply" type="button" class="btn btn-primary" style="width:100px;">提交申请</button>
+    </div>
+</div>
+
+<script>
+    if ($("#RecheckUserSelect-table tbody tr").length == 1) {
+        $("#RecheckUserSelect-table tbody tr:first-child").find("input[type=checkbox]").prop("checked", true).change();
+    }
+
+    $("#btnApply").click(function () {
+        $("#ApplyReason").val()
+        var checkRadio = $("#RecheckUserSelect-table input[type=radio]:checked").val();
+        if ('@Model.Count()' != '0') {
+            if (!checkRadio) {
+                alert("请选择下一个处理人员！");
+                return;
+            }
+        }
+        $("#btnApply").button("loading");
+        $.post("/SupplierMng/ApplyCommit", {
+            recheckUserId: checkRadio,
+            ApplyReason: $("#ApplyReason").val(),
+            SupplierMngId: $("#SupplierMngId").val(),
+            applyIdExists: $("#ApplyId").val(),
+            SeqNO: $("#SeqNO").val(),
+            attachArray: JSON.stringify(attachArray)
+        }, function () {
+            applyFinish();
+        }).complete(function () { $("#btnApply").button("reset"); })
+    })
+</script>

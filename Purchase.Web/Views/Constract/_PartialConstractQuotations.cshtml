@@ -1,0 +1,15 @@
+﻿@using Purchase.Service.DTO
+@model Dictionary<string, object>
+@if (Model != null)
+{
+    int index=0;
+    foreach (var item in Model)
+    {
+        @Html.Partial("PartialQuotation/_PartialLoad" + item.Key, item.Value)
+        if (index != Model.Count - 1)
+        {
+            <br />
+        }
+        index++;
+    }
+}

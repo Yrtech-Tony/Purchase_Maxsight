@@ -1,0 +1,245 @@
+﻿@{
+    ViewBag.Title = "价格统计表查询-业务";
+    Layout = "../FlowOrder/_FlowOrderLayout.cshtml";
+}
+<div class="count inline-block">
+    <form id="search-form" class="form">
+        <table>
+            <tr>
+                <td colspan="9" style="text-align:right">
+                    <a id="btnQuery" class="btn btn-primary" style="width:100px">查 询</a>
+                    <button id="btnExport" onclick="exportExcel()" type="button" class="btn btn-primary" style="width:100px" data-loading-text="正在导出...">导出Excel</button>
+                </td>
+            </tr>
+            <tr>
+                <td width="70" style="display:none">模块类型</td>
+                <td style="display:none">
+                    <select id="ModelType" name="ModelType" class="form-control">
+                        <option value="业务">业务</option>
+                    </select>
+                </td>
+                <td width="70">服务行业</td>
+                <td>
+                    <select id="ServiceTrade" name="ServiceTrade" class="form-control">
+                        <option value="Max">Max</option>
+                    </select>
+                </td>
+                <td width="80">确认单类型</td>
+                <td width="150">
+                    <select id="QuotationType" name="QuotationType" class="form-control">
+                        <option value="Biancheng">编程</option>
+                        <option value="Zhixing">执行</option>
+                        <option value="Fuhe">复核</option>
+                        <option value="Yanjiu">研究</option>
+                        <option value="Qita1">其他1</option>
+                        <option value="Qita2">其他2</option>
+                        <option value="Chezhan">车展</option>
+                        <option value="Zhichi">支持</option>
+                    </select>
+                </td>
+                <td width="80">期间</td>
+                <td width="240">
+                    <input id="StartDate" name="StartDate" class="form-control" onclick="WdatePicker()" />
+                </td>
+                <td width="10" style="text-align:center">至</td>
+                <td width="245">
+                    <input id="EndDate" name="EndDate" class="form-control" onclick="WdatePicker()" />
+                </td>
+            </tr>
+        </table>
+    </form>
+    <div style="position:relative">
+        <div id="search-result" class="table-responsive">
+        </div>
+    </div>
+
+    <div id="pagination" class="pull-right">
+        <ul id="pageUl"></ul>
+    </div>
+</div>
+@section Scripts {
+    <script src="~/Content/My97DatePicker/WdatePicker.js"></script>
+    <script src="~/Scripts/custom/form-serialize.js"></script>
+    <script>
+        var ModelType, QuotationType, thcount;
+        $(function () {
+            //BindQuotation();
+            //获取QuotationType
+            QuotationType = '@ViewBag.QuotationType';
+            if (QuotationType != "") {
+                $("#QuotationType").val(QuotationType);
+            }
+            $("#btnQuery").click(function () {
+                load();
+            })
+
+            $("#QuotationType").change(function () {
+                $("#search-result").clearFixLayout();
+                var type = $(this).val();
+                if (type == "Youxingshangpincaigou") {
+                    type = "Qita1";
+                }
+                if (type == "Wuxingshangpincaigou") {
+                    type = "Qita2";
+                }
+                var view = "_PartialJiagetongjiebiao" + type;
+
+                $("#pagination").empty();
+                $("#search-result").load("/Jiagetongjiebiao/LoadPartial", { partialView: view }, function () {
+                    thcount = $("#Jiagetongjiebiao-table thead tr th").length;
+                });
+            }).trigger("change");
+
+        })
+        function exportExcel() {
+            $("#btnExport").button("loading");
+            alert("正在导出...");
+
+            var type = $("#QuotationType").val();
+            var params = $("#search-form").serializeJson();
+            if (params.StartDate == "") {
+                params.StartDate = "1900-01-01";
+            }
+            if (params.EndDate == "") {
+                params.EndDate = "2999-01-01";
+            }
+            
+            params = $.extend(params, { QuotationType: type});
+            $.post("/Jiagetongjiebiao/ExportJiagetongjibiao", params, function (data) {
+                window.location.href = "/Jiagetongjiebiao/DownloadFile?fileName=" + data.ExportPath;
+            }).complete(function () {
+                $("#btnExport").button("reset");
+                closealert();
+            });
+        }
+        function load(pageNum) {
+            $("#btnQuery").button("loading");
+            $("#search-result").clearFixLayout();
+
+            var type = $("#QuotationType").val();
+            var params = $("#search-form").serializeJson();
+            if (params.StartDate == "") {
+                params.StartDate = "1900-01-01";
+            }
+            if (params.EndDate == "") {
+                params.EndDate = "2999-01-01";
+            }
+            
+            params = $.extend(params, { QuotationType: type, pageSize: 10, pageNum: pageNum ? pageNum : 1 });
+            $.post("/Jiagetongjiebiao/Load" + type, params, function (data) {
+                if (type == "Qita1" || type == "Qita2") {
+                    if (data && data.List) {
+                        $("#Jiagetongjiebiao-table tbody").empty();
+
+                        $.each(data.List, function (index, leftItem) {
+                            var tr = addJiagetongjibiaoTr(leftItem);
+
+                            $("#Jiagetongjiebiao-table tbody").append(tr);
+                        })                        
+                    }
+                    createPageNav({ $container: $("#pagination"), pageCount: data.PageCount, currentNum: data.CurPage, afterFun: load });
+                } else {
+                    
+                    if (data && data.HeaderDtoList && data.LeftDtoList && data.DataDtoList) {
+                        $("#Jiagetongjiebiao-table thead tr th").each(function (i) {
+                            if (i >= thcount) {
+                                $(this).remove();
+                            }
+                        });
+
+                        $("#Jiagetongjiebiao-table tbody").empty();
+                        //增加动态列头
+                        var headTr = $("#Jiagetongjiebiao-table thead tr").eq(0);
+                        $.each(data.HeaderDtoList, function (index, item) {
+                            headTr.append($("<th></th>").html(item.zhixingchengshi));
+                        })
+                        
+                        $.each(data.LeftDtoList, function (index, leftItem) {
+                            var tr = addJiagetongjibiaoTr(leftItem);
+
+                            $.each(data.HeaderDtoList, function (index, item) {
+                                tr.append($("<td></td>").html(""));
+                            })
+                            //动态绑定值
+                            $.each(data.DataDtoList, function (i, dataItem) {
+                                if (compareObject(dataItem, leftItem)) {
+                                    var bindThIndex = 0;
+                                    $.each(headTr.find("th"), function (thi, headTh) {
+                                        if ($(this).text() == dataItem.zhixingchengshi) {
+                                            bindThIndex = thi;
+                                        }
+                                    });
+                                    $.each(tr.find("td"), function (tdi, bodyTd) {
+                                        if (tdi == bindThIndex) {
+                                            $(bodyTd).text(dataItem.danjia_AVG);
+                                        }
+                                    })
+                                }
+                            })
+
+                            $("#Jiagetongjiebiao-table tbody").append(tr);
+                        })                        
+                    }
+                    
+                    createPageNav({ $container: $("#pagination"), pageCount: data.PageCount, currentNum: data.CurPage, afterFun: load });
+                }
+
+                if ($("#Jiagetongjiebiao-table tbody tr").length > 0 && thcount<8) {
+                    $("#search-result").fixHeadColumn({ fixColumnIndex: thcount });
+                }
+            }).complete(function () { $("#btnQuery").button("reset"); });
+        }
+
+        //比较两个对象，属性名一样的值是否都一样，有一个属性值不相等返回false
+        function compareObject(obj1, obj2) {
+            if (obj1 && obj2) {
+                var flag = true;
+                for (pro1 in obj1) {
+                    for (pro2 in obj2) {
+                        if (pro1 == pro2) {
+                            flag = flag & (obj1[pro1] == obj2[pro2])
+                        }
+                    }
+                }
+                return flag;
+            }
+            return false;
+        }
+
+        function BindQuotation() {
+            var bussiness = ["编程", "执行", "复核", "研究", "其他1", "其他2", "车展", "支持"];
+            var bussinessEn = ["Biancheng", "Zhixing", "Fuhe", "Yanjiu", "Qita1", "Qita2", "Chezhan", "Zhichi"];
+            var inter = ["有形商品采购", "无形商品采购"]
+            var interrEn = ["Qita1", "Qita2"]
+            var el = $("#QuotationType");
+            var combo = $("<select id='QuotationType' name='QuotationType' class = 'form-control'> ");
+            var input = $("<input id='QuotationType' name='QuotationType' class = 'form-control'> ");
+
+            if ($("#ModelType").val() == "业务") {
+                el = changeSelectInput(el, combo, input, true);
+                for (i in bussiness) {
+                    el.append($("<option>").html(bussiness[i]).val(bussinessEn[i]));
+                }
+            } else {
+                el = changeSelectInput(el, combo, input, true);
+                for (i in inter) {
+                    el.append($("<option>").html(inter[i]).val(interrEn[i]));
+                }
+            }
+            $("#QuotationType").data("live-search", true).prop("title", "").selectpicker("refresh");
+        }
+        function changeSelectInput(el, combo, input, isDropdown) {
+            var newEl;
+            if (isDropdown) {
+                newEl = combo;
+            } else {
+                newEl = input;
+            }
+            var parent = el.parent();
+            parent.empty();
+            parent.append(newEl);
+
+            return newEl;
+        }
+    </script>
+}

@@ -1,0 +1,123 @@
+﻿<table>
+    <tr>
+        <td width="80">执行省份</td>
+        <td>
+            <input id="zhixingshengfen" name="zhixingshengfen" class="form-control" />
+        </td>
+        <td width="80">执行城市</td>
+        <td>
+            <input id="zhixingchengshi" name="zhixingchengshi" class="form-control" />
+        </td>
+        <td width="70">项目</td>
+        <td width="130">
+            <input type="hidden" id="ProjectId" name="ProjectId" />
+            <input id="ProjectCode" name="ProjectCode" class="form-control"  disabled />
+        </td>
+        <td width="130">
+            <input id="ProjectName" name="ProjectName" class="form-control" disabled />
+        </td>
+        <td width="130">
+            <input id="ProjectShortName" name="ProjectShortName" class="form-control" disabled />
+        </td>
+        <td>
+            <a id="btnProjectSelect" class="btn btn-primary" style="width:120px">选择项目</a>
+        </td>
+    </tr>
+    <tr>
+        <td width="80">执行方式</td>
+        <td>
+            <select id="zhixingfangshi" name="zhixingfangshi" class="form-control">
+                <option value="暗访">暗访</option>
+                <option value="明检">明检</option>
+                <option value="盘库">盘库</option>
+                <option value="价格调查">价格调查</option>
+                <option value="面访">面访</option>
+                <option value="电访">电访</option>
+                <option value="座谈会">座谈会</option>
+                <option value="深访">深访</option>
+                <option value="日记留置">日记留置</option>
+                <option value="网络调研">网络调研</option>
+                <option value="车展展评会">车展展评会</option>
+                <option value="管控">管控</option>
+                <option value="编码">编码</option>
+                <option value="复核">复核</option>
+                <option value="编程及编辑">编程及编辑</option>
+                <option value="数据分析">数据分析</option>
+                <option value="报告制作">报告制作</option>
+                <option value="主持人">主持人</option>
+                <option value="场地">场地</option>
+                <option value="布展">布展</option>
+                <option value="运输">运输</option>
+                <option value="租车">租车</option>
+                <option value="供应商差旅">供应商差旅</option>
+                <option value="有形商品采购">有形商品采购</option>
+                <option value="服务采购">服务采购</option>
+                <option value="技术采购">技术采购</option>
+                <option value="工程发包">工程发包</option>
+                <option value="车展展评会">车展展评会</option>
+            </select>
+        </td>
+        @*<td>
+            <input id="zhixingfangshi" name="zhixingfangshi" class="form-control">
+        </td>*@
+        <td width="80">工作分类</td>
+        <td>
+            <input id="gongzuofenlei" name="gongzuofenlei" class="form-control">
+        </td>
+        <td>供应商</td>
+        <td width="130">
+            <input id="SupplierId" name="SupplierId" type="hidden" />
+            <input id="SupplierCode" name="SupplierCode" class="form-control" disabled>
+        </td>
+        <td width="130"><input id="SupplierName" name="SupplierName" class="form-control" disabled></td>
+        <td width="130"><input id="SupplierShortName" name="SupplierShortName" class="form-control"  disabled></td>
+        <td>
+            <a id="btnSupplierSelect" class="btn btn-primary" style="width:120px">选择供应商</a>
+        </td>
+    </tr>
+    <tr>
+        <td width="80">工作内容</td>
+        <td>
+            <input id="gongzuoneirong" name="gongzuoneirong" class="form-control">
+
+        </td>
+        <td width="80">类型/品牌</td>
+        <td>
+            <input id="leixingpinpai" name="leixingpinpai" class="form-control">
+        </td>
+        <td width="80">规格/要求</td>
+        <td>
+            <input id="guigeyaoqiu" name="guigeyaoqiu" class="form-control">
+        </td>
+        <td width="80">质量标准</td>
+        <td>
+            <input id="zhiliangbiaozhun" name="zhiliangbiaozhun" class="form-control">
+        </td>
+        <td></td>
+    </tr>
+    <tr>
+        <td width="80">核算单位</td>
+        <td>
+            <input id="hesuandanwei" name="hesuandanwei" class="form-control">
+        </td>
+        <td>参考价格</td>
+        <td><input id="cankaojiage" name="cankaojiage" class="form-control"></td>
+        <td width="80">单价</td>
+        <td>
+            <input id="danjia" name="danjia" class="form-control">
+        </td>
+        <td width="80">数量</td>
+        <td>
+            <input id="shuliang" name="shuliang" class="form-control">
+        </td>
+        <td></td>
+    </tr>
+    <tr>
+        <td width="80">备注</td>
+        <td colspan="7">
+            <textarea id="beizhu" name="beizhu" class="form-control"></textarea>
+        </td>
+
+        <td></td>
+    </tr>
+</table>

@@ -1,0 +1,455 @@
+﻿<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <title></title>   
+    <script src="/Scripts/jquery-1.10.2.min.js"></script>
+    <script src="Scripts/bootstrap.min.js"></script>
+    <script src="/Content/My97DatePicker/WdatePicker.js"></script>
+    <script src="/Scripts/custom/form-serialize.js"></script>
+    <script src="/Scripts/custom/date-format.js"></script>
+    <script src="/Scripts/custom/comm.js"></script>
+    <script>
+        $(function () {
+            $("#constract-div link").each(function () {
+                if ($(this).attr("href").indexOf(window.location.origin) < 0) {
+                    $(this).attr("href", window.location.origin + $(this).attr("href"));
+                }               
+            })
+            $(document).ajaxComplete(function (event, result, options) {
+                try {
+                    if (result.responseText.charAt(0) != '{')
+                        return;
+                    var result = $.parseJSON(result.responseText);
+                    if (result.Status == 401) {
+                        alert(result.Message, function () {
+                            window.location.href = "/Account/Login?ReturnUrl=" + result.ReturnUrl;
+                        });
+                    }
+                } catch (ex) {
+
+                }
+            });
+            $(document).ajaxError(function (event, response, options) {
+                if (response) {
+                    var data = JSON.parse(response.responseText);
+                    //alert(data.ErrMsg);
+                }
+            })
+
+            load();
+        });
+       
+        function load() {
+            var templateId = getQueryString("TemplateId");
+            var constractId = getQueryString("ConstractId");
+            $.post("/Constract/ConstractViewDtlSearch", {ConstractId:constractId, ConstractTemplateId:templateId}, function (data) {
+                if (data && data.TemplateDtls) {
+                    $("#TemplateContent").empty();
+                    $("#ConstractTitle").html(data.ConstractTemplate.TemplateName);
+                    var fixIndex = 0;
+                    $.each(data.TemplateDtls, function (index, item) {
+                        item.TemplateContent = item.TemplateContent || "";
+                        if (item.ContentType == "合同标题") {
+                            $("#Title").html(item.TemplateContent.trim());
+                        }
+                        else if (item.ContentType == "一级标题") {
+                            var content = item.TemplateContent.trim().replace(/ /g, "&nbsp;");
+                            $("#TemplateContent").append($("<h4></h4>").html(content));
+                        }
+                        else if (item.ContentType == "二级标题") {
+                            var content = item.TemplateContent.trim().replace(/ /g, "&nbsp;");
+                            $("#TemplateContent").append($("<h5 style='padding-left:25px; text-indent:24px;line-height:25px;'></h5>")
+                                .html(content));
+                        }
+                        else if (item.ContentType == "普通文本") {
+                            var content = item.TemplateContent.trim().replace(/ /g, "&nbsp;");
+                            $("#TemplateContent").append($("<p></p>").html(content));
+                        }
+                        else if (item.ContentType == "图片") {
+                            var src = "/ConstractTemplate/GetImageSrc?fileName=" + item.TemplateContent;
+                            $("#TemplateContent").append($("<img>").attr("src", src));
+                        } else if (item.ContentType == "表格") {
+                            var id = 'table-' + item.OrderNO;
+                            var div = $("<div id='" + id + "' class='table-div'>");
+                            $("#TemplateContent").append(div);
+                        } else if (item.ContentType == "表格-模板") {
+                            var div = $("<div id='table-template' class='table-div'>");
+                            div.append(bindTableTemplate(item.TemplateContent));
+                            $("#TemplateContent").append(div);
+                        } else {
+                            if (item.ContentType2 == "项目名称") {
+                                fixIndex++;
+                                var h5 = $("<h5 class='fix-content'>")
+                                    .append($("<span>" + fixIndex + ".&nbsp;&nbsp; 项目简称：</span>"))
+                                    .append($("<span id='ProjectShortName'>"));
+
+                                $("#TemplateContent").append(h5);
+                            }
+                            else if (item.ContentType2 == "执行区域") {
+                                fixIndex++;
+                                var h5 = $("<h5  class='fix-content'>")
+                                    .append($("<span>" + fixIndex + ".&nbsp;&nbsp; 执行区域：</span>"))
+                                    .append($("<span id='ExecuteRegion'>"));
+                                $("#TemplateContent").append(h5);
+                            }
+                            else if (item.ContentType2 == "项目时间") {
+                                fixIndex++;
+                                var h5 = $("<h5  class='fix-content'>").append($("<span>" + fixIndex + ".&nbsp;&nbsp; 项目时间：</span>"));
+                                h5.append($("<span id='StartDate'>"));
+                                h5.append($("<span>").html(" 至 "));
+                                h5.append($("<span id='EndDate'>"));
+                                $("#TemplateContent").append(h5);
+                            }
+                            else if (item.ContentType2 == "复核比例") {
+                                fixIndex++;
+                                var h5 = $("<h5 class='fix-content'>")
+                                    .append($("<span>" + fixIndex + ".&nbsp;&nbsp; 复核比例：</span>"))
+                                    .append($("<span id='RecheckRate'>"));
+                                $("#TemplateContent").append(h5);
+                            }
+                            else if (item.ContentType2 == "样本量配额") {
+                                fixIndex++;
+                                var h5 = $("<h5 class='fix-content'>")
+                                    .append($("<span>" + fixIndex + ".&nbsp;&nbsp; 样本量、配额：请详见协议附件</span>"))
+                                    //.append($("<span id='SampleCountAndQuota'>"));
+
+                                $("#TemplateContent").append(h5);
+                            } else if (item.ContentType2 == "平台名称") {
+                                fixIndex++;
+                                var h5 = $("<h5 class='fix-content'>")
+                                    .append($("<span>" + fixIndex + ".&nbsp;&nbsp; 平台名称：</span>"))
+                                    .append($("<span id='PlatformName'>"));
+
+                                $("#TemplateContent").append(h5);
+                            } else if (item.ContentType2 == "最终交付日期") {
+                                fixIndex++;
+                                var h5 = $("<h5 class='fix-content'>")
+                                    .append($("<span>" + fixIndex + ".&nbsp;&nbsp; 最终交付日期：</span>"))
+                                    .append($("<span id='StrLastFinishDate'>"));
+
+                                $("#TemplateContent").append(h5);
+                            } else if (item.ContentType2 == "交货日期") {
+                                fixIndex++;
+                                var h5 = $("<h5 class='fix-content'>")
+                                    .append($("<span>" + fixIndex + ".&nbsp;&nbsp; 交货日期：</span>"))
+                                    .append($("<span id='StrDeliveryDate'>"));
+
+                                $("#TemplateContent").append(h5);
+                            } else if (item.ContentType2 == "布展时间") {
+                                fixIndex++;
+                                var h5 = $("<h5 class='fix-content'>")
+                                    .append($("<span>" + fixIndex + ".&nbsp;&nbsp; 布展时间：</span>"))
+                                    .append($("<span id='buzhanshijian'>"));
+
+                                $("#TemplateContent").append(h5);
+                            } else if (item.ContentType2 == "撤展时间") {
+                                fixIndex++;
+                                var h5 = $("<h5 class='fix-content'>")
+                                    .append($("<span>" + fixIndex + ".&nbsp;&nbsp; 撤展时间：</span>"))
+                                    .append($("<span id='chezhanshijian'>"));
+
+                                $("#TemplateContent").append(h5);
+                            } else if (item.ContentType2 == "运输路线") {
+                                fixIndex++;
+                                var h5 = $("<h5 class='fix-content'>")
+                                    .append($("<span>" + fixIndex + ".&nbsp;&nbsp; 运输路线：</span>"))
+                                    .append($("<span id='yunshuluxian'>"));
+
+                                $("#TemplateContent").append(h5);
+                            } else if (item.ContentType2 == "服务内容") {
+                                fixIndex++;
+                                var h5 = $("<h5 class='fix-content'>")
+                                    .append($("<span>" + fixIndex + ".&nbsp;&nbsp; 服务内容：</span>"))
+                                    .append($("<span id='fuwuneirong'>"));
+
+                                $("#TemplateContent").append(h5);
+                            } else if (item.ContentType2 == "协议有效时间") {
+                                fixIndex++;
+                                var h5 = $("<h5 class='fix-content'>")
+                                    .append($("<span>" + fixIndex + ".&nbsp;&nbsp; 协议有效时间：</span>"))
+                                    .append($("<span id='xieyiyouxiaoshijian'>"));
+
+                                $("#TemplateContent").append(h5);
+                            } else if (item.ContentType2 == "展览展示委托内容") {
+                                fixIndex++;
+                                var h5 = $("<h5 class='fix-content'>")
+                                    .append($("<span>" + fixIndex + ".&nbsp;&nbsp; 展览展示委托内容：</span>"))
+                                    .append($("<span id='zhanshizhanlanweituoneirong'>"));
+
+                                $("#TemplateContent").append(h5);
+                            } else if (item.ContentType2 == "运输车辆信息") {
+                                fixIndex++;
+                                var h5 = $("<h5 class='fix-content'>")
+                                    .append($("<span>" + fixIndex + ".&nbsp;&nbsp; 运输车辆信息：请详见协议附件</span>"));
+
+                                $("#TemplateContent").append(h5);
+                            } else if (item.ContentType2 == "确认单") {
+                                var div = $("<div id='QuotationList'>");
+                                $("#TemplateContent").append(div);
+                            } else if (item.ContentType2 == "确认单2") {
+                                var div = $("<div id='Quotation2List'>");
+                                $("#TemplateContent").append(div);
+                            }
+                        }
+                    })
+                }
+                if (constractId) {
+                    loadConstract(constractId);
+                }
+            })
+        };
+        function loadConstractQuotations(data, isQuotation) {
+            var quoEl = isQuotation ? $("#Quotation2List") : $("#QuotationList");
+            var remarkId = isQuotation ? "Quotation2Remark" : "QuotationRemark";
+            var remarkV = isQuotation ? data.Quotation2Remark : data.QuotationRemark;
+            var quotationIdList = isQuotation ? data.QuotationId2List : data.QuotationIdList;
+            $(quoEl).load("/Constract/GetConstractQuotations", { QuotationIdList: quotationIdList }, function (html) {
+                if (html.length == 0) return;
+
+                $("table tr", $(this)).each(function () {
+                    if ($(this).find("td").length > 0) {
+                        $(this).find("td").eq(0).hide();
+                    } else if ($(this).find("th").length > 0) {
+                        $(this).find("th").eq(0).hide();
+                    }
+                })
+
+                $(this).append($("<div id='" + remarkId + "' style='width: 100%;display: inline-block;'>"));
+                
+                if (!remarkV) {
+                    return
+                }
+                $("#" + remarkId).append($("<strong>").text("说明：").css("width", 50).css("float", "left"));
+                $("#" + remarkId).append($("<span>").css("float", "left").width(780).html(remarkV.replace(/\n/g, '<br>')));
+
+            });
+        }
+
+        function loadConstract(constractId) {
+            var callback1, callback2;
+            $.post("/Constract/FindOne", { Id: constractId }, function (data) {
+                if (data) {
+                    for (pName in data) {
+                        $("#" + pName).html(data[pName]);
+                    }
+                    loadConstractQuotations(data, false);
+                    loadConstractQuotations(data, true);
+
+                    //$("#QuotationList").load("/Constract/GetConstractQuotations", { QuotationIdList: data.QuotationIdList }, function (html) {
+                    //    if (html.length == 0) return;
+
+                    //    $("#QuotationList table tr").each(function () {
+                    //        if ($(this).find("td").length > 0) {
+                    //            $(this).find("td").eq(0).hide();
+                    //        } else if ($(this).find("th").length > 0) {
+                    //            $(this).find("th").eq(0).hide();
+                    //        }
+                    //    })
+
+                    //    $(this).append($("<div id='QuotationRemark' style='width: 100%;display: inline-block;'>"));
+                    //    debugger
+                    //    if (!data.QuotationRemark) {
+                    //        return
+                    //    }
+                    //    $("#QuotationRemark").append($("<strong>").text("说明：").css("width", 50).css("float", "left"));
+                    //    $("#QuotationRemark").append($("<span>").css("float", "left").width(780).html(data.QuotationRemark.replace(/\n/g, '<br>')));
+                       
+                    //});
+                }
+            })
+           
+            $.post("/Constract/ConstractDtlSearch", { ConstractId: constractId }, function (data) {
+                $(".option-div").show();
+                if (data) {
+                    var dtlGroups = [];
+                    $.each(data, function (index, item) {
+                        //数据根据tableid分组
+                        var contain = false;
+                        if (dtlGroups.length > 0) {
+                            for (i in dtlGroups) {
+                                if (dtlGroups[i].key == item.TableId) {
+                                    contain = true;
+                                    dtlGroups[i].value.push(item);
+                                    break;
+                                }
+                            }
+                        }
+                        if (!contain) {
+                            dtlGroups.push({ key: item.TableId, value: [item] });
+                        }
+                    })
+
+                    //生成table
+                    for (i in dtlGroups) {
+                        var dtlGroup = dtlGroups[i];
+                        var table = $("<table></table>");
+                        var tdMaxLength = 0;
+                        for (j in dtlGroup.value) {
+                            var item = dtlGroup.value[j];
+                            var tr = $("<tr></tr>").clone();
+
+                            for (pName in item) {
+                                if (pName.length < 7 || pName.length > 9 || pName.substr(0, 6) != "Column") continue;
+                                if (j == 0) {
+                                    if (item[pName] != null && item[pName] != "") {
+                                        tr.append($("<th></th>").html(item[pName]));
+                                        tdMaxLength++;
+                                    }
+                                } else {
+                                    var c = parseInt(pName.substr(6));
+                                    if (c <= tdMaxLength) {
+                                        tr.append($("<td></td>").html(item[pName] == "" ? "&nbsp;" : item[pName]));
+                                    }
+                                }
+                            }
+
+                            table.append(tr);
+
+                        }
+                        $("#" + dtlGroup.key).append(table);
+                    }
+                }
+            });
+
+        }
+
+        function bindTableTemplate(templateContent) {
+            var table = $("<table></table>");
+            var rowColumns = 0;
+            var values = templateContent.split(';');
+            for (i in values) {
+                var tr = $("<tr></tr>");
+                var columns = values[i].split(',');
+
+                if (i == 0) {
+                    //列头
+                    for (j in columns) {
+                        if (columns[j] != "") {
+                            tr.append($("<th></th>").html(columns[j]));
+                            rowColumns = j;
+                        }
+                    }
+                } else {
+                    for (k in columns) {
+                        if (parseInt(k) <= parseInt(rowColumns)) {
+                            var v = columns[k] == "" ? "&nbsp;" : columns[k];
+                            tr.append($("<td></td>").html(v));
+                        }
+                    }
+                }
+                table.append(tr);
+            }
+            return table;
+        }
+
+        function changeToPdf(btn) {
+            $(btn).button("loading");
+
+            var top = $("#block-div").offset().top;
+            var m = top % 1360;
+            if (m < 40) {
+                $("#block-div").css("height", 100);
+            } else {
+                $("#block-div").css("height", 1360 - m + 100);
+            }
+            
+            var allHtml = $("#constract-div").prop("outerHTML");
+            $.post("/Constract/ChangeToPdf", { html: allHtml, constractName: $("#ConstractTitle").html() }, function (data) {
+                $(".option-div").show();
+                $(btn).button("reset");
+                if (data.Status) {
+                    var fileFullName="~/ConstractPdf/" + data.FileName;                
+                    if (window.opener && typeof window.opener.addConstractAttach != 'undefined') {
+                        $(btn).text("生成完毕");
+                        window.opener.addConstractAttach({ fileName: data.FileName, fileFullName: fileFullName });
+                    } else {                       
+                        window.location.href = "/Base/DownloadFile?fileName=" + fileFullName;
+                    }
+                }
+            });
+        }
+
+        function getQueryString(name) {
+            var reg = new RegExp('(^|&)' + name + '=([^&]*)(&|$)', 'i');
+            var r = window.location.search.substr(1).match(reg);
+            if (r != null) {
+                return unescape(r[2]);
+            }
+            return null;
+        }
+    </script>
+</head>
+<body>
+    <div class="option-div" style="display:none">
+        <div class="nav">
+            <a class="btn btn-primary" href="javascript:window.close()">关闭</a>
+            <button class="btn" onclick="changeToPdf(this)" data-loading-text="正在生成...">转成PDF</button>
+        </div>
+    </div>
+    <div id="constract-div">
+        <link href="/Content/bootstrap.css" rel="stylesheet" />
+        <link href="/Content/constract.css?v=20170327" rel="stylesheet" />       
+        <div class="container">
+            <div class="text-center">
+                <span id="ConstractTitle" class="title-p3" style="">项目委托协议-定量调研</span>
+            </div>
+            <p style="padding-right:10px;text-align:right;font-size:9px">合同编号：</p>
+            <p>本合同的签署双方为：</p>
+            <div id="jiafang-info" style="margin-bottom:25px;">
+                <p><span id="PartAName" style="font-weight:600"></span> （以下简称“甲方”）</p>
+                <p>地址及邮编：<span id="PartAAddress"></span>&nbsp;&nbsp;<span id="PartAPostCode"></span></p>
+                <div style="margin-top:-10px;">
+                    <p style="width:345px;float:left;">联系人：<span id="PartAContacts"></span></p>
+                    <p style="width:345px;float:left;">电话：<span id="PartATel"></span></p>
+                </div>
+                <p style="clear:both"> 邮件地址：<span id="PartAEmail"></span></p>
+            </div>
+            <div id="yifang-info" style="margin-bottom:30px;">
+                <p><span id="PartBName" style="font-weight:600"></span>（以下简称“乙方”）</p>
+                <p>地址及邮编：<span id="PartBAddress"></span>&nbsp;&nbsp;<span id="PartBPostCode"></span></p>
+                <div style="margin-top:-10px;">
+                    <p style="width:345px;float:left;">联系人：<span id="PartBContacts"></span></p>
+                    <p style="width:345px;float: left;">电话：<span id="PartBTel"></span></p>
+                </div>
+                <br />
+                <p style="clear:both">邮件地址：<span id="PartBEmail"></span></p>
+            </div>
+            <!--<p>甲方委托乙方提供“市场调研执行代理”服务，为顺利完成调查项目，经双方友好协商，达成以下委托协议：</p>-->
+            <!--合同模板的动态信息-->
+            <div id="TemplateContent"></div>
+            <div id="block-div" class="block-div"></div>            
+            <br />
+            <br />
+            <br />            
+            <div style="line-height:30px;font-size:14px;font-weight:600">
+                <h4>（本页无正文）</h4>
+                <p>合同甲方：</p>
+                <p>盖章：</p>
+                <p>授权代表姓名：</p>
+                <p>授权代表职务：</p>
+                <p>授权代表签字：</p>
+                <p>
+                    签字日期：
+                    <span style="width:45px;text-align:right;display: inline-block;">年</span>
+                    <span style="width:45px;text-align:right;display: inline-block;">月</span>
+                    <span style="width:45px;text-align:right;display: inline-block;">日</span>
+                </p>
+                <br />
+                <p>合同乙方：</p>
+                <p>盖章：</p>
+                <p>授权代表姓名：</p>
+                <p>授权代表职务：</p>
+                <p>授权代表签字：</p>
+                <p>
+                    签字日期：
+                    <span style="width:45px;text-align:right;display: inline-block;">年</span>
+                    <span style="width:45px;text-align:right;display: inline-block;">月</span>
+                    <span style="width:45px;text-align:right;display: inline-block;">日</span>
+                </p>
+            </div>
+        </div>
+    </div>
+
+</body>
+</html>

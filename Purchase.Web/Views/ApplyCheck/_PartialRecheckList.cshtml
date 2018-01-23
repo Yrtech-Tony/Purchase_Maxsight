@@ -1,0 +1,95 @@
+﻿@using Purchase.Service.DTO
+@model IEnumerable<RecheckUserSelectDto>
+
+<div class="count2">
+
+    <form id="recheck-form">
+        <div style="text-align:left;" class="radio-group">
+            <label>审核状态:</label>
+            <input id="excuteRadioGroup1_0" name="RecheckStatusCode" type="radio" value="同意" class="rido" checked>
+            <label for="excuteRadioGroup1_0">同意</label>
+        </div>
+        <br />
+        <table id="RecheckUserSelect-table" class="table table-bordered table-condensed table-hover">
+
+            @if (Model.Count() != 0)
+            {
+                <thead>
+                    <tr>
+                        <th width="80">选择</th>
+                        <th>姓名</th>
+                        <th>部门</th>
+                        <th>职位</th>
+                    </tr>
+                </thead>
+            }
+            <tbody>
+                @if (Model != null)
+                {
+                    foreach (RecheckUserSelectDto item in Model)
+                    {
+                        <tr>
+                            <td>@Html.RadioButton("RecheckUserId", item.RecheckUserId)</td>
+                            <td>@item.UserName</td>
+                            <td>@item.DepartmentName</td>
+                            <td>@item.PositionName</td>
+                        </tr>
+                    }
+                }
+            </tbody>
+        </table>
+        <textarea id="RecheckReason" name="RecheckReason" class="form-control" rows="3"></textarea>
+    </form>
+    <div class="mt20" style="text-align:right;">
+        <button id="btnApply" type="button" class="btn btn-primary" style="width:100px;">提交</button>
+    </div>
+</div>
+
+<script>
+    $(function () {
+        debugger
+        if ($("#RecheckUserSelect-table tbody tr").length == 1) {
+            $("#RecheckUserSelect-table tbody tr:first-child").find("input[type=radio]").prop("checked", true).change();
+        }
+    })
+    $("#btnApply").click(function () {
+        var checkRadio = $("#RecheckUserSelect-table input[type=radio]:checked").val();
+        var applyStatus = $("input:radio[name=RecheckStatusCode]:checked").val();
+        debugger
+        if ('@Model.Count()' != '0') {
+            if (applyStatus == "同意" && !checkRadio) {
+                alert("请选择下一个处理人员！");
+                return;
+            }
+        }
+        if ($("#ApplyTypeIdForRecheck").val() == "确认单") {
+            $.post("/ApplyCheck/ApplyDetail_QuotationList_CheckSelect", { ApplyIdList: $("#ApplyIdList").val() }, function (data) {
+                if (!data) {
+                    alert("未勾选终版确认单，请先勾选");
+                    return false;
+                }
+                var params = $("#recheck-form").serializeJson();
+                params = $.extend(params, { nextRecheckUserId: checkRadio });
+                console.log(params);
+                $.post("/ApplyCheck/RecheckListCommit", { applyStatusList: $("#ApplyIdList").val(), recheckReason: $("#RecheckReason").val(), nextRecheckUserId: checkRadio }, function () {
+                    recheckFinish();
+                })
+            });
+        }
+        else {
+            var params = $("#recheck-form").serializeJson();
+            params = $.extend(params, { nextRecheckUserId: checkRadio });
+            console.log(params);
+            $.post("/ApplyCheck/RecheckListCommit", { applyStatusList: $("#ApplyIdList").val(), recheckReason: $("#RecheckReason").val(), nextRecheckUserId: checkRadio }, function () {
+                recheckFinish();
+            })
+        }
+    })
+    function isEmpty(value) {
+        if (value == "")
+            return true;
+        else
+            return false;
+    }
+
+</script>

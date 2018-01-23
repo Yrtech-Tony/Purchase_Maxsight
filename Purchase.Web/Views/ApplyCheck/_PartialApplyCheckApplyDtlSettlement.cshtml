@@ -1,0 +1,91 @@
+﻿@using Purchase.Service.DTO
+@model IEnumerable<SettlementMstDto>
+@{string ProjectId = "";}
+<div style="position:relative" class="count2">
+    <table style=" width: 100%;">
+        <tr>
+            <td colspan="10" style="text-align:right">
+                <a class="btn btn-primary" href="javascript:showAttachList(@ViewBag.ApplyId)">查看附件</a>
+                <a class="btn btn-primary" style="width:180px" onclick="openZhuijia()">预算外确认单-追加费用</a>
+            </td>
+        </tr>
+
+    </table>
+    <div id="search-result" class="table-responsive" style="max-height:500px;overflow-y:auto;">
+        <table id="RecheckUserSelect-table" class="table table-bordered table-condensed table-hover">
+            <thead>
+                <tr>
+                    <th>申请编号</th>
+                    <th>供应商名称</th>
+                    <th>序号</th>
+                    <th>结算金额</th>
+                    <th>项目简称</th>
+                    <th>确认单组</th>
+                </tr>
+            </thead>
+            <tbody>
+                @if (Model != null)
+                {
+                    foreach (SettlementMstDto item in Model)
+                    {
+                        ProjectId = item.ProjectId;
+                        <tr>
+                            <td>@item.ApplyId</td>
+                            <td><a href="javascript:SettlementDtl('@item.ApplyId','@item.SettlementId','@item.ProjectId','@item.SupplierId','@item.QuotationGroupId')">@item.SupplierName</a></td>
+                            <td>@item.SeqNO_Supplier</td>
+                            <td>@item.SupplierAmt</td>
+                            <td>@item.ProjectShortName</td>
+                            <td>@item.QuotationGroupName</td>
+                        </tr>
+                    }
+                }
+            </tbody>
+        </table>
+    </div>
+</div>
+<input id="ProjectId" name="ProjectId" type="hidden" class="form-control" value="@ProjectId" />
+<input id="SupplierId" name="SupplierId" type="hidden" class="form-control" />
+<input id="ApplyId_Settlement" name="ApplyId_Settlement" type="hidden" class="form-control" />
+<input id="SettlementId" name="SettlementId" type="hidden" class="form-control" />
+<input id="QuotationGroupId" name="QuotationGroupId" type="hidden" class="form-control" />
+
+<script src="~/Scripts/custom/bs.modal.expend.js"></script>
+<script>
+    function SettlementDtl(ApplyId, SettlementId, ProjectId, SupplierId,QuotationGroupId) {
+        $("#ProjectId").val(ProjectId);
+        $("#SupplierId").val(SupplierId);
+
+        $("#ApplyId_Settlement").val(ApplyId);
+        $("#SettlementId").val(SettlementId);
+        $("#QuotationGroupId").val(QuotationGroupId);
+
+        $("#settlementdlt-detail .modal-title").html("结算单详细");
+        $("#settlementdlt-detail").modal("show");
+        $("#settlementdlt-detail .modal-body").empty();
+        $("#settlementdlt-detail .modal-body").load("/ApplyCheck/LoadPartial", { partialView: "_PartialApplyCheckApplyDtlSettlementDtl" }, function () {
+        });
+    }
+
+    function openZhuijia() {
+        $("#settlementdlt-detail .modal-title").html("预算外确认单-追加费用");
+        $("#settlementdlt-detail").modal("show");
+        $("#settlementdlt-detail .modal-body").empty();
+               
+        var resultDiv = $('<div class="table-responsive" style="max-height:550px;overflow:auto"></div>');
+        var countDiv = $('<div class="count2"></div>').append(resultDiv);
+        resultDiv.load("/ApplyCheck/LoadPartial", { partialView: "_PartialApplyCheckZhuijia" }, function () {
+            debugger
+            $("#settlementdlt-detail .modal-body").append(countDiv);
+            loadZhuijia();
+        });
+    }
+    
+    function showAttachList(ApplyId) {
+        var bsWindow = createBSWindow({
+            title: "附件"
+        });
+        $(".modal-body", bsWindow).load("/ApplyCheck/AttachShow", { applyId: ApplyId }, function () {
+
+        });
+    }
+</script>

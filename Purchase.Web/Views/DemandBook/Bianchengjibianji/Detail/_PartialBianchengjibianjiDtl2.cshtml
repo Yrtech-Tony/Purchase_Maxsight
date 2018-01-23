@@ -1,0 +1,82 @@
+﻿@model Purchase.DAL.Requirement_Bianchengjibianji_RequirementDtl2
+
+<form id="Bianchengjibianji-dtl2-form">
+    @Html.Hidden("SeqNO", 0)
+    <div class="form-horizontal">
+        @*<div class="form-group">
+            <label class="control-label col-md-2" for="AgeGroup">人员岗位</label>
+            <div class="col-md-8">
+                @Html.TextBoxFor(m => m.renyuangangwei, htmlAttributes: new { @class = "form-control" })
+            </div>
+        </div>*@
+        <div class="form-group">
+            <label class="control-label col-md-2" for="AgeGroup">工作内容</label>
+            <div class="col-md-8">
+                @Html.TextBoxFor(m => m.gongzuoneirong, htmlAttributes: new { @class = "form-control" })
+            </div>
+        </div>
+
+
+        @*<div class="form-group">
+            <label class="control-label col-md-2" for="TemplateName">工作地点</label>
+            <div class="col-md-8">
+                @Html.TextBoxFor(m => m.gongzuodidian, htmlAttributes: new { @class = "form-control" })
+            </div>
+        </div>*@
+        <div class="form-group">
+            <label class="control-label col-md-2" for="TemplateName">规格/要求</label>
+            <div class="col-md-8">
+                @Html.TextBoxFor(m => m.guigeyaoqiu, htmlAttributes: new { @class = "form-control" })
+            </div>
+        </div>
+        <div class="form-group">
+            <label class="control-label col-md-2" for="TemplateName">质量标准</label>
+            <div class="col-md-8">
+                @Html.TextBoxFor(m => m.zhiliangbiaozhun, htmlAttributes: new { @class = "form-control" })
+            </div>
+        </div>
+        <div class="form-group">
+            <label class="control-label col-md-2" for="">数量</label>
+            <div class="col-md-8">
+                @Html.TextBoxFor(m => m.shuliang, htmlAttributes: new { @class = "form-control" })
+            </div>
+        </div>
+        <div class="form-group">
+            <label class="control-label col-md-2" for="">时间安排</label>
+            <div class="col-md-8">
+                @Html.TextBoxFor(m => m.shijiananpai, htmlAttributes: new { @class = "form-control" })
+            </div>
+        </div>
+        <div class="form-group">
+            <label class="control-label col-md-2" for="TemplateName">其他说明</label>
+            <div class="col-md-8">
+                @Html.TextAreaFor(m => m.qitashuoming2, htmlAttributes: new { @class = "form-control" })
+            </div>
+        </div>
+        <div class="form-group">
+            <div class="col-md-offset-2 col-md-10">
+                <input id="saveBtn" type="button" value="保存" class="btn btn-primary btn-check" data-loading-text="提交中..." style="width:100px;height:35px" />
+            </div>
+        </div>
+    </div>
+</form>
+<script>
+    $(function () {
+       
+        $("#Bianchengjibianji-dtl2-form #saveBtn").click(function () {
+            if (!CommitCheck()) {
+                alert("正在审核中或者非本人添加的项目");
+                return false;
+            }
+            $(this).button("loading")
+            var params = $("#Bianchengjibianji-dtl2-form").serializeJson('&');
+            params = $.extend(params, getMstObject());
+
+            $.post("/DemandBook/SaveBianchengjibianjidtl2", params, function (data) {
+                $("#RequirementId").val(data);
+                loadBianchengjibianjiDtl2();
+                closeModal();
+            });
+        })
+    })
+</script>

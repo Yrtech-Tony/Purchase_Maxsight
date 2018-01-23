@@ -1,0 +1,41 @@
+﻿
+
+<table id="Jiagetongjiebiao-table" class="table table-bordered table-condensed table-hover">
+    <thead>
+        <tr>
+            <th>执行方式</th>
+            <th>复核要求</th>
+            <th>复核时间</th>
+            <th>电话咨询</th>
+            <th>电话回访</th>
+            <th>样本编辑</th>
+            <th>编码类型</th>
+            <th>问卷编程</th>
+            <th>题目数量</th>
+            <th>字数数量</th>
+            <th>样本录入</th>
+            <th>核算单位</th>
+        </tr>
+    </thead>
+    <tbody></tbody>
+</table>
+
+<script>
+    function addJiagetongjibiaoTr(item) {
+        var tr = $("<tr>");
+        tr.append($("<td></td>").html(item.ExcuteMode));
+        tr.append($("<td></td>").html(item.fuheyaoqiu));
+        tr.append($("<td></td>").html(item.fuheshijian));
+        tr.append($("<td></td>").html(item.dianhuazixun));
+        tr.append($("<td></td>").html(item.dianhuhuifang));
+        tr.append($("<td></td>").html(item.yanbenbianji));
+        tr.append($("<td></td>").html(item.bianmaleixing));
+        tr.append($("<td></td>").html(item.wenjuanbiancheng));
+        tr.append($("<td></td>").html(item.timushuliang));
+        tr.append($("<td></td>").html(item.zishushuliang));
+        tr.append($("<td></td>").html(item.yangbenluru));
+        tr.append($("<td></td>").html(item.hesuandanwei));
+
+        return tr;
+    }
+</script>

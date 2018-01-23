@@ -1,0 +1,73 @@
+﻿@using Purchase.Service.DTO
+@model IEnumerable<Quotation_QiTa2Dto>
+
+<table id="quotation-table" class="table table-bordered table-condensed table-hover">
+    <thead>
+        <tr>
+            <th>
+                供应商名称
+            </th>
+            <th>
+                采购分类
+            </th>
+            <th>
+                采购方式
+            </th>
+            <th>
+                提供服务
+            </th>
+            <th>
+                费用构成
+            </th>
+            <th>
+                品名
+            </th>
+            <th>
+                规格
+            </th>
+            <th>
+                型号
+            </th>
+            <th>
+                参考价格
+            </th>
+            <th>
+                单价
+            </th>
+            <th>
+                数量
+            </th>
+            <th>
+                小计
+            </th>
+            <th>
+                备注
+            </th>
+        </tr>
+    </thead>
+    <tbody>
+        @if (Model != null)
+        {
+            foreach (var item in Model)
+            {
+                double danjia = item.danjia.HasValue ? (double)item.danjia.Value : 0;
+                double shuliang = Purchase.Common.Utils.String2Double(item.shuliang);
+                var xiaoji = danjia * shuliang;
+                <tr>
+                    <td>@item.SupplierName</td>
+                    <td>@item.caigoufangshi</td>
+                    <td>@item.tigongfuwu</td>
+                    <td>@item.feiyonggoucheng</td>
+                    <td>@item.pinming</td>
+                    <td>@item.guige</td>
+                    <td>@item.xinghao</td>
+                    <td>@item.cankaojiage</td>
+                    <td>@Math.Round(danjia, 2)</td>
+                    <td>@item.shuliang</td>
+                    <td>@Math.Round(xiaoji, 2)</td>
+                    <td style="text-align:left">@item.beizhu</td>
+                </tr>
+            }
+        }
+    </tbody>
+</table>

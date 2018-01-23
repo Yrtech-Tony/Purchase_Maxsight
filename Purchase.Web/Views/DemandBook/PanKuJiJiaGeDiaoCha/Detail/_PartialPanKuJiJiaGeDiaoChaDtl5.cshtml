@@ -1,0 +1,81 @@
+﻿@using Purchase.Web.Common
+@model Purchase.DAL.Requirement_Pankujijiagediaocha_RequirementDtl5
+
+<form id="Pankujijiagediaocha-dtl5-form">
+    @Html.Hidden("SeqNO", 0)
+    <div class="form-horizontal">
+        <div class="form-group">
+            <label class="control-label col-md-2" for="shoucitijiaoshijianyaoqiu">首次提交时间要求</label>
+            <div class="col-md-8">
+                @Html.DropDownListFor(m => m.shoucitijiaoshijianyaoqiu, SelectListTool.HiddenCodeList("需求书-盘库及价格调查-资料提交-首次提交(时间要求)"),
+                           htmlAttributes: new { @class = "form-control", multiple = "" })
+            </div>
+        </div>
+        <div class="form-group">
+            <label class="control-label col-md-2" for="shoucitijiaotijiaoziliao">首次提交提交资料</label>
+            <div class="col-md-8">
+                @Html.DropDownListFor(m => m.shoucitijiaotijiaoziliao, SelectListTool.HiddenCodeList("需求书-盘库及价格调查-资料提交-首次提交(提交资料)"),
+                            htmlAttributes: new { @class = "form-control", multiple = "" })
+            </div>
+        </div>
+        <div class="form-group">
+            <label class="control-label col-md-2" for="shoucitijiaotijiaofangshi">首次提交提交方式</label>
+            <div class="col-md-8">
+                @Html.DropDownListFor(m => m.shoucitijiaotijiaofangshi, SelectListTool.HiddenCodeList("需求书-盘库及价格调查-资料提交-首次提交(提交方式)"),
+                            htmlAttributes: new { @class = "form-control", multiple = "" })
+            </div>
+        </div>
+        <div class="form-group">
+            <label class="control-label col-md-2" for="zuizhongtijiaoshijianyaoqiu">最终提交时间要求</label>
+            <div class="col-md-8">
+                @Html.DropDownListFor(m => m.zuizhongtijiaoshijianyaoqiu, SelectListTool.HiddenCodeList("需求书-盘库及价格调查-资料提交-最终提交(时间要求)"),
+                           htmlAttributes: new { @class = "form-control", multiple = "" })
+            </div>
+        </div>
+        <div class="form-group">
+            <label class="control-label col-md-2" for="zuizhongtijiaotijiaoziliao">最终提交提交资料</label>
+            <div class="col-md-8">
+                @Html.DropDownListFor(m => m.zuizhongtijiaotijiaoziliao, SelectListTool.HiddenCodeList("需求书-盘库及价格调查-资料提交-最终提交(提交资料)"),
+                            htmlAttributes: new { @class = "form-control", multiple = "" })
+            </div>
+        </div>
+        <div class="form-group">
+            <label class="control-label col-md-2" for="zuizhongtijiaotijiaofangshi">最终提交提交方式</label>
+            <div class="col-md-8">
+                @Html.DropDownListFor(m => m.zuizhongtijiaotijiaofangshi, SelectListTool.HiddenCodeList("需求书-盘库及价格调查-资料提交-最终提交(提交方式)"),
+                            htmlAttributes: new { @class = "form-control", multiple = "" })
+            </div>
+        </div>
+        <div class="form-group">
+            <label class="control-label col-md-2" for="qitashuoming5">其他说明</label>
+            <div class="col-md-8">
+                @Html.TextAreaFor(m => m.qitashuoming5, htmlAttributes: new { @class = "form-control", multiple="" })
+            </div>
+        </div>
+        <div class="form-group">
+            <div class="col-md-offset-2 col-md-10">
+                <input id="saveBtn" type="button" value="保存" class="btn btn-primary btn-check" data-loading-text="提交中..." style="width:100px;height:35px" />
+            </div>
+        </div>
+    </div>
+</form>
+<script>
+    $(function () {
+       
+        $("#Pankujijiagediaocha-dtl5-form #saveBtn").click(function () {
+            if (!CommitCheck()) {
+                alert("正在审核中或者非本人添加的项目");
+                return false;
+            }
+            $(this).button("loading");
+            var params = $("#Pankujijiagediaocha-dtl5-form").serializeJson('&');
+            params = $.extend(params, getMstObject());
+
+            $.post("/DemandBook/SavePankujijiagediaochaDtl5", params, function (data) {
+                $("#RequirementId").val(data);
+                loadPankujijiagediaochaDtl5();
+                closeModal();
+            });
+        })
+    })
+</script>

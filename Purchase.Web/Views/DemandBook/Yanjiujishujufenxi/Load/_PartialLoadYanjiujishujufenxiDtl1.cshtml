@@ -1,0 +1,184 @@
+﻿<div class="panel panel-default mt20">
+    <div class="panel-heading">
+        <strong style="line-height:35px;font-size:14px;">项目信息</strong>
+        <button class="btn btn-primary btn pull-right clearfix" onclick="addDtl1()">添加</button>
+        <button class="btn btn-primary btn pull-right" style="margin-right:5px;" onclick="delDemandBookPeiE('1')">删除</button>
+    </div>
+    <div class="panel-body">
+        <div class="table-responsive">
+            <table id="dtl1-table" class="table table-bordered table-condensed table-hover text-center">
+                <thead>
+                    <tr>
+                        <th width="50">选择</th>
+                        <th width="50">
+                            复制
+                        </th>
+                        <th width="50">
+                            详细
+                        </th>
+                        <th>
+                            序号
+                        </th>
+                        <th>
+                            工作分类
+                        </th>
+                        <th>
+                            工作内容
+                        </th>
+                        <th>
+                            人员岗位
+                        </th>
+                        <th>
+                            类型/品牌
+                        </th>
+                        <th>
+                            规格/要求
+                        </th>
+                        <th>
+                            质量标准
+                        </th>
+                        <th>
+                            数量
+                        </th>
+                        <th>
+                            时间安排
+                        </th>
+
+                        <th>
+                            其他说明
+                        </th>
+                    </tr>
+                </thead>
+                <tbody></tbody>
+            </table>
+        </div>
+    </div>
+    <input id="SeqNOForLocalCopy" name="SeqNOForLocalCopy" type="hidden">
+</div>
+
+<script>
+    var detailView1 = 'Yanjiujishujufenxi/Detail/_PartialYanjiujishujufenxiDtl1';
+    var title1 = "项目信息";
+    function addDtl1() {
+        if (!CommitCheck()) {
+            alert("正在审核中或者非本人添加的项目");
+            return false;
+        }
+        $("#SeqNOForLocalCopy").val("0");
+        setModal(title1, detailView1);
+        $("#myModal").modal("show");
+    }
+    function SavePeie() {
+        debugger
+        if (!CommitCheck()) {
+            alert("正在审核中或者非本人添加的项目");
+            return false;
+        }
+        var peieshuliang = 0;
+        $("#dtl1-table tbody tr").each(function (i, tr) {
+            if (sourceData[i].shuliang)
+                peieshuliang = parseFloat(FloatAdd(parseFloat(sourceData[i].shuliang), parseFloat(peieshuliang))).toFixed(2);
+        })
+        if (parseFloat(peieshuliang) != parseFloat($("#Count").val())) {
+            debugger
+            alert("项目信息样本量和立项样本量不同");
+            return false;
+        }
+        if (sourceData) {
+            $.post("/DemandBook/SaveYanjiujishujufenxiDtl1List", {
+                jsonArr: JSON.stringify(sourceData),
+                RequirementId: $("#RequirementId").val(),
+                ProjectId: $("#ProjectId").val(),
+                CitySeqNO: $("#CitySeqNo").val(),
+                RequirementGroupId: $("#GroupId").val(),
+                RequirementType: $("#RequirementType").val()
+            }, function (data) {
+                alert("保存成功！");
+                loadYanjiujishujufenxiDtl1()
+
+            })
+        }
+    }
+    function loadpage() {
+        $("#dtl1-table tbody").empty();
+        $.each(sourceData, function (index, item) {
+            for (pro in item) {
+                if ($.isArray(item[pro])) {
+                    item[pro] = item[pro].join('&');
+                }
+            }
+            var tr = $("<tr>");
+            tr.append($("<td></td>").append($("<input type='checkbox'>")));
+            var copyBtn = $("<a class='btn btn-primary btn2'>").html("复制");
+            copyBtn.click(function () {
+                debugger
+                $("#SeqNOForLocalCopy").val("0");
+                setModal(title1, detailView1, item);
+                $("#myModal").modal("show");
+
+            })
+            tr.append($("<td></td>").append(copyBtn));
+            var editBtn = $("<a class='btn btn-primary btn2'>").html("详细");
+            editBtn.click(function () {
+                $("#SeqNOForLocalCopy").val(item.SeqNO);
+                setModal(title1, detailView1, item);
+                $("#myModal").modal("show");
+            })
+            tr.append($("<td></td>").append(editBtn));
+            tr.append($("<td></td>").html(item.SeqNO));
+            tr.append($("<td></td>").html(item.gongzuofenlei));//工作分类
+            tr.append($("<td></td>").html(item.gongzuoneirong));//工作内容
+            tr.append($("<td></td>").html(item.renyuangangwei));//人员岗位
+            tr.append($("<td></td>").html(item.leixingpinpai));//类型品牌
+            tr.append($("<td></td>").html(item.guigeyaoqiu));//规格要求
+            tr.append($("<td></td>").html(item.zhiliangbiaozhun));//质量标准
+            tr.append($("<td></td>").html(item.shuliang));//数量
+            tr.append($("<td></td>").html(item.shijiananpai));//时间安排
+            //tr.append($("<td></td>").html(item.qitashuoming1));//其他说明
+            var qitashuoming1 = item.qitashuoming1 != null ? item.qitashuoming1.replace(/\n/g, '<br>') : "&nbsp;";
+            tr.append($("<td style='text-align: left;'></td>").html(qitashuoming1));//其他说明
+
+
+            $("#dtl1-table tbody").append(tr);
+        })
+    }
+    function loadYanjiujishujufenxiDtl1() {
+        $.post("/DemandBook/LoadYanjiujishujufenxiDtl1", { RequirementId: $("#RequirementId").val() }, function (data) {
+            if (data) {
+                sourceData = data;
+                loadpage();
+                //$("#dtl1-table tbody").empty();
+                //$.each(data, function (index, item) {
+                //    var tr = $("<tr>");
+                //    var copyBtn = $("<a class='btn btn-primary btn2'>").html("复制");
+                //    copyBtn.click(function () {
+                //        item.SeqNO = 0;
+                //        setModal(title1, detailView1, item);
+                //        $("#myModal").modal("show");
+                //    })
+                //    tr.append($("<td></td>").append(copyBtn));
+                //    var editBtn = $("<a class='btn btn-primary btn2'>").html("详细");
+                //    editBtn.click(function () {
+                //        setModal(title1, detailView1, item);
+                //        $("#myModal").modal("show");
+                //    })
+                //    tr.append($("<td></td>").append(editBtn));
+                //    tr.append($("<td></td>").html(item.SeqNO));
+                //    tr.append($("<td></td>").html(item.gongzuofenlei));//工作分类
+                //    tr.append($("<td></td>").html(item.gongzuoneirong));//工作内容
+                //    tr.append($("<td></td>").html(item.leixingpinpai));//类型品牌
+                //    tr.append($("<td></td>").html(item.guigeyaoqiu));//规格要求
+                //    tr.append($("<td></td>").html(item.zhiliangbiaozhun));//质量标准
+                //    tr.append($("<td></td>").html(item.shuliang));//数量
+                //    tr.append($("<td></td>").html(item.shijiananpai));//时间安排
+                //    tr.append($("<td></td>").html(item.qitashuoming1));//其他说明
+
+
+
+
+                //    $("#dtl1-table tbody").append(tr);
+                //})
+            }
+        })
+    }
+</script>

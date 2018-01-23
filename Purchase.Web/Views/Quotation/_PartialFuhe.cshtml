@@ -1,0 +1,150 @@
+﻿@model Purchase.DAL.Quotation_Fuhe_Dtl
+<table>
+    <tr>
+        <td width="80">执行省份</td>
+        <td>
+            <input id="zhixingshengfen" name="zhixingshengfen" class="form-control" />
+        </td>
+        <td width="80">执行城市</td>
+        <td>
+            <input id="zhixingchengshi" name="zhixingchengshi" class="form-control" />
+        </td>
+        <td width="70">项目</td>
+        <td width="130">
+            <input type="hidden" id="ProjectId" name="ProjectId" />
+            <input id="ProjectCode" name="ProjectCode" class="form-control" disabled />
+        </td>
+        <td width="130">
+            <input id="ProjectName" name="ProjectName" class="form-control"  disabled />
+        </td>
+        <td width="130">
+            <input id="ProjectShortName" name="ProjectShortName" class="form-control"  disabled />
+        </td>
+        <td>
+            <a id="btnProjectSelect" class="btn btn-primary" style="width:120px">选择项目</a>
+        </td>
+    </tr>
+    <tr>
+        <td width="80">
+            复核要求
+        </td>
+        <td>
+            @*<input id="fuheyaoqiu" name="fuheyaoqiu" class="form-control">*@
+            @Html.DropDownListFor(m => m.fuheyaoqiu, new List<SelectListItem> {new SelectListItem(){Text="",Value=""},
+                    new SelectListItem(){ Text="低标准一审",Value="低标准一审"},
+                    new SelectListItem(){ Text="标准一审",Value="标准一审"},
+                    new SelectListItem(){ Text="抽审",Value="抽审"},
+                    new SelectListItem(){ Text="低标准一审&抽审",Value="低标准一审&抽审"},
+                    new SelectListItem(){ Text="标准一审&标准二审&抽审",Value="标准一审&标准二审&抽审"},
+                    new SelectListItem(){ Text="低标准一审&标准二审&抽审",Value="低标准一审&标准二审&抽审"},
+                    new SelectListItem(){ Text="低标准一审&标准二审",Value="低标准一审&标准二审"},
+                    new SelectListItem(){ Text="个别题目",Value="个别题目"},
+                    new SelectListItem(){ Text="全流程题目",Value="全流程题目"},
+                    new SelectListItem(){ Text="不涉及",Value="不涉及"},
+                    new SelectListItem(){ Text="不限制",Value="不限制"}
+                }, htmlAttributes: new { @class = "form-control" })
+        </td>
+        <td width="80">样本编辑</td>
+        <td>
+           @* <input id="yanbenbianji" name="yanbenbianji" class="form-control">*@
+            @Html.DropDownListFor(m => m.yanbenbianji, new List<SelectListItem> {new SelectListItem(){Text="",Value=""},
+                    new SelectListItem(){ Text="常规编辑&检查",Value="常规编辑&检查"},
+                    new SelectListItem(){ Text="静音",Value="静音"},
+                    new SelectListItem(){ Text="马赛克",Value="马赛克"},
+                    new SelectListItem(){ Text="上字幕",Value="上字幕"},
+                    new SelectListItem(){ Text="录音编辑&检查",Value="录音编辑&检查"},
+                    new SelectListItem(){ Text="刻盘",Value="刻盘"},
+                    new SelectListItem(){ Text="不涉及",Value="不涉及"},
+                    new SelectListItem(){ Text="不限制",Value="不限制"}
+                }, htmlAttributes: new { @class = "form-control" })
+        </td>
+        <td>供应商</td>
+        <td width="130">
+            <input id="SupplierId" name="SupplierId" type="hidden" />
+            <input id="SupplierCode" name="SupplierCode" class="form-control" disabled>
+        </td>
+        <td width="130"><input id="SupplierName" name="SupplierName" class="form-control"  disabled></td>
+        <td width="130"><input id="SupplierShortName" name="SupplierShortName" class="form-control"  disabled></td>
+        <td>
+            <a id="btnSupplierSelect" class="btn btn-primary" style="width:120px">选择供应商</a>
+        </td>
+    </tr>
+    <tr>
+        <td width="80">电话咨询</td>
+        <td>
+            @*<input id="dianhuazixun" name="dianhuazixun" class="form-control">*@
+            @Html.DropDownListFor(m => m.dianhuazixun, new List<SelectListItem> {new SelectListItem(){Text="",Value=""},
+                    new SelectListItem(){ Text="正常咨询",Value="正常咨询"},
+                    new SelectListItem(){ Text="价格调查",Value="价格调查"},
+                    new SelectListItem(){ Text="电话咨询执行代理管控",Value="电话咨询执行代理管控"},
+                    new SelectListItem(){ Text="不涉及",Value="不涉及"},
+                    new SelectListItem(){ Text="不限制",Value="不限制"}
+                }, htmlAttributes: new { @class = "form-control" })
+        </td>
+        <td width="80">电话回访</td>
+        <td>
+            @*<input id="dianhuahuifang" name="dianhuahuifang" class="form-control">*@
+            @Html.DropDownListFor(m => m.dianhuahuifang, new List<SelectListItem> {new SelectListItem(){Text="",Value=""},
+                    new SelectListItem(){ Text="销售",Value="销售"},
+                    new SelectListItem(){ Text="售后",Value="售后"},
+                    new SelectListItem(){ Text="不涉及",Value="不涉及"},
+                    new SelectListItem(){ Text="不限制",Value="不限制"}
+                }, htmlAttributes: new { @class = "form-control" })
+        </td>
+        <td width="80">编码类型</td>
+        <td>
+           @* <input id="bianmaleixing" name="bianmaleixing" class="form-control">*@
+            @Html.DropDownListFor(m => m.bianmaleixing, new List<SelectListItem> {new SelectListItem(){Text="",Value=""},
+                    new SelectListItem(){ Text="初级编码或一级码",Value="初级编码或一级码"},
+                    new SelectListItem(){ Text="中级编码或二级码",Value="中级编码或二级码"},
+                    new SelectListItem(){ Text="高级编码或加码",Value="高级编码或加码"},
+                    new SelectListItem(){ Text="半开放题编码",Value="半开放题编码"},
+                    new SelectListItem(){ Text="论坛编码",Value="论坛编码"},
+                    new SelectListItem(){ Text="不涉及",Value="不涉及"},
+                    new SelectListItem(){ Text="不限制",Value="不限制"}
+                }, htmlAttributes: new { @class = "form-control" })
+        </td>
+        <td width="80">辅助用品</td>
+        <td>
+            @*<input id="fuzhuyongpin" name="fuzhuyongpin" class="form-control">*@
+            @Html.DropDownListFor(m => m.fuzhuyongpin, new List<SelectListItem> {new SelectListItem(){Text="",Value=""},
+                    new SelectListItem(){ Text="各城市电话卡",Value="各城市电话卡"},
+                    new SelectListItem(){ Text="电话充值卡",Value="电话充值卡"},
+                    new SelectListItem(){ Text="加班车补餐补",Value="加班车补餐补"},
+                    new SelectListItem(){ Text="邮寄费",Value="邮寄费"},
+                    new SelectListItem(){ Text="设备更新",Value="设备更新"},
+                    new SelectListItem(){ Text="移动硬盘",Value="移动硬盘"},
+                    new SelectListItem(){ Text="光盘",Value="光盘"},
+                    new SelectListItem(){ Text="差旅费",Value="差旅费"},
+                    new SelectListItem(){ Text="电脑租赁费",Value="电脑租赁费"},
+                    new SelectListItem(){ Text="不涉及",Value="不涉及"},
+                    new SelectListItem(){ Text="不限制",Value="不限制"}
+                }, htmlAttributes: new { @class = "form-control" })
+        </td>
+        <td></td>
+    </tr>
+    <tr>
+        <td width="80">核算单位</td>
+        <td>
+            <input id="hesuandanwei" name="hesuandanwei" class="form-control">
+        </td>
+        <td>参考价格</td>
+        <td><input id="cankaojiage" name="cankaojiage" class="form-control" type="number"></td>
+        <td width="80">单价</td>
+        <td>
+            <input id="danjia" name="danjia" class="form-control" type="number">
+        </td>
+        <td width="80">数量</td>
+        <td>
+            <input id="shuliang" name="shuliang" class="form-control" type="number">
+        </td>
+        <td></td>
+    </tr>
+    <tr>
+        <td width="80">备注</td>
+        <td colspan="7">
+            <textarea id="beizhu" name="beizhu" class="form-control"></textarea>
+        </td>
+        <td></td>
+    </tr>
+</table>

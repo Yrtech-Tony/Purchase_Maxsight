@@ -1,0 +1,268 @@
+﻿@{
+    ViewBag.Title = "资金需求表查询";
+    Layout = "../FlowOrder/_FlowOrderLayout.cshtml";
+}
+<div class="count inline-block">
+    <form id="search-form" class="form">
+        <table>
+            <tr>
+                <td colspan="11" style="text-align:right">
+                    <button id="btnQuery" type="button" class="btn btn-primary" style="width:100px">查 询</button>
+                    <button id="btnExport" onclick="exportExcel()" type="button" class="btn btn-primary" style="width:100px" data-loading-text="正在导出...">导出Excel</button>
+                </td>
+            </tr>
+            <tr>
+                <td width="60">服务行业</td>
+                <td width="150">
+                    <select id="ServiceTrade" name="ServiceTrade" class="form-control">
+                        <option value="Max">Max</option>
+                        <option value="Trip">Trip</option>
+                        <option value="Zebrac">Zebrac</option>
+                        <option value="Star">Star</option>
+                    </select>
+                </td>
+                <td width="80">期间</td>
+                <td width="140">
+                    <input id="StartDate" name="StartDate" class="form-control" onclick="WdatePicker()" />
+                </td>
+                <td width="20">至</td>
+                <td width="140">
+                    <input id="EndDate" name="EndDate" class="form-control" onclick="WdatePicker()" />
+                </td>
+                <td width="80">项目名称</td>
+                <td width="150">
+                    <input id="ProjectId" name="ProjectId" class="form-control" type="hidden" />
+                    <input id="ProjectName" name="ProjectName" class="form-control" />
+                </td>
+                <td width="60">项目简称</td>
+                <td width="150">
+                    <input id="ProjectShortName" name="ProjectShortName" class="form-control" />
+                </td>
+                <td width="100">
+                    <a id="btnProjectSelect" class="btn btn-primary" style="width:100px">选择项目</a>
+                </td>
+            </tr>
+        </table>
+    </form>
+    <div class="pull-right" style="padding:5px 0px;">
+        <table width="500">
+            <tr>
+                <td width="25" style="background-color:red; border:solid #999 1px"></td>
+                @*<td width="140" style="text-align:left">红色表示含有实际付款</td>*@
+                <td width="140" style="text-align:left">实际费用</td>
+                <td width="25" style="background-color: yellow; border: solid #999 1px"></td>
+                @*<td width="150" style="text-align:left">黄色表示含有预付款/押金</td>*@
+                <td width="150" style="text-align:left">预付款/押金</td>
+                <td width="25" style=" border:solid #999 1px"></td>
+                @*<td width="150" style="text-align:left">未标记颜色全是预计付款</td>*@
+                <td width="150" style="text-align:left">预估费用</td>
+            </tr>
+        </table>
+    </div>
+    <div style="position:relative;margin-top:34px">        
+        <div id="search-result" class="table-responsive fix-table-div">
+            <table id="CapitalRequirement-table" class="table table-bordered table-condensed table-hover">
+                <thead>
+                    <tr>
+                        <th style="min-width:50px;">详细</th>
+                        <th width="250">部门</th>
+                        <th width="250">支出用途</th>
+                        <th width="200">项目简称</th>
+                        <th width="200">支出方式</th>
+                        <th width="200">付款金额</th>
+                    </tr>
+                </thead>
+                <tbody></tbody>
+            </table>
+        </div>
+    </div>
+</div>
+<div class="modal fade" id="CapitalRequirementModal" tabindex="-1" role="dialog" aria-hidden="false">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
+                <h4 class="modal-title">资金需求表编辑</h4>
+            </div>
+            <div class="modal-body">
+                @Html.Partial("_PartialEdit", new Purchase.Service.DTO.CapitalRequiremenDto())
+            </div>
+        </div>
+    </div>
+</div>
+<div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-hidden="false">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
+                <h4 class="modal-title"></h4>
+            </div>
+            <div class="modal-body">
+            </div>
+        </div>
+    </div>
+</div>
+@section Scripts {
+    <script src="~/Content/My97DatePicker/WdatePicker.js"></script>
+    <script src="~/Scripts/custom/form-serialize.js"></script>
+    <script>
+        $(function () {
+            $("#btnQuery").click(function () {
+                load();
+            })
+
+            $("#btnProjectSelect").click(function () {
+                ProjectSelect();
+            })
+        })
+        //打开编辑窗体
+        function openEdit(obj) {
+            var item = $(obj).data("item");
+            $("#CapitalRequirementModal").modal("show");
+            $("#CapitalRequirementForm").setForm(item);
+        }
+        //查询
+        function load() {
+            $("#search-result").clearFixLayout();
+            if ($("#StartDate").val() == null || $("#StartDate").val() == "") {
+                alert("请选择开始日期");
+                return false;
+            }
+            if ($("#EndDate").val() == null || $("#EndDate").val() == "") {
+                alert("请选择结束日期");
+                return false;
+            }
+            var params = $("#search-form").serializeJson();
+            if (CalDateDiff(params.StartDate, params.EndDate) > 90) {
+                alert("开始时间和结束时间相差不能超过90天");
+                return false;
+            }
+            $.post("/CapitalRequirement/Load", params, function (data) {
+                if (data && data.HeaderDtoList && data.LeftDtoList && data.DataDtoList) {
+                    $("#CapitalRequirement-table thead tr th").each(function (i) {
+                        if (i > 5) {
+                            $(this).remove();
+                        }
+                    });
+                    $("#CapitalRequirement-table tbody").empty();
+                    //增加动态列头
+                    var headTr = $("#CapitalRequirement-table thead tr").eq(0);
+                    $.each(data.HeaderDtoList, function (index, item) {
+                        headTr.append($("<th></th>").html(item.Display));
+                    })
+                    $.each(data.LeftDtoList, function (index, leftItem) {
+                        var tr = $("<tr>");
+                        var codeLink = $("<a onclick='openEdit(this)'>").html("详细").attr("data-item", JSON.stringify(leftItem));
+                        codeLink.css("cursor", "pointer");
+                        tr.append($("<td></td>").append(codeLink));
+
+                        tr.append($("<td></td>").html(leftItem.DepartmentCode));
+                        tr.append($("<td></td>").html(leftItem.ExpendType));
+                        tr.append($("<td></td>").html(leftItem.ProjectShortName));
+                        tr.append($("<td></td>").html(leftItem.ExpendPattern));
+                        tr.append($("<td></td>").html(leftItem.PaySumAmt));
+
+                        //动态绑定值
+                        $.each(data.DataDtoList, function (i, dataItem) {
+
+                            if (dataItem.ProjectId == leftItem.ProjectId) {
+                                var SumAmtTd = $("<td></td>").html(dataItem.SumAmt);
+                                if (dataItem.AdvancePaymentChk) {
+                                    SumAmtTd.css("background-color", "yellow").css("color", "#060");
+                                } else if (dataItem.FactPayChk) {
+                                    SumAmtTd.css("background-color", "red").css("color", "white");
+                                }
+                                tr.append(SumAmtTd);
+                            }
+                        })
+
+                        $("#CapitalRequirement-table tbody").append(tr);
+                    })
+                    if (data.DataDtoList.length > 0) {
+                        //增加合计
+                        calHeji(5, data.HeaderDtoList.length + 1);
+                        $("#search-result").fixHeadColumn({ fixColumnIndex: 6 });
+                    }
+                }
+            })
+        }
+        function exportExcel() {
+            if ($("#StartDate").val() == null || $("#StartDate").val() == "") {
+                alert("请选择开始日期");
+                return false;
+            }
+            if ($("#EndDate").val() == null || $("#EndDate").val() == "") {
+                alert("请选择结束日期");
+                return false;
+            }
+            var params = $("#search-form").serializeJson();
+            if (CalDateDiff(params.StartDate, params.EndDate) > 90) {
+                alert("开始时间和结束时间相差不能超过90天");
+                return false;
+            }
+            $("#btnExport").button("loading");
+            alert("正在导出...");
+            $.post("/CapitalRequirement/ExportCapitalRequirement", params, function (data) {
+                window.location.href = "/CapitalRequirement/DownloadFile?fileName=" + data.ExportPath;
+            }).complete(function () {
+                $("#btnExport").button("reset");
+                closealert();
+            });
+        }
+        function ProjectSelect() {
+            $("#myModal .modal-body").empty();
+            $("#myModal").modal("show");
+            $("#myModal .modal-title").html("选择项目");
+            $("#myModal .modal-body").load("/DemandBook/ProjectSelect", { ModelType: "", ProjectCode: "", ProjectName: "", ProjectShortName: "" }, function () {
+
+            });
+        }
+        function ProjectSelectCallback(args) {
+            $("#ProjectName").val(args[1]);
+            $("#ProjectShortName").val(args[2]);
+            $("#ProjectId").val(args[3]);
+            $("#myModal").modal("hide");
+        }
+        function CalDateDiff(startDate, endDate) {
+            var date3 = new Date(endDate).getTime() - new Date(startDate).getTime();
+            days = Math.floor(date3 / (24 * 3600 * 1000))
+            return days;
+        }
+
+        //增加合计
+        function calHeji(thcount, dynamicCount) {
+            //预算小计合计
+            var tr = $("<tr>");
+
+            var tdCount = thcount + dynamicCount;
+            var hejiArr = new Array(dynamicCount);
+            for (var i = 0; i < dynamicCount; i++) {
+                hejiArr[i] = 0;
+            }
+            $("#CapitalRequirement-table tbody tr").each(function () {
+                var tds = $(this).find("td");
+                for (var i = 0; i < dynamicCount; i++) {
+                    var v = parseFloat(tds.eq(thcount + i).text());
+                    if (!isNaN(v)) {
+                        hejiArr[i] += v;
+                    }
+                }
+            })
+            for (var i = 0; i < tdCount; i++) {
+                var td = $("<td>");
+                if (i == 0) {
+                    tr.append($("<td><strong>合计<strong></td>"));
+                    continue;
+                }
+                for (var j = 0; j < dynamicCount; j++) {
+                    if (j + thcount == i) {
+                        td.html(hejiArr[j].toFixed(2));
+                    }
+                }
+                tr.append(td);
+            }
+
+            $("#CapitalRequirement-table tbody").append(tr);
+        }
+    </script>
+}

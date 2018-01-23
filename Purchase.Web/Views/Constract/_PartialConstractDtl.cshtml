@@ -1,0 +1,92 @@
+﻿@using Purchase.DAL
+@model ConstractDtl
+<style>
+    .count2 {
+        width: auto;
+    }
+
+        .count2 input[type='radio'] {
+            width: 20px !important;
+            text-align: center;
+            vertical-align: middle;
+        }
+</style>
+<form id="constract-dtl-form">
+    @Html.HiddenFor(x=>x.Id)
+    <div class="form-horizontal">
+        <div class="form-group">
+            <label class="control-label col-md-2" for="Column1">表格ID</label>
+            <div class="col-md-4">
+                @Html.DropDownListFor(x => x.TableId,(SelectList)ViewBag.TableIds, htmlAttributes: new { @class = "form-control" })
+            </div>
+        </div>
+        <div class="form-group">
+            <label class="control-label col-md-2" for="Column1">列1</label>
+            <div class="col-md-4">
+                @Html.TextBoxFor(x => x.Column1, htmlAttributes: new { @class = "form-control" })
+            </div>
+            <label class="control-label col-md-2" for="Column2">列2</label>
+            <div class="col-md-4">
+                @Html.TextBoxFor(x => x.Column2, htmlAttributes: new { @class = "form-control" })
+            </div>            
+        </div>
+        <div class="form-group">
+            <label class="control-label col-md-2" for="Column3">列3</label>
+            <div class="col-md-4">
+                @Html.TextBoxFor(x => x.Column3, htmlAttributes: new { @class = "form-control" })
+            </div>
+            <label class="control-label col-md-2" for="Column4">列4</label>
+            <div class="col-md-4">
+                @Html.TextBoxFor(x => x.Column4, htmlAttributes: new { @class = "form-control" })
+            </div>
+        </div>
+        <div class="form-group">
+            <label class="control-label col-md-2" for="Column5">列5</label>
+            <div class="col-md-4">
+                @Html.TextBoxFor(x => x.Column5, htmlAttributes: new { @class = "form-control" })
+            </div>
+            <label class="control-label col-md-2" for="Column6">列6</label>
+            <div class="col-md-4">
+                @Html.TextBoxFor(x => x.Column6, htmlAttributes: new { @class = "form-control" })
+            </div>
+        </div>
+        <div class="form-group">
+            <label class="control-label col-md-2" for="Column7">列7</label>
+            <div class="col-md-4">
+                @Html.TextBoxFor(x => x.Column7, htmlAttributes: new { @class = "form-control" })
+            </div>
+            <label class="control-label col-md-2" for="Column8">列8</label>
+            <div class="col-md-4">
+                @Html.TextBoxFor(x => x.Column8, htmlAttributes: new { @class = "form-control" })
+            </div>
+        </div>
+        <div class="form-group">
+            <label class="control-label col-md-2" for="Column9">列9</label>
+            <div class="col-md-4">
+                @Html.TextBoxFor(x => x.Column9, htmlAttributes: new { @class = "form-control" })
+            </div>
+            <label class="control-label col-md-2" for="Column10">列10</label>
+            <div class="col-md-4">
+                @Html.TextBoxFor(x => x.Column10, htmlAttributes: new { @class = "form-control" })
+            </div>
+        </div>
+        <div class="form-group">
+            <div class="col-md-12 text-right">
+                <input id="constractDtlSave" type="button" value="保存" class="btn btn-primary btn-check" data-loading-text="提交中..." style="width:100px;height:35px" />
+            </div>
+        </div>
+    </div>
+</form>
+
+<script>
+    $("#constractDtlSave").click(function () {
+        $(".btn-check").button("loading");
+        var params = $("#constract-dtl-form").serializeJson();
+        params.ConstractId = $("#Id").val();
+        $.post("/Constract/ConstractDtlSave", params, function () {
+            loadConstractDtl();
+            $("#myModal").modal("hide");
+        }).complete(function () { $(".btn-check").button("reset"); })
+    })
+
+</script>

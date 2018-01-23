@@ -1,0 +1,156 @@
+﻿@using Purchase.Service.DTO
+@using Purchase.Web.Common
+@model FlowOrderDto
+
+<div class="count2 inline-block" style="line-height:40px">
+    @using (Html.BeginForm("", "", FormMethod.Post, new { Id = "PaymentForm" }))
+    {
+        @Html.HiddenFor(m => m.FlowOrderId)
+        @Html.HiddenFor(m => m.ProjectId)
+        @Html.HiddenFor(m => m.SupplierId)
+
+        <div class="form-horizontal">
+            <table>
+                <tr>
+                    <td colspan="4" style="text-align:right">
+                        <a id="btnSave" class="btn btn-primary" data-loading-text="提交中...">保 存</a>
+                    </td>
+                </tr>
+                <tr>
+                    <td width="150px">税前金额</td>
+                    <td width="250px">
+                        @Html.TextBoxFor(m => m.PreTaxAmt, htmlAttributes: new { @class = "form-control", type = "number" })
+                    </td>
+                    <td width="150px">本次发票金额</td>
+                    <td width="250px">
+                        @Html.TextBoxFor(m => m.InvoceAmtThis, htmlAttributes: new { @class = "form-control", type = "number" })
+                    </td>
+                </tr>
+                <tr>
+                    <td>项目类型</td>
+                    <td>
+                        @Html.DropDownListFor(m => m.ProjectType, SelectListTool.HiddenCodeList("对公付款查询-项目类型"), htmlAttributes: new { @class = "form-control" })
+                        @*@Html.DropDownListFor(m => m.ProjectType, new List<SelectListItem> {
+                            new SelectListItem(){Text="",Value=""},
+                            new SelectListItem(){ Text="暗访",Value="暗访"},
+                            new SelectListItem(){ Text="明检",Value="明检"},
+                            new SelectListItem(){ Text="盘库",Value="盘库"},
+                            new SelectListItem(){ Text="价格调查",Value="价格调查"},
+                            new SelectListItem(){ Text="面访",Value="面访"},
+                            new SelectListItem(){ Text="电访",Value="电访"},
+                            new SelectListItem(){ Text="座谈会",Value="座谈会"},
+                            new SelectListItem(){ Text="深访",Value="深访"},
+                            new SelectListItem(){ Text="日记留置",Value="日记留置"},
+                            new SelectListItem(){ Text="网络调研",Value="网络调研"},
+                            new SelectListItem(){ Text="车展展评会",Value="车展展评会"},
+                            new SelectListItem(){ Text="管控",Value="管控"},
+                            new SelectListItem(){ Text="编码",Value="编码"},
+                            new SelectListItem(){ Text="复核",Value="复核"},
+                            new SelectListItem(){ Text="编程及编辑",Value="编程及编辑"},
+                            new SelectListItem(){ Text="数据分析",Value="数据分析"},
+                            new SelectListItem(){ Text="报告制作",Value="报告制作"},
+                            new SelectListItem(){ Text="主持人",Value="主持人"},
+                            new SelectListItem(){ Text="场地",Value="场地"},
+                            new SelectListItem(){ Text="布展",Value="布展"},
+                            new SelectListItem(){ Text="运输",Value="运输"},
+                            new SelectListItem(){ Text="租车",Value="租车"},
+                            new SelectListItem(){ Text="供应商差旅",Value="供应商差旅"},
+                            new SelectListItem(){ Text="有形商品采购",Value="有形商品采购"},
+                            new SelectListItem(){ Text="服务采购",Value="服务采购"},
+                            new SelectListItem(){ Text="技术采购",Value="技术采购"},
+                            new SelectListItem(){ Text="工程发包",Value="工程发包"},
+                            new SelectListItem(){ Text="研发",Value="研发"},
+                            new SelectListItem(){ Text="翻译",Value="翻译"},
+                            new SelectListItem(){ Text="声纹识别",Value="声纹识别"},
+                       }, htmlAttributes: new { @class = "form-control" })*@
+
+                    </td>
+                    <td>合同</td>
+                    <td>
+                        @Html.DropDownListFor(m => m.ConstractChk, new List<SelectListItem> {
+                            new SelectListItem(){Text="",Value=""},
+                            new SelectListItem(){ Text="是",Value="是"},
+                            new SelectListItem(){ Text="否",Value="否"},
+                       }, htmlAttributes: new { @class = "form-control" })
+                    </td>
+                </tr>
+                <tr>
+                    <td>结算单</td>
+                    <td>
+                        @Html.DropDownListFor(m => m.SettlementChk, new List<SelectListItem> {
+                            new SelectListItem(){Text="",Value=""},
+                            new SelectListItem(){ Text="是",Value="是"},
+                            new SelectListItem(){ Text="否",Value="否"},
+                       }, htmlAttributes: new { @class = "form-control" })
+                    </td>
+                    <td>发票</td>
+                    <td>
+                        @Html.DropDownListFor(m => m.InvoceChk, new List<SelectListItem> {
+                            new SelectListItem(){Text="",Value=""},
+                            new SelectListItem(){ Text="是",Value="是"},
+                            new SelectListItem(){ Text="否",Value="否"},
+                       }, htmlAttributes: new { @class = "form-control" })
+                    </td>
+                </tr>
+                <tr>
+                    <td>发票号</td>
+                    <td>@Html.TextBoxFor(m => m.InvoiceNO, htmlAttributes: new { @class = "form-control", maxlength = "100" })</td>
+                    <td>纸版资料提交财务</td>
+                    <td>
+                        @Html.DropDownListFor(m => m.PaperChk, new List<SelectListItem> {
+                            new SelectListItem(){Text="",Value=""},
+                            new SelectListItem(){ Text="是",Value="是"},
+                            new SelectListItem(){ Text="否",Value="否"},
+                       }, htmlAttributes: new { @class = "form-control" })
+                    </td>
+                   
+                </tr>
+                <tr>
+                    <td>备注</td>
+                    <td colspan="3">
+                        @Html.TextAreaFor(m => m.PaymentRemark, htmlAttributes: new { @class = "form-control" })
+                    </td>
+                </tr>
+            </table>
+        </div>
+    }
+</div>
+<script>
+    var validArray = [{ proName: 'PreTaxAmt', msg: '税前金额不能为空！<br>' },
+  { proName: 'InvoceAmtThis', msg: '本次发票金额不能为空！<br>' },
+  { proName: 'ProjectType', msg: '项目类型不能为空！<br>' },
+  { proName: 'ConstractChk', msg: '合同不能为空！<br>' },
+  { proName: 'SettlementChk', msg: '结算单不能为空！<br>' },
+  { proName: 'InvoceChk', msg: '发票不能为空！<br>' },
+  { proName: 'PaperChk', msg: '纸版资料提交财务不能为空！<br>' }];
+
+    $("#btnSave").click(function () {
+        debugger
+        if ($("#UserRoleType").val().indexOf("对公付款保存")==-1)
+        {
+            alert("没有权限修改");
+            return false;
+        }
+        $(this).button('loading');
+        var msg = '';
+        for (i in validArray) {
+            var valid = validArray[i];
+            if ($("#" + valid.proName).length > 0) {
+                if ($("#" + valid.proName).val() == "") {
+                    msg += valid.msg;
+                }
+            }
+        }
+        if (msg.length > 0) {
+            alert(msg);
+            $(this).button('reset');
+            return;
+        }
+
+        var params = $("#PaymentForm").serializeJson();
+        $.post("/Payment/Save", params, function () {
+            load();
+            $("#myModal").modal("hide");
+        })
+    })
+</script>

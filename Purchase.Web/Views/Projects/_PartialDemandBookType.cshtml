@@ -1,0 +1,95 @@
+﻿<form id="ProjectBase" class="form-horizontal">
+    <input id="RequirementId" name="RequirementId" type="hidden">
+    <input id="ProjectId" name="ProjectId" type="hidden">
+    <input id="SeqNo" name="SeqNo" type="hidden">
+    <input id="GroupId" name="GroupId" type="hidden">
+    
+    <table style="width:90%">
+        <tr>
+            <td width="100"></td>
+            <td>
+                <select id="DemandBookType" name="DemandBookType" class="form-control">
+                    <option value="Anfang">暗访</option>
+                    <option value="Mingjian">明检</option>
+                    <option value="Pankujijiagediaocha">盘库及价格调查</option>
+                    <option value="Mianfangjidianfang">面访及电访</option>
+                    <option value="Zuotanhui">座谈会</option>
+                    <option value="Shenfangjirijiliuzhi">深访及日记留置</option>
+                    <option value="Wangluodiaoyan">网络调研</option>
+                    <option value="Cheliangzhanpinghui">车展展评会</option>
+                    <option value="Guankong">管控</option>
+                    <option value="Bianmajifuhe">编码及复核</option>
+                    <option value="Bianchengjibianji">编程及编辑</option>
+                    <option value="Yanjiujishujufenxi">研究及数据分析</option>
+                    <option value="Changdibuzhan">场地布展</option>
+                    <option value="Yunshuzuche">运输租车</option>
+                    <option value="Gongyingshangchailv">供应商差旅</option>
+                    <option value="Youxingshangpincaigou">有形商品采购(业务其他1)</option>
+                    <option value="Wuxingshangpincaigou">无形商品采购(业务其他2)</option>
+                </select>
+            </td>
+            <td width="100">
+                <button type="button" class="btn btn-primary" onclick="openDemandBook()">确认</button>
+            </td>
+        </tr>
+    </table>
+</form>
+
+<script>
+    $(function () {
+
+        BindDemandBook();
+    })
+    function BindDemandBook() {
+        var bussiness = ["暗访", "明检", "盘库及价格调查", "面访及电访", "座谈会", "深访及日记留置", "网络调研", "车展展评会", "管控", "编码及复核", "编程及编辑", "研究及数据分析", "场地布展", "运输租车", "供应商差旅", "有形商品采购(业务其他1)", "无形商品采购(业务其他2)"];
+        var bussinessEn = ["Anfang", "Mingjian", "Pankujijiagediaocha", "Mianfangjidianfang", "Zuotanhui", "Shenfangjirijiliuzhi", "Wangluodiaoyan", "Cheliangzhanpinghui", "Guankong", "Bianmajifuhe", "Bianchengjibianji", "Yanjiujishujufenxi", "Changdibuzhan", "Yunshuzuche", "Gongyingshangchailv", "Youxingshangpincaigou", "Wuxingshangpincaigou"];
+        var other = ["有形商品采购(业务其他1)", "无形商品采购(业务其他2)"]
+        var otherEn = ["Youxingshangpincaigou", "Wuxingshangpincaigou"]
+        var el = $("#DemandBookType");
+        var combo = $("<select id='DemandBookType' name='DemandBookType' class = 'form-control'> ");
+        var input = $("<input id='DemandBookType' name='DemandBookType' class = 'form-control'> ");
+
+        if ($("#ModelType").val() == "业务") {
+            el = changeSelectInput(el, combo, input, true);
+            for (i in bussiness) {
+                el.append($("<option>").html(bussiness[i]).val(bussinessEn[i]));
+            }
+        }  else {
+            el = changeSelectInput(el, combo, input, true);
+            for (i in other) {
+                el.append($("<option>").html(other[i]).val(otherEn[i]));
+            }
+            //el = changeSelectInput(el, combo, input, true);
+            //for (i in bussiness) {
+            //    el.append($("<option>").html(bussiness[i]).val(bussiness[i]));
+            //}
+        }
+        
+    }
+    function changeSelectInput(el, combo, input, isDropdown) {
+        var newEl;
+        if (isDropdown) {
+            newEl = combo;
+        } else {
+            newEl = input;
+        }
+        var parent = el.parent();
+        parent.empty();
+        parent.append(newEl);
+
+        return newEl;
+    }
+    function openDemandBook() {
+        var url = "/DemandBook/Create?DemandBookType=" + $("#DemandBookType").val();
+        url += "&ProjectId=" + $("#ProjectId").val();
+        url += "&SeqNO=" + $("#SeqNo").val();
+        if ($("#RequirementId").val() != "0" && $("#RequirementId").val() != "") {
+            url += "&RequirementId=" + $("#RequirementId").val();
+        }
+        if ($("#GroupId").val() != "0" && $("#GroupId").val() != "") {
+            url += "&GroupId=" + $("#GroupId").val();
+        }
+        DemandBookTypeSelectFinish();
+        window.open(url);
+    }
+</script>

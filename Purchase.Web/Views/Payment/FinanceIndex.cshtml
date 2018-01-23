@@ -1,0 +1,384 @@
+﻿@{
+    ViewBag.Title = "财务对公付款查询";
+    Layout = "../FlowOrder/_FlowOrderLayout.cshtml";
+    DateTime start = DateTime.Now.AddDays(-7);
+    DateTime end = DateTime.Now.AddDays(7);
+}
+<div class="count inline-block">
+    <form id="search-form" class="form">
+        <table>
+            <tr>
+                <td colspan="10" style="text-align:right">
+                    <button id="btnQuery" type="button" class="btn btn-primary" style="width:100px">查 询</button>
+                    <button id="btnExcelExport" type="button" class="btn btn-primary" style="width:100px" data-loading-text="正在导出...">导出Excel</button>
+                </td>
+            </tr>
+            <tr>
+                <td width="70">项目名称</td>
+                <td width="200">
+                    <input id="ProjectId" name="ProjectId" class="form-control" type="hidden" />
+                    <input id="ProjectName" name="ProjectName" class="form-control" />
+                </td>
+                <td width="80">项目简称</td>
+                <td width="200">
+                    <input id="ProjectShortName" name="ProjectShortName" class="form-control" />
+                </td>
+                <td>
+                    <a id="btnProjectSelect" class="btn btn-primary" style="width:100px">选择项目</a>
+                </td>
+                <td></td>
+                <td width="100">期间</td>
+                <td>
+                    <input name="FactPaymentTimeStart" class="form-control" onclick="WdatePicker()" />
+                </td>
+                <td>至</td>
+                <td>
+                    <input name="FactPaymentTimeEnd" class="form-control" onclick="WdatePicker()" />
+                </td>
+            </tr>
+            <tr>
+                <td>服务行业</td>
+                <td>
+                    <select id="ServiceTrade" name="ServiceTrade" class="form-control">
+                        <option value="Max">Max</option>
+                        <option value="Trip">Trip</option>
+                        <option value="Zebrac">Zebrac</option>
+                        <option value="Star">Star</option>
+                    </select>
+                </td>
+                <td>供应商</td>
+                <td>
+                    <input id="SupplierId" name="SupplierId" class="form-control" type="hidden" />
+                    <input id="SupplierName" name="SupplierName" class="form-control">
+                </td>
+                <td>
+                    <a id="btnSupplierSelect" class="btn btn-primary" style="width:100px">选择供应商</a>
+                </td>
+                <td></td>
+                <td>结算金额</td>
+                <td style="text-align:left">
+                    <input name="FactPaymentAmtStart" class="form-control" />
+                </td>
+                <td>至</td>
+                <td>
+                    <input name="FactPaymentAmtEnd" class="form-control" />
+                </td>
+            </tr>
+            <tr>
+                <td>付款与否</td>
+                <td><input name="PayChk" type="checkbox" value="是"></td>
+            </tr>
+        </table>
+    </form>
+    <div style="position:relative;">
+        <div id="search-result" class="table-responsive fix-table-div">
+            <table id="flowOrder-table" class="table table-bordered table-condensed table-hover">
+                <thead>
+                    <tr>
+                        <th style="min-width:50px;">详细</th>
+                        <th>序号</th>
+                        <th>年份</th>
+                        <th>付款时间</th>
+                        <th>模块</th>
+                        <th>服务行业</th>
+                        <th>项目名称</th>
+                        <th>项目简称</th>
+                        <th>项目编号</th>
+                        <th>供应商名称</th>
+                        <th>收款人</th>
+                        <th>税前金额</th>
+                        <th>税金</th>
+                        <th>结算金额</th>
+                        <th>往期发票金额</th>
+                        <th>本次发票金额</th>
+                        <th>项目类型</th>
+                        <th>执行开始时间</th>
+                        <th>执行结束时间</th>
+                        <th>合同</th>
+                        <th>结算单</th>
+                        <th>发票</th>
+                        <th>发票号</th>
+                        <th>纸版资料提交财务</th>
+                        <th>备注</th>
+                        <th>财务反馈-付款状态</th>
+                        <th>财务反馈-实际付款金额</th>
+                        <th>财务反馈-未付款原因</th>
+                        <th>财务反馈-合同</th>
+                        <th>财务反馈-结算单</th>
+                        <th>财务反馈-往期发票</th>
+                        <th>财务反馈-本期发票</th>
+                    </tr>
+                </thead>
+                <tbody></tbody>
+            </table>
+        </div>
+    </div>
+
+    <div id="pagination" class="pull-right">
+        <ul id="pageUl"></ul>
+    </div>
+</div>
+<div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-hidden="false">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
+                <h4 class="modal-title"></h4>
+            </div>
+            <div class="modal-body">
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="modal fade" id="applyModal" tabindex="-1" role="dialog" aria-hidden="false">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
+                <h4 class="modal-title"></h4>
+            </div>
+            <div class="modal-body">
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script src="~/Scripts/custom/form-serialize.js"></script>
+    <script src="~/Content/My97DatePicker/WdatePicker.js"></script>
+    <script>
+        var curPageNum = 1;
+        $(function () {
+            $("#btnQuery").click(function () {
+                load();
+            })
+
+            $("#btnProjectSelect").click(function () {
+                ProjectSelect();
+            })
+            $("#btnSupplierSelect").click(function () {
+                SupplierSelect(1);
+            })
+            $("#btnExcelExport").click(function () {
+                ExportExcel();
+            })
+        })
+        //打开编辑窗体
+        function openEdit(obj) {
+            var item = $(obj).data("item");
+            $("#myModal .modal-body").empty();
+            $("#myModal").modal("show");
+            $("#myModal .modal-title").html("财务对公付款编辑");
+            $("#myModal .modal-body").load("/Payment/FinanceEdit",
+                { FlowOrderId: item.FlowOrderId }, function () {
+
+                });
+        }
+
+        function load(pageNum) {           
+            //if ($("#ProjectId").val() == null || $("#ProjectId").val() == "") {
+            //    alert("请选择项目");
+            //    return false;
+            //}
+
+            var params = $("#search-form").serializeJson();
+            if (params.StartDate == "") {
+                params.StartDate = "1900-01-01";
+            }
+            if (params.EndDate == "") {
+                params.EndDate = "2999-01-01";
+            }
+            //if (params.FactPaymentTimeStart == "") {
+            //    alert("开始付款时间必须填写");
+            //    return false;
+            //} if (params.FactPaymentTimeEnd == "") {
+            //    alert("结束付款时间必须填写");
+            //    return false;
+            //}
+            $("#search-result").clearFixLayout();
+            $("#btnQuery").button("loading");
+            params = $.extend(params, { pageSize: 10, pageNum: pageNum ? pageNum : 1 });
+            $.post("/Payment/Load", params, function (data) {
+                if (data && data.List) {
+                    $("#flowOrder-table tbody").empty();
+                    $.each(data.List, function (index, item) {
+                        var tr = $("<tr>");
+                        var codeLink = $("<a onclick='openEdit(this)'>").html("详细").attr("data-item", JSON.stringify(item));
+                        codeLink.css("cursor", "pointer");
+
+                        tr.append($("<td></td>").append(codeLink));
+
+                        //tr.append($("<td></td>").html(item.FlowOrderId));
+                        tr.append($("<td></td>").html(index + 1));
+                        tr.append($("<td></td>").html(item.Year));
+                        tr.append($("<td></td>").html(item.FactPaymentTime));
+                        tr.append($("<td></td>").html(item.ModelType));
+                        tr.append($("<td></td>").html(item.ServiceTrade));
+                        tr.append($("<td></td>").html(item.ProjectName));
+                        tr.append($("<td></td>").html(item.ProjectShortName));
+                        tr.append($("<td></td>").html(item.ProjectCode));
+                        tr.append($("<td></td>").html(item.SupplierName));
+                        tr.append($("<td></td>").html(item.Payee));
+                        tr.append($("<td></td>").html(item.PreTaxAmt));
+                        tr.append($("<td></td>").html(item.TaxAmt));
+                        tr.append($("<td></td>").html(item.FactPaymentAmt));
+                        tr.append($("<td></td>").html(item.InvoiceAmt));
+                        tr.append($("<td></td>").html(item.InvoceAmtThis));
+                        tr.append($("<td></td>").html(item.ProjectType));
+                        tr.append($("<td></td>").html(item.ExecuteCycleStartDate));
+                        tr.append($("<td></td>").html(item.ExecuteCycleEndDate));
+                        tr.append($("<td></td>").html(item.ConstractChk));
+                        tr.append($("<td></td>").html(item.SettlementChk));
+                        tr.append($("<td></td>").html(item.InvoceChk));
+                        tr.append($("<td></td>").html(item.InvoiceNO));
+                        tr.append($("<td></td>").html(item.PaperChk));
+                        tr.append($("<td></td>").html(item.PaymentRemark));
+                        tr.append($("<td></td>").html(item.Finance_PaymentStatus));
+
+                        if (item.FactPaymentAmt != item.Finance_PaymentAmt) {
+                            tr.append($("<td style='color:red'></td>").html(item.Finance_PaymentAmt));
+                        } else {
+                            tr.append($("<td></td>").html(item.Finance_PaymentAmt));
+                        }
+                        tr.append($("<td></td>").html(item.Finance_NotPayReason));
+                        tr.append($("<td></td>").html(item.Finance_Constract));
+                        if (item.SettlementChk != item.Finance_SettlementChk) {
+                            tr.append($("<td style='color:red'></td>").html(item.Finance_SettlementChk));
+                        } else {
+                            tr.append($("<td></td>").html(item.Finance_SettlementChk));
+                        }
+                        if (item.InvoiceAmt != item.Finance_InvoceAmt) {
+                            tr.append($("<td style='color:red'></td>").html(item.Finance_InvoceAmt));
+                        } else {
+                            tr.append($("<td></td>").html(item.Finance_InvoceAmt));
+                        }
+                        if (item.InvoceAmtThis != item.Finance_InvoceAmtThis) {
+                            tr.append($("<td style='color:red'></td>").html(item.Finance_InvoceAmtThis));
+                        } else {
+                            tr.append($("<td></td>").html(item.Finance_InvoceAmtThis));
+                        }
+
+                        $("#flowOrder-table tbody").append(tr);
+                    })
+                    //增加合计
+                    if (data.List.length > 0) {
+                        calHeji();
+                        $("#search-result").fixHeadColumn({ fixColumnIndex: 9 });
+                    }
+
+                    curPageNum = data.CurPage;
+                    createPageNav({ $container: $("#pagination"), pageCount: data.PageCount, currentNum: data.CurPage, afterFun: load });
+                }
+            }).complete(function () { $("#btnQuery").button("reset"); });
+        };
+
+        //增加合计
+        function calHeji() {
+            var hasHejiIndexs = [11, 12, 13, 14, 15, 26, 30, 31];
+            //预算小计合计
+            var tr = $("<tr>");
+
+            var tdCount;
+            $("#flowOrder-table thead tr").each(function () {
+                tdCount = $(this).find("th").length;
+            })
+            var hejiArr = new Array(hasHejiIndexs.length);
+            for (var i = 0; i < hasHejiIndexs.length; i++) {
+                hejiArr[i] = 0;
+            }
+            $("#flowOrder-table tbody tr").each(function () {
+                var tds = $(this).find("td");
+                for (var i = 0; i < hasHejiIndexs.length; i++) {
+                    var v = parseFloat(tds.eq(hasHejiIndexs[i]).text());
+                    if (!isNaN(v)) {
+                        hejiArr[i] += v;
+                    }
+                }
+            })
+            for (var i = 0; i < tdCount; i++) {
+                var td = $("<td>");
+                if (i == 0) {
+                    tr.append($("<td><strong>合计<strong></td>"));
+                    continue;
+                }
+                for (var j = 0; j < hasHejiIndexs.length; j++) {
+                    if (hasHejiIndexs[j] == i) {
+                        td.html(hejiArr[j].toFixed(2));
+                    }
+                }
+                tr.append(td);
+            }
+
+            $("#flowOrder-table tbody").append(tr);
+        }
+        function ProjectSelect() {
+            $("#myModal .modal-body").empty();
+            $("#myModal").modal("show");
+            $("#myModal .modal-title").html("选择项目");
+            $("#myModal .modal-body").load("/DemandBook/ProjectSelect", { ModelType: "", ProjectCode: "", ProjectName: "", ProjectShortName: "" }, function () {
+                //$(this).append($("<input id='FlowOrderId' type='hidden'>").val(id));
+            });
+        }
+        function SupplierSelect(type) {
+            $("#myModal .modal-body").empty();
+            $("#myModal").modal("show");
+            $("#myModal .modal-title").html("选择供应商");
+            $("#myModal .modal-body").load("/Constract/SupplierMngSelect",
+                { SupplierCode: "", SupplierName: "", SupplierShortName: "", province: '', city: '' }, function () {
+                    $("#myModal .modal-body #Type").val(type)
+                });
+        }
+        function ProjectSelectCallback(args) {
+            $("#ProjectName").val(args[1]);
+            $("#ProjectShortName").val(args[2]);
+            $("#ProjectId").val(args[3]);
+            $("#myModal").modal("hide");
+        }
+        function SupplierSelectCallback1(args) {
+            $("#SupplierName").val(args.SupplierName);
+            $("#SupplierId").val(args.SupplierId);
+            $("#myModal").modal("hide");
+        }
+
+        function apply(FlowOrderId, ApplyId, SeqNO) {
+            debugger;
+            $.post("/Projects/RecheckProcessExistChk", { recheckType: "供应商" }, function (data) {
+                if (data == 0) {
+                    alert("不在审核流程中，请联系管理人员添加");
+                    return false;
+                }
+                $("#applyModal").modal("show");
+                $("#applyModal .modal-title").html("选择审核人员");
+                $("#applyModal .modal-body").load("/FlowOrder/RecheckUserSelect", {}, function () {
+                    debugger
+                    $(this).append($("<input id='FlowOrderId' type='hidden'>").val(FlowOrderId));
+                    $(this).append($("<input id='ApplyId' type='hidden'>").val(ApplyId));
+                    $(this).append($("<input id='SeqNO' type='hidden'>").val(SeqNO));
+                });
+            })
+
+        }
+        function payApply(FlowOrderId) {
+            $.post("/FlowOrder/ApplyPayUpdate", { id: FlowOrderId }, function (data) {
+                alert("申请完毕");
+            })
+        }
+        function applyFinish() {
+            $("#applyModal").modal("hide");//关闭弹出窗口
+            load(curPageNum)//刷新表格
+        }
+        function ExportExcel() {
+            $("#btnExcelExport").button("loading");
+            alert("正在导出...");
+
+            var params = $("#search-form").serializeJson();
+            $.post("/Payment/PaymentExport", params, function (data) {
+                window.location.href = "/Payment/DownloadFile?fileName=" + data.ExportPath;
+            }).complete(function () {
+                $("#btnExcelExport").button("reset");
+                closealert();
+            })
+        }
+    </script>
+}

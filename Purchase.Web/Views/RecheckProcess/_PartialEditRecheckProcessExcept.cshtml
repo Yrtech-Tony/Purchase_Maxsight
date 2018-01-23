@@ -1,0 +1,67 @@
+﻿@using Purchase.DAL
+@model RecheckProcessExcept
+
+<div class="count2 inline-block" style="line-height:40px">
+    @using (Html.BeginForm("", "", FormMethod.Post, new { Id = "RecheckProcessExceptForm" }))
+    {
+        @Html.HiddenFor(m => m.SeqNO)
+
+        <div class="form-horizontal">
+            <table>
+                <tr>
+                    <td colspan="2" style="text-align:right">
+                        <a id="btnSave" class="btn btn-primary" data-loading-text="提交中...">保 存</a>
+                    </td>
+                </tr>
+                <tr>
+                    <td width="110">申请类型 </td>
+                    <td width="380">
+                        @Html.DropDownListFor(m => m.RecheckType, new List<SelectListItem> {
+                            new SelectListItem(){ Text="供应商",Value="供应商"},
+                            new SelectListItem(){ Text="合同",Value="合同"},
+                            new SelectListItem(){ Text="立项",Value="立项"},
+                            new SelectListItem(){ Text="需求书",Value="需求书"},
+                            new SelectListItem(){ Text="确认单",Value="确认单"},
+                            new SelectListItem(){ Text="结算单",Value="结算单"},
+                            new SelectListItem(){ Text="流转单",Value="流转单"}
+                       }, htmlAttributes: new { @class = "form-control" })
+                    </td>
+                </tr>
+                <tr>
+                    <td width="110">申请人/审核人</td>
+                    <td>
+                        @Html.DropDownListFor(m => m.ApplyUserId, Purchase.Web.Common.SelectListTool.MstUserList(), htmlAttributes: new { @class = "form-control" })
+                    </td>
+                </tr>
+                <tr>
+                    <td width="110">导师</td>
+                    <td>
+                        @Html.DropDownListFor(m => m.RecheckUserId, Purchase.Web.Common.SelectListTool.MstUserList(), htmlAttributes: new { @class = "form-control" })
+                    </td>
+                </tr>
+                <tr>
+                    <td width="110">使用与否</td>
+                    <td style="text-align:left">
+                        @Html.CheckBox("UseChk", Model.UseChk.HasValue ? Model.UseChk.Value : false, htmlAttributes: new { })
+                    </td>
+                </tr>
+
+            </table>
+        </div>
+    }
+</div>
+
+<script>
+    $("#btnSave").click(function () {
+        var params = $("#RecheckProcessExceptForm").serializeJson();
+        params.UseChk = $("#UseChk").is(":checked");
+        $.post("/RecheckProcess/SaveRecheckProcessExcept", params, function () {
+            if ($("#SeqNO").val() != "0" && curPageRecheckProcessExcept) {
+                loadRecheckProcessExcept(curPageRecheckProcess);
+            } else {
+                loadRecheckProcessExcept();
+            }
+            $("#myModal").modal("hide");
+        })
+    })
+</script>

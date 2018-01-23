@@ -1,0 +1,141 @@
+﻿<div class="panel panel-default mt20">
+    <div class="panel-heading">
+        <strong style="line-height:35px;font-size:14px;">需求信息</strong>
+        @*<button id="addbutton" class="btn btn-primary btn pull-right clearfix" onclick="addDtl1()">添加</button>*@
+    </div>
+    <div class="panel-body">
+        <div class="table-responsive">
+            <table id="dtl1-table" class="table table-bordered table-condensed table-hover text-center">
+                <thead>
+                    <tr>
+                        @*<th width="50">
+                                复制
+                            </th>*@
+                        <th width="100">
+                            详细/添加
+                        </th>
+                        <th>
+                            序号
+                        </th>
+                        <th>项目编号</th>
+                        <th>服务地区</th>
+                        <th>采购分类</th>
+                        <th>采购方式</th>
+                        <th>提供服务</th>
+                        <th>品名</th>
+                        <th>
+                            品牌
+                        </th>
+                        <th>
+                            规格
+                        </th>
+                        <th>
+                            型号
+                        </th>
+                        <th>
+                            配置
+                        </th>
+                        <th>
+                            颜色
+                        </th>
+                        <th>
+                            材料
+                        </th>
+                        <th>数量</th>
+                        <th>
+                            物流要求
+                        </th>
+                        <th>
+                            包装要求
+                        </th>
+                        <th>
+                            验货周期
+                        </th>
+                        <th>
+                            质保期
+                        </th>
+                        <th>
+                            售后服务期
+                        </th>
+                        <th>
+                            其他说明
+                        </th>
+                    </tr>
+                </thead>
+                <tbody></tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+<script>
+    var detailView1 = 'Youxingshangpincaigou/Detail/_PartialYouxingshangpincaigouDtl1';
+    var title1 = "需求信息";
+    function addDtl1() {
+        if (!CommitCheck()) {
+            alert("正在审核中或者非本人添加的项目");
+            return false;
+        }
+        setModal(title1, detailView1);
+        $("#myModal").modal("show");
+    }
+
+    function loadYouxingshangpincaigou1() {
+        $.post("/DemandBook/LoadYouxingshangpincaigou", { ProjectId: $("#ProjectId").val(), citySeqNO: $("#CitySeqNo").val(), GroupId: $("#GroupId").val(), RequirementId: $("#RequirementId").val() }, function (data) {
+            if (data) {
+                debugger
+                $("#dtl1-table tbody").empty();
+                $.each(data, function (index, item) {
+                    var tr = $("<tr>");
+                    //var copyBtn = $("<a class='btn btn-primary btn2'>").html("复制");
+                    //copyBtn.click(function () {
+                    //    item.SeqNO = 0;
+                    //    setModal(title1, detailView1, item);
+                    //    $("#myModal").modal("show");
+                    //})
+                    //tr.append($("<td></td>").append(copyBtn));
+                    var editBtn = $("<a class='btn btn-primary btn2'>").html("详细/添加");
+                    editBtn.click(function () {
+                        setModal(title1, detailView1, item);
+                        $("#myModal").modal("show");
+                    })
+                    debugger
+                    tr.append($("<td></td>").append(editBtn));
+                    tr.append($("<td></td>").html(item.SeqNO));
+                    tr.append($("<td></td>").html(item.ProjectCode));
+                    tr.append($("<td></td>").html(item.ServiceRegion));
+                    tr.append($("<td></td>").html(item.PurchaseType));
+                    tr.append($("<td></td>").html(item.PurchaseMode));
+                    tr.append($("<td></td>").html(item.SupplyService));
+                    tr.append($("<td></td>").html(item.ItemName));
+                    tr.append($("<td></td>").html(item.Brand));
+                    tr.append($("<td></td>").html(item.Specification));
+                    tr.append($("<td></td>").html(item.Model));
+                    tr.append($("<td></td>").html(item.Configuration));
+                    tr.append($("<td></td>").html(item.Color));
+                    tr.append($("<td></td>").html(item.Material));
+                    tr.append($("<td></td>").html(item.Count));
+                    tr.append($("<td></td>").html(item.LogisticsRequirements));
+                    tr.append($("<td></td>").html(item.PackagingRequirements));
+                    tr.append($("<td></td>").html(item.InspectionCycle));
+                    tr.append($("<td></td>").html(item.Warranty));
+                    tr.append($("<td></td>").html(item.AfterSalePeriod));
+                    if (item.Remark == null) {
+                        item.Remark = "";
+                    }
+                    tr.append($("<td  style='text-align:left'></td>").html(item.Remark.replace(/\n/g, '<br>')));
+
+                    $("#dtl1-table tbody").append(tr);
+                })
+                //if ($("#dtl1-table tbody").is(":empty")) {
+                //    $("#addbutton").show();
+                //}
+                //else {
+                //    $("#addbutton").hide();
+                //}
+            }
+        })
+        debugger
+
+    }
+</script>

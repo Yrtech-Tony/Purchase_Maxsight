@@ -1,0 +1,111 @@
+﻿
+
+<table id="quotation-table" class="table table-bordered table-condensed table-hover">
+    <thead>
+        <tr>
+            @*<th>
+                供应商名称
+            </th>
+            <th>
+                执行省份
+            </th>
+            <th>
+                执行城市
+            </th>*@
+            <th>
+                执行方式
+            </th>
+            <th>
+                工作分类
+            </th>
+            <th>
+                工作内容
+            </th>
+            <th>
+                类型/品牌
+            </th>
+            <th>
+                规格/要求
+            </th>
+            <th>
+                质量标准
+            </th>
+            <th>
+                核算单位
+            </th>
+            <th>
+                单价
+            </th>
+            <th>
+                数量
+            </th>
+            <th>
+                小计
+            </th>
+            <th>
+                备注
+            </th>
+        </tr>
+    </thead>
+    <tbody></tbody>
+</table>
+
+<script>
+    $(function () {
+    })
+      
+    function addQuotationTr(item) {
+        var tr = $("<tr>");
+        //tr.append($("<td></td>").html(item.SupplierName));
+        //tr.append($("<td></td>").html(item.zhixingshengfen));
+        //tr.append($("<td></td>").html(item.zhixingchengshi));
+        tr.append($("<td></td>").html(item.zhixingfangshi));
+        tr.append($("<td></td>").html(item.gongzuofenlei));
+        tr.append($("<td></td>").html(item.gongzuoneirong));
+        tr.append($("<td></td>").html(item.leixingpinpai));
+        tr.append($("<td></td>").html(item.guigeyaoqiu));
+        tr.append($("<td></td>").html(item.zhiliangbiaozhun));
+
+        var xiaojiInput = $("<input  type='number' class='quotation-table-input' readonly>").val(xiaoji);
+        //核算单位
+        var hesuandanweiInput = $("<input class='quotation-table-input'>").val(item.hesuandanwei);
+        tr.append($("<td></td>").append(hesuandanweiInput));
+        //单价
+        var danjiaInput = $("<input type='number' class='quotation-table-input'>").val(item.danjia);
+        danjiaInput.change(function () {
+            xiaojiInput.val(calaXiaoji(danjiaInput.val(), shuliangInput.val()));
+            calHeji();
+        });
+        tr.append($("<td></td>").append(danjiaInput));
+        //数量
+        var shuliangInput = $("<input  type='number' class='quotation-table-input'>").val(item.shuliang);
+        shuliangInput.change(function () {
+            xiaojiInput.val(calaXiaoji(danjiaInput.val(), shuliangInput.val()));
+            calHeji();
+        });
+        tr.append($("<td></td>").append(shuliangInput));
+        //小计
+        var xiaoji = calaXiaoji(item.danjia, item.shuliang);
+        xiaojiInput.val(xiaoji);
+        tr.append($("<td></td>").append(xiaojiInput));
+        
+        var beizhuInput = $("<input class='quotation-table-input'  style='width:500px'>").val(item.beizhu);
+        tr.append($("<td></td>").append(beizhuInput));
+
+        $("#quotation-table tbody").append(tr);
+    }
+
+    function calaXiaoji(dj, sl) {
+        if (dj && dj != "" && sl && dj != "") {
+            return FloatMul(dj, sl).toFixed(2);
+        } else {
+            return 0;
+        }        
+    }
+    function FloatMul(arg1, arg2) {
+        var m = 0, s1 = arg1.toString(), s2 = arg2.toString();
+        try { m += s1.split(".")[1].length } catch (e) { }
+        try { m += s2.split(".")[1].length } catch (e) { }
+        return Number(s1.replace(".", "")) * Number(s2.replace(".", "")) / Math.pow(10, m);
+    }
+</script>

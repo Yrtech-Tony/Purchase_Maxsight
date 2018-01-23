@@ -1,0 +1,30 @@
+﻿@model Purchase.DAL.SettlementCommitGroup
+<form id="SettlementGroupForm">
+    <div class="form-horizontal">
+        <div class="form-group">
+            <label class="control-label col-md-2" for="GroupName">结算单组名称</label>
+            <div class="col-md-5">
+                @Html.TextBoxFor(m => Model.GroupName, new { @class = "form-control" })
+            </div>
+            <div class="col-md-1 text-right">
+                <a id="btnSave" class="btn btn-primary" data-loading-text="提交中..." style="width:100px;">保 存</a>
+            </div>
+        </div>
+    </div>
+</form>
+<script>
+    $(function () {
+        $("#btnSave").click(function () {
+            if (!CommitCheck()) {
+                alert("正在审核中或者非本人添加的项目");
+                return false;
+            }
+            $(this).button('loading');//禁用按钮并显示提交中
+            debugger
+            $.post("/Settlement/SettlementGroupSave", { SettlementGroupId: $("#GroupId").val(), SettlementGroupName: $("#GroupName").val(),projectId:$("#ProjectId").val() }, function () {
+                $("#myModal").modal('hide');
+                load();
+            });
+        })
+    })
+</script>

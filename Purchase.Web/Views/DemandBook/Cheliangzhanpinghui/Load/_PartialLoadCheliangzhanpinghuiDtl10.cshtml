@@ -1,0 +1,128 @@
+﻿<div class="panel panel-default mt20">
+    <div class="panel-heading">
+        <strong style="line-height:35px;font-size:14px;">深访及日记留置_执行要求</strong>
+        <button class="btn btn-primary btn pull-right clearfix" onclick="addDtl10()">添加</button>
+        <button class="btn btn-primary btn pull-right" style="margin-right:5px;" onclick="delDemandBookDtl('10')">删除</button>
+    </div>
+    <div class="panel-body">
+        <div class="table-responsive">
+            <table id="dtl10-table" class="table table-bordered table-condensed table-hover text-center" style="width: 2000px !important">
+                <thead>
+                    <tr>
+                        <th width="50">选择</th>
+                        <th width="50">
+                            复制
+                        </th>
+                        <th width="50">
+                            详细
+                        </th>
+                        <th>
+                            序号
+                        </th>
+                        <th>
+                            执行分类
+                        </th>
+                        <th>
+                            场地分类
+                        </th>
+                        <th>
+                            访问时长
+                        </th>
+                        <th>
+                            培训方式
+                        </th>
+                        <th>
+                            跟访需求
+                        </th>
+                        <th>
+                            跟访人数
+                        </th>
+                        <th>
+                            本品名单
+                        </th>
+                        <th>
+                            日记形式
+                        </th>
+                        <th>
+                            日记周期
+                        </th>
+                        <th>
+                            日记内容
+                        </th>
+                        <th>
+                            留置形式
+                        </th>
+                        <th>
+                            留置周期
+                        </th>
+                        <th>
+                            留置内容
+                        </th>
+                       
+                        <th>
+                            其他说明
+                        </th>
+                    </tr>
+                </thead>
+                <tbody></tbody>
+            </table>
+        </div>
+    </div>
+</div>
+<script>
+    var detailView10 = 'Cheliangzhanpinghui/Detail/_PartialCheliangzhanpinghuiDtl10';
+    var title10 = "深访及日记留置_执行要求";
+    function addDtl10() {
+        if (!CommitCheck()) {
+            alert("正在审核中或者非本人添加的项目");
+            return false;
+        }
+        setModal(title10, detailView10, undefined, true);
+        $("#myModal").modal("show");
+    }
+
+    function loadCheliangzhanpinghuiDtl10() {
+        $.post("/DemandBook/LoadCheliangzhanpinghuiDtl10", { RequirementId: $("#RequirementId").val() }, function (data) {
+            if (data) {
+                $("#dtl10-table tbody").empty();
+                $.each(data, function (index, item) {
+                    var tr = $("<tr>");
+                    tr.append($("<td></td>").append($("<input type='checkbox'>")));
+
+                    var copyBtn = $("<a class='btn btn-primary btn2'>").html("复制");
+                    copyBtn.click(function () {
+                        item.SeqNO = 0;
+                        setModal(title10, detailView10, item, true);
+                        $("#myModal").modal("show");
+                    })
+                    tr.append($("<td></td>").append(copyBtn));
+                    var editBtn = $("<a class='btn btn-primary btn2'>").html("详细");
+                    editBtn.click(function () {
+                        setModal(title10, detailView10, item);
+                        $("#myModal").modal("show");
+                    })
+                    tr.append($("<td></td>").append(editBtn));
+                    tr.append($("<td></td>").html(item.SeqNO));
+                    tr.append($("<td></td>").html(item.zhixingfenlei));//执行分类
+                    tr.append($("<td></td>").html(item.zhixingchangdi));//执行场地
+                    tr.append($("<td></td>").html(item.fangwenshichang));//访问时长
+                    tr.append($("<td></td>").html(item.peixunfangshi));//培训方式
+                    tr.append($("<td></td>").html(item.genfangxueqiu));//跟访需求
+                    tr.append($("<td></td>").html(item.genfangrenshu));//跟访人数
+                    tr.append($("<td></td>").html(item.benpinmingdan));//本品名单
+                    tr.append($("<td></td>").html(item.rijixingshi));//日记形式
+                    tr.append($("<td></td>").html(item.rijizhouqi));//日记周期
+                    tr.append($("<td></td>").html(item.rijineirong));//日记内容
+                    tr.append($("<td></td>").html(item.liuzhixingshi));//留置形式
+                    tr.append($("<td></td>").html(item.liuzhizhouqi));//留置周期
+                    tr.append($("<td></td>").html(item.liuzhineirong));//留置内容
+                    //tr.append($("<td></td>").html(item.qitashuoming10));//其他说明
+                    var qitashuoming10 = item.qitashuoming10 != null ? item.qitashuoming10.replace(/\n/g, '<br>') : "&nbsp;";
+                    tr.append($("<td style='text-align: left;'></td>").html(qitashuoming10));//其他说明
+
+                    $("#dtl10-table tbody").append(tr);
+                })
+            }
+        })
+    }
+</script>

@@ -1,0 +1,91 @@
+﻿@using Purchase.Web.Common
+@model Purchase.DAL.Requirement_Zuotanhui_RequirementDtl4
+
+<form id="Zuotanhui-dtl4-form">
+    @Html.Hidden("SeqNO", 0)
+    <div class="form-horizontal">
+        <div class="form-group">
+            <label class="control-label col-md-2" for="">客户人数</label>
+            @*<div class="col-md-8">
+                @Html.DropDownListFor(m => m.kehurenshu, new List<SelectListItem> {new SelectListItem(){Text="",Value=""},
+                    new SelectListItem(){ Text="1",Value="1"},
+                    new SelectListItem(){ Text="2",Value="2"},
+                    new SelectListItem(){ Text="3",Value="3"},
+                    new SelectListItem(){ Text="4",Value="4"},
+                    new SelectListItem(){ Text="5",Value="5"},
+                    new SelectListItem(){ Text="6",Value="6"},
+                    new SelectListItem(){ Text="7",Value="7"},
+                    new SelectListItem(){ Text="8",Value="8"},
+                    new SelectListItem(){ Text="9",Value="9"},
+                    new SelectListItem(){ Text="10",Value="10"},
+                    new SelectListItem(){ Text="11",Value="11"},
+                    new SelectListItem(){ Text="12",Value="12"},
+                    new SelectListItem(){ Text="13",Value="13"},
+                    new SelectListItem(){ Text="14",Value="14"},
+                    new SelectListItem(){ Text="15",Value="15"},
+                    new SelectListItem(){ Text="16",Value="16"},
+                    new SelectListItem(){ Text="17",Value="17"},
+                    new SelectListItem(){ Text="18",Value="18"},
+                    new SelectListItem(){ Text="19",Value="19"},
+                    new SelectListItem(){ Text="20",Value="20"},
+                    new SelectListItem(){ Text="不限制",Value="不限制"},
+                    new SelectListItem(){ Text="不涉及",Value="不涉及"}
+                }, htmlAttributes: new { @class = "form-control", multiple="" })
+            </div>*@
+            <div class="col-md-8">
+                @Html.TextBoxFor(m => m.kehurenshu, htmlAttributes: new { @class = "form-control", multiple="" })
+            </div>
+        </div>
+        <div class="form-group">
+            <label class="control-label col-md-2" for="RemarkDtl3">客户食品</label>
+            <div class="col-md-8">
+                @Html.TextBoxFor(m => m.kehushipin, htmlAttributes: new { @class = "form-control", multiple="" })
+            </div>
+        </div>
+        <div class="form-group">
+            <label class="control-label col-md-2" for="RemarkDtl3">客户餐饮</label>
+            <div class="col-md-8">
+                @Html.TextBoxFor(m => m.kehucanyin, htmlAttributes: new { @class = "form-control", multiple="" })
+            </div>
+        </div>
+        <div class="form-group">
+            <label class="control-label col-md-2" for="RemarkDtl3">会场食品</label>
+            <div class="col-md-8">
+                @Html.TextBoxFor(m => m.huichangshipin, htmlAttributes: new { @class = "form-control", multiple="" })
+            </div>
+        </div>
+        <div class="form-group">
+            <label class="control-label col-md-2" for="RemarkDtl3">其他说明</label>
+            <div class="col-md-8">
+                @Html.TextAreaFor(m => m.qitashuoming4, htmlAttributes: new { @class = "form-control", multiple="" })
+            </div>
+        </div>
+        <div class="form-group">
+            <div class="col-md-offset-2 col-md-10">
+                <input id="saveBtn" type="button" value="保存" class="btn btn-primary btn-check" data-loading-text="提交中..." style="width:100px;height:35px" />
+            </div>
+        </div>
+    </div>
+</form>
+<script>
+    $(function () {
+        //if ($("#ApplyStautCode").val() != "") {
+        //    $("#saveBtn").attr("disabled", true);
+        //}
+        $("#Zuotanhui-dtl4-form #saveBtn").click(function () {
+            if (!CommitCheck()) {
+                alert("正在审核中或者非本人添加的项目");
+                return false;
+            }
+            $(this).button("loading");
+            var params = $("#Zuotanhui-dtl4-form").serializeJson('&');
+            params = $.extend(params, getMstObject());
+
+            $.post("/DemandBook/SaveZuotanhuiDtl4", params, function (data) {
+                $("#RequirementId").val(data);
+                loadZuotanhuiDtl4();
+                closeModal();
+            });
+        })
+    })
+</script>

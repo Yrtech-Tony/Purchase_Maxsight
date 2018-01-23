@@ -1,0 +1,53 @@
+﻿@using Purchase.Web.Common
+@model Purchase.DAL.Requirement_Guangkong_RequirementDtl3
+
+<form id="Guankong-dtl3-form">
+    @Html.Hidden("SeqNO", 0)
+    <div class="form-horizontal">
+        <div class="form-group">
+            <label class="control-label col-md-2" for="qudaoshebei">渠道设备</label>
+            <div class="col-md-8">
+                @Html.DropDownListFor(m => m.qudaoshebei, SelectListTool.HiddenCodeList("需求书-管控-行政支持-渠道设备"),
+                     htmlAttributes: new { @class = "form-control", multiple = "" })
+            </div>
+        </div>
+        <div class="form-group">
+            <label class="control-label col-md-2" for="xingzhengfentan">行政分摊</label>
+            <div class="col-md-8">
+                @Html.DropDownListFor(m => m.xingzhengfentan, SelectListTool.HiddenCodeList("需求书-管控-行政支持-行政分摊"),
+                     htmlAttributes: new { @class = "form-control", multiple = "" })
+            </div>
+        </div>
+        <div class="form-group">
+            <label class="control-label col-md-2" for="TemplateName">其他说明</label>
+            <div class="col-md-8">
+                @Html.TextAreaFor(m => m.qitashuoming3, htmlAttributes: new { @class = "form-control", multiple="" })
+            </div>
+        </div>
+        <div class="form-group">
+            <div class="col-md-offset-2 col-md-10">
+                <input id="saveBtn" type="button" value="保存" class="btn btn-primary btn-check" data-loading-text="提交中..." style="width:100px;height:35px" />
+            </div>
+        </div>
+    </div>
+</form>
+<script>
+    $(function () {
+         
+        $("#Guankong-dtl3-form #saveBtn").click(function () {
+            if (!CommitCheck()) {
+                alert("正在审核中或者非本人添加的项目");
+                return false;
+            }
+            $(this).button("loading")
+            var params = $("#Guankong-dtl3-form").serializeJson('&');
+            params = $.extend(params, getMstObject());
+
+            $.post("/DemandBook/SaveGuankongDtl3", params, function (data) {
+                $("#RequirementId").val(data);
+                loadGuankongDtl3();
+                closeModal();
+            });
+        })
+    })
+</script>

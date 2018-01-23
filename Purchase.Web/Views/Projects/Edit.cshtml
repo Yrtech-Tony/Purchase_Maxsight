@@ -1,0 +1,520 @@
+﻿@model Purchase.DAL.Projects
+
+@{
+    ViewBag.Title = "立项信息编辑";
+    Layout = "~/Views/Shared/_PurchaseLayout.cshtml";
+}
+<div class="count inline-block">
+    <h4>@ViewBag.Title</h4>
+    <hr />
+    @using (Html.BeginForm("Edit", "Projects", FormMethod.Post, new { Id = "ProjectsForm" }))
+    {
+        @Html.AntiForgeryToken()
+        @Html.ValidationSummary(false)
+        @Html.HiddenFor(m => m.Id)
+        @Html.Hidden("QueryParams", (string)ViewBag.queryParams)
+
+        @Html.Partial("_PartialEdit", Model)
+
+    }
+    <div class="form-horizontal">
+        <table class="mt20">
+            <tr>
+                <td>
+                    <h4 class="title">样本量信息</h4>
+                </td>
+                <td style="text-align:right">
+                    <button id="addCityBtn" type="button" class="btn btn-primary btn-sm" data-toggle="modal" data-target="#myModal">添加样本量信息</button>
+                    <button id="delCityBtn" type="button" class="btn btn-primary btn-sm" data-toggle="modal">删除样本量信息</button>
+
+                </td>
+            </tr>
+            <tr>
+                <td valign="top" colspan="2">
+                    <table id="city-table" class="table table-bordered table-condensed table-set">
+                        <thead>
+                            <tr>
+                                <th width="50">选择</th>
+                                <th>序号</th>
+                                <th>复制</th>
+                                <th>详细</th>
+                                <th>执行省份</th>
+                                <th>执行城市</th>
+                                <th id="PurchaseType">采购分类</th>
+                                <th id="PurchaseMode">采购方式</th>
+                                <th id="Responsibilites">工作职责</th>
+                                <th id="ProjectType">项目类型</th>
+                                <th id="ExcuteMode">执行方式</th>
+                                <th>提供服务</th>
+                                <th>品名</th>
+                                <th>样本量</th>
+                                @*<th>需求书操作</th>*@
+                                <th>状态</th>
+                                <th>取消时间</th>
+                                <th>备注</th>
+                            </tr>
+                        </thead>
+                        <tbody></tbody>
+                    </table>
+                </td>
+            </tr>
+        </table>
+        <table>
+            <tr>
+                <td>
+                    <h4 class="title">总样本量信息</h4>
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    <table id="statCity1-table" class="table table-bordered table-condensed statCity">
+                        <thead>
+                            <tr>
+                                <th>工作职责</th>
+                                <th>项目类型</th>
+                                <th>执行方式</th>
+                                <th>品名</th>
+                                <th>样本量合计</th>
+                            </tr>
+                        </thead>
+                        <tbody></tbody>
+                    </table>
+                    <table id="statCity2-table" class="table table-bordered table-condensed hidden statCity">
+                        <thead>
+                            <tr>
+                                <th>采购分类</th>
+                                <th>采购方式</th>
+                                <th>提供服务</th>
+                                <th>品名</th>
+                                <th>样本量合计</th>
+                            </tr>
+                        </thead>
+                        <tbody></tbody>
+                    </table>
+                </td>
+            </tr>
+        </table>
+        <table>
+            <tr>
+                <td>
+                    <h4 class="title">人员信息</h4>
+                </td>
+                <td style="text-align:right">
+                    <button id="addPersonBtn" type="button" class="btn btn-primary btn-sm" data-toggle="modal" data-target="#myModal">添加人员信息</button>
+                    <button id="delPersonBtn" type="button" class="btn btn-primary btn-sm" data-toggle="modal">删除人员信息</button>
+                </td>
+            </tr>
+            <tr>
+                <td valign="top" colspan="2">
+                    <table id="person-table" class="table table-bordered table-condensed">
+                        <thead>
+                            <tr>
+                                <th width="50">选择</th>
+                                <th width="80">序号</th>
+                                <th width="80">详细</th>
+                                <th id="DepartmentCode_show">部门</th>
+                                <th id="PositionCode_show">职责</th>
+                                <th>姓名</th>
+                            </tr>
+                        </thead>
+                        <tbody></tbody>
+                    </table>
+                </td>
+            </tr>
+        </table>
+    </div>
+</div>
+<div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-hidden="false">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
+                <h4 class="modal-title"></h4>
+            </div>
+            <div class="modal-body">
+            </div>
+        </div>
+    </div>
+</div>
+<input id="ApplyStautCode" type="hidden" />
+<input id="UserChk" type="hidden" />
+@section Scripts {
+    <script src="~/Content/My97DatePicker/WdatePicker.js"></script>
+    <script src="~/Scripts/custom/form-serialize.js"></script>
+    <script>
+        var citys;
+        $(function () {
+            load();
+            if ($("#ModelType").val() == "业务") {
+                $("#DepartmentCode_show").html("部门");
+                $("#PositionCode_show").html("职责");
+            }
+            else {
+                $("#DepartmentCode_show").html("部门分类");
+                $("#PositionCode_show").html("部门");
+            }
+
+        })
+        $("#ModelType").change(function () {
+            statCity();
+        })
+        $("#addCityBtn").click(function () {
+            if (!CommitCheck()) {
+                alert("正在审核中或者非本人添加的项目");
+                return false;
+            }
+            setModal($(this).html(), '_PartialCity');
+        })
+        $("#delCityBtn").click(function () {
+            if (!CommitCheck()) {
+                alert("正在审核中或者非本人添加的项目");
+                return false;
+            }
+            var SeqNOs = '';
+            $("#city-table tbody input[type=checkbox]:checked").each(function () {
+                var seqno = $(this).parents("tr").find("td:eq(1)").text();
+                SeqNOs += seqno + ",";
+            });
+            if (SeqNOs.length > 0) {
+                SeqNOs = SeqNOs.substr(0, SeqNOs.length - 1);
+            } else {
+                alert("请至少勾选一条记录");
+                return;
+            }
+            confirm("确定要删除勾选的记录吗？", function () {
+                $.post("/Projects/DeleteProjectCity", { ProjectId: $("#Id").val(), SeqNOs: SeqNOs }, function () {
+                    loadProjectCity();
+                })
+            });           
+        })
+
+        $("#delPersonBtn").click(function () {
+            if (!CommitCheck()) {
+                alert("正在审核中或者非本人添加的项目");
+                return false;
+            }
+            var SeqNOs = '';
+            $("#person-table tbody input[type=checkbox]:checked").each(function () {
+                var seqno = $(this).parents("tr").find("td:eq(1)").text();
+                SeqNOs += seqno + ",";
+            });
+            if (SeqNOs.length > 0) {
+                SeqNOs = SeqNOs.substr(0, SeqNOs.length - 1);
+            } else {
+                alert("请至少勾选一条记录");
+                return;
+            }
+            confirm("确定要删除勾选的记录吗？", function () {
+                $.post("/Projects/DeleteProjectPerson", { ProjectId: $("#Id").val(), SeqNOs: SeqNOs }, function () {
+                    loadProjectPerson();
+                });
+            });
+        })
+
+        $("#addPersonBtn").click(function () {
+            if (!CommitCheck()) {
+                alert("正在审核中或者非本人添加的项目");
+                return false;
+            }
+            setModal($(this).html(), '_PartialPerson');
+        })
+        function load() {
+            $.get("/Projects/FindOne", { id: $("#Id").val() }, function (obj) {
+                debugger
+                $("#ProjectsForm").setForm(obj);
+                $("#ApplyStautCode").val(obj.ApplyStatusCode);
+                $("#UserChk").val(obj.UserChk);
+                $(".selectpicker").selectpicker('refresh');
+            })
+            loadProjectCity();
+            loadProjectPerson();
+        }
+        function statCity() {
+            if (citys) {
+                var table;
+                var stat = [];
+                if ($("#ModelType").val() == "业务") {
+                    table = $("#statCity1-table");
+                    $("#statCity1-table").removeClass("hidden");
+                    stat = $.map(citys, function (item) {
+                        if (item.Status != '取消') {
+                            return {
+                                key: item.Responsibilites + '_' + item.ProjectType + '_' + item.ExcuteMode + '_' + item.ItemName,
+                                value: parseFloat(item.Count).toFixed(2)
+                            }
+                        }
+                    })
+                } else {
+                    table = $("#statCity2-table");
+
+                    stat = $.map(citys, function (item) {
+                        if (item.Status != '取消') {
+                            return {
+                                key: item.PurchaseType + '_' + item.PurchaseMode + '_' + item.SupplyService + '_' + item.ItemName,
+                                value: parseFloat(item.Count).toFixed(2)
+                            }
+                        }
+                    })
+                }
+                $(".statCity").addClass("hidden");
+                table.removeClass("hidden");
+                table.find("tbody").empty();
+
+                var keys = [];
+                var values = [];
+                $.each(stat, function () {
+                    var i = 0;
+                    if ((i = $.inArray(this.key, keys)) >= 0) {
+                        values[i] = FloatAdd(values[i], this.value).toFixed(2);
+                    } else {
+                        keys.push(this.key);
+                        values.push(this.value);
+                    }
+                })
+
+                $.each(keys, function (index, key) {
+                    var tr = $("<tr>");
+                    var arr = key.split('_');
+                    for (i in arr) {
+                        debugger
+
+                        var title = "";
+                        if (arr[i] != "null") {
+                            title = arr[i];
+
+                        }
+
+                        tr.append($("<td>").html(title));
+                    }
+                    tr.append($("<td>").html(values[index]));
+                    table.find("tbody").append(tr);
+                })
+            }
+        }
+        function loadProjectCity() {
+            var projectId = $("#Id").val();
+            //绑定城市
+            $.get("/Projects/GetProjectCitys", { ProjectId: projectId }, function (data) {
+                $("#city-table tbody").empty();
+                $.each(data, function () {
+                    addCityTr(this);
+                })
+                citys = data;
+                statCity();
+            })
+        }
+        function loadProjectPerson() {
+            var projectId = $("#Id").val();
+            //绑定人员
+            $.get("/Projects/GetProjectPersons", { ProjectId: projectId }, function (data) {
+                $("#person-table tbody").empty();
+                $.each(data, function () {
+                    addPersonTr(this);
+                })
+            })
+        }
+        function setModal(title, body, obj) {
+            $("#myModal .modal-title").html(title);
+            $("#myModal .modal-body").empty();
+            $("#myModal .modal-body").load("/Projects/LoadPartial", { partialView: body }, function () {
+                if (obj) {
+                    debugger
+                    $("#myModal .modal-body form").setForm(obj);
+                    if ($(this).find("#Province").length > 0) {
+                        loadCityByProvince($(this).find("#Province option:selected").attr("id"));
+                        $(this).find("#City").val(obj.City);
+                    }
+                }
+                $(this).find("select").addClass("selectpicker").prop("title", "").data("live-search", true).selectpicker("refresh");
+            });
+        }
+        function isEmpty(value) {
+            if (value == "")
+                return true;
+            else
+                return false;
+        }
+        function FloatAdd(arg1, arg2) {
+            var r1, r2, m;
+            try { r1 = arg1.toString().split(".")[1].length } catch (e) { r1 = 0 }
+            try { r2 = arg2.toString().split(".")[1].length } catch (e) { r2 = 0 }
+            m = Math.pow(10, Math.max(r1, r2));
+            return (arg1 * m + arg2 * m) / m;
+        }
+        function addCityTr(city) {
+            var tr = $("<tr>");
+
+            tr.append($("<td></td>").append($("<input type='checkbox'>")));
+
+            var copyBtn = $("<a class='btn btn-primary btn2'>").html("复制");
+            copyBtn.click(function () {
+                if (!CommitCheck()) {
+                    alert("正在审核中或者非本人添加的项目");
+                    return false;
+                }
+                city.SeqNO = 0;
+                setModal($("#addCityBtn").html(), '_PartialCity', city);
+                $("#myModal").modal("show");
+            })
+            var editBtn = $("<a class='btn btn-primary btn2'>").html("详细");
+            editBtn.click(function () {
+                city.SeqNO = city.SeqNo;
+                setModal("编辑样本量信息", '_PartialCity', city);
+                $("#myModal").modal("show");
+            })
+            tr.append($("<td>").html(city.SeqNo));
+            tr.append($("<td>").append(copyBtn));
+            tr.append($("<td>").append(editBtn));
+            tr.append($("<td>").html(city.Province));
+            tr.append($("<td>").html(city.City));
+
+            if ($("#ModelType").val() == "业务") {
+                $("#PurchaseType").hide();
+                $("#PurchaseMode").hide();
+                tr.append($("<td>").html(city.Responsibilites));
+                tr.append($("<td>").html(city.ProjectType));
+                tr.append($("<td>").html(city.ExcuteMode));
+            }
+            else {
+                $("#Responsibilites").hide();
+                $("#ProjectType").hide();
+                $("#ExcuteMode").hide();
+                tr.append($("<td>").html(city.PurchaseType));
+                tr.append($("<td>").html(city.PurchaseMode));
+            }
+            tr.append($("<td>").html(city.SupplyService));
+            tr.append($("<td>").html(city.ItemName));
+            tr.append($("<td>").html(city.Count));
+            //var td = $("<td>");
+            ////if (city.RequirementId == "" || city.RequirementId == "0") {
+            ////    var addDemand = $("<a class='btn btn-primary btn2'>").html("添加");
+            ////    addDemand.click(function () {
+            ////        //if (!isEmpty($("#ApplyStautCode").val())) {
+            ////        //    return;
+            ////        //}
+            ////        setModal("选择需求书类型", '_PartialDemandBookType', city);
+            ////        $("#myModal").modal("show");
+            ////    })
+            ////    td.append(addDemand);
+            ////} else {
+            //    var editDemand = $("<a class='btn btn-primary btn2'>").html("详细");
+            //    editDemand.click(function () {
+            //        openDemandBook(city.RequirementType, city.ProjectId, city.SeqNo, city.RequirementId);
+            //    });
+            //    tr.append(td.append(editDemand));
+            ////}
+            //var copyDBookBtn = $("<a class='btn btn-primary btn2'>").html("选择复制");
+            //copyDBookBtn.click(function () {
+            //    openCopyDemandBookSelect(city.SeqNo);
+            //})
+            //td.append(td.append(copyDBookBtn));
+            //tr.append(td);
+
+            tr.append($("<td>").html(city.Status));
+            tr.append($("<td>").html(city.StatusDate));
+            tr.append($("<td>").html(city.Remark).attr("title", city.Remark));
+            $("#city-table tbody").append(tr);
+
+            $("#myModal").modal("hide");
+        }
+        function openCopyDemandBookSelect(SeqNO) {
+            $("#myModal .modal-dialog").addClass("modal-lg");
+            $("#myModal .modal-title").html("从需求书复制");
+            $("#myModal").modal("show");
+            $("#myModal .modal-body").empty();
+            $("#myModal .modal-body").load("/Projects/LoadPartial", { partialView: "_PartialCopyDamandBookSelect" }, function () {
+                var table = $("<table class='table table-bordered table-condensed' style='width:100%'>");
+                table.append($('<tr><th>选择</th><th>执行省份</th><th>执行城市</th><th>采购分类</th><th>采购方式</th><th>工作职责</th><th>项目类型</th><th>执行方式</th><th>提供服务</th><th>品名</th></tr>'));
+                for (i in citys) {
+                    var city = citys[i];
+                    if (city.RequirementId != "" && city.RequirementId != "0") {
+                        var tr = $("<tr>");
+                        var radio = $("<input id='selectDemandRadio' type='radio'>").val(city.SeqNO);
+                        tr.append($("<td>").append(radio));
+                        tr.append($("<td>").html(city.Province));
+                        tr.append($("<td>").html(city.City));
+                        tr.append($("<td>").html(city.PurchaseType));
+                        tr.append($("<td>").html(city.PurchaseMode));
+                        tr.append($("<td>").html(city.Responsibilites));
+                        tr.append($("<td>").html(city.ProjectType));
+                        tr.append($("<td>").html(city.ExcuteMode));
+                        tr.append($("<td>").html(city.SupplyService));
+                        tr.append($("<td>").html(city.ItemName));
+
+                        table.append(tr);
+                    }
+
+                    $("#select-demandbook-copy").append(table);
+                }
+                $("#toSeqNO").val(SeqNO);
+            });
+        }
+        function CopyDemandBookSelectFinish() {
+            loadProjectCity();
+            $("#myModal").modal("hide");
+            $("#myModal .modal-dialog").removeClass("modal-lg");
+        }
+        function openDemandBook(DemandBookType, ProjectId, SeqNO, RequirementId) {
+            var url = "/DemandBook/Create?DemandBookType=" + DemandBookType;
+            url += "&ProjectId=" + ProjectId;
+            url += "&SeqNO=" + SeqNO;
+            if (RequirementId != 0) {
+                url += "&RequirementId=" + RequirementId;
+            }
+
+            window.open(url);
+        }
+        function addPersonTr(person) {
+            var tr = $("<tr>");
+
+            tr.append($("<td></td>").append($("<input type='checkbox'>")));
+
+            var editBtn = $("<a class='btn btn-primary btn2'>").html("详细");
+            editBtn.click(function () {
+                setModal("编辑人员信息", '_PartialPerson', person);
+                $("#myModal").modal("show");
+            })
+            tr.append($("<td>").html(person.SeqNO));
+            tr.append($("<td>").append(editBtn));
+            tr.append($("<td>").html(person.DepartmentCode));
+            tr.append($("<td>").html(person.PositionCode));
+            tr.append($("<td>").html(person.PersonName));
+            $("#person-table tbody").append(tr);
+
+            $("#myModal").modal("hide");
+        }
+        function DemandBookTypeSelectFinish() {
+            $("#myModal").modal("hide");
+            $("#myModal .modal-dialog").removeClass("modal-lg");
+            load();
+        }
+        // 判断当前项目的提交状态
+        function CommitCheck() {
+            debugger
+            var ApplyStatusCode = $("#ApplyStautCode").val();
+            var UserChk = $("#UserChk").val();
+            if (ApplyStatusCode == undefined) {
+                ApplyStatusCode = "";
+            }
+            if (UserChk == undefined) {
+                UserChk = "true";
+            }
+            if (UserChk == "true") {
+                if (ApplyStatusCode != "") {
+                    if (ApplyStatusCode == "完成") {
+                        return true;
+                    }
+                    else {
+                        return false;
+                    }
+                }
+                else {
+                    return true;
+                }
+            }
+            else {
+                return false;
+            }
+        }
+    </script>
+}

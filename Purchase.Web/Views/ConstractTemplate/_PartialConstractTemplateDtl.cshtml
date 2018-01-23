@@ -1,0 +1,219 @@
+﻿<form id="ConstractTemplateDtlForm"
+      method="post" action="/ConstractTemplate/SaveConstractTemplateDtl">
+    @Html.Hidden("ConstractTemplateId", 0)
+    @Html.Hidden("SeqNO", 0)
+    @Html.Hidden("IsInsert", 0)
+
+    <table style="width:95%">
+        <tr>
+            <td></td>
+            <td>
+                <a id="SaveDtlBtn" class="btn btn-primary">保 存</a>
+            </td>
+        </tr>
+        <tr style="display:none">
+            <td width="100">序号</td>
+            <td>
+                <input id="OrderNO" name="OrderNO" class="form-control">
+            </td>
+        </tr>
+        <tr>
+            <td>类型</td>
+            <td>
+                <select id="ContentType" name="ContentType" class="form-control">
+                    <option value="合同标题">合同标题</option>
+                    <option value="一级标题">一级标题</option>
+                    <option value="二级标题">二级标题</option>
+                    <option value="图片">图片</option>
+                    <option value="普通文本">普通文本</option>
+                    <option value="固定内容">固定内容</option>
+                    <option value="表格">表格</option>
+                    <option value="表格-模板">表格-模板</option>
+                </select>
+            </td>
+        </tr>
+        <tr id="ContentType2Tr" style="display:none;">
+            <td>内容类型</td>
+            <td>
+                <select id="ContentType2" name="ContentType2" class="form-control">
+                    <option value="项目名称">项目名称</option>
+                    <option value="执行区域">执行区域</option>
+                    <option value="项目时间">项目时间</option>
+                    <option value="复核比例">复核比例</option>
+                    <option value="样本量配额">样本量配额</option>
+                    <option value="平台名称">平台名称</option>
+                    <option value="最终交付日期">最终交付日期</option>
+                    <option value="交货日期">交货日期</option>
+                    <option value="布展时间">布展时间</option>
+                    <option value="撤展时间">撤展时间</option>
+                    <option value="运输路线">运输路线</option>
+                    <option value="服务内容">服务内容</option>
+                    <option value="协议有效时间">协议有效时间</option>
+                    <option value="展览展示委托内容">展览展示委托内容</option>
+                    <option value="运输车辆信息">运输车辆信息</option>
+                    <option value="确认单">确认单</option> 
+                    <option value="确认单2">确认单2</option>                    
+                </select>
+            </td>
+        </tr>
+        <tr id="TemplateContentTr">
+            <td>内容</td>
+            <td>
+                <textarea id="TemplateContent" name="TemplateContent" class="form-control" rows="3"></textarea>
+            </td>
+        </tr>
+        <tr id="TemplateFileTr" style="display:none;height:40px;">
+            <td>上传图片</td>
+            <td>
+                <input id="TemplateFile" name="TemplateFile" type="file" />
+            </td>
+        </tr>
+        <tr id="table-template" style="display:none">
+            <td colspan="2">
+                <div class="pull-right">                    
+                </div>
+                <table class="table table-bordered table-condensed text-center">
+                    <tbody></tbody>
+                </table>
+            </td>
+        </tr>
+    </table>     
+</form>
+<script>
+    $(function () {        
+        $("#ContentType").change(function () {
+            $(this).parents(".modal-dialog").removeClass("modal-lg");
+            if ($(this).val() == "图片") {
+                $("#TemplateContentTr").hide();
+                $("#TemplateFileTr").show();
+                $("#ContentType2Tr").hide();
+                $("#TemplateContentTr textarea").html("");
+                $("#table-template").hide();
+                
+            } else if ($(this).val() == "固定内容") {
+                $("#TemplateFileTr").hide();
+                $("#TemplateContentTr").hide();
+                $("#ContentType2Tr").show();
+                $("#TemplateContentTr textarea").html("");
+                $("#table-template").hide();
+            } else if ($(this).val() == "表格") {
+                $("#TemplateFileTr").hide();
+                $("#TemplateContentTr").hide();
+                $("#ContentType2Tr").hide();
+                $("#TemplateContentTr textarea").html("");
+                $("#table-template").hide();
+            } else if ($(this).val() == "表格-模板") {
+                $("#TemplateFileTr").hide();
+                $("#TemplateContentTr").hide();
+                $("#ContentType2Tr").hide();
+                $("#TemplateContentTr textarea").html("");
+                $("#table-template").show();
+                $(this).parents(".modal-dialog").addClass("modal-lg");
+                $("#table-template .table tbody").empty();
+                addTableTemplate();
+            } else {
+                $("#TemplateFileTr").hide();
+                $("#TemplateContentTr").show();
+                $("#ContentType2Tr").hide();
+                $("#table-template").hide();
+            }
+        })
+
+        $("#SaveDtlBtn").click(function () {
+            if ($("#ContentType").val() == "表格-模板") {
+                $("#TemplateContent").val(getTableTemplates());
+            }
+            //if (isEmpty($("#OrderNO").val())) {
+            //    alert("序号必须填写");
+            //    return false;
+            //}
+            if (isEmpty($("#ServiceTrade").val())) {
+                alert("内容必须填写");
+                return false;
+            }
+            if (isEmpty($("#ServiceTrade").val())) {
+                alert("服务行业必须填写内容");
+                return false;
+            }
+            if ($("#ContentType").val() != "固定内容") {
+                $("#ContentType2").val("");
+            }
+            if (!$("#TemplateContentTr").is(":hidden")) {
+                if ($("#TemplateContent").val() == "") {
+                    alert("内容必须填写");
+                    return false;
+                }
+            }
+
+            $("#ConstractTemplateDtlForm").submit(function () {
+                
+            }).submit();
+        })
+    })
+    
+    function addTableTemplate(hasDel) {
+        var tr = $("<tr>");
+        
+        for (var i = 0; i < 10; i++) {
+            var td = $("<td>");
+            td.append($("<input type='text' style='width:65px' class='form-control'>"));
+            tr.append(td);
+        }
+        if (hasDel) {
+            var delA = $("<a>").html("删除");
+            delA.css("cursor", 'pointer');
+            delA.click(function () {
+                tr.remove();
+            });
+            tr.append($("<td style='vertical-align:middle;text-align: center;'>").append(delA));
+        } else {
+            var add = $('<a class="btn btn-default btn-sm" onclick="addTableTemplate(1)" style="margin-bottom:5px;">添加</a>');
+            tr.append($("<td style='vertical-align:middle;'>").append(add));
+        }
+        
+        $("#table-template .table tbody").append(tr);
+        return tr;
+    }
+    function setTableTemplates(templateContent) {
+        if (templateContent == null || templateContent.length == 0) {
+            addTableTemplate(false);
+            return;
+        }
+        var values = templateContent.split(';');
+        for (i in values) {
+            var tr = $("#table-template .table tbody tr:first-child");
+            if (i != 0) {
+                tr = addTableTemplate(true);
+            }
+           
+            var columns = values[i].split(',');
+            var tds = tr.find("input");
+            for (k in columns) {
+                tds.eq(k).val(columns[k]);
+            }
+        }
+    }
+    function getTableTemplates() {
+        debugger
+        var params = '';
+        $("#table-template .table tbody tr").each(function (i) {
+            if (i > 0) {
+                params += ";";
+            }
+            var rowV = '';
+            $(this).find("input").each(function () {
+                 rowV+= $(this).val() + ",";
+            })
+            params += rowV;
+        })
+        return params;
+    }
+
+    function isEmpty(value) {
+        if (value == "")
+            return true;
+        else
+            return false;
+    }
+</script>
+

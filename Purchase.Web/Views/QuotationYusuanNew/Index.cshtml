@@ -1,0 +1,213 @@
+﻿@using Purchase.Service.DTO
+@model IEnumerable<QuotationGroupDto>
+
+<div class="count2 inline-block" style="width: 100%;">
+    <input id="QuotationYusuanGroupId" name="QuotationYusuanGroupId" type="hidden">
+    <table style="width:100%">
+        <tr>
+            <td style="text-align:right">
+                不可预见费：<input name="ContingencyFee" id="ContingencyFee" />
+                <a id="btnSaveYusuan" class="btn btn-primary" style="width:100px">保存</a>
+            </td>
+        </tr>
+    </table>
+    <div class="table-responsive" style="max-height:550px;overflow:auto">
+        @if (Model != null)
+        {
+            int index = 0;
+            foreach (QuotationGroupDto groupDto in Model)
+            {
+                index++;
+                <div class="panel panel-default collapse-panel" style="margin-bottom:0px;">
+                    <div class="panel-heading">
+                        <h4 class="panel-title">
+                            @Html.Hidden("QuotationGroupId", groupDto.GroupId)
+                            <a data-toggle="collapse" data-parent="#accordion" href="#collapse-table-@index">
+                                @groupDto.QuotationGroupName
+                            </a>
+                        </h4>
+                    </div>
+                    <div id="collapse-table-@index" class="panel-collapse collapse">
+                        <div class="panel-body">
+
+                        </div>
+                    </div>
+                </div>
+            }
+        }
+    </div>
+
+
+</div>
+<div id="sub-result-source" class="sub-result-source search-resultyusuan" style="display:none">
+    <table style="width: 100%; padding-bottom:3px">
+        <tr>
+            <td style="width:250px; text-align:left">
+                <strong>确认单类型：</strong>
+                <span id="QuotationTypeText"></span>
+                @Html.Hidden("QuotationType")
+            </td>
+        </tr>
+    </table>
+    <div class="data table-responsive" style="max-height:250px;overflow:auto;"></div>
+</div>
+<style>
+    .quotation-table-input {
+        width: 100px;
+        border-radius: 4px;
+        border: solid 1px #ddd;
+        font-size: 12px;
+        padding: 3px;
+        height: 25px !important;
+    }
+</style>
+<script src="~/Scripts/custom/form-serialize.js"></script>
+<script>
+    var index = 0;
+    var quotationTypeAndText = {
+        "Biancheng": "编程", "Zhixing": "执行", "Fuhe": "复核", "Yanjiu": "研究",
+        "Zhichi": "支持", "Chezhan": "车展", "Qita1": "其他1", "Qita2": "其他2"
+    }
+
+    $(function () {
+        $("#btnSaveYusuan").button("loading");
+        $.post("/QuotationYusuan/FindContingency", { ProjectId: $("#ProjectId").val() }, function (data) {
+            debugger
+            if (data && data != null) {
+                $("#ContingencyFee").val(data.ContingencyFee);
+            }
+            $("#btnSaveYusuan").button("reset");
+        })
+        loadAll();
+
+        //预算保存
+        $("#btnSaveYusuan").click(function () {
+            var changeItems = [];
+            $(".collapse-panel input:focus").change();
+            $(".search-resultyusuan").each(function () {
+                var qtype = $(this).find("#QuotationType").val();
+                $(this).find("tr[data-change]").each(function () {
+                    var tr = $(this);
+                    var qidseq = tr.data("change");
+                    var arr = qidseq.split('_');
+                    changeItems.push({
+                        Id: arr[0],
+                        SeqNo: arr[1],
+                        QuotationYusanGroupId: $("#QuotationYusuanGroupId").val(),
+                        QuotationType: qtype,
+                        Yusuandanjia: tr.find("#yusuandanjia_new").val(),
+                        Yusuanshuliang: tr.find("#yusuanshuliang").val(),
+                    })
+                })
+            });
+
+            $("#btnSaveYusuan").button("loading");
+            $.post("/QuotationYusuanNew/UpdateYusuanAndContingency", { jsonArr: JSON.stringify(changeItems), ProjectId: $("#ProjectId").val(), ContingencyFee: $("#ContingencyFee").val() }, function () {
+                $("#search-resultyusuan tr[data-change]").each(function (i) {
+                    $(this).find("input").css("border-color", "");
+                })
+                alert("保存成功");
+                loadAll();
+            }).complete(function () { $("#btnSaveYusuan").button("reset"); })
+        })
+    });
+    function loadAll() {
+        $(".collapse-panel").each(function () {
+            var panel = $(this);
+
+            //load quotation table by quotationgroup
+            var QuotationGroupId = $("#QuotationGroupId", panel).val();
+            $.post("/QuotationYusuanNew/QuotationTypeSearch", {
+                ProjectId: $("#ProjectId").val(),
+                QuotationGroupId: QuotationGroupId
+            }, function (data) {
+                $(".panel-body", panel).empty();
+                $.each(data, function (i, item) {
+                    var view = "_PartialLoad" + item.QuotationType;
+
+                    var subResult = $('#sub-result-source').clone().show();
+                    subResult.attr("id", "sub-result-source-" + index);
+                    $(".panel-body", panel).append(subResult);
+
+                    subResult.find(".data").load("/QuotationYusuanNew/LoadPartial", { partialView: view }, function () {
+                        $.post("/QuotationYusuanNew/LoadQuotationYusuan", {
+                            quotationType: item.QuotationType,
+                            QuotationYusuanGroupId: $("#QuotationYusuanGroupId").val(),
+                            QuotationGroupId: QuotationGroupId
+                        }, function (list) {
+                            $("#quotation-table tbody", subResult).empty();
+                            var qtype = item.QuotationType
+                            $.each(list, function (j, item) {
+                                var func = eval("addQuotationTr_" + qtype);
+                                $("#quotation-table tbody", subResult).append(new func(item));
+                            })
+                            if (data.length > 0) {
+                                var tr = $("<tr>");
+                                var tdCount = $("#quotation-table tbody tr:first-child td", subResult).length;
+                                for (var i = 0; i < tdCount; i++) {
+                                    if (i == tdCount - 6 || i == tdCount - 3) {
+                                        tr.append($("<td>").append($("<strong>").text("合计")));
+                                    } else {
+                                        tr.append($("<td>").text(""));
+                                    }
+                                }
+                                $("#quotation-table tbody", subResult).append(tr);
+                                calYusuanheji(subResult);
+                            }
+
+                            subResult.find("#QuotationTypeText").html(quotationTypeAndText[item.QuotationType]);
+                            subResult.find("#QuotationType").val(item.QuotationType);
+                        });
+                    });
+
+                    index++;
+                })
+
+            });
+        });
+
+    }
+    function calYusuanheji(resultDiv) {
+        //预算小计合计
+        var tr = $("#quotation-table tbody tr:last-child", resultDiv);
+        var yusuanheji = 0;
+        var heji = 0
+        var tdCount;
+        $("#quotation-table tbody tr:not(:last-child)", resultDiv).each(function () {
+            tdCount = $(this).find("td").length;
+            var yusuanxiaoji = $(this).find("td:eq(" + (tdCount - 5) + ")").text();
+            var xiaoji = $(this).find("td:eq(" + (tdCount - 2) + ")").text();
+            yusuanheji += yusuanxiaoji.length > 0 ? parseFloat(yusuanxiaoji) : 0;
+            heji += xiaoji.length > 0 ? parseFloat(xiaoji) : 0;
+        })
+        tr.find("td").each(function (i) {
+            if (i == tdCount - 2) {
+                $(this).empty();
+                $(this).append($("<strong>").text(heji.toFixed(2)));
+            }
+            if (i == tdCount - 5) {
+                $(this).empty();
+                $(this).append($("<strong>").text(yusuanheji.toFixed(2)));
+            }
+        });
+    }
+
+    function ysdjOrysslBlur(input, item) {
+        $(input).change(function () {
+            var tr = $(this).parents("tr");
+            var ysdjValue = tr.find("#yusuandanjia_new").val();
+            var ysslValue = tr.find("#yusuanshuliang").val();
+
+            $(this).css("border-color", 'red');
+            $(this).parents("tr").attr("data-change", item.QuotationId + "_" + item.SeqNO);
+
+            var yusuanxiaoji = 0;
+            if (!isEmptyOrNull(ysdjValue) && !isEmptyOrNull(ysslValue)) {
+                yusuanxiaoji = parseFloat(ysdjValue) * parseFloat(ysslValue);
+            }
+
+            tr.find("#yusuanxiaoji").text(yusuanxiaoji.toFixed(2));
+            calYusuanheji($(input).parents(".search-resultyusuan"));
+        });
+    }
+</script>

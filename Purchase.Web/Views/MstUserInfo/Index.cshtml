@@ -1,0 +1,169 @@
+﻿@{
+    ViewBag.Title = "用户管理";
+    Layout = "~/Views/Shared/_SystemLayout.cshtml";
+}
+<div class="count inline-block">
+    <form id="search-form" class="form">
+        <table>
+            <tr>
+                <td width="80">登录账号</td>
+                <td width="150">
+                    <input id="UserId" name="UserId" class="form-control" />
+                </td>
+                <td width="80">用户名</td>
+                <td width="150">
+                    <input id="UserName" name="UserName" class="form-control" />
+                </td>
+                <td style="text-align:right">
+                    <button id="btnQuery" type="button" class="btn btn-primary" style="width:100px">查 询</button>
+                    <button id="btnAdd" type="button" class="btn btn-primary" style="width:100px">新 增</button>
+                </td>
+            </tr>
+        </table>
+    </form>
+    <div id="search-result" class="table-responsive">
+        <table id="userinfo-table" class="table table-bordered table-condensed table-hover">
+            <thead>
+                <tr>
+                    <th width="50">详细</th>
+                    <th>项目授权</th>
+                    <th>供应商授权</th>
+                    <th>登录账号</th>
+                    <th>姓名</th>
+                    <th>
+                        部门
+                    </th>
+                    <th>
+                        职位
+                    </th>
+                    <th>
+                        角色类型
+                    </th>
+                    <th>
+                        邮箱
+                    </th>
+                    <th>
+                        
+                    </th>
+                    @*<th>
+                        邮箱密码
+                    </th>*@
+                    <th>
+                        登记人
+                    </th>
+                    <th>登记时间</th>
+                </tr>
+            </thead>
+            <tbody></tbody>
+        </table>
+    </div>
+    <div id="pagination" class="pull-right">
+        <ul id="pageUl"></ul>
+    </div>
+</div>
+<div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-hidden="false">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
+                <h4 class="modal-title"></h4>
+            </div>
+            <div class="modal-body">
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script src="~/Scripts/custom/form-serialize.js"></script>
+    <script>
+        var curPage;
+        $(function () {
+            load();
+            $("#btnQuery").click(function () {
+                load();
+            })
+
+            $("#btnAdd").click(function () {
+                edit();
+            })
+        })
+        function load(pageNum) {
+            var params = $("#search-form").serializeJson();
+            params = $.extend(params, { pageSize: 15, pageNum: pageNum ? pageNum : 1 });
+            $.post("/MstUserInfo/Load", params, function (data) {
+                if (data && data.List) {
+                    $("#userinfo-table tbody").empty();
+                    $.each(data.List, function (index, item) {
+                        var tr = $("<tr>");
+
+                        var editBtn = $("<a>").html("详细");
+                        editBtn.css("cursor", "pointer");
+                        editBtn.click(function () {
+                            edit(item.UserId);
+                        })
+                        tr.append($("<td></td>").append(editBtn));
+                        //项目授权
+                        var title = "项目授权";
+                        var projectAccreditBtn = $("<a>").html(title);
+                        projectAccreditBtn.css("cursor", "pointer");
+                        projectAccreditBtn.click(function () {
+                            Accredit(item.UserId, "P", title);
+                        })
+                        tr.append($("<td></td>").append(projectAccreditBtn));
+                        //供应商授权
+                        var title2 = "供应商授权";
+                        var supplierAccreditBtn = $("<a>").html(title2);
+                        supplierAccreditBtn.css("cursor", "pointer");
+                        supplierAccreditBtn.click(function () {
+                            Accredit(item.UserId, "S", title2);
+                        })
+                        tr.append($("<td></td>").append(supplierAccreditBtn));
+
+                        tr.append($("<td></td>").html(item.UserId));
+                        tr.append($("<td></td>").html(item.UserName));
+                        tr.append($("<td></td>").html(item.DepartmentCode));
+                        tr.append($("<td></td>").html(item.PositionCode));
+                        tr.append($("<td></td>").html(item.RoleTypeCode));
+                        tr.append($("<td></td>").html(item.Email));
+                        var useChk = '使用中';
+                        if (item.UseChk == 0 || item.UseChk == false)
+                        {
+                            useChk = '禁用';
+                        }
+                        tr.append($("<td></td>").html(useChk));
+                        //tr.append($("<td></td>").html(item.EmailPassword));
+                        tr.append($("<td></td>").html(item.InUserId));
+                        tr.append($("<td></td>").html(item.InDateTime));
+
+                        $("#userinfo-table tbody").append(tr);
+                    })
+
+                    if (data.CurPage) {
+                        curPage = data.CurPage;
+                        createPageNav({ $container: $("#pagination"), pageCount: data.PageCount, currentNum: data.CurPage, afterFun: load });
+                    }
+                }
+            })
+        }
+
+        function edit(UserId) {
+            $("#myModal").modal("show");
+            $("#myModal .modal-title").html("编辑用户");
+            $("#myModal .modal-body").empty();
+            $("#myModal .modal-body").load("/MstUserInfo/Edit", { UserId: UserId ||""}, function () {
+
+            })
+        }
+
+        function Accredit(userId,type,title) {
+            $("#myModal").modal("show");
+            $("#myModal .modal-title").html(title);
+            $("#myModal .modal-body").empty();
+            $("#myModal .modal-body").load("/MstUserInfo/Accredit", { UserId: userId || "", setUserId: "", type: type }, function () {
+                $("#UserIdHidden").val(userId);
+                $("#TypeHidden").val(type);                
+            })
+        }
+    </script>
+}

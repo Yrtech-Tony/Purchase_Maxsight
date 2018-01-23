@@ -1,0 +1,93 @@
+﻿<div class="panel panel-default mt20">
+    <div class="panel-heading">
+        <strong style="line-height:35px;font-size:14px;">人员要求</strong>
+        <button class="btn btn-primary btn pull-right clearfix" onclick="addDtl4()">添加</button>
+        <button class="btn btn-primary btn pull-right" style="margin-right:5px;" onclick="delDemandBookDtl('4')">删除</button>
+    </div>
+    <div class="panel-body">
+        <div class="table-responsive">
+            <table id="dtl4-table" class="table table-bordered table-condensed table-hover text-center">
+                <thead>
+                    <tr>
+                        <th width="50">选择</th>
+                        <th width="50">
+                            复制
+                        </th>
+                        <th width="50">
+                            详细
+                        </th>
+                        <th>
+                            序号
+                        </th>
+                        <th>
+                            评估员条件-年龄
+                        </th>
+                        <th>
+                            评估员条件-学历
+                        </th>
+                        <th>
+                            评估员条件-人员备份比例
+                        </th>
+                        <th>
+                            评估员条件-执行经验
+                        </th>
+
+                        <th>
+                            其他说明
+                        </th>
+                    </tr>
+                </thead>
+                <tbody></tbody>
+            </table>
+        </div>
+        </div>
+</div>
+<script>
+    var detailView4 = 'Mingjian/Detail/_PartialMingjianDtl4';
+    var title4="人员要求";
+    function addDtl4() {
+        if (!CommitCheck()) {
+            alert("正在审核中或者非本人添加的项目");
+            return false;
+        }
+        setModal(title4, detailView4);
+        $("#myModal").modal("show");
+    }
+
+    function loadMingjianDtl4() {
+        $.post("/DemandBook/LoadMingjianDtl4", { RequirementId: $("#RequirementId").val() }, function (data) {
+            if (data) {
+                $("#dtl4-table tbody").empty();
+                $.each(data, function (index, item) {
+                    var tr = $("<tr>");
+                    tr.append($("<td></td>").append($("<input type='checkbox'>")));
+                    var copyBtn = $("<a class='btn btn-primary btn2'>").html("复制");
+                    copyBtn.click(function () {
+                        item.SeqNO = 0;
+                        setModal(title4, detailView4, item, true);
+                        $("#myModal").modal("show");
+                    })
+                    tr.append($("<td></td>").append(copyBtn));
+                    var editBtn = $("<a class='btn btn-primary btn2'>").html("详细");
+                    editBtn.click(function () {
+                        setModal(title4, detailView4, item);
+                        $("#myModal").modal("show");
+                    })
+                    tr.append($("<td></td>").append(editBtn));
+                    tr.append($("<td></td>").html(item.SeqNO));
+                    tr.append($("<td></td>").html(item.pingguyuantiaojiannianling));
+                    tr.append($("<td></td>").html(item.pingguyuantiaojianxueli));
+                    tr.append($("<td></td>").html(item.pingguyuantiaojianrenyuanbeifenbili));
+                    tr.append($("<td></td>").html(item.pingguyuantiaojianzhixingjingyan));
+                    //tr.append($("<td style='text-align:left'></td>").html(item.qitashuoming4.replace(/\n/g, '<br>')));
+                    if (item.qitashuoming1 == null) {
+                        tr.append($("<td style='text-align:left'></td>").html(item.qitashuoming4));
+                    } else {
+                        tr.append($("<td style='text-align:left'></td>").html(item.qitashuoming4.replace(/\n/g, '<br>')));
+                    }
+                    $("#dtl4-table tbody").append(tr);
+                })
+            }
+        })
+    }
+</script>

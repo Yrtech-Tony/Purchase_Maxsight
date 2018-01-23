@@ -1,0 +1,84 @@
+﻿@using Purchase.DAL
+@using Purchase.Common
+@model IEnumerable<Quotation_Chezhan_Dtl>
+
+<table id="quotation-table" class="table table-bordered table-condensed table-hover">
+    <thead>
+        <tr>
+            <th style="width: 45px">
+                选择
+            </th>
+            <th style="width: 80px">
+                执行省份
+            </th>
+            <th style="width: 80px">
+                执行城市
+            </th>
+            <th style="width: 65px">
+                执行分类
+            </th>
+            <th style="width: 100px">
+                工作职责
+            </th>
+            <th style="width: 75px">
+                用户分类
+            </th>
+            <th style="width: 80px">
+                现有或潜在
+            </th>
+            <th style="width: 65px">
+                客户分类
+            </th>
+            <th style="width: 65px">
+                核算单位
+            </th>
+            <th style="width: 40px">
+                单价
+            </th>
+            <th style="width: 40px">
+                数量
+            </th>
+            <th style="width: 40px">
+                小计
+            </th>
+            @*<th>
+                备注
+            </th>*@
+        </tr>
+    </thead>
+    <tbody>
+        @if (Model != null)
+        {
+            foreach (var item in Model)
+            {
+                if (!(Utils.Decimal2Double(item.danjia) == 0 && Utils.Decimal2Double(item.shuliang) == 0))
+                {
+                    var xiaoji = Utils.Decimal2Double(item.danjia) * Utils.Decimal2Double(item.shuliang);
+                    <tr>
+                        <td><input type="checkbox" value="@Json.Encode(item)"></td>
+                        <td>@item.zhixingshengfen</td>
+                        <td>@item.zhixingchengshi</td>
+                        <td>@item.zhixingfenlei</td>
+                        <td>@item.gongzuozhize</td>
+                        <td>@item.yonghufenlei</td>
+                        <td>@item.xianyouhuoqianzai</td>
+                        <td>@item.kehufenlei</td>
+                        <td>@item.hesuandanwei</td>
+                        <td>@item.danjia</td>
+                        <td>@item.shuliang</td>
+                        <td>@Utils.DoubleFormat(Math.Round(xiaoji, 2))</td>
+                        @*<td style="text-align:left">@item.beizhu</td>*@
+                    </tr>
+                }
+            }
+            <tr>
+                <td></td>
+                <td colspan="8"></td>
+                <td>合计</td>
+                <td>@Model.Sum(x => x.shuliang)</td>
+                <td>@Utils.DoubleFormat(Model.Sum(x => Utils.Decimal2Double(x.danjia) * Utils.Decimal2Double(x.shuliang)))</td>
+                @*<td></td>*@
+            </tr>
+        }
+    </tbody>
+</table>

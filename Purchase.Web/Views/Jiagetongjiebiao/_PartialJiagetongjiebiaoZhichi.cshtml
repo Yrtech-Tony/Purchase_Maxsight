@@ -1,0 +1,24 @@
+﻿
+
+<table id="Jiagetongjiebiao-table" class="table table-bordered table-condensed table-hover">
+    <thead>
+        <tr>
+            <th>执行方式</th>
+            <th>分类</th>
+            <th>核算单位</th>
+        </tr>
+    </thead>
+    <tbody></tbody>
+</table>
+
+<script>
+    function addJiagetongjibiaoTr(item) {
+        var tr = $("<tr>");
+
+        tr.append($("<td></td>").html(item.ExcuteMode));
+        tr.append($("<td></td>").html(item.fenlei));
+        tr.append($("<td></td>").html(item.hesuandanwei));
+
+        return tr;
+    }
+</script>

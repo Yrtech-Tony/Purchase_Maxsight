@@ -1,0 +1,49 @@
+﻿@model Purchase.Service.DTO.ConstractDto
+
+@{
+    ViewBag.Title = "合同信息登记";
+    Layout = "~/Views/Shared/_ConstractLayout.cshtml";
+}
+
+<div class="count inline-block">
+    <h4>@ViewBag.Title</h4>
+    <hr />
+    @using (Html.BeginForm("Create", "Constract", FormMethod.Post, new { Id = "ConstractForm", @class = "form-horizontal" }))
+    {
+        @Html.AntiForgeryToken()
+        @Html.ValidationSummary(false)
+        @Html.Hidden("Id", "0")
+
+        @Html.Partial("_PartialEdit", Model)
+
+        <div class="panel panel-default">
+            <div class="panel-heading"><strong>合同模板</strong></div>
+            <div class="panel-body">
+                <table>
+                    <tr>
+                        <td width="100">合同模板名称</td>
+                        <td width="400">
+                            <input type="text" id="TemplateName" name="TemplateName" class="form-control" disabled>
+                        </td>
+                        <td>
+                            <a class="btn btn-primary" onclick="selectTemplate()" style="width:120px">选择合同模板</a>
+                        </td>
+                    </tr>
+                </table>
+            </div>
+        </div>
+    }
+
+    <div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-hidden="false">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
+                    <h4 class="modal-title"></h4>
+                </div>
+                <div class="modal-body">
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

@@ -1,0 +1,194 @@
+﻿<div class="panel panel-default mt20">
+    <div class="panel-heading">
+        <strong style="line-height:35px;font-size:14px;">配额要求</strong>
+        <button class="btn btn-primary btn pull-right clearfix" onclick="addDtl2()">添加</button>
+        <button class="btn btn-primary btn pull-right" style="margin-right:5px;" onclick="delDemandBookPeiE('2')">删除</button>
+    </div>
+    <div class="panel-body">
+        <div class="table-responsive">
+            <table id="dtl2-table" class="table table-bordered table-condensed table-hover text-center">
+                <thead>
+                    <tr>
+                        <th width="50">选择</th>
+                        <th width="50">
+                            复制
+                        </th>
+                        <th width="50">
+                            详细
+                        </th>
+                        <th width="50">
+                            序号
+                        </th>
+                        <th>
+                            执行分类
+                        </th>
+                        <th>
+                            客户分类
+                        </th>
+                        <th>
+                            品牌分类
+                        </th>
+                        <th>
+                            进店方式
+                        </th>
+                        <th>
+                            开车进店
+                        </th>
+                        <th>
+                            进店方式比例
+                        </th>
+                        <th>
+                            车辆类别
+                        </th>
+                        <th>
+                            车价范围
+                        </th>
+                        <th>
+                            车型级别
+                        </th>
+                        <th>
+                            样本量
+                        </th>
+                        <th>
+                            报酬金额
+                        </th>
+                        <th>
+                            其他说明
+                        </th>
+                    </tr>
+                </thead>
+                <tbody></tbody>
+            </table>
+        </div>
+    </div>
+    <input id="SeqNOForLocalCopy" name="SeqNOForLocalCopy" type="hidden">
+</div>
+
+<script>
+    var detailView2 = 'Pankujijiagediaocha/Detail/_PartialPankujijiagediaochaDtl2';
+    var title2 = "配额要求";
+    function addDtl2() {
+        if (!CommitCheck()) {
+            alert("正在审核中或者非本人添加的项目");
+            return false;
+        }
+        $("#SeqNOForLocalCopy").val("0");
+        setModal(title2, detailView2);
+        $("#myModal").modal("show");
+    }
+    function SavePeie() {
+        debugger
+        if (!CommitCheck()) {
+            alert("正在审核中或者非本人添加的项目");
+            return false;
+        }
+        var peieshuliang = 0;
+        $("#dtl2-table tbody tr").each(function (i, tr) {
+            if (sourceData[i].yangbenliang)
+                peieshuliang = parseFloat(FloatAdd(parseFloat(sourceData[i].yangbenliang), parseFloat(peieshuliang))).toFixed(2);
+        })
+        if (parseFloat(peieshuliang) != parseFloat($("#Count").val())) {
+            debugger
+            alert("配额样本量和立项样本量不同");
+            return false;
+        }
+        if (sourceData) {
+            $.post("/DemandBook/SavePankujijiagediaochaDtl2List", {
+                jsonArr: JSON.stringify(sourceData),
+                RequirementId: $("#RequirementId").val(),
+                ProjectId: $("#ProjectId").val(),
+                CitySeqNO: $("#CitySeqNo").val(),
+                RequirementGroupId: $("#GroupId").val(),
+                RequirementType: $("#RequirementType").val()
+            }, function (data) {
+                alert("保存成功！");
+                loadPankujijiagediaochaDtl2()
+
+            })
+        }
+    }
+    function loadpage() {
+        debugger
+        $("#dtl2-table tbody").empty();
+        $.each(sourceData, function (index, item) {
+            for (pro in item) {
+                if ($.isArray(item[pro])) {
+                    item[pro] = item[pro].join('&');
+                }
+            }
+            var tr = $("<tr>");
+            tr.append($("<td></td>").append($("<input type='checkbox'>")));
+            var copyBtn = $("<a class='btn btn-primary btn2'>").html("复制");
+            copyBtn.click(function () {
+                debugger
+                $("#SeqNOForLocalCopy").val("0");
+                setModal(title2, detailView2, item);
+                $("#myModal").modal("show");
+
+            })
+            tr.append($("<td></td>").append(copyBtn));
+            var editBtn = $("<a class='btn btn-primary btn2'>").html("详细");
+            editBtn.click(function () {
+                $("#SeqNOForLocalCopy").val(item.SeqNO);
+                setModal(title2, detailView2, item);
+                $("#myModal").modal("show");
+            })
+            tr.append($("<td></td>").append(editBtn));
+            tr.append($("<td></td>").html(item.SeqNO));
+            tr.append($("<td></td>").html(item.zhixingfenlei));
+            tr.append($("<td></td>").html(item.kehufenlei));
+            tr.append($("<td></td>").html(item.pingpaifenlei));
+            tr.append($("<td></td>").html(item.jindianfangshi));
+            tr.append($("<td></td>").html(item.kaichejindian));
+            tr.append($("<td></td>").html(item.jindianfangshibili));
+            tr.append($("<td></td>").html(item.cheliangleixing));
+            tr.append($("<td></td>").html(item.chejiafanwei));
+            tr.append($("<td></td>").html(item.chexingjibie));
+            tr.append($("<td></td>").html(item.yangbenliang));
+            tr.append($("<td></td>").html(item.baochoujine));
+            var qitashuoming2 = item.qitashuoming2 != null ? item.qitashuoming2.replace(/\n/g, '<br>') : "&nbsp;";
+            tr.append($("<td style='text-align: left;'></td>").html(qitashuoming2));//其他说明
+            $("#dtl2-table tbody").append(tr);
+        })
+    }
+    function loadPankujijiagediaochaDtl2() {
+        $.post("/DemandBook/LoadPankujijiagediaochaDtl2", { RequirementId: $("#RequirementId").val() }, function (data) {
+            if (data) {
+                sourceData = data;
+                loadpage();
+                //$("#dtl2-table tbody").empty();
+                //$.each(data, function (index, item) {
+                //    var tr = $("<tr>");
+                //    var copyBtn = $("<a class='btn btn-primary btn2'>").html("复制");
+                //    copyBtn.click(function () {
+                //        item.SeqNO = 0;
+                //        setModal(title2, detailView2, item);
+                //        $("#myModal").modal("show");
+                //    })
+                //    tr.append($("<td></td>").append(copyBtn));
+                //    var editBtn = $("<a class='btn btn-primary btn2'>").html("详细");
+                //    editBtn.click(function () {
+                //        setModal(title2, detailView2, item);
+                //        $("#myModal").modal("show");
+                //    })
+                //    tr.append($("<td></td>").append(editBtn));
+                //    tr.append($("<td></td>").html(item.SeqNO));
+                //    tr.append($("<td></td>").html(item.zhixingfenlei));
+                //    tr.append($("<td></td>").html(item.kehufenlei));
+                //    tr.append($("<td></td>").html(item.pingpaifenlei));
+                //    tr.append($("<td></td>").html(item.jindianfangshi));
+                //    tr.append($("<td></td>").html(item.kaichejindian));
+                //    tr.append($("<td></td>").html(item.jindianfangshibili));
+                //    tr.append($("<td></td>").html(item.cheliangleixing));
+                //    tr.append($("<td></td>").html(item.chejiafanwei));
+                //    tr.append($("<td></td>").html(item.chexingjibie));
+                //    tr.append($("<td></td>").html(item.yangbenliang));
+                //    tr.append($("<td></td>").html(item.baochoujine));
+                //    tr.append($("<td></td>").html(item.qitashuoming2));
+
+                //    $("#dtl2-table tbody").append(tr);
+                //})
+            }
+        })
+    }
+</script>

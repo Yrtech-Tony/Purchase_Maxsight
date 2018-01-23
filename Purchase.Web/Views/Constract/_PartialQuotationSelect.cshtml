@@ -1,0 +1,134 @@
+﻿@using Purchase.Service.DTO
+@model IEnumerable<QuotationMstDto>
+<form id="search-project-form">
+    <table style=" width: 100%;">
+        <tr>
+            <td colspan="10" style="text-align:right">
+                <a id="btnConfirm" class="btn btn-primary" style="width:100px">确 定</a>
+            </td>
+        </tr>
+    </table>
+</form>
+<div class="count2">
+    <div class="table-responsive" style="max-height:250px;overflow-y:auto;">
+        <table id="RecheckUserSelect-table" class="table table-bordered table-condensed table-hover">
+            <thead>
+                <tr>
+                    <th>确认单类型</th>
+                    <th>供应商名称</th>
+                    <th>项目编号</th>
+                    <th>项目名称</th>
+                    <th>项目简称</th>
+                    <th>确认单组</th>
+                </tr>
+            </thead>
+            <tbody>
+                @if (Model != null)
+                {
+                    foreach (QuotationMstDto item in Model)
+                    {
+                        <tr>
+                            <td><a href="javascript:QuotationDtl('@item.QuotationId','@item.QuotationType')">@item.QuotationTypeTxt</a></td>
+                            <td>@item.SupplierName</td>
+                            <td>@item.ProjectCode</td>
+                            <td>@item.ProjectName</td>
+                            <td>@item.ProjectShortName</td>
+                            <td>@item.QuotationGroupName</td>
+                        </tr>
+                    }
+                }
+            </tbody>
+        </table>
+    </div>    
+</div>
+<br />
+<table style=" width: 100%;">
+    <tr>
+        <td colspan="10" style="text-align:right">
+            <a id="btnCheckAll" class="btn btn-primary" style="width:100px">全选</a>
+            <a id="btnNotcheckAll" class="btn btn-primary" style="width:100px">反选</a>
+        </td>
+    </tr>
+</table>
+
+<div id="search-result" class="table-responsive" style="max-height:350px;overflow-y:auto;display:none"></div>
+<script>
+    var selectValues = [];
+    var quotationType = '';
+    var isQuotationId2List = false;
+    $(function () { 
+        $("#btnConfirm").click(function () {
+            QuotationSelectCallback(selectValues);
+        });
+        
+        $("#btnCheckAll").click(function () {
+            $("#search-result input[type=checkbox]").prop("checked", true).change();
+        })
+        $("#btnNotcheckAll").click(function () {
+            $("#search-result input[type=checkbox]").prop("checked", false).change();
+        })
+    })
+
+    function loadSelectedValues(qIdList) {
+        var items = qIdList.split(';');
+        for (i in items) {
+            if (!items[i] || items[i] == '') continue;
+            var arr = items[i].split(',');
+            selectValues.push({
+                QuotationId: arr[0],
+                QuotationType: arr[1],
+                SeqNO: arr[2],
+            })
+        }
+    }
+
+    function bindQuotation() {
+        $("#search-result table input[type=checkbox]").each(function () {
+            var item = JSON.parse($(this).val());
+            for (i in selectValues) {
+                if (selectValues[i].QuotationId == item.QuotationId
+                    && selectValues[i].SeqNO == item.SeqNO) {
+                    $(this).prop("checked", true);
+                }
+            }
+        })
+    }
+
+    function bindCheckboxChange() {
+        $("#search-result table input[type=checkbox]").unbind("change").change(function () {            
+            var item = JSON.parse($(this).val());
+            debugger
+            var ischeck = $(this).is(":checked");
+            if (ischeck) {
+                selectValues.push({
+                    QuotationId: item.QuotationId,
+                    QuotationType: quotationType,
+                    SeqNO: item.SeqNO,
+                })
+            } else {
+                for (i in selectValues) {
+                    if (selectValues[i].QuotationId == item.QuotationId
+                        && selectValues[i].SeqNO == item.SeqNO) {
+                        selectValues.splice(i,1);
+                    }
+                }
+            }
+        });
+    }
+    function QuotationDtl(QuotationId, QuotationType) {
+        if (QuotationType == "Youxingshangpincaigou") {
+            QuotationType = "Qita1";
+        }
+        if (QuotationType == "Wuxingshangpincaigou") {
+            QuotationType = "Qita2";
+        }
+        var view = "_PartialApplyCheckLoad" + QuotationType;
+        quotationType = QuotationType;
+        $("#search-result").empty();
+        $("#search-result").load("/Constract/LoadQuotation", { QuotationId: QuotationId, QuotationType: QuotationType }, function () {
+            $(this).show();
+            bindCheckboxChange();
+            bindQuotation();
+        });
+    }
+</script>

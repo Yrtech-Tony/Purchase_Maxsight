@@ -1,0 +1,65 @@
+﻿@using Purchase.DAL
+@model RecheckProcess
+
+<div class="count2 inline-block" style="line-height:40px">
+    @using (Html.BeginForm("", "", FormMethod.Post, new { Id = "RecheckProcessForm" }))
+    {
+        @Html.HiddenFor(m => m.SeqNO)
+
+        <div class="form-horizontal">
+            <table>
+                <tr>
+                    <td colspan="2" style="text-align:right">
+                        <a id="btnSave" class="btn btn-primary" data-loading-text="提交中...">保 存</a>
+                    </td>
+                </tr>
+                <tr>
+                    <td width="110">申请类型 </td>
+                    <td width="380">
+                        @Html.DropDownListFor(m => m.RecheckType, new List<SelectListItem> {
+                            new SelectListItem(){ Text="供应商",Value="供应商"},
+                            new SelectListItem(){ Text="合同",Value="合同"},
+                            new SelectListItem(){ Text="立项",Value="立项"},
+                            new SelectListItem(){ Text="需求书",Value="需求书"},
+                            new SelectListItem(){ Text="确认单",Value="确认单"},
+                            new SelectListItem(){ Text="结算单",Value="结算单"},
+                            new SelectListItem(){ Text="流转单",Value="流转单"}
+                       }, htmlAttributes: new { @class = "form-control" })
+                    </td>
+                </tr>
+                <tr>
+                    <td width="110">职位</td>
+                    <td>
+                        @Html.DropDownListFor(m => m.PositionCode, new List<SelectListItem> {
+                           new SelectListItem(){ Text="专员",Value="专员"},
+                            new SelectListItem(){ Text="经理",Value="经理"},
+                            new SelectListItem(){ Text="总监",Value="总监"}
+                       }, htmlAttributes: new { @class = "form-control" })
+                    </td>
+                </tr>
+                <tr>
+                    <td width="110">使用与否</td>
+                    <td style="text-align:left">
+                        @Html.CheckBox("UseChk",Model.UseChk.HasValue?Model.UseChk.Value:false, htmlAttributes: new { })
+                    </td>
+                </tr>
+                
+            </table>
+        </div>
+    }
+</div>
+
+<script>
+    $("#btnSave").click(function () {
+        var params = $("#RecheckProcessForm").serializeJson();
+        params.UseChk = $("#UseChk").is(":checked");
+        $.post("/RecheckProcess/SaveRecheckProcess", params, function () {
+            if ($("#SeqNO").val()!="0" && curPageRecheckProcess) {
+                loadRecheckProcess(curPageRecheckProcess);
+            } else {
+                loadRecheckProcess();
+            }
+            $("#myModal").modal("hide");
+        })
+    })
+</script>

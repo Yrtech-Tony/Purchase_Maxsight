@@ -1,0 +1,55 @@
+﻿@{
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+<div class="body inline-block-father">
+    <div class="menu inline-block">
+        <div class="panel panel-default">
+            <div class="panel-heading"><h4>供应商管理</h4></div>
+            <div class="panel-body">
+                @*<a href="/SupplierMng/Create">供应商信息登记</a>
+                    <hr />*@
+                @if ((Session["LoginUser"] as Purchase.DAL.Mst_UserInfo).RoleTypeCode.Contains("采购基本权限")
+                    //        (Session["LoginUser"] as Purchase.DAL.Mst_UserInfo).UserId == "wangchao"
+                    //|| (Session["LoginUser"] as Purchase.DAL.Mst_UserInfo).UserId == "zhengzilong"
+                    //|| (Session["LoginUser"] as Purchase.DAL.Mst_UserInfo).UserId == "gaolei"
+                    //|| (Session["LoginUser"] as Purchase.DAL.Mst_UserInfo).UserId == "xuweijia"
+                    //|| (Session["LoginUser"] as Purchase.DAL.Mst_UserInfo).UserId == "lipengna"
+                    //|| (Session["LoginUser"] as Purchase.DAL.Mst_UserInfo).UserId == "yubingke"
+                    //|| (Session["LoginUser"] as Purchase.DAL.Mst_UserInfo).UserId == "kongshengbei"
+                    //|| (Session["LoginUser"] as Purchase.DAL.Mst_UserInfo).UserId == "zhangqianqian"
+                    )
+                {
+                    <a href="/SupplierMng/" class="active">供应商库</a>
+                }
+
+                @*@if ((Session["LoginUser"] as Purchase.DAL.Mst_UserInfo).RoleTypeCode == "财务")
+                    {*@
+                <hr />
+                <a href="/SupplierMng/BankInfo">供应商银行信息</a>
+                @*}*@
+            </div>
+        </div>
+        @if ((Session["LoginUser"] as Purchase.DAL.Mst_UserInfo).RoleTypeCode.Contains("采购基本权限")
+            //        (Session["LoginUser"] as Purchase.DAL.Mst_UserInfo).UserId == "wangchao"
+            //|| (Session["LoginUser"] as Purchase.DAL.Mst_UserInfo).UserId == "zhengzilong"
+            //|| (Session["LoginUser"] as Purchase.DAL.Mst_UserInfo).UserId == "gaolei"
+            //|| (Session["LoginUser"] as Purchase.DAL.Mst_UserInfo).UserId == "xuweijia"
+            //|| (Session["LoginUser"] as Purchase.DAL.Mst_UserInfo).UserId == "lipengna"
+            //|| (Session["LoginUser"] as Purchase.DAL.Mst_UserInfo).UserId == "yubingke"
+            //|| (Session["LoginUser"] as Purchase.DAL.Mst_UserInfo).UserId == "kongshengbei"
+            //|| (Session["LoginUser"] as Purchase.DAL.Mst_UserInfo).UserId == "zhangqianqian"
+                    )
+        {
+            <div class="panel panel-default">
+                <div class="panel-heading"><h4>供应商评分</h4></div>
+                <div class="panel-body">
+                    <a href="/SupplierEva/">供应商评分登记及查询</a>
+                    
+                </div>
+            </div>
+        }
+    </div>
+
+    @RenderBody()
+    @RenderSection("scripts", required: false)
+</div>

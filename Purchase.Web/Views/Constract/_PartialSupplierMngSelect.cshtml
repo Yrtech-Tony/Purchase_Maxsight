@@ -1,0 +1,123 @@
+﻿@using Purchase.Service.DTO
+@model IEnumerable<SupplierDto>
+
+
+<form id="search-supplier-form">
+    <input id="Type" name="Type" type="hidden" value="1" />
+    <table style="width: 100%;">
+        <tr>
+            <td colspan="10" style="text-align:right">
+                <a id="btnSupplierQuery" class="btn btn-primary" style="width:100px">查 询</a>
+                <a id="btnConfirm" class="btn btn-primary" style="width:100px">确 认</a>
+            </td>
+        </tr>
+        <tr>
+            <td width="80">供应商编码</td>
+            <td width="200">
+                <input id="SupplierCode" name="SupplierCode" class="form-control" />
+            </td>
+            <td width="80">供应商名称</td>
+            <td>
+                <input id="SupplierName" name="SupplierName" class="form-control" />
+            </td>
+            <td width="80">供应商简称</td>
+            <td width="200">
+                <input id="SupplierShortName" name="SupplierShortName" class="form-control" />
+            </td>
+        </tr>
+        <tr>
+            <td>省份</td>
+            <td>
+                <input id="Province" name="Province" class="form-control">
+            </td>
+            <td>城市</td>
+            <td>
+                <input id="City" name="City" class="form-control">
+            </td>
+        </tr>
+    </table>
+</form>
+
+<div class="count2">
+    <div style="position:relative">
+        <div id="search-result" class="table-responsive" style="max-height:350px;overflow-y:auto;">
+            <table id="select-table" class="table table-bordered table-condensed table-hover">
+                <thead>
+                    <tr>
+                        <th width="40">选择</th>
+                        <th>供应商编号</th>
+                        <th>供应商名称</th>
+                        <th>供应商简称</th>
+                        <th>服务行业</th>
+                        <th>供应商类别</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @if (Model != null)
+                    {
+                        foreach (SupplierDto item in Model)
+                        {
+
+                            <tr>
+                                <td>
+                                    @Html.Hidden("SupplierJson", Json.Encode(item))
+                                    @Html.RadioButton("Id", item.SupplierId)
+                                </td>
+                                <td>@item.SupplierCode</td>
+                                <td>@item.SupplierName</td>
+                                <td>@item.SupplierShortName</td>
+                                <td>@item.ServiceTrade</td>
+                                <td>@item.SupplierType</td>
+                            </tr>
+                        }
+                    }
+                </tbody>
+            </table>
+        </div>
+    </div>   
+</div>
+<script>
+    $("#btnConfirm").click(function () {
+        var checkedRadio = $("#select-table input[type=radio]:checked");
+        var tds = checkedRadio.parents("tr:first").find("td");
+        var item = JSON.parse(checkedRadio.prev().val());
+
+        if ($("#search-supplier-form #Type").val() == "1") {
+            SupplierSelectCallback1(item);
+        } else if ($("#search-supplier-form #Type").val() == "2") {
+            SupplierSelectCallback2(item);
+        } else if ($("#search-supplier-form #Type").val() == "3") {
+            SupplierSelectCallback3(item);
+        }
+    })
+
+    $("#btnSupplierQuery").click(function () {
+        $("#btnSupplierQuery").button("loading");
+
+        var params = $("#search-supplier-form").serializeJson();
+        $.post("/Constract/SupplierSelectSearch", params, function (data) {
+            if (data && data.List) {
+                $("#select-table tbody").empty();
+                $.each(data.List, function (index, item) {
+                    var tr = $("<tr>");
+                    tr.append($("<td>").append($("<input id='SupplierJson' type='hidden'>").val(JSON.stringify(item))).append($("<input id='Id' name='Id' type='radio'>").val(item.Id)));
+                    tr.append($("<td>").html(item.SupplierCode));
+                    tr.append($("<td>").html(item.SupplierName));
+                    tr.append($("<td>").html(item.SupplierShortName));
+                    tr.append($("<td>").html(item.ServiceTrade));
+                    tr.append($("<td>").html(item.SupplierType));
+                    $("#select-table tbody").append(tr);
+                })
+            }
+            //$("#select-table tbody").empty();
+            //$(data, function (index, item) {
+            //    var tr = $("<tr>");
+            //    tr.append($("<td>").append($("<input id='SupplierJson' type='hidden'>").val(JSON.stringify(item))).append($("<input id='Id' type='radio'>").val(item.Id)));
+            //    tr.append($("<td>").html(item.SupplierCode));
+            //    tr.append($("<td>").html(item.SupplierName));
+            //    tr.append($("<td>").html(item.SupplierShortName));
+            //    $("#select-table tbody").append(tr);
+            //})
+        }).complete(function () { $("#btnSupplierQuery").button("reset"); });
+    })
+</script>

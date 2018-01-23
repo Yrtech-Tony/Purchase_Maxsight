@@ -1,0 +1,57 @@
+﻿@charset "utf-8";
+/* CSS Document */
+
+body {
+    background: #61c2e2 url(../images/login-bg.png) repeat-x center top;
+}
+
+.login {
+    width: 683px;
+    height: 501px;
+    margin: 175px auto 0;
+    padding-top: 295px;
+    padding-left: 50px;
+    background: url(../images/login.png) no-repeat center top;
+}
+
+    .login input {
+        border: 0;
+    }
+
+    .login .username {
+        width: 193px;
+        margin-left: 35px;
+    }
+
+    .login .password {
+        width: 215px;
+        margin-left: 34px;
+    }
+
+    .login input[type=button]  {
+        background: none;
+        border: 0;
+        width: 110px;
+        font-size: 16px;
+        color: #fff;
+        font-weight: 700;
+        padding-top: 7px;
+        padding-left: 28px;
+        margin-left: -2px;
+    }
+
+        .login button:hover {
+            color: #fff;
+            background: none;
+        }
+
+.tip {
+    color: #fff;
+}
+
+.copyright {
+    font-size: 12px;
+    color: #3b79ea;
+    margin-top: 10px;
+}
+.login .form-group{display: inline-block;}

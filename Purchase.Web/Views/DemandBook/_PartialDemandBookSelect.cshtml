@@ -1,0 +1,131 @@
+﻿@using Purchase.Service.DTO
+@model IEnumerable<RequiremetMstDto>
+
+<form id="search-project-form">
+    <table style=" width: 100%;">
+        <tr>
+            <td colspan="10" style="text-align:right">
+                <a id="btnSearch" class="btn btn-primary" style="width:100px">查 询</a>
+                <a id="btnConfirm" class="btn btn-primary" style="width:100px">确 认</a>
+            </td>
+        </tr>
+        <tr>
+            <td>省份</td>
+            <td>
+                <input id="ProvincePopup" name="Province" class="form-control">
+            </td>
+            <td>城市</td>
+            <td>
+                <input id="CityPopup" name="City" class="form-control">
+            </td>
+        </tr>
+    </table>
+</form>
+<div class="count2">
+    <table style=" width: 100%;">
+        <tr>
+            <td colspan="10" style="text-align:right">
+                <a id="btnCheckAll" class="btn btn-primary" style="width:100px">全选</a>
+                <a id="btnNotcheckAll" class="btn btn-primary" style="width:100px">反选</a>
+            </td>
+        </tr>
+    </table>
+
+    <div style="position:relative">
+        <div id="search-result" class="table-responsive" style="max-height:350px;overflow: auto;">
+            <table id="select-table" class="table table-bordered table-condensed table-hover">
+                <thead>
+                    <tr>
+                        <th width="80">选择</th>
+                        <th>需求书Id</th>
+                        <th>需求书类型</th>
+                        <th>项目简称</th>
+                        <th>省份</th>
+                        <th>城市</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @if (Model != null)
+            {
+                foreach (RequiremetMstDto item in Model)
+                {
+                    <tr>
+                        <td>@Html.CheckBox("Id", item.RequirementId)</td>
+                        <td>@item.RequirementId</td>
+                        <td style="display:none">@item.RequirementType</td>
+                        <td>@item.RequirementName</td>
+                        <td>@item.ProjectShortName</td>
+                        <td>@item.Province</td>
+                        <td>@item.City</td>
+                        <td style="display:none">@item.Responsibilites</td>
+                    </tr>
+                }
+            }
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+<script>
+    $("#btnCheckAll").click(function () {
+        $("#search-result input[type=checkbox]").prop("checked", true).change();
+    })
+    $("#btnNotcheckAll").click(function () {
+        $("#search-result input[type=checkbox]").prop("checked", false).change();
+    })
+
+    $("#btnConfirm").click(function () {
+        var lstString = '';
+        var lstStringId = '';
+        var checkbox = $("#select-table input[type=checkbox]:checked");
+        $.each(checkbox, function (index,item) {
+            var tds = $(item).parents("tr:first").find("td");
+            lstString += tds.eq(1).html() + " " + tds.eq(5).html() + " " + tds.eq(6).text().trim() + ";";
+            lstStringId += tds.eq(1).html() + "," + tds.eq(2).html() + "," + tds.eq(5).html() + "," + tds.eq(6).text().trim() + "," + tds.eq(4).html() + "," + tds.eq(7).text() + ";";
+        });
+        if (lstString.length > 0) {
+            lstString = lstString.substr(0, lstString.length - 1);
+        }
+        if (lstStringId.length > 0) {
+            lstStringId = lstStringId.substr(0, lstStringId.length - 1);
+        }
+        //var tds = checkedRadio.parents("tr:first").find("td");
+        //var args = [];
+        //args.push(tds.eq(1).html());
+        //args.push(tds.eq(2).html());
+        //args.push(tds.eq(3).html());
+        //args.push(checkedRadio.val());
+        
+        $("#requirementSelected").html(lstString);
+        $("#requirementIdSelected").html(lstStringId);
+        
+        $("#myModal").modal("hide");
+    })
+    $("#btnSearch").click(function () {
+        var params = $("#search-project-form").serializeJson();
+        $.post("/DemandBook/RequirementSearchByProjectIdSearch", {
+            ProjectId: $("#ProjectId").val(),
+            GroupId: $("#sendemail-form #RequirementGroupId").val(),
+            Province: $("#ProvincePopup").val(),
+            City: $("#CityPopup").val()
+        }, function (data) {
+            if (data && data.List) {
+                $("#select-table tbody").empty();
+                $.each(data.List, function (index, item) {
+                    var tr = $("<tr>");
+                    tr.append($("<td>").append($("<input id='Id' type='checkbox'>").val(item.RequirementId)));
+                    tr.append($("<td>").html(item.RequirementId));
+                    tr.append($("<td style='display:none'>").html(item.RequirementType));
+                    tr.append($("<td>").html(item.RequirementName));
+                    tr.append($("<td>").html(item.ProjectShortName));
+                    tr.append($("<td>").html(item.Province));
+                    tr.append($("<td>").html(item.City));
+                    tr.append($("<td>").html(item.Responsibilites).hide());
+
+                    $("#select-table tbody").append(tr);
+                })
+            }
+           
+        })
+    })
+</script>

@@ -1,0 +1,162 @@
+﻿@using Purchase.Service.DTO
+@model IEnumerable<RequiremetMstDto>
+@{
+    string ModelType = Request.Form["ModelType"];
+}
+<form id="search-requirement-form">
+    <table style="width: 100%;">
+        <tr>
+            <td colspan="4" style="text-align:right">
+                <a id="btnSearchPopup" class="btn btn-primary" style="width:100px">查 询</a>
+                <a id="btnConfirmPopup" class="btn btn-primary" style="width:100px">确 认</a>
+            </td>
+        </tr>
+        <tr>
+            <td>省份</td>
+            <td>
+                <input id="ProvincePopup" name="Province" class="form-control">
+            </td>
+            <td>城市</td>
+            <td>
+                <input id="CityPopup" name="City" class="form-control">
+            </td>
+        </tr>
+    </table>
+</form>
+<table style=" width: 100%;">
+    <tr>
+        <td colspan="10" style="text-align:right">
+            <a id="btnCheckAll" class="btn btn-primary" style="width:100px">全选</a>
+            <a id="btnNotcheckAll" class="btn btn-primary" style="width:100px">反选</a>
+        </td>
+    </tr>
+</table>
+<div class="count2 table-responsive" style="max-height: 470px;overflow: auto;">
+    <table id="select-demandbook-table" class="table table-bordered table-condensed table-hover">
+        <thead>
+            <tr>
+                <th width="80">选择</th>
+                <th>需求书Id</th>
+                <th>需求书类型</th>
+                <th>项目简称</th>
+                <th>省份</th>
+                <th>城市</th>
+                @if (ModelType == "业务")
+                {
+                    <th id="Responsibilites">工作职责</th>
+                    <th id="ProjectType">项目类型</th>
+                    <th id="ExcuteMode">执行方式</th>
+                }
+                else
+                {
+                    <th id="PurchaseType">采购分类</th>
+                    <th id="PurchaseMode">采购方式</th>
+                }
+
+
+                <th>提供服务</th>
+                <th>品名</th>
+                <th>样本量</th>
+                <th>备注</th>
+            </tr>
+        </thead>
+        <tbody>
+            @if (Model != null)
+            {
+                foreach (RequiremetMstDto item in Model)
+                {
+                    <tr>
+                        <td>@Html.CheckBox("Id", false, new { data = Json.Encode(item) })</td>
+                        <td>@item.RequirementId</td>
+                        <td>@item.RequirementName</td>
+                        <td>@item.ProjectShortName</td>
+                        <td>@item.Province</td>
+                        <td>@item.City</td>
+                        @if (ModelType == "业务")
+                        {
+                            <td>@item.Responsibilites</td>
+                            <td>@item.ProjectType</td>
+                            <td>@item.ExcuteMode</td>
+                        }
+                        else
+                        {
+                            <td>@item.PurchaseType</td>
+                            <td>@item.PurchaseMode</td>
+                        }
+                        <td>@item.SupplyService</td>
+                        <td>@item.ItemName</td>
+                        <td>@item.Count</td>
+                        <td>@item.Remark</td>
+                    </tr>
+                }
+            }
+        </tbody>
+    </table>
+</div>
+<script>
+    $("#btnCheckAll").click(function () {
+        $("#select-demandbook-table input[type=checkbox]").prop("checked", true).change();
+    })
+    $("#btnNotcheckAll").click(function () {
+        $("#select-demandbook-table input[type=checkbox]").prop("checked", false).change();
+    })
+
+    $("#btnConfirmPopup").click(function () { 
+
+        var ids = "";
+        $("#select-demandbook-table input[type=checkbox]:checked").each(function () {
+            var args = JSON.parse($(this).attr("data"));
+            ids += args.RequirementId + ",";
+        });
+        if (ids.length > 0) {
+            ids = ids.substr(0, ids.length - 1);
+        } else {
+            return;
+        }
+        RequirementSelectCallback(ids);
+    })
+    $("#btnSearchPopup").click(function () {
+        var params = $("#search-requirement-form").serializeJson();
+        $.post("/DemandBook/RequirementSearchByProjectIdSearch", {
+            ProjectId: $("#ProjectId").val(),
+            GroupId: $("#search-quotation-form #RequirementGroupId").val(),
+            Province: $("#ProvincePopup").val(),
+            City: $("#CityPopup").val()
+        }, function (data) {
+            if (data && data.List) {
+                $("#select-demandbook-table tbody").empty();
+                $.each(data.List, function (index, item) {
+                    var tr = $("<tr>");
+                    tr.append($("<td>").append($("<input id='Id' type='checkbox'>").attr("data", JSON.stringify(item))));
+                    tr.append($("<td>").html(item.RequirementId));
+                    tr.append($("<td style='display:none'>").html(item.RequirementType));
+                    tr.append($("<td>").html(item.RequirementName));
+                    tr.append($("<td>").html(item.ProjectShortName));
+                    tr.append($("<td>").html(item.Province));
+                    tr.append($("<td>").html(item.City));
+                    if ($("#ModelType").val() == "业务") {
+                        $("#PurchaseType").hide();
+                        $("#PurchaseMode").hide();
+                        tr.append($("<td>").html(item.Responsibilites));
+                        tr.append($("<td>").html(item.ProjectType));
+                        tr.append($("<td>").html(item.ExcuteMode));
+                    }
+                    else {
+                        $("#Responsibilites").hide();
+                        $("#ProjectType").hide();
+                        $("#ExcuteMode").hide();
+                        tr.append($("<td>").html(item.PurchaseType));
+                        tr.append($("<td>").html(item.PurchaseMode));
+                    }
+                    tr.append($("<td>").html(item.SupplyService));
+                    tr.append($("<td>").html(item.ItemName));
+                    tr.append($("<td>").html(item.Count));
+                    tr.append($("<td>").html(item.Remark));
+
+                    $("#select-demandbook-table tbody").append(tr);
+                })
+            }
+
+        })
+    })
+</script>

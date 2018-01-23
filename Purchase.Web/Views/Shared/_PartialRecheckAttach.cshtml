@@ -1,0 +1,41 @@
+﻿<a id="attachPicker" class="btn btn-primary">选择附件</a>
+<!--用来存放文件信息-->
+<div class="uploader-list table-responsive" style="max-height: 280px; overflow-y: auto; margin-top: 3px; display: none">
+    <table class="table table-bordered table-condensed table-hover">
+        <thead>
+            <tr>
+                <th>文件名</th>
+                <th width="60">操作</th>
+            </tr>
+        </thead>
+        <tbody></tbody>
+    </table>
+</div>
+<link href="/Scripts/upload/webuploader.css" rel="stylesheet" />
+<script src="/Scripts/upload/webuploader.nolog.js"></script>
+<script src="~/Scripts/upload/uploader.tools.js"></script>
+<script>
+    var attachArray = [];
+    $(function () {
+        var mulUploader = new MulUploader({
+            url: '/ApplyCheck/AttachSave',
+            el: '#attachPicker',
+            uploadSuccess: function (retData) {
+                console.log("retData", retData);
+                attachArray.push(retData.fileName);
+            },
+            fileDelete: function (retData) {
+                $.post("/ApplyCheck/AttachDelete", { fileFullName: retData.fileFullName }, function () { });
+                
+                for (var i = 0; i < attachArray.length;i++) {
+                    if (attachArray[i] == retData.fileName) {
+                        attachArray.splice(i, 1);
+                        break;
+                    }
+                }
+                
+            }
+        });
+    })
+    
+</script>

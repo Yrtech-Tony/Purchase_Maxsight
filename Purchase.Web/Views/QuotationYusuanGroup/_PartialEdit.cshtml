@@ -1,0 +1,56 @@
+﻿@model Purchase.DAL.Quotation_Group_Yusuan
+<form id="QuotationYusuanGroupForm">
+    <div class="form-horizontal">
+        <div class="form-group">
+            <table style="width:80%">
+                <tr>
+                    <td colspan="6" style="text-align:right">
+                        <a id="btnSave" class="btn btn-primary" data-loading-text="提交中..." style="width:100px;height:35px">保 存</a>
+                    </td>
+                </tr>
+                <tr>
+                    <td>预算确认单组名称</td>
+                    <td>@Html.TextBoxFor(m => Model.QuotationYusuanGroupName, new { @class = "form-control" })</td>
+                </tr>
+                <tr>
+                    <td>预算终版</td>
+                    <td>@Html.CheckBox("LastChk", new { @class = "checkbox-inline", style = "height:16px; margin-right:3px;" })</td>
+                </tr>
+            </table>
+        </div>
+    </div>
+    <input type="hidden" id="ProjectId" name="ProjectId" />
+    <input type="hidden" id="Id" name="Id" value="0" />
+</form>
+<script>
+    $(function () {
+        $("#btnSave").click(function () {
+            debugger
+            if (!CommitCheck()) {
+                alert("正在审核中或者非本人添加的项目");
+                return false;
+            }
+            $(this).button('loading');//禁用按钮并显示提交中
+            $.post("/QuotationYusuanGroup/Save", $("#QuotationYusuanGroupForm").serialize(), function () {
+                $("#myModal").modal('hide');
+                load();
+            });
+        });
+        $("#btnRequirementGroupSelect").click(function () {
+            GroupSelect();
+        })
+    })
+    function GroupSelect() {
+        $("#supplierModal").modal("show");
+        $("#supplierModal .modal-title").html("选择需求书组");
+        $("#supplierModal .modal-body").empty();
+        $("#supplierModal .modal-body").load("/QuotationYusuanGroup/RequirementGroupSelect", { ProjectId: $("#ProjectId").val() }, function () {
+
+        });
+    }
+    function GroupSelectCallback(args) {
+        $("#QuotationYusuanGroupForm #RequirementGroupName").val(args[0]);
+        $("#QuotationYusuanGroupForm #RequirementGroupId").val(args[1]);
+        $("#supplierModal").modal("hide");
+    }
+</script>

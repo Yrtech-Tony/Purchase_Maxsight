@@ -1,0 +1,86 @@
+﻿<form id="QuotationType-form" class="form-horizontal">
+    <input id="GroupId" name="GroupId" type="hidden">
+    
+    <table style="width:90%">
+        <tr>
+            <td width="100">确认单类型</td>
+            <td>
+                <select id="QuotationType" name="QuotationType" class="form-control">
+                    <option value="Biancheng">编程</option>
+                    <option value="Zhixing">执行</option>
+                    <option value="Fuhe">复核</option>
+                    <option value="Yanjiu">研究</option>
+                    <option value="Qita1">其他1</option>
+                    <option value="Qita2">其他2</option>
+                    <option value="Chezhan">车展</option>
+                    <option value="Zhichi">支持</option>
+                    <option value="Youxingshangpincaigou">有形商品采购</option>
+                    <option value="Wuxingshangpincaigou">无形商品采购</option>
+                </select>
+            </td>
+            <td width="100">
+                <button type="button" class="btn btn-primary" onclick="openQuotation()">确认</button>
+            </td>
+        </tr>
+    </table>
+</form>
+
+<script>
+    $(function () {
+        BindQuotation();
+    })
+    function openQuotation() {
+        debugger
+        var quotationType =  $("#QuotationType").val();
+        if (quotationType == "Youxingshangpincaigou") 
+                                                       
+        {
+            quotationType="Qita1"
+        }
+        if (quotationType == "Wuxingshangpincaigou") {
+            quotationType = "Qita2"
+        }
+        var url = '/Quotation/Create?';
+        url += 'ModelType=' + $("#ModelType").val();
+        url += '&ProjectId=' + $("#search-form #ProjectId").val();
+        url += '&QuotationType=' + quotationType;
+        url += "&GroupId=" + $("#GroupId").val();
+        window.open(url);
+        OpenQuotationTypeFinish();
+    }
+    function BindQuotation() {
+        var bussiness = ["编程", "执行", "复核", "研究", "其他1", "其他2", "车展", "支持"];
+        var bussinessEn = ["Biancheng", "Zhixing", "Fuhe", "Yanjiu", "Qita1", "Qita2", "Chezhan", "Zhichi"];
+        var inter = ["有形商品采购", "无形商品采购"]
+        var interrEn = ["Youxingshangpincaigou", "Wuxingshangpincaigou"]
+        var el = $("#QuotationType");
+        var combo = $("<select id='QuotationType' name='QuotationType' class = 'form-control'> ");
+        var input = $("<input id='QuotationType' name='QuotationType' class = 'form-control'> ");
+
+        if ($("#ModelType").val() == "业务") {
+            el = changeSelectInput(el, combo, input, true);
+            for (i in bussiness) {
+                el.append($("<option>").html(bussiness[i]).val(bussinessEn[i]));
+            }
+        } else {
+            el = changeSelectInput(el, combo, input, true);
+            for (i in inter) {
+                el.append($("<option>").html(inter[i]).val(interrEn[i]));
+            }
+        }
+        $("#QuotationType").data("live-search", true).prop("title", "").selectpicker("refresh");
+    }
+    function changeSelectInput(el, combo, input, isDropdown) {
+        var newEl;
+        if (isDropdown) {
+            newEl = combo;
+        } else {
+            newEl = input;
+        }
+        var parent = el.parent();
+        parent.empty();
+        parent.append(newEl);
+
+        return newEl;
+    }
+</script>

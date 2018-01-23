@@ -1,0 +1,372 @@
+﻿@{
+    ViewBag.Title = "需求书组登记、查询、审核";
+    Layout = "~/Views/Shared/_PurchaseLayout.cshtml";
+}
+<div class="count inline-block">
+    <form id="search-form" class="form">
+        <table>
+            <tr>
+                <td colspan="11" style="text-align:right">
+                    <button id="btnQuery" type="button" class="btn btn-primary" style="width:100px">查 询</button>
+                    <button id="btnAdd" type="button" class="btn btn-primary" style="width:100px">新 增</button>
+                </td>
+            </tr>
+            <tr>
+                <td width="60">模块类型</td>
+                <td width="100">
+                    <select id="ModelType" name="ModelType" class="form-control"></select>
+                </td>
+                <td width="60">服务行业</td>
+                <td width="100">
+                    <select id="ServiceTrade" name="ServiceTrade" class="form-control"></select>
+                </td>
+                <td width="70">项目编号</td>
+                <td>
+                    <input id="ProjectId" name="ProjectId" class="form-control" type="hidden" />
+                    <input id="ProjectApplyStatusCode" name="ProjectApplyStatusCode" class="form-control" type="hidden" />
+                    <input id="ProjectUserChk" name="ProjectUserChk" class="form-control" type="hidden" />
+                    <input id="ProjectCode" name="ProjectCode" class="form-control" readonly="readonly" />
+                </td>
+                <td width="70">项目名称</td>
+                <td>
+                    <input id="ProjectName" name="ProjectName" class="form-control" readonly="readonly" />
+                </td>
+                <td width="70">项目简称</td>
+                <td>
+                    <input id="ProjectShortName" name="ProjectShortName" class="form-control" readonly="readonly" />
+                </td>
+                <td style="display:none">
+                    <input id="GroupId" name="GroupId" class="form-control" />
+                    <input id="ApplyId" name="ApplyId" class="form-control" />
+                    <input id="SeqNO" name="SeqNO" class="form-control" />
+                </td>
+                <td>
+                    <button id="btnProjectSelect" type="button" class="btn btn-primary" style="width:100px">选择项目</button>
+                </td>
+            </tr>
+        </table>
+    </form>
+    <table id="result-table" class="table table-bordered table-condensed">
+        <thead>
+            <tr>
+                <th width="80">提交审核</th>
+                <th width="50">删除</th>
+                <th width="50">详细</th>
+                <th>需求书组名</th>
+                <th>包含的需求书</th>
+                <th>操作</th>
+                <th>需求书复制</th>
+            </tr>
+        </thead>
+        <tbody></tbody>
+    </table>
+    <div id="apply-detail">
+
+    </div>
+</div>
+
+<div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-hidden="false">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
+                <h4 class="modal-title"></h4>
+            </div>
+            <div class="modal-body">
+            </div>
+        </div>
+    </div>
+</div>
+<div class="modal fade" id="myModal2" tabindex="-1" role="dialog" aria-hidden="false">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
+                <h4 class="modal-title"></h4>
+            </div>
+            <div class="modal-body">
+            </div>
+        </div>
+    </div>
+</div>
+<div class="modal fade" id="RequirementGroupModal" tabindex="-1" role="dialog" aria-hidden="false">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
+                <h4 class="modal-title"></h4>
+            </div>
+            <div class="modal-body">
+            </div>
+        </div>
+    </div>
+</div>
+@section Scripts {
+    <script src="~/Content/My97DatePicker/WdatePicker.js"></script>
+    <script src="~/Scripts/custom/form-serialize.js"></script>
+    <script src="~/Scripts/custom/date-format.js"></script>
+    <script>
+        $(function () {
+            //load();
+            ServiceTradeBind();// 绑定服务行业
+            $("#btnQuery").click(function () {
+                load();
+            })
+            $("#btnProjectSelect").click(function () {
+                ProjectSelect();
+            })
+            $("#btnAdd").click(function () {
+                if (!CommitCheck()) {
+                    alert("正在审核中或者非本人添加的项目");
+                    return false;
+                }
+                openNew();
+            })
+        })
+        function openNew(id, groupName) {
+            if (isEmpty($("#ProjectCode").val())) {
+                alert("请选择项目");
+                return
+            }
+            $("#myModal2").modal("show");
+            $("#myModal2 .modal-title").html("需求书组添加");
+            $("#myModal2 .modal-body").empty();
+            $("#myModal2 .modal-body").load("/DemandBookGroup/LoadPartial", { partialView: "_PartialEdit" }, function () {
+                $("#DemandBookGroupForm #ProjectId").val($("#search-form #ProjectId").val());
+                if (id) {
+                    debugger
+                    $("#DemandBookGroupForm #Id").val(id);
+                    $("#RequirementGroupName").val(groupName);
+                }
+            });
+        }
+        //删除
+        function delDemandBookGroup(GroupId) {
+            confirm("确定要删除此记录吗？", function () {
+                $.post("/DemandBookGroup/RequirementGroupDelete", { GroupId: GroupId }, function () {
+                    load();
+                })
+            });
+        };
+        function load() {
+            if (isEmpty($("#ProjectCode").val())) {
+                alert("请选择项目");
+                return
+            }
+            var params = $("#search-form").serializeJson();
+            $.post("/DemandBookGroup/RequirementGroupSearch", params, function (data) {
+                if (data && data.List) {
+                    $("#result-table tbody").empty();
+                    $("#RecheckUserSelect-table tbody").empty();
+
+                    $.each(data.List, function (index, item) {
+                        var tr = $("<tr>");
+
+                        //提交审核
+                        var applyLink = $("<a>");
+                        tr.append($("<td></td>").append(applyLink));
+                        if ((item.ApplyStatusCode == "" || item.ApplyStatusCode == "拒绝") && item.UserChk) {
+                            applyLink.html("提交审核");
+                            applyLink.attr("style", "cursor: pointer;");
+                            applyLink.click(function () {
+                                applyLink.attr("disabled", true);
+                                apply(item.GroupId, item.ApplyId, item.SeqNO);
+                                applyLink.attr("disabled", false);
+                            })
+                        }
+                        //删除
+                        var delLink = $("<a>");
+                        tr.append($("<td></td>").append(delLink));
+                        if (item.ApplyStatusCode == "" && item.UserChk) {
+                            delLink.html("删除");
+                            delLink.attr("style", "cursor: pointer;");
+                            delLink.click(function () {
+                                delDemandBookGroup(item.GroupId);
+                            })
+                        }
+
+                        var codeLink = $("<a>").html("详细");
+                        codeLink.attr("style", "cursor: pointer;");
+                        codeLink.click(function () {
+                            openNew(item.GroupId, item.RequirementGroupName);
+                        })
+                        tr.append($("<td></td>").append(codeLink));
+
+                        tr.append($("<td></td>").html(item.RequirementGroupName));
+
+                        var detailLink = $("<a>").html("包含的需求书");
+                        detailLink.attr("style", "cursor: pointer;");
+                        detailLink.click(function () {
+                            GroupDtl(item.ProjectId, item.GroupId);
+                        })
+                        tr.append($("<td></td>").append(detailLink));
+
+                        //添加需求书
+                        var addCityLink;
+                        // 业务修改为:需求书提交审核后还是可以修改，所以去掉了审核状态判断
+                        // if ((item.ApplyStatusCode == "" || item.ApplyStatusCode == "拒绝") && item.UserChk) {
+                        if (item.UserChk) {
+                            addCityLink = $("<a>").html("添加需求书");
+                            addCityLink.attr("style", "cursor: pointer;");
+                            addCityLink.click(function () {
+                                OpenProjectCityIndex(item.ProjectId, item.GroupId);
+                            })
+                        }
+                        tr.append($("<td></td>").append(addCityLink));
+                        //复制需求书
+                        var copyCityLink;
+                        // 业务修改为:需求书提交审核后还是可以修改，所以去掉了审核状态判断
+                        //if (item.ApplyStatusCode != "" || !item.UserChk)
+                        //{ }
+                        //else
+                        //{
+                        if (item.UserChk) {
+                            copyCityLink = $("<a>").html("需求书复制");
+                            copyCityLink.attr("style", "cursor: pointer;");
+                            copyCityLink.click(function () {
+                                DemandBookGroupCopy(item.GroupId);
+                            })
+                        }
+                        //}
+                        tr.append($("<td></td>").append(copyCityLink));
+
+                        $("#result-table tbody").append(tr);
+                    })
+                }
+            })
+        }
+        function ProjectSelect() {
+            $("#myModal").modal("show");
+            $("#myModal .modal-title").html("选择项目");
+            $("#myModal .modal-body").load("/DemandBook/ProjectSelect", { ModelType: $("#ModelType").val(), ProjectCode: "", ProjectName: "", ProjectShortName: "", ServiceTrade: $("#ServiceTrade").val() }, function () {
+            });
+        }
+        function ProjectSelectCallback(args) {
+            $("#search-form #ProjectCode").val(args[0]);
+            $("#search-form #ProjectName").val(args[1]);
+            $("#search-form #ProjectShortName").val(args[2]);
+            $("#search-form #ProjectId").val(args[3]);
+
+            GetProjects();
+            $("#myModal").modal("hide");
+            load();
+        }
+        function GroupDtl(ProjectId, GroupId) {
+            $("#apply-detail").show();
+            $("#apply-detail").load("/DemandBookGroup/GroupDtl", { ProjectId: ProjectId, GroupId: GroupId, ModelType: $("#ModelType").val() }, function () {
+                //$(this).append($("<input id='SupplierMngId' type='hidden'>").val(id));
+                //$(this).find("#RequirementGroupId").val(GroupId);
+                $("#GroupId").val(GroupId);
+
+            });
+        }
+        function apply(GroupId, ApplyId, SeqNO) {
+            $.post("/Projects/RecheckProcessExistChk", { recheckType: "需求书" }, function (data) {
+                if (data == 0) {
+                    alert("不在审核流程中，请联系管理人员添加");
+                    return false;
+                }
+                $("#ApplyId").val(ApplyId);
+                $("#SeqNO").val(SeqNO);
+                $("#GroupId").val(GroupId);
+
+                $("#myModal").modal("show");
+                $("#myModal .modal-title").html("选择审核人员");
+                $("#myModal .modal-body").load("/DemandBook/RecheckUserSelect", {}, function () {
+                    //  $(this).append($("<input id='ProjectId' type='hidden'>").val(id));
+                });
+            })
+
+        }
+        function isEmpty(value) {
+            if (value == "")
+                return true;
+            else
+                return false;
+        }
+        function GetCommitRequirement() {
+            var lstStringId = '';
+            var checkbox = $("#Requirement-table input[type=checkbox]:checked");
+            $.each(checkbox, function (index, item) {
+                var tds = $(item).parents("tr:first").find("td");
+                lstStringId += tds.eq(1).html() + ";"
+            });
+            if (lstStringId.length > 0) {
+                lstStringId = lstStringId.substr(0, lstStringId.length - 1);
+            }
+            $("#RequirementIdSelected").val(lstStringId);
+        }
+        function applyFinish() {
+            $("#myModal").modal("hide");//关闭弹出窗口
+            load()//刷新表格
+        }
+        function OpenProjectCityIndex(ProjectId, GroupId) {
+            var url = "/DemandBookGroup/ProjectCityIndex?";// + window.location.search;
+            url += "ProjectId=" + ProjectId;
+            url += "&GroupId=" + GroupId;
+            url += "&ModelType=" + $("#ModelType").val();
+
+            window.open(url);
+        }
+        function GetProjects() {
+            $.get("/Projects/FindOne", { id: $("#ProjectId").val() }, function (obj) {
+                debugger
+                $("#ProjectApplyStatusCode").val(obj.ApplyStatusCode);
+                $("#ProjectUserChk").val(obj.UserChk);
+            })
+        }
+        function CommitCheck() {
+            var ApplyStatusCode = $("#ProjectApplyStatusCode").val();
+            var UserChk = $("#ProjectUserChk").val();
+            if (ApplyStatusCode == undefined) {
+                ApplyStatusCode = "";
+            }
+            if (UserChk == undefined) {
+                UserChk = "true";
+            }
+            if (UserChk == "true") {
+                if (ApplyStatusCode != "") {
+                    if (ApplyStatusCode == "完成") {
+                        return true;
+                    }
+                    else {
+                        return false;
+                    }
+                }
+                else {
+                    return false;
+                }
+            }
+            else {
+                return false;
+            }
+        }
+
+        function DemandBookGroupCopy(groupId) {
+            $("#myModal").modal("show");
+            $("#myModal .modal-title").html("批量复制需求书");
+            $("#myModal .modal-body").load("/DemandBookGroup/DemandBookGroupCopy", {
+                ModelType: $("#ModelType").val()
+            }, function () {
+                $("#TargetGroupId").val(groupId);
+            });
+        }
+        function CopyDemandBookSelectFinish(groupId) {
+            GroupDtl($("#ProjectId").val(), groupId);
+            $("#myModal").modal("hide");
+        }
+        function ServiceTradeBind() {
+            var el = $("#ServiceTrade");
+            var modelType = $("#ModelType").val();
+            if (modelType.startsWith("其他")) {
+                el.append($("<option>").html("Trip").val("Trip"));
+                el.append($("<option>").html("Zebrac").val("Zebrac"));
+                el.append($("<option>").html("Star").val("Star"));
+            }
+            else {
+                el.append($("<option>").html("Max").val("Max"));
+            }
+            el.data("live-search", true).prop("title", "").selectpicker("refresh");
+        }
+    </script>
+}

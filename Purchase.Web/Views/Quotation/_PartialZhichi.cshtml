@@ -1,0 +1,447 @@
+﻿<table id="quotation-zhichi-table">
+    <tr>
+        <td width="80">执行省份</td>
+        <td>
+            <input id="zhixingshengfen" name="zhixingshengfen" class="form-control" />
+        </td>
+        <td width="80">执行城市</td>
+        <td>
+            <input id="zhixingchengshi" name="zhixingchengshi" class="form-control" />
+        </td>
+        <td width="70">项目</td>
+        <td width="130">
+            <input type="hidden" id="ProjectId" name="ProjectId" />
+            <input id="ProjectCode" name="ProjectCode" class="form-control"  disabled />
+        </td>
+        <td width="130">
+            <input id="ProjectName" name="ProjectName" class="form-control" disabled />
+        </td>
+        <td width="130">
+            <input id="ProjectShortName" name="ProjectShortName" class="form-control"  disabled />
+        </td>
+        <td>
+            <a id="btnProjectSelect" class="btn btn-primary" style="width:120px">选择项目</a>
+        </td>
+    </tr>
+    <tr>
+        <td width="80">需求书类型</td>
+        <td>
+            @Html.DropDownList("RequirementType", new List<SelectListItem> {
+                    new SelectListItem(){Text="",Value=""},
+                    new SelectListItem(){ Text="场地布展",Value="场地布展"},
+                    new SelectListItem(){ Text="布展要求",Value="布展要求"},
+                    new SelectListItem(){ Text="展车租赁",Value="展车租赁"},
+                    new SelectListItem(){ Text="展车运输",Value="展车运输"},
+                    new SelectListItem(){ Text="差旅要求",Value="差旅要求"},
+                }, new { @class = "form-control" })
+        </td>
+        <td width="80">分类</td>
+        <td>
+            @Html.DropDownList("fenlei", new List<SelectListItem> {
+                    new SelectListItem(){Text="",Value=""} },
+                    new { @class = "form-control" })
+        </td>
+       
+        <td>供应商</td>
+        <td width="130">
+            <input id="SupplierId" name="SupplierId" type="hidden" />
+            <input id="SupplierCode" name="SupplierCode" class="form-control"  disabled>
+        </td>
+        <td width="130"><input id="SupplierName" name="SupplierName" class="form-control"  disabled></td>
+        <td width="130"><input id="SupplierShortName" name="SupplierShortName" class="form-control" disabled></td>
+        <td>
+            <a id="btnSupplierSelect" class="btn btn-primary" style="width:120px">选择供应商</a>
+        </td>        
+    </tr>
+    <tr>
+        <td width="80">类型/品牌</td>
+        <td>
+            @Html.DropDownList("leixingpinpai",  new List<SelectListItem> {
+                    new SelectListItem(){Text="",Value=""} }, new { @class = "form-control" })
+        </td>
+        <td width="80">
+            核算单位
+        </td>
+        <td>
+            <input id="hesuandanwei" name="hesuandanwei" class="form-control">
+        </td>
+        <td width="80">单价</td>
+        <td>
+            <input id="danjia" name="danjia" class="form-control" type="number">
+        </td>   
+        <td width="80">数量</td>
+        <td>
+            <input id="shuliang" name="shuliang" class="form-control" type="number">
+        </td>   
+    </tr>
+    <tr>
+        <td width="80">备注</td>
+        <td colspan="7">
+            <textarea id="beizhu" name="beizhu" class="form-control"></textarea>
+        </td>
+    </tr>
+</table>
+
+<script>
+    $(function () {
+        var fenlei1 = ["", "执行场地", "房间/会议室", "灯光要求", "制冷/暖设备", "电量负载", "网络", "停车位", "其他说明"];
+        var fenlei2 = ["", "展板", "地毯", "桌椅", "沙发", "桌裙", "光源", "布线", "门", "叉车", "液压小推车数", "雪糕筒", "减速带", "玻璃会议室",
+           "车标覆盖", "地标制作", "区域标识制作", "背景墙制作", "前台展示", "指示牌", "对讲机", "安检门", "安检棒", "储物柜"];
+        var fenlei3 = ["", "本品展车", "竞品展车", "其他说明"];
+        var fenlei4 = ["", "展车运输", "车衣", "本品展车", "其他说明"];
+        var fenlei5 = ["", "到达交通", "餐饮住宿", "保险", "其他说明"];
+
+        $("#quotation-zhichi-table #RequirementType").change(function () {
+            var el = $("#quotation-zhichi-table #fenlei");
+            el.empty();
+            if ($(this).val() == "场地布展") {
+                for (i in fenlei1) {
+                    el.append($("<option>").html(fenlei1[i]).val(fenlei1[i]));
+                }
+                changeFeilei1();
+            } else if ($(this).val() == "布展要求") {
+                for (i in fenlei2) {
+                    el.append($("<option>").html(fenlei2[i]).val(fenlei2[i]));
+                }
+                changeFeilei2();
+            } else if ($(this).val() == "展车租赁") {
+                for (i in fenlei3) {
+                    el.append($("<option>").html(fenlei3[i]).val(fenlei3[i]));
+                }
+                changeFeilei3();
+            } else if ($(this).val() == "展车运输") {
+                for (i in fenlei4) {
+                    el.append($("<option>").html(fenlei4[i]).val(fenlei4[i]));
+                }
+                changeFeilei4();
+            } else if ($(this).val() == "差旅要求") {
+                for (i in fenlei5) {
+                    el.append($("<option>").html(fenlei5[i]).val(fenlei5[i]));
+                }
+                changeFeilei5();
+            }
+        })
+
+    })
+   
+    function changeFeilei1() {
+        var leixingpinpai1 = ["", "场馆", "专业赛道", "实路", "五星级酒店", "四星级酒店", "三星级酒店", "篷房", "代理公司", "其他", "不涉及", "不限制"];
+        var leixingpinpai2 = ["", "P房", "会议室（圆桌）", "会议室（课桌）", "会议室（沙发）", "指定会议室", "单面镜会议室", "不涉及", "不限制"];
+        var leixingpinpai3 = ["", "满足照明", "增加光源", "不涉及", "不限制"];
+        var leixingpinpai4 = ["", "空调", "风扇", "工业风扇", "加湿器", "暖气", "取暖炉", "小太阳", "不涉及", "不限制"];
+        var leixingpinpai5 = ["", "卓思统一", "不涉及", "不限制"];
+        var leixingpinpai6 = ["", "有线", "无线", "不涉及", "不限制"];
+        var leixingpinpai7 = ["", "固定停车场", "公共停车场", "不涉及", "不限制"];
+
+        $("#quotation-zhichi-table #fenlei").unbind("change");
+        $("#quotation-zhichi-table #fenlei").change(function () {
+            var el = $("#leixingpinpai");
+            var combo = $("<select id='leixingpinpai' name='leixingpinpai' class = 'form-control'> ");
+            var input = $("<input id='leixingpinpai' name='leixingpinpai' class = 'form-control'> ");
+
+            if ($(this).val() == "执行场地") {
+                el = changeSelectInput(el, combo, input, true);
+                for (i in leixingpinpai1) {
+                    el.append($("<option>").html(leixingpinpai1[i]).val(leixingpinpai1[i]));
+                }
+            } else if ($(this).val() == "房间/会议室") {
+                el = changeSelectInput(el, combo, input, true);
+                for (i in leixingpinpai2) {
+                    el.append($("<option>").html(leixingpinpai2[i]).val(leixingpinpai2[i]));
+                }
+            } else if ($(this).val() == "灯光要求") {
+                el = changeSelectInput(el, combo, input, true);
+                for (i in leixingpinpai3) {
+                    el.append($("<option>").html(leixingpinpai3[i]).val(leixingpinpai3[i]));
+                }
+            } else if ($(this).val() == "制冷/暖设备") {
+                el = changeSelectInput(el, combo, input, true);
+                for (i in leixingpinpai4) {
+                    el.append($("<option>").html(leixingpinpai4[i]).val(leixingpinpai4[i]));
+                }
+            } else if ($(this).val() == "电量负载") {
+                el = changeSelectInput(el, combo, input, true);
+                for (i in leixingpinpai5) {
+                    el.append($("<option>").html(leixingpinpai5[i]).val(leixingpinpai5[i]));
+                }
+            }
+            else if ($(this).val() == "网络") {
+                el = changeSelectInput(el, combo, input, true);
+                for (i in leixingpinpai6) {
+                    el.append($("<option>").html(leixingpinpai6[i]).val(leixingpinpai6[i]));
+                }
+            }
+            else if ($(this).val() == "停车位") {
+                el = changeSelectInput(el, combo, input, true);
+                for (i in leixingpinpai7) {
+                    el.append($("<option>").html(leixingpinpai7[i]).val(leixingpinpai7[i]));
+                }
+
+            } else if ($(this).val() == "其他说明") {
+                el = changeSelectInput(el, combo, input, false);
+            }
+        })
+    }
+
+    function changeFeilei2() {
+        var leixingpinpai1 = ["", "全新", "8成新", "不涉及", "不限制"];
+        var leixingpinpai2 = ["", "全新", "8成新", "不涉及", "不限制"];
+        var leixingpinpai3 = ["", "一套（一桌两椅）", "1.8米长桌", "不涉及", "不限制"];
+        var leixingpinpai4 = ["", "两人", "三人", "转角", "不涉及", "不限制"];
+        var leixingpinpai5 = ["", "桌裙", "桌布", "不涉及", "不限制"];
+        var leixingpinpai6 = ["", "射灯", "卤素灯", "孔明灯", "灯柱", "桁架", "不涉及", "不限制"];
+        var leixingpinpai7 = ["", "隐藏", "不涉及", "不限制"];
+        var leixingpinpai8 = ["", "带锁门", "门帘", "不涉及", "不限制"];
+        var leixingpinpai9 = ["", "卓思统一", "不涉及", "不限制"];
+        var leixingpinpai10 = ["", "卓思统一", "不涉及", "不限制"];
+        var leixingpinpai11 = ["", "卓思统一", "不涉及", "不限制"];
+        var leixingpinpai12 = ["", "卓思统一", "不涉及", "不限制"];
+        var leixingpinpai13 = ["", "卓思统一", "不涉及", "不限制"];
+        var leixingpinpai14 = ["", "静态伪装", "动态伪装", "不涉及", "不限制"];
+        var leixingpinpai15 = ["", "卓思统一", "不涉及", "不限制"];
+        var leixingpinpai16 = ["", "卓思统一", "不涉及", "不限制"];
+        var leixingpinpai17 = ["", "卓思统一", "不涉及", "不限制"];
+        var leixingpinpai18 = ["", "卓思统一", "不涉及", "不限制"];
+        var leixingpinpai19 = ["", "卓思统一", "不涉及", "不限制"];
+        var leixingpinpai20 = ["", "覆盖1公里", "覆盖5公里", "覆盖10公里", "不涉及", "不限制"];
+        var leixingpinpai21 = ["", "使用", "不涉及", "不限制"];
+        var leixingpinpai22 = ["", "使用", "不涉及", "不限制"];
+        var leixingpinpai23 = ["", "全新", "8成新", "不涉及", "不限制"];
+
+        $("#quotation-zhichi-table #fenlei").unbind("change");
+        $("#quotation-zhichi-table #fenlei").change(function () {
+            var el = $("#leixingpinpai");
+            var combo = $("<select id='leixingpinpai' name='leixingpinpai' class = 'form-control'> ");
+            var input = $("<input id='leixingpinpai' name='leixingpinpai' class = 'form-control'> ");
+
+            if ($(this).val() == "展板") {
+                for (i in leixingpinpai1) {
+                    el.append($("<option>").html(leixingpinpai1[i]).val(leixingpinpai1[i]));
+                }
+            } else if ($(this).val() == "地毯") {
+                el = changeSelectInput(el, combo, input, true);
+                for (i in leixingpinpai2) {
+                    el.append($("<option>").html(leixingpinpai2[i]).val(leixingpinpai2[i]));
+                }
+            } else if ($(this).val() == "桌椅") {
+                el = changeSelectInput(el, combo, input, true);
+                for (i in leixingpinpai3) {
+                    el.append($("<option>").html(leixingpinpai3[i]).val(leixingpinpai3[i]));
+                }
+            } else if ($(this).val() == "沙发") {
+                el = changeSelectInput(el, combo, input, true);
+                for (i in leixingpinpai4) {
+                    el.append($("<option>").html(leixingpinpai4[i]).val(leixingpinpai4[i]));
+                }
+            } else if ($(this).val() == "桌裙") {
+                el = changeSelectInput(el, combo, input, true);
+                for (i in leixingpinpai5) {
+                    el.append($("<option>").html(leixingpinpai5[i]).val(leixingpinpai5[i]));
+                }
+            }
+            else if ($(this).val() == "光源") {
+                el = changeSelectInput(el, combo, input, true);
+                for (i in leixingpinpai6) {
+                    el.append($("<option>").html(leixingpinpai6[i]).val(leixingpinpai6[i]));
+                }
+            }
+            else if ($(this).val() == "布线") {
+                el = changeSelectInput(el, combo, input, true);
+                for (i in leixingpinpai7) {
+                    el.append($("<option>").html(leixingpinpai7[i]).val(leixingpinpai7[i]));
+                }
+            }
+            else if ($(this).val() == "门") {
+                el = changeSelectInput(el, combo, input, true);
+                for (i in leixingpinpai8) {
+                    el.append($("<option>").html(leixingpinpai8[i]).val(leixingpinpai8[i]));
+                }
+            } else if ($(this).val() == "叉车") {
+                el = changeSelectInput(el, combo, input, true);
+                for (i in leixingpinpai9) {
+                    el.append($("<option>").html(leixingpinpai9[i]).val(leixingpinpai9[i]));
+                }
+            }
+            else if ($(this).val() == "液压小推车数") {
+                el = changeSelectInput(el, combo, input, true);
+                for (i in leixingpinpai10) {
+                    el.append($("<option>").html(leixingpinpai10[i]).val(leixingpinpai10[i]));
+                }
+            }
+            else if ($(this).val() == "雪糕筒") {
+                el = changeSelectInput(el, combo, input, true);
+                for (i in leixingpinpai11) {
+                    el.append($("<option>").html(leixingpinpai11[i]).val(leixingpinpai11[i]));
+                }
+            }
+            else if ($(this).val() == "减速带") {
+                el = changeSelectInput(el, combo, input, true);
+                for (i in leixingpinpai12) {
+                    el.append($("<option>").html(leixingpinpai12[i]).val(leixingpinpai12[i]));
+                }
+            } else if ($(this).val() == "玻璃会议室") {
+                el = changeSelectInput(el, combo, input, true);
+                for (i in leixingpinpai13) {
+                    el.append($("<option>").html(leixingpinpai13[i]).val(leixingpinpai13[i]));
+                }
+            } else if ($(this).val() == "车标覆盖") {
+                el = changeSelectInput(el, combo, input, true);
+                for (i in leixingpinpai14) {
+                    el.append($("<option>").html(leixingpinpai14[i]).val(leixingpinpai14[i]));
+                }
+            } else if ($(this).val() == "地标制作") {
+                el = changeSelectInput(el, combo, input, true);
+                for (i in leixingpinpai15) {
+                    el.append($("<option>").html(leixingpinpai15[i]).val(leixingpinpai15[i]));
+                }
+            }
+            else if ($(this).val() == "区域标识制作") {
+                el = changeSelectInput(el, combo, input, true);
+                for (i in leixingpinpai16) {
+                    el.append($("<option>").html(leixingpinpai16[i]).val(leixingpinpai16[i]));
+                }
+            }
+            else if ($(this).val() == "背景墙制作") {
+                el = changeSelectInput(el, combo, input, true);
+                for (i in leixingpinpai17) {
+                    el.append($("<option>").html(leixingpinpai17[i]).val(leixingpinpai17[i]));
+                }
+            } else if ($(this).val() == "前台展示") {
+                el = changeSelectInput(el, combo, input, true);
+                for (i in leixingpinpai18) {
+                    el.append($("<option>").html(leixingpinpai18[i]).val(leixingpinpai18[i]));
+                }
+            } else if ($(this).val() == "指示牌") {
+                el = changeSelectInput(el, combo, input, true);
+                for (i in leixingpinpai19) {
+                    el.append($("<option>").html(leixingpinpai19[i]).val(leixingpinpai19[i]));
+                }
+            } else if ($(this).val() == "对讲机") {
+                el = changeSelectInput(el, combo, input, true);
+                for (i in leixingpinpai20) {
+                    el.append($("<option>").html(leixingpinpai20[i]).val(leixingpinpai20[i]));
+                }
+            }
+            else if ($(this).val() == "安检门") {
+                el = changeSelectInput(el, combo, input, true);
+                for (i in leixingpinpai21) {
+                    el.append($("<option>").html(leixingpinpai21[i]).val(leixingpinpai21[i]));
+                }
+            }
+            else if ($(this).val() == "安检棒") {
+                el = changeSelectInput(el, combo, input, true);
+                for (i in leixingpinpai22) {
+                    el.append($("<option>").html(leixingpinpai22[i]).val(leixingpinpai22[i]));
+                }
+            }
+            else if ($(this).val() == "储物柜") {
+                el = changeSelectInput(el, combo, input, true);
+                for (i in leixingpinpai23) {
+                    el.append($("<option>").html(leixingpinpai23[i]).val(leixingpinpai23[i]));
+                }
+            }
+            else if ($(this).val() == "其他说明") {
+                el = changeSelectInput(el, combo, input, false);
+            }
+        })
+    }
+
+    function changeFeilei3() {
+        var leixingpinpai1 = ["", "量产车", "油泥模车", "模型车", "不涉及", "不限制"];
+        var leixingpinpai2 = ["", "卓思统一", "不涉及", "不限制"];
+
+        $("#quotation-zhichi-table #fenlei").unbind("change");
+        $("#quotation-zhichi-table #fenlei").change(function () {
+            var el = $("#leixingpinpai");
+
+            var combo = $("<select id='leixingpinpai' name='leixingpinpai' class = 'form-control'> ");
+            var input = $("<input id='leixingpinpai' name='leixingpinpai' class = 'form-control'> ");
+            if ($(this).val() == "本品展车") {
+                el = changeSelectInput(el, combo, input, true);
+                for (i in leixingpinpai1) {
+                    el.append($("<option>").html(leixingpinpai1[i]).val(leixingpinpai1[i]));
+                }
+            } else if ($(this).val() == "竞品展车") {
+                el = changeSelectInput(el, combo, input, true);
+                for (i in leixingpinpai2) {
+                    el.append($("<option>").html(leixingpinpai2[i]).val(leixingpinpai2[i]));
+                }
+            } else if ($(this).val() == "其他要求") {
+                el = changeSelectInput(el, combo, input, false);
+            }
+        })
+    }
+    
+    function changeFeilei4() {
+        var leixingpinpai1 = ["", "量产车", "油泥模车", "模型车", "不涉及", "不限制"];
+        var leixingpinpai2 = ["", "卓思统一", "不涉及", "不限制"];
+
+        $("#quotation-zhichi-table #fenlei").unbind("change");
+        $("#quotation-zhichi-table #fenlei").change(function () {
+            var el = $("#leixingpinpai");
+            var combo = $("<select id='leixingpinpai' name='leixingpinpai' class = 'form-control'> ");
+            var input = $("<input id='leixingpinpai' name='leixingpinpai' class = 'form-control'> ");
+            
+            if ($(this).val() == "本品展车") {
+                el = changeSelectInput(el, combo, input, true);
+                for (i in leixingpinpai1) {
+                    el.append($("<option>").html(leixingpinpai1[i]).val(leixingpinpai1[i]));
+                }
+            } else if ($(this).val() == "竞品展车") {
+                el = changeSelectInput(el, combo, input, true);
+                for (i in leixingpinpai2) {
+                    el.append($("<option>").html(leixingpinpai2[i]).val(leixingpinpai2[i]));
+                }
+            } else if ($(this).val() == "其他要求") {
+                el = changeSelectInput(el, combo, input, false);
+            }
+        })
+    }
+
+    function changeFeilei5() {
+        var leixingpinpai1 = ["", "市内", "城际", "不涉及", "不限制"];
+        var leixingpinpai2 = ["", "卓思统一", "不涉及", "不限制"];
+        var leixingpinpai3 = ["", "卓思统一", "不涉及", "不限制"];
+
+        $("#quotation-zhichi-table #fenlei").unbind("change");
+        $("#quotation-zhichi-table #fenlei").change(function () {
+            var el = $("#leixingpinpai");
+            var combo = $("<select id='leixingpinpai' name='leixingpinpai' class = 'form-control'> ");
+            var input = $("<input id='leixingpinpai' name='leixingpinpai' class = 'form-control'> ");
+
+            if ($(this).val() == "到达交通") {
+                el = changeSelectInput(el, combo, input, true);
+                for (i in leixingpinpai1) {
+                    el.append($("<option>").html(leixingpinpai1[i]).val(leixingpinpai1[i]));
+                }
+            } else if ($(this).val() == "餐饮住宿") {
+                el = changeSelectInput(el, combo, input, true);
+                for (i in leixingpinpai2) {
+                    el.append($("<option>").html(leixingpinpai2[i]).val(leixingpinpai2[i]));
+                }
+            } else if ($(this).val() == "保险") {
+                el = changeSelectInput(el, combo, input, true);
+                for (i in leixingpinpai3) {
+                    el.append($("<option>").html(leixingpinpai3[i]).val(leixingpinpai3[i]));
+                }
+            } else if ($(this).val() == "其他要求") {
+                el = changeSelectInput(el, combo, input, false);
+            }
+            $("#leixingpinpai").data("live-search", true).prop("title", "").selectpicker("refresh");
+        })
+    }
+
+    function changeSelectInput(el, combo, input, isDropdown) {
+        var newEl;
+        if (isDropdown) {
+            newEl = combo;
+        } else {
+            newEl = input;
+        }
+        var parent = el.parent();
+        parent.empty();
+        parent.append(newEl);
+
+        return newEl;
+    }
+</script>

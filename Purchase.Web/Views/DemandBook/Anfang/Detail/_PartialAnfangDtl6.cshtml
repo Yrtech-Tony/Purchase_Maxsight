@@ -1,0 +1,82 @@
+﻿@using Purchase.Web.Common
+@model Purchase.DAL.Requirement_Anfang_RequirementDtl6
+
+<form id="anfang-dtl6-form">
+    @Html.Hidden("SeqNO", 0)
+    <div class="form-horizontal">
+        <div class="form-group">
+            <label class="control-label col-md-4" for="FirstCommit_Time">首次提交-时间要求</label>
+            <div class="col-md-6">
+                @Html.DropDownListFor(m => m.FirstCommit_Time, SelectListTool.HiddenCodeList("需求书-暗访-资料提交-首次提交(时间要求)"),
+                       htmlAttributes: new { @class = "form-control", multiple = "" })
+            </div>
+        </div>
+        <div class="form-group">
+            <label class="control-label col-md-4" for="FirstCommit_CommitFile">首次提交-提交资料</label>
+            <div class="col-md-6">
+                @Html.DropDownListFor(m => m.FirstCommit_CommitFile, SelectListTool.HiddenCodeList("需求书-暗访-资料提交-首次提交(提交资料)"),
+                       htmlAttributes: new { @class = "form-control", multiple = "" })
+            </div>
+        </div>
+        <div class="form-group">
+            <label class="control-label col-md-4" for="FirstCommit_Type">首次提交-提交方式</label>
+            <div class="col-md-6">
+                @Html.DropDownListFor(m => m.FirstCommit_Type, SelectListTool.HiddenCodeList("需求书-暗访-资料提交-首次提交(提交方式)"),
+                      htmlAttributes: new { @class = "form-control", multiple = "" })
+            </div>
+        </div>
+        <div class="form-group">
+            <label class="control-label col-md-4" for="LastCommit_Time">最终提交-时间要求</label>
+            <div class="col-md-6">
+                @Html.DropDownListFor(m => m.LastCommit_Time, SelectListTool.HiddenCodeList("需求书-暗访-资料提交-最终提交(时间要求)"),
+                       htmlAttributes: new { @class = "form-control", multiple = "" })
+            </div>
+        </div>
+        <div class="form-group">
+            <label class="control-label col-md-4" for="LastCommit_CommitFile">最终提交-提交资料</label>
+            <div class="col-md-6">
+                @Html.DropDownListFor(m => m.LastCommit_CommitFile, SelectListTool.HiddenCodeList("需求书-暗访-资料提交-最终提交(提交资料)"),
+                       htmlAttributes: new { @class = "form-control", multiple = "" })
+            </div>
+        </div>
+        <div class="form-group">
+            <label class="control-label col-md-4" for="LastCommit_Type">最终提交-提交方式</label>
+            <div class="col-md-6">
+                @Html.DropDownListFor(m => m.LastCommit_Type, SelectListTool.HiddenCodeList("需求书-暗访-资料提交-最终提交(提交方式)"),
+                       htmlAttributes: new { @class = "form-control", multiple = "" })
+            </div>
+        </div>
+
+        <div class="form-group">
+            <label class="control-label col-md-4" for="RemarkDtl6">其他说明</label>
+            <div class="col-md-6">
+                @Html.TextAreaFor(m => m.RemarkDtl6, htmlAttributes: new { @class = "form-control", multiple="" })
+            </div>
+        </div>
+        <div class="form-group">
+            <div class="col-md-offset-2 col-md-10">
+                <input id="saveBtn" type="button" value="保存" class="btn btn-primary btn-check" data-loading-text="提交中..." style="width:100px;height:35px" />
+            </div>
+        </div>
+    </div>
+</form>
+<script>
+    $(function () {
+
+        $("#anfang-dtl6-form #saveBtn").click(function () {
+            if (!CommitCheck()) {
+                alert("正在审核中或者非本人添加的项目");
+                return false;
+            }
+            $(this).button("loading")
+            var params = $("#anfang-dtl6-form").serializeJson('&');
+            params = $.extend(params, getMstObject());
+
+            $.post("/DemandBook/SaveAnfangDtl6", params, function (data) {
+                $("#RequirementId").val(data);
+                loadAnfangDtl6();
+                closeModal();
+            });
+        })
+    })
+</script>

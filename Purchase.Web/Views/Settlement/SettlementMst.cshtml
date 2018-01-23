@@ -1,0 +1,551 @@
+﻿@{
+    ViewBag.Title = "结算单查询及发送邮件";
+    Layout = "~/Views/Shared/_PurchaseLayout.cshtml";
+}
+<div class="count inline-block">
+    <form id="search-form" class="form">
+        <table>
+            <tr>
+                <td colspan="10" style="text-align:right">
+                    <button id="btnQuery" type="button" class="btn btn-primary" style="width:100px">查 询</button>
+                    <button id="btnAdd" type="button" class="btn btn-primary" style="width:100px">新 增</button>
+                    <button id="btnSave" type="button" class="btn btn-primary" style="width:100px">保 存</button>
+                    <a id="btnExport" onclick="exportExcel()" class="btn btn-primary" style="width:100px" data-loading-text="正在导出...">导出Excel</a>
+                </td>
+            </tr>
+            <tr>
+                <td width="60">模块类型</td>
+                <td width="120">
+                    <select id="ModelType" name="ModelType" class="form-control"></select>
+                </td>
+                <td width="60">服务行业</td>
+                <td width="100">
+                    <select id="ServiceTrade" name="ServiceTrade" class="form-control"></select>
+                </td>
+                <td width="80">项目名称</td>
+                <td width="240">
+                    <input id="ProjectId" name="ProjectId" class="form-control" type="hidden" />
+                    <input id="ProjectName" name="ProjectName" class="form-control" disabled />
+                </td>
+                <td width="60">项目简称</td>
+                <td width="180">
+                    <input id="ProjectShortName" name="ProjectShortName" class="form-control" disabled />
+                    <input id="ProjectApplyStatusCode" name="ProjectApplyStatusCode" class="form-control" type="hidden" />
+                    <input id="ProjectUserChk" name="ProjectUserChk" class="form-control" type="hidden" />
+                </td>
+                <td width="100">
+                    <a id="btnProjectSelect" class="btn btn-primary" style="width:100px">选择项目</a>
+                </td>
+            </tr>
+            <tr>   
+                <td>
+                    废弃与否
+                </td>
+                <td>
+                    <select name="DelChk" class="form-control">
+                        <option value="">全部</option>
+                        <option value="Y">是</option>
+                        <option value="N">否</option>
+                    </select>
+                </td>   
+                <td></td>    
+                <td></td>          
+                <td>供应商</td>
+                <td colspan="3">
+                    <input id="SupplierId" name="SupplierId" class="form-control" type="hidden" />
+                    <input id="SupplierName" name="SupplierName" class="form-control" disabled>
+                </td>
+                <td width="100">
+                    <a id="btnSupplierSelect" class="btn btn-primary" style="width:100px">选择供应商</a>
+                </td>
+            </tr>
+        </table>
+    </form>
+    <table id="amt-table" style="width: 550px;">
+        <tr>
+            <td width="80"><strong>项目预算：</strong></td>
+            <td style="text-align:left" width="100"><span id="ProjectSumAmt"></span></td>
+            <td width="90"><strong>已提交金额：</strong></td>
+            <td style="text-align:left" width="100"><span id="CommitAmt"></span></td>
+            <td width="80"><strong>剩余金额：</strong></td>
+            <td style="text-align:left" width="100"><span id="LastAmt"></span></td>
+        </tr>
+    </table>
+    <div class="table-responsive">
+        <table id="SettlementMst-table" class="table table-bordered table-condensed table-hover">
+            <thead>
+                <tr>
+                    <th width="50">选择</th>
+                    <th>详细</th>
+
+                    <th>项目简称</th>
+                    <th>确认单组</th>
+                    <th>供应商名称</th>
+                    <th>序号</th>
+                    <th>预算金额</th>
+                    <th>结算单金额</th>
+                    <th>是否填写扣款</th>
+                    <th>是否填写追加</th>
+                    <th>是否添加到结算单组</th>
+                    <th>审核状态</th>
+                    <th>最后一次结算单</th>
+                    <th>是否废弃</th>
+                    <th>分配流转单</th>
+                    <th>发送邮件</th>
+                </tr>
+            </thead>
+            <tbody></tbody>
+        </table>
+    </div>
+    <div id="pagination" class="pull-right">
+        <ul id="pageUl"></ul>
+    </div>
+</div>
+<div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-hidden="false">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
+                <h4 class="modal-title"></h4>
+            </div>
+            <div class="modal-body">
+            </div>
+        </div>
+    </div>
+</div>
+<div class="modal fade" id="quotationGroupModal" tabindex="-1" role="dialog" aria-hidden="false">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
+                <h4 class="modal-title"></h4>
+            </div>
+            <div class="modal-body">
+            </div>
+        </div>
+    </div>
+</div>
+<div class="modal fade" id="applyModal" tabindex="-1" role="dialog" aria-hidden="false">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
+                <h4 class="modal-title"></h4>
+            </div>
+            <div class="modal-body">
+            </div>
+        </div>
+    </div>
+</div>
+@section Scripts {
+    <script src="~/Scripts/custom/form-serialize.js"></script>
+    <script>
+        $(function () {
+            ServiceTradeBind();// 绑定服务行业
+
+            $("#btnAdd").click(function () {
+                addSettlementDtl();
+            })
+            $("#btnQuery").click(function () {
+                load();
+            })
+            $("#btnSave").click(function () {
+                // 判断项目是否为本人添加的项目
+                if (!CommitCheck()) {
+                    alert("正在审核中或者非本人添加的项目");
+                    return false;
+                }
+
+                var necessityCheck = "";
+                var optionalCheck = "";
+                var jsonArr = [];
+                $("#SettlementMst-table tbody tr").each(function (i, tr) {
+                    if (i == $("#SettlementMst-table tbody tr").length - 1) {
+                        //最后一行是合计，不保存
+                        return;
+                    }
+                    var form = $("<form>").append($(tr).clone());
+                    var obj = form.serializeJson();
+                    //obj.SettleChk = $(this).find("#SettleChk").is(":checked");
+                    obj.DelChk = $(this).find("#DelChk").is(":checked");
+                    jsonArr.push(obj);
+                    //if (obj.SettleChk == true) {
+                    //    var tds = $(tr).find("td");
+                    //    var projectSupplerName = "供应商：" + tds.eq(5).text();
+                    //    if ($(tr).attr("SettlementDtlFinishCheck") != "true") {
+                    //        necessityCheck += projectSupplerName + " 的结算单详细没有填写完毕<br>";
+                    //        return;
+                    //    }
+                    //    if ($(tr).attr("SettlementDtlDebitCheck") != "true") {
+                    //        optionalCheck += projectSupplerName + " 的扣款或追加没有填写<br>";
+                    //        return;
+                    //    }
+                    //    if ($(tr).attr("SettlementDtlAdditionalCheck") != "true") {
+                    //        optionalCheck += projectSupplerName + " 的扣款或追加没有填写<br>";
+                    //        return;
+                    //    }
+                    //}
+                });
+                if (necessityCheck.length > 0) {
+                    optionalCheck += "\n不能保存"
+                    alert(necessityCheck);
+                    return;
+                }
+
+                var saveFun = function () {
+                    $("#btnSave").button("loading");
+                    $.post("/Settlement/SaveSettlementMsts", {
+                        jsonArr: JSON.stringify(jsonArr),
+                        ProjectId: $("#ProjectId").val(),
+                        SupplierId: $("#SupplierId").val()
+                    }, function () {
+                        alert("保存成功！");
+                        load();
+                    }).complete(function () { $("#btnSave").button("reset"); });
+                }
+                if (optionalCheck.length > 0) {
+                    optionalCheck += "\n确认要继续保存吗？"
+                    confirm(optionalCheck, saveFun);
+                } else {
+                    saveFun();
+                }
+            })
+
+            $("#btnProjectSelect").click(function () {
+                ProjectSelect();
+            })
+            $("#btnSupplierSelect").click(function () {
+                SupplierSelect(1);
+            })
+
+            //接受查询参数（打开一个新的界面时或从编辑返回时传的）
+            var query = getQueryString("queryParams");
+            if (query && query.length > 0) {
+                var queryObj = JSON.parse(query);
+                $("#search-form").setForm(queryObj);
+                $("#btnQuery").trigger("click");
+            }
+        })
+        function exportExcel() {
+            var ids = '';
+            $("#SettlementMst-table input[name=selectCheckbox]:checked").each(function (i, item) {
+                var ri = $(this).closest("td").index("table>td");
+                var projectId = $("#ProjectId").val();
+                var supplierId = $(this).parents("tr").find("td:eq(4)").text();
+                var projectShortName = $("#ProjectShortName").val();
+                var projectCode = "";
+                var supplierName = $(this).parents("tr").find("td:eq(5)").text();
+                var projectName = $("#ProjectName").val();
+                var modelType = $("#ModelType").val();
+                var QuotationGroupId = $("#QuotationGroupId", $(this).parents("tr")).val();
+                var SettlementId = $("#SettlementId", $(this).parents("tr")).val();
+
+                ids += projectId + "," + supplierId + "," + projectShortName + "," + projectCode + "," + supplierName + "," + projectName + "," + modelType + "," + QuotationGroupId + "," + SettlementId + ";";
+            });
+            if (ids.length > 0) {
+                ids = ids.substr(0, ids.length - 1);
+            } else {
+                alert("请至少勾选一条记录");
+                return false;
+            }
+            $("#btnExport").button("loading");
+            alert("正在导出...");
+            $.post("/SettlementExport/SettlementExport", { list: ids }, function (data) {
+                window.location.href = "/SettlementExport/DownloadFile?fileName=" + data.ExportPath;
+            }).complete(function () {
+                $("#btnExport").button("reset");
+                closealert();
+            });
+        }
+        function load() {
+            if ($("#ProjectId").val() == null || $("#ProjectId").val() == "") {
+                alert("请选择项目");
+                return false;
+            }
+
+            $("#btnQuery").button("loading");
+            LoadBugetAmt();
+            var params = $("#search-form").serializeJson();
+            $.post("/Settlement/LoadSettlementMsts", params, function (data) {
+                if (data) {
+                    if (data.List) {
+                        $("#SettlementMst-table tbody").empty();
+                        $.each(data.List, function (index, item) {
+                            $("#SettlementMst-table tbody").append(bindTr(item));
+                        })
+                    }
+
+                    if (data.List && data.List.length > 0) {
+                        //金额合计
+                        var supplierBugetAmtheji = 0;
+                        var supplierAmtheji = 0;
+                        $.each(data.List, function (index, item) {
+                            supplierBugetAmtheji += parseFloat(item.SupplierBugetAmt);
+                            supplierAmtheji += parseFloat(item.SupplierAmt);
+                        })
+
+                        var tdCount = $("#SettlementMst-table th").length;
+                        var tr = $("<tr>");
+                        for (var i = 0; i < tdCount; i++) {
+                            if (i == 5) {
+                                tr.append($("<td>").append($("<strong>").text("合计")));
+                            } else if (i == 6) {
+                                //tr.append($("<td>").append($("<strong>").text(supplierBugetAmtheji.toFixed(2))));
+                                tr.append($("<td>").text(""));
+                            } else if (i == 7) {
+                                tr.append($("<td>").append($("<strong>").text(supplierAmtheji.toFixed(2))));
+                            }
+                            else {
+                                tr.append($("<td>").text(""));
+                            }
+                        }
+                        $("#SettlementMst-table tbody").append(tr);
+                    }
+                }
+            }).complete(function () { $("#btnQuery").button("reset"); })
+        };
+
+        function bindTr(item) {
+            var tr = $("<tr>");
+            tr.append($("<td></td>").append($("<input type='checkbox' name='selectCheckbox'>")));
+            var sendbtn = $("<a>").html("详细");
+            sendbtn.css("cursor", "pointer");
+            sendbtn.click(function () {
+                openSettlementDtl(item);
+            })
+            tr.append($("<td></td>").append(sendbtn));
+
+            // tr.append($("<td></td>").html(item.ProjectName));
+            tr.append($("<td></td>").html(item.ProjectShortName));
+            tr.append($("<td></td>").html(item.QuotationGroupName));
+            tr.append($("<td style='display:none'></td>").html(item.SupplierId));
+            tr.append($("<td></td>").html(item.SupplierName));
+            tr.append($("<td></td>").html(item.SeqNO_Supplier));
+            tr.append($("<td></td>").html(item.SupplierBugetAmt));
+            if (parseFloat(item.SupplierBugetAmt) < parseFloat(item.SupplierAmt)) {
+                tr.append($("<td  style='color:red'></td>").html(parseFloat(item.SupplierAmt).toFixed(2)));
+            } else {
+                tr.append($("<td></td>").html(parseFloat(item.SupplierAmt).toFixed(2)));
+            }
+            //  tr.append($("<td></td>").html(item.SettlementDtlFinishCheck ? "是" : "否"));
+            tr.append($("<td></td>").html(item.SettlementDtlDebitCheck ? "是" : "否"));
+            tr.append($("<td></td>").html(item.SettlementDtlAdditionalCheck ? "是" : "否"));
+            tr.append($("<td></td>").html(item.CommitGroupChk ? "是" : "否"));
+            tr.append($("<td></td>").html(item.CommitGroupApplyStatusCode));
+
+            var settlementIdHidden = $("<input type='hidden'id='SettlementId' name='SettlementId'>").val(item.SettlementId);
+            var quotationGroupIdHidden = $("<input type='hidden'id='QuotationGroupId' name='QuotationGroupId'>").val(item.QuotationGroupId);
+            tr.append($("<td style='display:none'></td>").append(settlementIdHidden).append(quotationGroupIdHidden));
+            //最后一次结算
+            tr.append($("<td></td>").html(item.SettleChk ? "是" : "否"));
+            //是否废弃
+            tr.append($("<td></td>").append($("<input id='DelChk' type='checkbox'>").attr("checked", item.DelChk)));
+
+            //SettlementDtlFinishCheck，SettlementDtlDebitCheck，SettlementDtlAdditionalCheck
+            // tr.attr("SettlementDtlFinishCheck", item.SettlementDtlFinishCheck);
+            tr.attr("SettlementDtlDebitCheck", item.SettlementDtlDebitCheck);
+            tr.attr("SettlementDtlAdditionalCheck", item.SettlementDtlAdditionalCheck);
+
+            //分配流转单
+            var allotFlowBtn = $("<a>").html("分配流转单");
+            allotFlowBtn.css("cursor", "pointer");
+            allotFlowBtn.click(function () {
+                openFlowOrderDtl(item);
+            })
+            tr.append($("<td></td>").append(allotFlowBtn));
+            //发送邮件
+            if (CommitCheck()) {
+                var sendbtn = $("<a>").html("发送邮件");
+                var url = "/Settlement/EmailSend?";
+                url += "ModelType=" + getQueryString("ModelType");
+                url += "&projectId=" + item.ProjectId;
+                url += "&supplierId=" + item.SupplierId;
+                url += "&SettlementId=" + item.SettlementId;
+                url += "&QuotationGroupId=" + item.QuotationGroupId;
+                sendbtn.attr("href", url);
+                sendbtn.click(function () {
+                    if (parseFloat($("#LastAmt").text()) < 0) {
+                        alert("各供应商结算总金额超出项目预算，不能发送邮件");
+                        return false;
+                    }
+                    if (parseFloat(item.SupplierBugetAmt) < parseFloat(item.SupplierAmt)) {
+                        alert("供应商结算金额超出预算金额，不能发送邮件");
+                        return false;
+                    }
+                    if (!item.CommitGroupChk || !item.RecheckFinishCheck) {
+                        alert("供应商的结算单未审核完毕，不能发送邮件");
+                        return false;
+                    }
+                })
+                tr.append($("<td></td>").append(sendbtn));
+            } else {
+                tr.append($("<td></td>"));
+            }
+
+            return tr;
+        }
+
+        function ProjectSelect() {
+            $("#myModal .modal-body").empty();
+            $("#myModal").modal("show");
+            $("#myModal .modal-title").html("选择项目");
+            $("#myModal .modal-body").load("/DemandBook/ProjectSelect", { ModelType: $("#ModelType").val(), ProjectCode: "", ProjectName: "", ProjectShortName: "", ServiceTrade: $("#ServiceTrade").val() }, function () {
+
+            });
+        }
+        function SupplierSelect(type) {
+            $("#myModal .modal-body").empty();
+            $("#myModal").modal("show");
+            $("#myModal .modal-title").html("选择供应商");
+            $("#myModal .modal-body").load("/Constract/SupplierMngSelect",
+                { SupplierCode: "", SupplierName: "", SupplierShortName: "", province: '', city: '' }, function () {
+                    $("#myModal .modal-body #Type").val(type)
+                });
+        }
+
+        function addSettlementDtl() {
+            if (!CommitCheck()) {
+                alert("正在审核中或者非本人添加的项目");
+                return false;
+            }
+            if ($("#SupplierId").val() == null || $("#SupplierId").val() == "") {
+                alert("请选择供应商");
+                return false;
+            }
+            $("#myModal .modal-body").empty();
+            $("#myModal").modal("show");
+            $("#myModal .modal-title").html("结算单登记");
+            $("#myModal .modal-body").load("/Settlement/LoadPartial",
+                { partialView: "_PartialSettlementAdd" }, function () {
+                    $("#PopupProjectId").val($("#ProjectId").val());
+                    $("#PopupSupplierId").val($("#SupplierId").val());
+                });
+        }
+
+        function openSettlementDtl(item) {
+            $("#myModal .modal-body").empty();
+            $("#myModal .modal-title").html("结算单详细");
+            $("#myModal").modal("show");
+            $("#myModal .modal-body").load("/Settlement/LoadPartial",
+                { partialView: "_PartialSettlementDtl" }, function () {
+                    $("#PopupSettlementId").val(item.SettlementId);
+                    $("#PopupProjectId").val(item.ProjectId);
+                    $("#PopupSupplierId").val(item.SupplierId);
+                    $("#PopupQuotationGroupId").val(item.QuotationGroupId);
+                    $("#PopupSeqNO_Supplier").val(item.SeqNO_Supplier);
+                    $("#PopupDelChk").val(item.DelChk);
+                    $("#SettleChk").prop("checked", item.SettleChk);
+
+                    loadSettlementDtls();
+                });
+        }
+        function settlementDtlCallback() {
+            $("#myModal").modal("hide");
+            load();
+        }
+        //分配流转单
+        function openFlowOrderDtl(item) {
+            $("#myModal .modal-body").empty();
+            $("#myModal .modal-title").html("分配流转单");
+            $("#myModal").modal("show");
+            $("#myModal .modal-body").load("/Settlement/LoadFlowOrder", {
+                projectId: item.ProjectId,
+                supplierId: item.SupplierId,
+                settlementId: item.SettlementId,
+                settleChk: item.SettleChk
+            }, function () {
+                debugger
+                $("#SupplierAmt").val(item.SupplierAmt);
+                $("#AllotSettlementId").val(item.SettlementId);
+                if (item.SettleChk) {
+                    $("#SettleChk").attr("checked", 'true');
+                }
+                SelectItem = item;
+            });
+        }
+
+        function ProjectSelectCallback(args) {
+            $("#ProjectName").val(args[1]);
+            $("#ProjectShortName").val(args[2]);
+            $("#ProjectId").val(args[3]);
+            $("#myModal").modal("hide");
+            GetProjects();
+            LoadBugetAmt();
+        }
+
+        function SupplierSelectCallback1(args) {
+            $("#SupplierName").val(args.SupplierName);
+            $("#SupplierId").val(args.SupplierId);
+            $("#myModal").modal("hide");
+        }
+        function GetProjects() {
+            $.get("/Projects/FindOne", { id: $("#ProjectId").val() }, function (obj) {
+                $("#ProjectApplyStatusCode").val(obj.ApplyStatusCode);
+                $("#ProjectUserChk").val(obj.UserChk);
+            })
+        }
+
+        function LoadBugetAmt() {
+            $.post("/Settlement/LoadBugetAmt", { projectId: $("#ProjectId").val() }, function (data) {
+                if (data && data.BugetAmtDto) {
+                    if (data.BugetAmtDto.CommitAmt == null) {
+                        data.BugetAmtDto.CommitAmt = "0";
+                    }
+                    if (data.BugetAmtDto.YusuanAmt_Projects == null) {
+                        data.BugetAmtDto.YusuanAmt_Projects = "0";
+                    }
+                    $("#ProjectSumAmt").text(parseFloat(data.BugetAmtDto.YusuanAmt_Projects).toFixed(2));
+                    $("#CommitAmt").text(data.BugetAmtDto.CommitAmt);
+                    var lastAmt = parseFloat(parseFloat(data.BugetAmtDto.YusuanAmt_Projects) - parseFloat(data.BugetAmtDto.CommitAmt)).toFixed(2);
+                    if (isNaN(lastAmt)) {
+                        lastAmt = "0";
+                    }
+                    $("#LastAmt").text(lastAmt);
+                    if (lastAmt < 0) {
+                        $("#amt-table span").css("color", "red");
+                    }
+                }
+            })
+        }
+
+        function CommitCheck() {
+            var ApplyStatusCode = $("#ProjectApplyStatusCode").val();
+            var UserChk = $("#ProjectUserChk").val();
+            if (ApplyStatusCode == undefined) {
+                ApplyStatusCode = "";
+            }
+            if (UserChk == undefined) {
+                UserChk = "true";
+            }
+            if (UserChk == "true") {
+                if (ApplyStatusCode != "") {
+                    if (ApplyStatusCode == "完成") {
+                        return true;
+                    }
+                    else {
+                        return false;
+                    }
+                }
+                else {
+                    return false;
+                }
+            }
+            else {
+                return false;
+            }
+        }
+        function ServiceTradeBind() {
+            var el = $("#ServiceTrade");
+            var modelType = $("#ModelType").val();
+            if (modelType.startsWith("其他")) {
+                el.append($("<option>").html("Trip").val("Trip"));
+                el.append($("<option>").html("Zebrac").val("Zebrac"));
+                el.append($("<option>").html("Star").val("Star"));
+            }
+            else {
+                el.append($("<option>").html("Max").val("Max"));
+            }
+            el.data("live-search", true).prop("title", "").selectpicker("refresh");
+        }
+    </script>
+}

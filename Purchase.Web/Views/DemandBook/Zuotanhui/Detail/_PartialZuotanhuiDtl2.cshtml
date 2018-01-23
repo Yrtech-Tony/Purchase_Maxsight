@@ -1,0 +1,69 @@
+﻿@using Purchase.Web.Common
+@model Purchase.DAL.Requirement_Zuotanhui_RequirementDtl2
+
+<form id="Zuotanhui-dtl2-form">
+    @Html.Hidden("SeqNO", 0)
+    <div class="form-horizontal">
+        <div class="form-group">
+            <label class="control-label col-md-2" for="">执行场地要求</label>
+            <div class="col-md-8">
+                @Html.DropDownListFor(m => m.zhixingchangdiyaoqiu, SelectListTool.HiddenCodeList("需求书-座谈会-执行要求-执行场地要求")
+                , htmlAttributes: new { @class = "form-control", multiple = "" })
+            </div>
+        </div>
+        <div class="form-group">
+            <label class="control-label col-md-2" for="">访问时长</label>
+            <div class="col-md-8">
+                @Html.DropDownListFor(m => m.fangwenshichang, SelectListTool.HiddenCodeList("需求书-座谈会-执行要求-访问时长")
+                , htmlAttributes: new { @class = "form-control", multiple = "" })
+            </div>
+        </div>
+        <div class="form-group">
+            <label class="control-label col-md-2" for="">培训方式</label>
+            <div class="col-md-8">
+                @Html.DropDownListFor(m => m.peixunfangshi, SelectListTool.HiddenCodeList("需求书-座谈会-执行要求-培训方式")
+                , htmlAttributes: new { @class = "form-control", multiple = "" })
+            </div>
+        </div>
+        @*<div class="form-group">
+            <label class="control-label col-md-2" for="">本品名单</label>
+            <div class="col-md-8">
+                @Html.DropDownListFor(m => m.benpingmingdan, SelectListTool.HiddenCodeList("需求书-座谈会-执行要求-本品名单")
+                , htmlAttributes: new { @class = "form-control", multiple = "" })
+            </div>
+        </div>*@
+        <div class="form-group">
+            <label class="control-label col-md-2" for="TemplateName">其他说明</label>
+            <div class="col-md-8">
+                @Html.TextAreaFor(m => m.qitashuoming2, htmlAttributes: new { @class = "form-control", multiple="" })
+            </div>
+        </div>
+        <div class="form-group">
+            <div class="col-md-offset-2 col-md-10">
+                <input id="saveBtn" type="button" value="保存" class="btn btn-primary btn-check" data-loading-text="提交中..." style="width:100px;height:35px" />
+            </div>
+        </div>
+    </div>
+</form>
+<script>
+    $(function () {
+        //if ($("#ApplyStautCode").val() != "") {
+        //    $("#saveBtn").attr("disabled", true);
+        //}
+        $("#Zuotanhui-dtl2-form #saveBtn").click(function () {
+            if (!CommitCheck()) {
+                alert("正在审核中或者非本人添加的项目");
+                return false;
+            }
+            $(this).button("loading");
+            var params = $("#Zuotanhui-dtl2-form").serializeJson('&');
+            params = $.extend(params, getMstObject());
+
+            $.post("/DemandBook/SaveZuotanhuidtl2", params, function (data) {
+                $("#RequirementId").val(data);
+                loadZuotanhuiDtl2();
+                closeModal();
+            });
+        })
+    })
+</script>

@@ -1,0 +1,104 @@
+﻿<table>
+    <tr>
+        <td width="80">
+            采购分类
+        </td>
+        <td>
+            <select id="caigoufenlei" name="caigoufenlei" class="form-control">
+                @*<option value="有形商品采购">有形商品采购</option>*@
+                <option value="无形商品采购">无形商品采购</option>
+            </select>
+        </td>
+        <td width="80">采购方式</td>
+        <td>
+            <select id="caigoufangshi" name="caigoufangshi" class="form-control">
+                @*<option value="有形商品采购">有形商品采购</option>*@
+                <option value="技术采购">技术采购</option>
+                <option value="服务采购">服务采购</option>
+                <option value="工程发包采购">工程发包采购</option>
+            </select>
+        </td>
+        <td width="70">项目</td>
+        <td width="130">
+            <input type="hidden" id="ProjectId" name="ProjectId" />
+            <input id="ProjectCode" name="ProjectCode" class="form-control" disabled />
+        </td>
+        <td width="130">
+            <input id="ProjectName" name="ProjectName" class="form-control" disabled />
+        </td>
+        <td width="130">
+            <input id="ProjectShortName" name="ProjectShortName" class="form-control" disabled />
+        </td>
+        <td>
+            <a id="btnProjectSelect" class="btn btn-primary" style="width:120px">选择项目</a>
+        </td>
+    </tr>
+    <tr>
+        <td width="80">
+            提供服务
+        </td>
+        <td>
+            <input id="tigongfuwu" name="tigongfuwu" class="form-control" />
+            @*@Html.DropDownList("tigongfuwu", Purchase.Web.Common.SelectListTool.HiddenCodeList("立项-样本量-提供服务"), new { @class = "form-control" })*@
+        </td>
+        <td width="80">品名</td>
+        <td>
+            <input id="pinming" name="pinming" class="form-control" />
+            @*@Html.DropDownList("pinming", Purchase.Web.Common.SelectListTool.HiddenCodeList("立项-样本量-品名"), new { @class = "form-control" })*@
+        </td>
+        <td>供应商</td>
+        <td width="130">
+            <input id="SupplierId" name="SupplierId" type="hidden" />
+            <input id="SupplierCode" name="SupplierCode" class="form-control"  disabled>
+        </td>
+        <td width="130"><input id="SupplierName" name="SupplierName" class="form-control"  disabled></td>
+        <td width="130"><input id="SupplierShortName" name="SupplierShortName" class="form-control"  disabled></td>
+        <td>
+            <a id="btnSupplierSelect" class="btn btn-primary" style="width:120px">选择供应商</a>
+        </td>
+    </tr>
+    <tr>
+        <td width="80">
+            费用构成
+        </td>
+        <td>
+            <input id="feiyonggoucheng" name="feiyonggoucheng" class="form-control">
+        </td>
+        <td width="80">
+            规格
+        </td>
+        <td>
+            <input id="guige" name="guige" class="form-control">
+        </td>
+        <td width="80">
+            型号
+        </td>
+        <td>
+            <input id="xinghao" name="xinghao" class="form-control">
+        </td>
+        <td>参考价格</td>
+        <td>
+            <input id="cankaojiage" name="cankaojiage" class="form-control" type="number">
+        </td>
+        <td></td>
+    </tr>
+    <tr>
+        <td width="80">单价</td>
+        <td>
+            <input id="danjia" name="danjia" class="form-control" type="number">
+        </td>
+        <td width="80">数量</td>
+        <td>
+            <input id="shuliang" name="shuliang" class="form-control" type="number">
+        </td>
+        <td colspan="5"></td>
+    </tr>
+    <tr>
+        <td width="80">备注</td>
+        <td colspan="7">
+            <textarea id="beizhu" name="beizhu" class="form-control"></textarea>
+        </td>
+
+        <td></td>
+    </tr>
+</table>

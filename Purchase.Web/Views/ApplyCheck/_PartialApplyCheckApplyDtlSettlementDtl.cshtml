@@ -1,0 +1,198 @@
+﻿<div style="position:relative" class="count2">    
+    <div id="settlementDtl" class="table-responsive style=" max-height:610px;overflow-y:auto;">
+        <table>
+            <tr>
+                <td width="100"><strong>执行周期：</strong></td>
+                <td style="text-align:left"><span id="ExecuteCycle"></span></td>
+                <td width="120"><strong>执行省份-城市：</strong></td>
+                <td style="text-align:left" colspan="5"><span id="zhixingchengshi"></span></td>
+            </tr>
+            <tr>
+                <td width="120"><strong>项目预算金额：</strong></td>
+                <td style="text-align:left"><span id="YusuanAmt_Projects"></span></td>
+                <td width="100"><strong>已结算金额：</strong></td>
+                <td style="text-align:left"><span id="SettlementFinishAmt"></span></td>
+                <td width="160"><strong>本组提交金额：</strong></td>
+                <td style="text-align:left"><span id="ThisGroupAmt"></span></td>
+                <td width="160"><strong>剩余金额：</strong></td>
+                <td style="text-align:left"><span id="LeftAmt"></span></td>
+            </tr>
+        </table>
+        <div style="position:relative">
+            <div id="search-result" class="table-responsive" style="max-height:450px;overflow:auto;">
+                <table id="SettlementDtl-table-1" class="table table-bordered table-condensed table-hover">
+                    <thead>
+                        <tr>
+                            <th width="400px">费用内容</th>
+                            <th width="100px">单价</th>
+                            <th width="100px">数量</th>
+                            <th width="100px">合计</th>
+                            <th width="200px">备注</th>
+                        </tr>
+                    </thead>
+                    <tbody></tbody>
+                </table>
+                <h4 class="title">扣款说明</h4>
+                <table id="SettlementDtl-table-2" class="table table-bordered table-condensed table-hover">
+                    <thead>
+                        <tr>
+                            <th width="400px">费用内容</th>
+                            <th width="100px">单价</th>
+                            <th width="100px">数量</th>
+                            <th width="100px">合计</th>
+                            <th width="200px">备注</th>
+                        </tr>
+                    </thead>
+                    <tbody></tbody>
+                </table>
+                <h4 class="title">追加说明</h4>
+                <table id="SettlementDtl-table-3" class="table table-bordered table-condensed table-hover">
+                    <thead>
+                        <tr>
+                            <th width="400px">费用内容</th>
+                            <th width="100px">单价</th>
+                            <th width="100px">数量</th>
+                            <th width="100px">合计</th>
+                            <th width="200px">备注</th>
+                        </tr>
+                    </thead>
+                    <tbody></tbody>
+                </table>
+                <table id="SettlementDtl-table-4" class="table table-bordered table-condensed table-hover">
+                    <tbody></tbody>
+                </table>
+
+                <h4 class="title">小计</h4>
+                <table id="heji-table" class="table table-bordered table-condensed table-hover">
+                    <thead>
+                        <tr>
+
+                            <th width="120px">执行小计</th>
+                            <th width="120px">扣款小计</th>
+                            <th width="120px">追加小计</th>
+                            <th width="120px">结算金额</th>
+                        </tr>
+                    </thead>
+                    <tbody></tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<script src="~/Scripts/custom/form-serialize.js"></script>
+<script>
+    var FlowOrderSum;
+    $(function () {
+        load();
+    })
+    
+
+    function load() {
+        $.post("/ApplyCheck/ApplyDetail_SettlementDtl", { ApplyId: $("#ApplyId_Settlement").val(), SettlementId: $("#SettlementId").val(), QuotationGroupId: $("#QuotationGroupId").val(), ProjectId: $("#ProjectId").val(), SupplierId: $("#SupplierId").val() }, function (data) {
+            if (data && data.List) {
+                $("#ExecuteCycle").text(data.MainObject.ExecuteCycle);
+                $("#zhixingchengshi").text(data.MainObject.zhixingchengshi);
+                $("#SettlementId").val(data.MainObject.SettlementId);
+
+                //BugetAmtDto
+                if (data.BugetAmtDto) {
+                    $("#YusuanAmt_Projects").text(data.BugetAmtDto.YusuanAmt_Projects);
+                    $("#SettlementFinishAmt").text(data.BugetAmtDto.SettlementFinishAmt);
+                    $("#ThisGroupAmt").text(data.BugetAmtDto.ThisGroupAmt);
+                    $("#LeftAmt").text(data.BugetAmtDto.LeftAmt);
+                }                
+
+                FlowOrderSum = parseFloat(data.MainObject.FlowOrderSum) || 0;
+
+                $("#SettlementDtl-table-1 tbody").empty();
+                $("#SettlementDtl-table-2 tbody").empty();
+                $("#SettlementDtl-table-3 tbody").empty();
+                $.each(data.List, function (index, item) {
+                    var tr = bindTr(index, item, item.SettlementType);
+                    if (tr) {
+                        $("#SettlementDtl-table-" + item.SettlementType + " tbody").append(tr);
+                    }                    
+                })
+                
+                for (var i = 1; i < 4; i++) {
+                    if ($("#SettlementDtl-table-"+i+" tbody tr").length == 0) {
+                        $("#SettlementDtl-table-" + i + " tbody").append(bindTr("", { SettleAmt: "&nbsp;" }, ""));
+                    }
+                }
+                
+                calaHeji();
+            }
+        })
+    };
+
+    function calaHeji() {
+        var sumAmt1 = 0;        
+        $("#SettlementDtl-table-1 tbody tr").each(function () {
+            var amtStr = $(this).find("#SettleAmt").val();
+            if (amtStr && amtStr != "") {
+                sumAmt1 += parseFloat(amtStr);
+            }
+        })
+        $("#SettlementDtl-table-1 tbody").append(bindTr(0, { SettleCount: "合计", SettleAmt: sumAmt1.toFixed(2) }, ""));
+        
+        var sumAmt2 = 0;
+        $("#SettlementDtl-table-2 tbody tr").each(function () {
+            var amtStr = $(this).find("#SettleAmt").val();
+            debugger
+            if (amtStr && $.trim(amtStr) != "") {
+                sumAmt2 += parseFloat(amtStr);
+            }
+        })
+        $("#SettlementDtl-table-2 tbody").append(bindTr(0, { SettleCount: "合计", SettleAmt: sumAmt2.toFixed(2) }, ""));
+       
+        var sumAmt3 = 0;
+        $("#SettlementDtl-table-3 tbody tr").each(function () {
+            var amtStr = $(this).find("#SettleAmt").val();
+            if (amtStr && $.trim(amtStr) != "") {
+                sumAmt3 += parseFloat(amtStr);
+            }
+        })
+        $("#SettlementDtl-table-3 tbody").append(bindTr(0, { SettleCount: "合计", SettleAmt: sumAmt3.toFixed(2) }, ""));
+
+        var heji = sumAmt1 - sumAmt2 + sumAmt3;
+        $("#heji-table tbody").empty();
+        var tr1 = $("<tr>");
+        tr1.append($("<td>").text(sumAmt1.toFixed(2)))
+            .append($("<td>").text(sumAmt2.toFixed(2)))
+            .append($("<td>").text(sumAmt3.toFixed(2)))
+            .append($("<td>").text(heji.toFixed(2)));
+        var tr2 = $("<tr>");
+        tr2.append($("<td>").text("首付款金额")).append($("<td>")).append($("<td>"));
+        tr2.append($("<td>").text(FlowOrderSum.toFixed(2)));
+        var tr3 = $("<tr>");
+        tr3.append($("<td>").text("尾款金额")).append($("<td>")).append($("<td>"));
+        tr3.append($("<td>").text((heji - FlowOrderSum).toFixed(2)));
+
+        $("#heji-table tbody").empty();
+        $("#heji-table tbody").append(tr1).append(tr2).append(tr3);
+
+    }
+
+    function bindTr(i, item, type) {
+        if (item.SettleAmt) {
+            var tr = $("<tr>");
+
+            tr.append($("<td></td>").html(item.FeeContent));
+            tr.append($("<td></td>").html(item.danjia));
+            tr.append($("<td></td>").html(item.SettleCount));
+            tr.append($("<td></td>").html(item.SettleAmt));
+            tr.append($("<td></td>").html(item.Remark));
+            tr.append($("<td style='display:none'></td>").append($("<input id='SettleAmt' name='SettleAmt' type='hidden'>").val(nbsp2Space(item.SettleAmt))));
+            return tr;
+        }
+    }
+    
+    function FloatMul(arg1, arg2) {
+        var m = 0, s1 = arg1.toString(), s2 = arg2.toString();
+        try { m += s1.split(".")[1].length } catch (e) { }
+        try { m += s2.split(".")[1].length } catch (e) { }
+        return Number(s1.replace(".", "")) * Number(s2.replace(".", "")) / Math.pow(10, m);
+    }
+</script>

@@ -1,0 +1,90 @@
+﻿@using Purchase.DAL
+@model IEnumerable<ConstractTemplate>
+
+<form id="search-template-form">
+    <input id="Type" name="Type" type="hidden" value="1" />
+    <table>
+        <tr>
+            <td colspan="2" style="text-align:right">
+                <a id="btnTemplateQuery" class="btn btn-primary" style="width:100px">查 询</a>
+                <a id="btnConfirm" class="btn btn-primary" style="width:100px">确 认</a>
+            </td>
+        </tr>
+        <tr>
+            <td width="100">模板名称</td>
+            <td>
+                <input id="TemplateName" name="TemplateName" class="form-control" />
+            </td>
+        </tr>
+    </table>
+</form>
+
+<div class="count2">
+    <div id="search-result" class="table-responsive" style="max-height:350px;overflow-y:auto;">
+        <table id="select-table" class="table table-bordered table-condensed table-hover">
+            <thead>
+                <tr>
+                    <th width="40">选择</th>
+                    @*<th>合同模板类型</th>*@
+                    <th>合同模板名称</th>
+                </tr>
+            </thead>
+            <tbody>
+                @if (Model != null)
+                {
+                    foreach (ConstractTemplate item in Model)
+                    {
+                        <tr>
+                            <td>
+                                @Html.Hidden("TemplateJson", Json.Encode(item))
+                                @Html.RadioButton("Id", item.Id)
+                            </td>
+                            @*<td>@item.TemplateType</td>*@
+                            <td>@item.TemplateName</td>
+                        </tr>
+                    }
+                }
+            </tbody>
+        </table>
+    </div>
+</div>
+<script>
+    $("#btnConfirm").click(function () {
+        var checkedRadio = $("#select-table input[type=radio]:checked");
+        var tds = checkedRadio.parents("tr:first").find("td");
+        var item = JSON.parse(checkedRadio.prev().val());
+
+        templateSelectCallback(item);
+        $("#myModal").modal("hide");
+    })
+
+    $("#btnTemplateQuery").click(function () {
+        debugger
+        var params = $("#search-template-form").serializeJson();
+        $.post("/Constract/TemplateSearch", params, function (data) {
+            $("#select-table tbody").empty();
+            $.each(data.List, function (index, item) {
+                var tr = $("<tr>");
+                //tr.append($("<td>").append($("<input id='Id' name='Id' type='radio'>").val(item.ProjectId)));
+                //tr.append($("<td>").html(item.ProjectCode));
+                //tr.append($("<td>").html(item.ProjectName));
+                //tr.append($("<td>").html(item.ProjectShortName));
+                //tr.append($("<td>").html(item.UserName));
+                //$("#select-table tbody").append(tr);
+                tr.append($("<td>").append($("<input id='TemplateJson' type='hidden'>").val(JSON.stringify(item))).append($("<input id='Id' type='radio'>").val(item.Id)));
+                //tr.append($("<td>").html(item.TemplateType));
+                tr.append($("<td>").html(item.TemplateName));
+                $("#select-table tbody").append(tr);
+            })
+
+            //$(data.List, function (index, item) {
+            //    var tr = $("<tr>");
+            //    debugger
+            //    tr.append($("<td>").append($("<input id='TemplateJson' type='hidden'>").val(JSON.stringify(item))).append($("<input id='Id' type='radio'>").val(item.Id)));
+            //    //tr.append($("<td>").html(item.TemplateType));
+            //    tr.append($("<td>").html(item.TemplateName));
+            //    $("#select-table tbody").append(tr);
+            //})
+        })
+    })
+</script>

@@ -1,0 +1,250 @@
+﻿@{
+    ViewBag.Title = "样本量编辑";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+<style>
+    .my-container{
+        width:auto;
+        padding:10px 15px;
+    }
+</style>
+<div class="count2 my-container " >
+    <h4>@ViewBag.Title</h4>
+    <hr />
+    <input type="hidden" id="GroupId" name="GroupId" value="@ViewBag.GroupId"/>
+    <input type="hidden" id="ProjectId" name="ProjectId" value="@ViewBag.ProjectId" />
+    <input type="hidden" id="ModelType" name="ModelType" value="@ViewBag.ModelType" />
+    <input type="hidden" id="DepartmentCode" name="DepartmentCode" value="@ViewBag.DepartmentCode" />
+    <input type="hidden" id="ApplyStautCode" name="ApplyStautCode" value="@ViewBag.ApplyStautCode" />
+    <input type="hidden" id="UserChk" name="UserChk" value="@ViewBag.UserChk" />
+    <input type="hidden" id="ToSeqNO" name="ToSeqNO" value="" />
+    <input type="hidden" id="DepartmentCode" name="DepartmentCode" value="" />
+    
+    <table style="width:100%">
+        <tr>
+            <td colspan="10" style="text-align:right">
+                <a class="btn btn-primary" href="javascript:window.close()">关闭</a>
+            </td>
+        </tr>
+    </table>
+    <table class="mt20" >
+        @*<tr>
+            <td><button id="addCityBtn" type="button" class="btn btn-primary btn-sm" data-toggle="modal" data-target="#myModal">添加样本量信息</button></td>
+        </tr>*@
+        <tr>
+            <td valign="top" colspan="2">
+                <table id="city-table" class="table table-bordered table-condensed table-set ">
+                    <thead>
+                        <tr>
+                            <th width="40">序号</th>
+                            @*<th>复制</th>*@
+                            <th width="50">详细</th>
+                            <th>执行省份</th>
+                            <th>执行城市</th>
+                            <th id="PurchaseType">采购分类</th>
+                            <th id="PurchaseMode">采购方式</th>
+                            <th id="Responsibilites">工作职责</th>
+                            <th id="ProjectType">项目类型</th>
+                            <th id="ExcuteMode">执行方式</th>
+                            <th>需求书类型</th>
+                            <th>提供服务</th>
+                            <th>品名</th>
+                            <th>样本量</th>
+                            <th width="120">需求书操作</th>
+                            <th>状态</th>
+                            <th>取消时间</th>
+                            <th>备注</th>
+                        </tr>
+                    </thead>
+                    <tbody></tbody>
+                </table>
+            </td>
+        </tr>
+    </table>
+</div>
+<div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-hidden="false">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
+                <h4 class="modal-title"></h4>
+            </div>
+            <div class="modal-body">
+            </div>
+        </div>
+    </div>
+</div>
+<script src="~/Scripts/custom/form-serialize.js"></script>
+<script>
+    $(function () {
+        //$("#addCityBtn").click(function () {
+        //    setModal($(this).html(), '_PartialCity');
+        //})
+        loadProjectCity();
+    })
+
+    function loadProjectCity() {
+        var projectId = $("#ProjectId").val();
+        //绑定城市
+        $.post("/Projects/GetProjectCitysByGroupId", { ProjectId: projectId,GroupId: $("#GroupId").val() }, function (data) {
+            $("#city-table tbody").empty();
+            debugger
+            $("#DepartmentCode").val( data[0].DepartmentCode);
+            debugger
+            $.each(data, function () {
+                addCityTr(this);
+            })
+        })
+    }
+
+    function setModal(title, body, obj) {
+        debugger
+        $("#myModal .modal-title").html(title);
+        $("#myModal .modal-body").empty();
+        $("#myModal .modal-body").load("/DemandBookGroup/LoadPartial", { partialView: body }, function () {
+            if (obj) {                
+                $("#myModal .modal-body form").setForm(obj);
+                if ($(this).find("#Province").length > 0) {
+                    loadCityByProvince($(this).find("#Province option:selected").attr("id"));
+                    $(this).find("#City").val(obj.City);
+                }
+            }
+            $(this).find("select").addClass("selectpicker").prop("title", "").data("live-search", true).selectpicker("refresh");
+        });
+    }
+
+    function addCityTr(city) {
+        var tr = $("<tr>");
+        var copyBtn = $("<a class='btn btn-primary btn2'>").html("复制");
+        copyBtn.click(function () {
+            //if (!isEmpty($("#ApplyStautCode").val()) || $("#UserChk").val() == false) {
+            //    alert("已经提交审核或者非本人添加的立项");
+            //    return;
+            //}
+            city.SeqNO = 0;
+            setModal($("#addCityBtn").html(), '_PartialCity', city);
+            $("#myModal").modal("show");
+        })
+        var editBtn = $("<a class='btn btn-primary btn2'>").html("详细");
+        editBtn.click(function () {
+            city.SeqNO = city.SeqNo;
+            setModal("编辑样本量信息", '_PartialCity', city);
+            $("#myModal").modal("show");
+        })
+        tr.append($("<td>").html(city.SeqNo));
+        //tr.append($("<td>").append(copyBtn));
+        tr.append($("<td>").append(editBtn));
+        tr.append($("<td>").html(city.Province));
+        tr.append($("<td>").html(city.City));
+
+        if ($("#ModelType").val() == "业务") {
+            $("#PurchaseType").hide();
+            $("#PurchaseMode").hide();
+            tr.append($("<td>").html(city.Responsibilites));
+            tr.append($("<td>").html(city.ProjectType));
+            tr.append($("<td>").html(city.ExcuteMode));
+        }
+        else {
+            $("#Responsibilites").hide();
+            $("#ProjectType").hide();
+            $("#ExcuteMode").hide();
+            tr.append($("<td>").html(city.PurchaseType));
+            tr.append($("<td>").html(city.PurchaseMode));
+        }
+        tr.append($("<td>").html(city.RequirementName))
+        tr.append($("<td>").html(city.SupplyService));
+        tr.append($("<td>").html(city.ItemName));
+        tr.append($("<td>").html(city.Count));
+        var td = $("<td>");
+        if ((city.RequirementId == "" || city.RequirementId == "0")) {
+            var addDemand = $("<a class='btn btn-primary btn2'>").html("添加");
+           
+            addDemand.click(function () {
+                debugger
+                $("#myModal").modal("hide");
+                $("#myModal .modal-dialog").removeClass("modal-lg");
+                setModal("选择需求书类型", '../Projects/_PartialDemandBookType', city);
+                $("#myModal").modal("show");
+            })
+            td.append(addDemand);
+        } else {
+            var cityCopy = $.extend(city, {});
+            var editDemand = $("<a class='btn btn-primary btn2'>").html("详细");
+            editDemand.click(function () {
+                editDemandBook(cityCopy);
+            });
+            tr.append(td.append(editDemand));
+        }
+        if ((city.RequirementId == "" || city.RequirementId == "0")) {
+            var copyDBookBtn = $("<a class='btn btn-primary btn2'>").html("选择复制");
+            copyDBookBtn.click(function () {
+                //if (!isEmpty($("#ApplyStautCode").val()) || $("#UserChk").val() == false) {
+                //    alert("已经提交审核或者非本人添加的立项");
+                //    return;
+                //}
+                openCopyDemandBookSelect(city.SeqNo);
+            })
+        }
+        td.append(td.append(copyDBookBtn));
+        tr.append(td);
+
+        tr.append($("<td>").html(city.Status));
+        tr.append($("<td>").html(city.StatusDate));
+        tr.append($("<td>").html(city.Remark).attr("title", city.Remark));
+        $("#city-table tbody").append(tr);
+
+        $("#myModal").modal("hide");
+    }
+    function RequirementSelect() {
+        $("#myModal .modal-body").empty();
+        $("#myModal").modal("show");
+        $("#myModal .modal-title").html("选择需求书");
+        $("#myModal .modal-body").load("/DemandBook/RequirementSearchByProjectId",
+            { ProjectId: $("#ProjectId").val(), Province: $("#Province").val(), City: $("#City").val() }, function () {
+
+            });
+    }
+    function openCopyDemandBookSelect(SeqNO) {
+        $("#myModal .modal-dialog").addClass("modal-lg");
+        $("#myModal .modal-title").html("选择需求书");
+        $("#myModal").modal("show");
+        $("#myModal .modal-body").empty();
+        $("#myModal .modal-body").load("/DemandBookGroup/RequirementSearchByProjectId",
+             { ProjectId: $("#ProjectId").val(), Province: $("#Province").val(), City: $("#City").val(), GroupId: $("#GroupId").val() }, function () {
+
+             });
+        $("#ToSeqNO").val(SeqNO);
+    }
+    function CopyDemandBookSelectFinish() {
+        loadProjectCity();
+        $("#myModal").modal("hide");
+        $("#myModal .modal-dialog").removeClass("modal-lg");
+    }
+    function editDemandBook(city) {
+        var DemandBookType = city.RequirementType,
+            ProjectId = city.ProjectId,
+            SeqNO = city.SeqNo,
+            RequirementId = city.RequirementId,
+            GroupId = city.RequirementGroupId
+        var url = "/DemandBook/Create?DemandBookType=" + DemandBookType;
+        url += "&ProjectId=" + ProjectId;
+        url += "&SeqNO=" + SeqNO;
+        url += "&GroupId=" + GroupId;
+        if (RequirementId != 0) {
+            url += "&RequirementId=" + RequirementId;
+        }
+
+        window.open(url);
+    }
+
+    function DemandBookTypeSelectFinish() {
+       
+    }    
+
+    function isEmpty(value) {
+        if (value == "")
+            return true;
+        else
+            return false;
+    }
+</script>

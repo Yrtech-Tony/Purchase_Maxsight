@@ -1,0 +1,82 @@
+﻿@model Purchase.Service.DTO.SupplierDto
+@{
+    ViewBag.Title = "供应商信息查看";
+    //Layout = "_SupplierMngLayout.cshtml";
+    Layout = "~/Views/Shared/_TaskLayout.cshtml";
+}
+
+<div class="count inline-block">
+    <h4>@ViewBag.Title</h4>
+    <hr />
+    @using (Html.BeginForm("Edit", "SupplierMng", FormMethod.Post, new { Id = "SupplierMngForm", enctype = "multipart/form-data" }))
+    {
+        @Html.AntiForgeryToken()
+        @Html.ValidationSummary(false)
+        @Html.HiddenFor(m => m.SupplierId)
+        @Html.HiddenFor(m => m.ApplyId)
+
+        @Html.Partial("_PartialApplyCheckApplyDtlSupplierEditDtl", Model)
+    }
+</div>
+@section Scripts {
+    <script src="~/Content/My97DatePicker/WdatePicker.js"></script>
+    <script src="~/Scripts/custom/province_city.js?1"></script>
+    <script src="~/Scripts/custom/form-serialize.js"></script>
+    <script src="~/Scripts/custom/date-format.js"></script>
+    <script>
+        $(function () {
+            $.get("/ApplyCheck/ApplyDetail_SupplierDtl", { ApplyId: $("#ApplyId").val(), SupplierId: $("#SupplierId").val() }, function (obj) {
+                debugger
+                $.post("/ApplyCheck/ApplyDetail_SupplierDtl_Pngs", { ApplyId: $("#ApplyId").val(), SupplierId: $("#SupplierId").val() }, function (data) {
+                    $.each(data, function (i, item) {
+                        bindPng("#filePicker" + (i + 1), item);
+                    })
+                })
+                $("#SupplierMngForm").setForm(obj);
+                $("#Province").val(obj.Province);
+                $("#SupplierNameOld").val(obj.SupplierName);
+                $("#BussinessPngChk").val(obj.BussinessPngChk);
+
+                $("#ServiceTrade").change();
+                $("#RecommendDepartment").val(obj.RecommendDepartment).selectpicker('refresh');
+                $(".selectpicker").selectpicker('refresh');
+
+                loadCityByProvince($("#Province option:selected").attr("id"));
+                $("#City").val(obj.City).selectpicker('refresh');
+                $("#OperationStartDate").val(obj.OperationStartDate);
+                $("#OperationEndDate").val(obj.OperationEndDate);
+                if (obj.OperationEndDate == null || obj.OperationEndDate == '1970-01-01') {
+                    $("#OperationEndDateChk").prop("checked", true);
+                    $("#OperationEndDateChk").prev().val("").prop("readonly", true);
+                } else {
+                    $("#OperationEndDateChk").prop("checked", false);
+                    $("#OperationEndDateChk").prev().prop("readonly", false);
+                }
+                debugger
+                setdiable(false);
+            })
+        })
+        function setdiable(check) {
+            if (check) {
+                $("#btnSave").attr("disabled", false);
+                $("#filePicker1").attr("disabled", false);
+                $(".att_del").html("删除");
+                $("#filePicker2").attr("disabled", false);
+                $("#filePicker3").attr("disabled", false);
+                $("#filePicker4").attr("disabled", false);
+                $("#filePicker5").attr("disabled", false);
+                $("#filePicker6").attr("disabled", false);
+            }
+            else {
+                $("#btnSave").attr("disabled", true);
+                $("#filePicker1").attr("disabled", true);
+                $(".att_del").html("");
+                $("#filePicker2").attr("disabled", true);
+                $("#filePicker3").attr("disabled", true);
+                $("#filePicker4").attr("disabled", true);
+                $("#filePicker5").attr("disabled", true);
+                $("#filePicker6").attr("disabled", true);
+            }
+        }
+    </script>
+}

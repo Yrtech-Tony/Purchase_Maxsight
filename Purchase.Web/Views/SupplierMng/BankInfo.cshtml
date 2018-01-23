@@ -1,0 +1,199 @@
+﻿@{
+    ViewBag.Title = "供应商银行信息";
+    Layout = "_SupplierMngLayout.cshtml";
+}
+
+<div class="count inline-block">
+    <form id="search-form" class="form">
+        <table>
+            <tr>
+                <td colspan="12" style="text-align:right">
+                    <button id="btnQuery" type="button" class="btn btn-primary" style="width:100px">查 询</button>
+                    <button id="btnExport" onclick="exportExcel()" type="button" class="btn btn-primary" style="width:100px" data-loading-text="正在导出...">导出Excel</button>
+                </td>
+            </tr>
+            <tr>
+                <td width="80">供应商编码</td>
+                <td width="150">
+                    <input id="SupplierCode" name="SupplierCode" class="form-control">
+                </td>
+                <td width="100">供应商名称</td>
+                <td width="150"><input id="SupplierName" name="SupplierName" class="form-control"></td>
+                <td width="100">供应商简称</td>
+                <td width="150"><input id="SupplierShortName" name="SupplierShortName" class="form-control"></td>
+                <td width="100">供应商类型</td>
+                <td width="150">
+                    <select id="SupplierType" name="SupplierType" class="form-control">
+                        <option value="">全部</option>
+                        <option value="业务">业务</option>
+                        <option value="内部采购">内部采购</option>
+                        <option value="其他">其他</option>
+                    </select>
+                </td>
+                @*<td width="80">合作状态</td>
+                <td>
+                    <select id="CooperationState" name="CooperationState" class="form-control">
+                        <option value="">全部</option>
+                        <option value="合作-核心">合作-核心</option>
+                        <option value="合作-垄断">合作-垄断</option>
+                        <option value="合作-其他">合作-其他</option>
+                        <option value="暂不合作-核心">暂不合作-核心</option>
+                        <option value="暂不合作-垄断">暂不合作-垄断</option>
+                        <option value="暂不合作-其他">暂不合作-其他</option>
+                        <option value="黑名单">黑名单</option>
+                    </select>
+                </td>*@
+            </tr>
+            <tr>
+                <td>服务行业</td>
+                <td>
+                    <input id="ServiceTrade" name="ServiceTrade" class="form-control">
+                </td>
+                <td>采购方式</td>
+                <td>
+                    <select id="PurchaseType" name="PurchaseType" class="form-control">
+                        <option value="">全部</option>
+                        <option value="集中采购">集中采购</option>
+                        <option value="分散采购">分散采购</option>
+                        <option value="其他采购">其他采购</option>
+                    </select>
+                </td>
+                <td>省份</td>
+                <td>
+                    <input id="Province" name="Province" class="form-control" />
+                </td>
+                <td>城市</td>
+                <td>
+                    <input id="City" name="City" class="form-control" />
+                </td>
+            </tr>
+        </table>
+    </form>
+    <div class="table-responsive">
+        <table id="supplier-table" class="table table-bordered table-condensed table-hover">
+            <thead>
+                <tr>                    
+                    <th class="piao">操作</th>
+                    <th><div class="pzhan"></div></th>
+                    <th>更新时间</th>
+                    <th>供应商编码</th>                    
+                    <th>供应商类别</th>
+                    <th>供应商名称</th>
+                    @*<th>合作状态</th>*@
+                    <th>开户行全称</th>
+                    <th>开户户名</th>
+                    <th>银行账号</th>
+                    <th>增值税税率</th>
+                    <th>服务行业</th>
+                    <th>推荐部门</th>
+                    <th>合作模式</th>                   
+                    <th width="200">备注</th>
+                </tr>
+            </thead>
+            <tbody></tbody>
+        </table>
+    </div>
+    <div id="pagination" class="pull-right">
+        <ul id="pageUl"></ul>
+    </div>
+</div>
+@section Scripts {
+    <script src="~/Scripts/custom/form-serialize.js"></script>
+    <script src="~/Scripts/custom/province_city.js"></script>
+    <script>
+        $(function () {
+            //loadProvince();
+            //loadCityByProvince(1);
+
+            load();
+            $("#btnQuery").click(function () {
+                load();
+            })
+        })
+        function exportExcel() {
+            $("#btnExport").button("loading");
+            alert("正在导出...");
+
+            var params = $("#search-form").serializeJson();
+            $.post("/SupplierMng/ExportSupplierBankInfo", params, function (data) {
+                window.location.href = "/SupplierMng/DownloadFile?fileName=" + data.ExportPath;
+            }).complete(function () {
+                $("#btnExport").button("reset");
+                closealert();
+            });
+        }
+        function load(pageNum) {
+            var params = $("#search-form").serializeJson();
+            params = $.extend(params, { pageSize: 10, pageNum: pageNum ? pageNum : 1 });
+            $.post("../SupplierMng/LoadBank", params, function (data) {
+                if (data && data.List) {
+                    $("#supplier-table tbody").empty();
+
+                    $.each(data.List, function (index, item) {
+                        var alert = false;
+                        var tr = $("<tr>");
+                        if (item.BankModifyColumn && item.BankModifyColumn != "") {
+                            if (item.BankModifyColumn == "New") {
+                                //新增 整行变黄色
+                                debugger
+                                tr.css("backgroundColor", "yellow");
+                            } else {
+                                var cols = item.BankModifyColumn.split(",");
+                                for (i in cols) {
+                                    for (pro in item) {
+                                        if (pro == cols[i]) {
+                                            item[pro] = "<span class='alert-span'>" + item[pro] + "</span>";
+                                            alert = true;
+                                        }
+                                    }
+                                }
+                            }                           
+                        }
+                                                
+                        if (alert) {
+                            var noAlert = $("<a>").html("不再提醒");
+                            noAlert.attr("style", "cursor: pointer;");
+                            noAlert.click(function () {
+                                $.post("/SupplierMng/ClearBankModifyColumn", { id: item.SupplierId }, function () {
+                                    tr.find(" .alert-span").removeClass();
+                                    noAlert.remove();
+                                });
+                            })
+                            tr.append($("<td  class='piao'></td>").append(noAlert));
+
+                        } else {
+                            tr.append($("<td  class='piao'></td>").html("&nbsp;"));
+                        }
+                        tr.append($('<td><div class="pzhan">&nbsp;</div></td>'));
+
+                        tr.append($("<td></td>").html(item.BankModifyDateTime));
+                        
+                        tr.append($("<td></td>").html(item.SupplierCode));
+                       
+                        tr.append($("<td></td>").html(item.SupplierType));
+                        tr.append($("<td></td>").html(item.SupplierName));
+                        //tr.append($("<td></td>").html(item.CooperationState));
+                        tr.append($("<td></td>").html(item.AccountBankFullName));
+                        tr.append($("<td></td>").html(item.AccountName));
+                        tr.append($("<td></td>").html(item.AccountBankNo));
+                        tr.append($("<td></td>").html(item.VATRate));
+                        tr.append($("<td></td>").html(item.ServiceTrade));
+                        tr.append($("<td></td>").html(item.RecommendDepartment));
+                        tr.append($("<td></td>").html(item.CooperationState));
+
+                        tr.append($("<td></td>").html(item.Remark));
+
+                        $("#supplier-table tbody").append(tr);
+                    })
+
+                   createPageNav({ $container: $("#pagination"), pageCount: data.PageCount, currentNum: data.CurPage, afterFun: load });
+                }
+            })
+        }
+    </script>
+}
+<style>
+    .alert-span {
+        color: red;
+    }
+</style>

@@ -1,0 +1,78 @@
+﻿@using Purchase.Service.DTO
+@model IEnumerable<Quotation_ZhiXingDto>
+
+<table id="quotation-table" class="table table-bordered table-condensed table-hover">
+    <thead>
+        <tr>
+            <th>
+                供应商名称
+            </th>
+            <th>
+                执行省份
+            </th>
+            <th>
+                执行城市
+            </th>
+            <th>
+                执行方式
+            </th>
+            <th>
+                用户分类
+            </th>
+            <th>
+                现有或潜在
+            </th>
+            <th>
+                客户分类
+            </th>
+            <th>
+                执行分类
+            </th>
+            <th>
+                核算单位
+            </th>
+            <th>
+                参考价格
+            </th>
+            <th>
+                单价
+            </th>
+            <th>
+                数量
+            </th>
+            <th>
+                小计
+            </th>
+            <th>
+                备注
+            </th>
+        </tr>
+    </thead>
+    <tbody>
+        @if (Model != null)
+        {
+            foreach (var item in Model)
+            {
+                var unitPrice = Purchase.Common.Utils.Decimal2Double(item.UnitPrice);
+                var Count = Purchase.Common.Utils.String2Double(item.Count);
+                var xiaoji = unitPrice * Count;
+                <tr>
+                    <td>@item.SupplierName</td>
+                    <td>@item.Province</td>
+                    <td>@item.City</td>
+                    <td>@item.ExecuteMode</td>
+                    <td>@item.UserType</td>
+                    <td>@item.ExistingOrPotential</td>
+                    <td>@item.CustomerType</td>
+                    <td>@item.ExcuteType</td>
+                    <td>@item.AccountUnit</td>
+                    <td>@item.ProposedPrice</td>
+                    <td>@Math.Round(unitPrice, 2)</td>
+                    <td>@item.Count</td>
+                    <td>@Math.Round(xiaoji, 2)</td>
+                    <td style="text-align:left">@item.Remark</td>
+                </tr>
+            }
+        }
+    </tbody>
+</table>

@@ -1,0 +1,77 @@
+﻿<table id="quotation-table-copy" class="table table-bordered table-condensed table-hover">
+    <thead>
+        <tr>
+            <th>选择</th>
+            <th>
+                供应商名称
+            </th>
+            <th>
+                执行省份
+            </th>
+            <th>
+                执行城市
+            </th>
+            <th>分类</th>
+            <th>类型/品牌</th>           
+            <th>次/天/个/小时</th>
+            <th>单价/标准</th>
+            <th>数量/人数</th>
+            <th>小计</th>
+            <th>备注</th>
+        </tr>
+    </thead>
+    <tbody></tbody>
+</table>
+<script>
+    function addQuotationTr(item) {
+        var tr = $("<tr>");
+        tr.append($("<td>").append($("<input id='Id' type='checkbox'>").attr("data", JSON.stringify(item))));
+        tr.append($("<td></td>").html(item.SupplierName));
+        tr.append($("<td></td>").html(item.zhixingshengfen));
+        tr.append($("<td></td>").html(item.zhixingchengshi));
+        tr.append($("<td></td>").html(item.fenlei));
+        tr.append($("<td></td>").html(item.leixingpinpai));
+
+        var xiaojiInput = $("<input  type='number' class='quotation-table-input' readonly>").val(xiaoji);
+        //核算单位
+        var hesuandanweiInput = $("<input class='quotation-table-input'>").val(item.hesuandanwei);
+        tr.append($("<td></td>").append(hesuandanweiInput));
+        //单价
+        var danjiaInput = $("<input type='number' class='quotation-table-input'>").val(item.danjia);
+        danjiaInput.change(function () {
+            xiaojiInput.val(calaXiaoji(danjiaInput.val(), shuliangInput.val()));
+            calHeji();
+        });
+        tr.append($("<td></td>").append(danjiaInput));
+        //数量
+        var shuliangInput = $("<input  type='number' class='quotation-table-input'>").val(item.shuliang);
+        shuliangInput.change(function () {
+            xiaojiInput.val(calaXiaoji(danjiaInput.val(), shuliangInput.val()));
+            calHeji();
+        });
+        tr.append($("<td></td>").append(shuliangInput));
+        //小计
+        var xiaoji = calaXiaoji(item.danjia, item.shuliang);
+        xiaojiInput.val(xiaoji);
+        tr.append($("<td></td>").append(xiaojiInput));
+
+        var beizhuInput = $("<input class='quotation-table-input' style='width:500px'>").val(item.beizhu);;
+        tr.append($("<td></td>").append(beizhuInput));
+
+        $("#quotation-table-copy tbody").append(tr);
+    }
+
+    function calaXiaoji(dj, sl) {
+        if (dj && dj != "" && sl && dj != "") {
+            return FloatMul(dj, sl).toFixed(2);
+        } else {
+            return 0;
+        }
+    }
+    function FloatMul(arg1, arg2) {
+        var m = 0, s1 = arg1.toString(), s2 = arg2.toString();
+        try { m += s1.split(".")[1].length } catch (e) { }
+        try { m += s2.split(".")[1].length } catch (e) { }
+        return Number(s1.replace(".", "")) * Number(s2.replace(".", "")) / Math.pow(10, m);
+    }
+</script>

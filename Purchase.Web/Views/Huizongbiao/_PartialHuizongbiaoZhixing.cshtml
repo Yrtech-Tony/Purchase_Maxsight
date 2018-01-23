@@ -1,0 +1,192 @@
+﻿<table id="huizongbiao-table-Zhixing" class="table table-bordered table-condensed table-hover">
+    <thead>
+        <tr>	
+            <th>
+                供应商名称
+            </th>
+            <th>
+                项目名称
+            </th>
+            <th>
+                项目简称
+            </th>
+            <th>
+                项目经理
+            </th>
+            <th>
+                执行省份
+            </th>
+            <th>
+                执行城市
+            </th>
+            <th>
+                执行周期
+            </th>
+            <th>
+                项目类型
+            </th>
+            <th>
+                执行方式
+            </th>
+            <th>执行分类 </th>
+            <th>客户分类 </th>
+            <th>
+                用户分类
+            </th>
+            <th>
+                品牌分类
+            </th>
+            <th>
+                工作职责
+            </th>
+            <th>
+                车辆类别
+            </th>
+            <th>
+                车价范围
+            </th>
+            <th>
+                进店方式
+            </th>
+            <th>
+                进店规避要求
+            </th>
+            <th>
+                访问时长
+            </th>
+            <th>
+                成功率
+            </th>
+            @*<th>
+                执行难度
+            </th>
+            <th>
+                执行经验
+            </th>*@
+            @*<th>
+                推送方式
+            </th>*@
+            <th>
+                二次进店
+            </th>
+            <th>
+                现有或潜在
+            </th>
+            <th>
+                名单来源
+            </th>
+            <th>
+                参会人数
+            </th>
+            @*<th>
+                陪访要求
+            </th>*@
+            <th>
+                购车（预购）时间段
+            </th>
+            <th>
+                具体购车时间
+            </th>
+            <th>
+                售后维修/保养时间
+            </th>
+            <th>
+                经营时间要求
+            </th>
+            <th>
+                工作时间要求
+            </th>
+            @*<th>
+                配额分布
+            </th>
+            <th>
+                配额说明
+            </th>*@
+            <th>
+                报酬方式
+            </th>           
+            <th>
+                核算单位
+            </th>
+            <th>
+                单价
+            </th>
+            <th>
+                数量
+            </th>
+            <th>
+                合计
+            </th>
+            <th width="200">
+                备注
+            </th>
+            @*<th>
+                供应商评分类别
+            </th>
+            <th>
+                供应商评分
+            </th>*@
+        </tr>
+    </thead>
+    <tbody></tbody>
+</table>
+
+<script>
+    function addHuizongbiaoTr_Zhixing(item) {
+        var tr = $("<tr>");
+        addHiddenField(tr, item);
+
+        tr.append($("<td></td>").html(item.SupplierName));
+        tr.append($("<td></td>").html(item.ProjectName));
+        tr.append($("<td></td>").html(item.ProjectShortName));
+        tr.append($("<td></td>").html(item.xiangmujingli));//项目经理？
+
+        tr.append($("<td></td>").html(item.zhixingshengfen));
+        tr.append($("<td></td>").html(item.zhixingchengshi));
+
+        tr.append($("<td></td>").html(item.ExecuteCycle));
+        tr.append($("<td></td>").html(item.ProjectType));
+
+        tr.append($("<td></td>").html(item.ExcuteMode));
+        tr.append($("<td></td>").html(item.zhixingfenlei));
+        tr.append($("<td></td>").html(item.kehufenlei));
+        tr.append($("<td></td>").html(item.yonghufenlei));
+        tr.append($("<td></td>").html(item.pinpaifenlei));
+        tr.append($("<td></td>").html(item.gongzuozhize));
+        tr.append($("<td></td>").html(item.cheliangleibei));
+        tr.append($("<td></td>").html(item.chejiafanwei));
+        tr.append($("<td></td>").html(item.jindianfangshi));
+        tr.append($("<td></td>").html(item.jindianguibiyaoqiu));
+        tr.append($("<td></td>").html(item.fangwenshichang));
+        tr.append($("<td></td>").html(item.chenggonglv));
+        //tr.append($("<td></td>").html(item.zhixingnandu));
+        //tr.append($("<td></td>").html(item.zhixingjingyan));
+        //tr.append($("<td></td>").html(item.tuisongfangshi));
+        tr.append($("<td></td>").html(item.ercijindian));
+        tr.append($("<td></td>").html(item.xianyouhuoqianzai));
+        tr.append($("<td></td>").html(item.mingdanlaiyuan));        
+        tr.append($("<td></td>").html(item.canhuirenshu));
+        //tr.append($("<td></td>").html(item.peifangyaoqiu));
+        tr.append($("<td></td>").html(item.goucheyugoushijianduan));
+        tr.append($("<td></td>").html(item.jutigoucheshijian));
+        tr.append($("<td></td>").html(item.shouhouweixiubaoyangshijian));
+        tr.append($("<td></td>").html(item.jingyingshijianyaoqiu));
+        tr.append($("<td></td>").html(item.gongzuoshijianyaoqiu));
+        //tr.append($("<td></td>").html(item.peiefenbu));
+        //tr.append($("<td></td>").html(item.peieshuoming));
+        tr.append($("<td></td>").html(item.baochoufangshi));
+        
+        tr.append($("<td></td>").html(item.hesuandanwei));
+        tr.append($("<td></td>").html(item.danjia));
+        tr.append($("<td></td>").html(item.shuliang));
+        tr.append($("<td></td>").html(item.heji));
+
+        var remark = $("<input name='Remark' class='form-control' style='width:150px'>").val(item.Remark);
+        tr.append($("<td></td>").append(remark));
+
+        //tr.append($("<td></td>").html(""));
+        //tr.append($("<td></td>").html(""));
+
+        $("#huizongbiao-table-Zhixing tbody").append(tr);
+    }
+</script>

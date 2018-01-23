@@ -1,0 +1,87 @@
+﻿@using Purchase.Service.DTO
+@model IEnumerable<RequirementGroupDto>
+
+<div class="count2">
+    <form id="search-group-form">
+        <table style="width:100%">
+            <tr>
+                <td colspan="10" style="text-align:right">
+                    <a id="btnGroupQuery" class="btn btn-primary" style="width:100px">查 询</a>
+                    <a id="btnConfirm" class="btn btn-primary" style="width:100px">确 认</a>
+                </td>
+            </tr>
+            <tr>
+                <td width="70">项目名称</td>
+                <td width="460">
+                    <input id="ProjectName" name="ProjectName" class="form-control" />
+                </td>
+                <td width="70">项目简称</td>
+                <td width="260">
+                    <input id="ProjectShortName" name="ProjectShortName" class="form-control" />
+                </td>
+                <td>
+                </td>
+            </tr>
+        </table>
+    </form>
+  
+    <div class="table-responsive" style="max-height:500px;overflow:auto">
+        <table id="select-table" class="table table-bordered table-condensed table-hover">
+            <thead>
+                <tr>
+                    <th width="80">选择</th>
+                    <th>需求书组名</th>
+                    <th>项目编号</th>
+                    <th>项目名称</th>
+                    <th>项目简称</th>
+                </tr>
+            </thead>
+            <tbody>
+                @if (Model != null)
+                {
+                    foreach (RequirementGroupDto item in Model)
+                    {
+                        <tr>
+                            <td>@Html.RadioButton("radio",Json.Encode(item))</td>
+                            <td>@item.RequirementGroupName</td>
+                            <td>@item.ProjectCode</td>
+                            <td>@item.ProjectName</td>
+                            <td>@item.ProjectShortName</td>
+                        </tr>
+                    }
+                }
+            </tbody>
+        </table>
+    </div>    
+</div>
+<script>
+    $("#btnConfirm").click(function () {
+        var checkedRadio = $("#select-table input[type=radio]:checked");
+        var args = JSON.parse(checkedRadio.val());
+
+        GroupSelectCallback(args);
+    })
+
+    $("#btnGroupQuery").click(function () {
+        $("#btnGroupQuery").button("loading");
+
+        var params = $("#search-group-form").serializeJson();
+        params = $.extend(params, { ModelType: $("#ModelType").val() });
+        $.post("/DemandBookGroup/RequirementGroupSearchByProjectName", params, function (data) {
+            if (data && data.List) {
+                $("#select-table tbody").empty();
+                $.each(data.List, function (index, item) {
+                    var tr = $("<tr>");
+                    tr.append($("<td>").append($("<input id='Id' type='radio'>").val(JSON.stringify(item))));
+                    tr.append($("<td>").html(item.RequirementGroupName));
+                    tr.append($("<td>").html(item.ProjectCode));
+                    tr.append($("<td>").html(item.ProjectName));
+                    tr.append($("<td>").html(item.ProjectShortName));
+                  
+                    $("#select-table tbody").append(tr);
+                })
+            }
+
+        }).complete(function () { $("#btnGroupQuery").button("reset"); });
+    })
+</script>

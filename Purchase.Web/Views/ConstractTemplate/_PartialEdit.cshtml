@@ -1,0 +1,42 @@
+﻿@model Purchase.DAL.ConstractTemplate
+
+<div class="form-horizontal">
+    <div class="form-group">
+        <label class="control-label col-md-2" for="TemplateName">合同模板名称</label>
+        <div class="col-md-5">
+            @Html.TextBoxFor(m => m.TemplateName, new { @class = "form-control" })
+        </div>
+        <label class="control-label col-md-1" for="TemplateName">是否使用</label>
+        <div class="col-md-2" style="line-height:30px;height:30px;font-size:14px">
+            @Html.CheckBox("UseChk", Model.UseChk.HasValue?Model.UseChk.Value:false, new { @class = "checkbox-inline", style = "height:16px; margin-right:3px;" })使用
+        </div>
+        <div class="col-md-2 text-right">
+            @*<input id="saveBtn" type="submit" value="保存" class="btn btn-primary btn-check" data-loading-text="提交中..." style="width:100px;height:35px" />*@
+            <a id="btnSave" class="btn btn-primary" data-loading-text="提交中...">保 存</a>
+        </div>
+    </div>
+</div>
+<script>
+    $(function () {
+        $(".btn-check").click(function () {
+            $(this).button('loading');//禁用按钮并显示提交中
+        });
+        $("#btnSave").click(function () {
+            $("#ConstractTemplateForm").submit(function () {
+                if (isEmpty($("#TemplateName").val())) {
+                    alert("合同模板名称必须填写");
+                    return false;
+                }
+            }).submit();
+        })
+            
+    })
+    function isEmpty(value) {
+        if (value == "")
+            return true;
+        else
+            return false;
+    }
+
+</script>
+

@@ -1,0 +1,48 @@
+﻿@using Purchase.Service.DTO
+@model IEnumerable<QuotationMstDto>
+
+<div class="count2">
+    <table id="quotations-pre-group-table" class="table table-bordered table-condensed table-hover mt20">
+        <thead>
+            <tr>
+                <th>确认单Id</th>
+                <th>确认单类型</th>
+                <th>项目编号</th>
+                <th>项目名称</th>
+                <th>项目简称</th>
+                <th>供应商名称</th>
+                <th>供应商简称</th>
+            </tr>
+        </thead>
+        <tbody>
+            @if (Model != null)
+            {
+                foreach (QuotationMstDto item in Model)
+                {
+                    <tr>
+                        <td><a href="javascript:openDetailList(@item.QuotationId,'@item.QuotationType','@item.SupplierName')">@item.QuotationId</a></td>
+                        <td>@item.QuotationTypeTxt</td>
+                        <td>@item.ProjectCode</td>
+                        <td>@item.ProjectName</td>
+                        <td>@item.ProjectShortName</td>
+                        <td>@item.SupplierName]</td>
+                        <td>@item.SupplierShortName</td>
+                    </tr>
+                }
+            }
+        </tbody>
+    </table>
+</div>
+<script>
+    function openQuotation(QuotationType, ProjectId, QuotationId) {
+        debugger
+        var modeltypes = ["业务", "内部采购", "其他"];
+        var url = "/Quotation/Create?QuotationType=" + QuotationType;
+        url += "&ProjectId=" + ProjectId;
+        if (QuotationId != 0) {
+            url += "&QuotationId=" + QuotationId;
+        }
+
+        window.open(url);
+    }
+</script>

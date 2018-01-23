@@ -1,0 +1,86 @@
+﻿@{
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+<div class="body inline-block-father">
+    <div class="menu inline-block">
+        <div class="panel panel-default">
+            <div class="panel-heading"><h4>立项管理</h4></div>
+            <div class="panel-body">
+                @*<a href="/Projects/Create">立项信息登记</a>
+                    <hr />*@
+                <a href="/Projects/">立项登记及查询</a>
+            </div>
+        </div>
+        <div class="panel panel-default">
+            <div class="panel-heading"><h4>需求书管理</h4></div>
+            <div class="panel-body">
+                <a href="/DemandBookGroup/Index">需求书组登记、查询、审核</a>
+                <hr />
+                <a href="/DemandBook/Index">需求书发送邮件</a>
+            </div>
+        </div>
+        <div class="panel panel-default">
+            <div class="panel-heading"><h4>确认单管理</h4></div>
+            <div class="panel-body">
+                <a href="/QuotationGroup/Index">确认单组登记、查询、审核</a>
+                <hr />
+                <a href="/Quotation/">确认单查询</a>
+            </div>
+        </div>
+        <div class="panel panel-default">
+            <div class="panel-heading"><h4>预算确认单管理</h4></div>
+            <div class="panel-body">
+                <a href="/QuotationYusuanGroup/Index">预算确认单组登记、查询</a>
+                <hr />
+                <a href="/Settlement/ZhuijiaIndex">预算外确认单-追加费用</a>
+            </div>
+        </div>
+        <div class="panel panel-default">
+            <div class="panel-heading"><h4>结算单管理</h4></div>
+            <div class="panel-body">
+                @*<a href="/Settlement/SettlementDtl">结算单登记</a>
+                <hr />*@
+                <a href="/Settlement/SettlementMst">结算单查询及发送邮件</a>
+                <hr />
+
+                <a href="/Settlement/SettlementGroup">结算单审核</a>
+            </div>
+        </div>
+        <div class="panel panel-default">
+            <div class="panel-heading"><h4>应付流转单</h4></div>
+            <div class="panel-body">
+                <a href="/FlowOrder/">应付流转单登记及查询</a>
+                @*<hr />*@
+                @*<a href="/Payment/">对公付款查询</a>
+                    <hr />
+                    <a href="/Payment/FinanceIndex">财务对公付款查询</a>*@
+            </div>
+        </div>
+
+    </div>
+    <script>
+        $(function () {            
+            var type = getQueryString("ModelType");
+            addModelOption(type);
+            if (type) {
+                $(".menu a").each(function () {
+                    $(this).attr("href", $(this).attr("href") + "?ModelType=" + type);
+                })
+            }
+        })
+        function addModelOption(type) {
+            var modeltypes = ["业务", "内部采购", "其他", "其他"];
+            
+            if (type == "2") {
+                addOption($("#ModelType"), '其他', '其他');
+               // addOption($("#ModelType"), '其他2', '其他2');
+            }
+            else {
+                var value = text = modeltypes[type];
+                addOption($("#ModelType"), value, text);
+            }
+        }
+    </script>
+    @RenderBody()
+    @RenderSection("scripts", required: false)
+</div>

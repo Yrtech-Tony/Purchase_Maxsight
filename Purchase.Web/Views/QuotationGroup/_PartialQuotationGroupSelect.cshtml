@@ -1,0 +1,103 @@
+﻿@using Purchase.Service.DTO
+@model IEnumerable<QuotationGroupDto>
+
+<div class="count2">
+    <form id="search-group-form">
+        <input type="hidden" id="TargetGroupId" name="TargetGroupId" />
+        <table style="width:100%">
+            <tr>
+                <td colspan="10" style="text-align:right">
+                    <a id="btnGroupQuery" class="btn btn-primary" style="width:100px">查 询</a>
+                    <a id="btnQuotationConfirm" class="btn btn-primary" style="width:100px">确 认</a>
+                </td>
+            </tr>
+            <tr>
+                <td width="70">项目名称</td>
+                <td width="460">
+                    <input id="ProjectName" name="ProjectName" class="form-control" />
+                </td>
+                <td width="70">项目简称</td>
+                <td width="260">
+                    <input id="ProjectShortName" name="ProjectShortName" class="form-control" />
+                </td>
+                <td></td>
+            </tr>
+        </table>
+    </form>
+    <div class="table-responsive" style="max-height:500px;overflow:auto">
+        <table id="select-quotation-group-table" class="table table-bordered table-condensed table-hover">
+            <thead>
+                <tr>
+                    <th width="80">选择</th>
+                    <th>确认单组名</th>
+                    <th>项目编号</th>
+                    <th>项目名称</th>
+                    <th>项目简称</th>
+                </tr>
+            </thead>
+            <tbody>
+                @if (Model != null)
+                {
+                    foreach (QuotationGroupDto item in Model)
+                    {
+                        <tr>
+                            <td>@Html.RadioButton("radio", Json.Encode(item))</td>
+                            <td>@item.QuotationGroupName</td>
+                            <td>@item.ProjectCode</td>
+                            <td>@item.ProjectName</td>
+                            <td>@item.ProjectShortName</td>
+                        </tr>
+                    }
+                }
+            </tbody>
+        </table>
+    </div>    
+</div>
+<script>
+    $("#btnQuotationConfirm").click(function () {
+       // $("#btnConfirm").button("loading");
+
+        //var checkedRadio = $("#select-quotation-group-table input[type=radio]:checked");
+        //var args = JSON.parse(checkedRadio.val());
+
+        //$.post("/QuotationGroup/QuotationGroupCopy", {
+        //    SourceGroupId:args.GroupId,
+        //    TargetGroupId: $("#TargetGroupId").val(),
+        //    ProjectId: $("#ProjectId").val()
+        //}, function () {
+        //    alert("复制成功");
+        //    $("#myModal").modal("hide");
+        //}).complete(function () { $("#btnConfirm").button("reset"); });
+
+        debugger
+        var checkedRadio = $("#select-quotation-group-table input[type=radio]:checked");
+        var args = JSON.parse(checkedRadio.val());
+        //var args = [];
+        //args.push(tds.eq(1).html());
+        //args.push(checkedRadio.val());
+        QuotationSelectCallback(args);
+    })
+
+    $("#btnGroupQuery").click(function () {
+        $("#btnGroupQuery").button("loading");
+
+        var params = $("#search-group-form").serializeJson();
+        params = $.extend(params, { ModelType: $("#ModelType").val() });
+        $.post("/QuotationGroup/QuotationGroupSearchByProjectName", params, function (data) {
+            if (data && data.List) {
+                $("#select-quotation-group-table tbody").empty();
+                $.each(data.List, function (index, item) {
+                    var tr = $("<tr>");
+                    tr.append($("<td>").append($("<input id='radio' name='radio' type='radio'>").val(JSON.stringify(item))));
+                    tr.append($("<td>").html(item.QuotationGroupName));
+                    tr.append($("<td>").html(item.ProjectCode));
+                    tr.append($("<td>").html(item.ProjectName));
+                    tr.append($("<td>").html(item.ProjectShortName));
+
+                    $("#select-quotation-group-table tbody").append(tr);
+                })
+            }
+
+        }).complete(function () { $("#btnGroupQuery").button("reset"); });
+    })
+</script>

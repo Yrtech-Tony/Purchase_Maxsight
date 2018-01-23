@@ -1,0 +1,98 @@
+﻿<div class="form-horizontal">
+    <div id="RequirementBase" class="panel panel-default mt20">
+        <div class="panel-heading">
+            <strong style="line-height:35px;font-size:14px;">基本信息</strong>
+            <button class="btn btn-danger btn pull-right clearfix" onclick="SavePeie()">保存配额</button>
+            <button id="btnSaveBase" class="btn btn-primary btn pull-right clearfix" style="margin-right:5px;" onclick="saveBase()">保存</button>
+        </div>
+        <div class="panel-body">
+            <form id="requirement-base-form">
+                <input id="SeqNO" name="SeqNO" type="hidden">
+                <table>
+                    <tr>
+                        <td>
+                            项目简称
+                        </td>
+                        <td>
+                            <input id="ProjectShortName" name="ProjectShortName" class="form-control" disabled>
+                        </td>
+                        <td>执行省份</td>
+                        <td width="160">
+                            <input id="Province" name="Province" class="form-control" disabled>
+                        </td>
+                        <td>执行城市</td>
+                        <td width="160">
+                            <input id="City" name="City" class="form-control" disabled>
+                        </td>
+                        <td>执行周期</td>
+                        <td>
+                            <input id="ExecuteCycle" name="ExecuteCycle" class="form-control" />
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>项目类型</td>
+                        <td><input id="ProjectType" name="ProjectType" class="form-control" disabled></td>
+                        <td>执行方式</td>
+                        <td><input id="ExcuteMode" name="ExcuteMode" class="form-control" disabled></td>
+                        <td>样本量合计</td>
+                        <td><input id="Count" name="Count" class="form-control" disabled></td>
+                        <td>其他说明</td>
+                        <td><input id="Remark" name="Remark" class="form-control"></td>
+                    </tr>
+                </table>
+            </form>
+        </div>
+    </div>
+    <div id="table-details" style="display:none">
+        @Html.Partial("Bianchengjibianji/Load/_PartialLoadBianchengjibianjiDtl1")
+        @Html.Partial("Bianchengjibianji/Load/_PartialLoadBianchengjibianjiDtl2")
+    </div>
+    </div>
+<div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-hidden="false">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
+                <h4 class="modal-title"></h4>
+            </div>
+            <div class="modal-body">
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    $(function () {
+     
+    })
+    function closeModal() {
+        $("#myModal").modal("hide");
+    }
+    function setModal(title, body, item, big) {
+        if (big) {
+            $("#myModal .modal-dialog").addClass( "modal-lg");
+        } else {
+            $("#myModal .modal-dialog").removeClass("modal-lg");
+        }
+        $("#myModal .modal-title").html(title);
+        $("#myModal .modal-body").empty();
+        $("#myModal .modal-body").load("/DemandBook/LoadPartial", { partialView: body }, function () {          
+            if (item) {
+                $("#myModal .modal-body form").setForm(item);
+                if ($(this).find("#Province").length > 0) {
+                    loadCityByProvince($("#myModal .modal-body form #Province option:selected").attr("id"));
+                }
+            }
+            $(this).find("select").addClass("selectpicker").prop("title", "").data("live-search", true).selectpicker("refresh");
+        });
+    }
+    //function saveBase() {
+    //    var params = $("#requirement-base-form").serializeJson('&');
+    //    params = $.extend(params, getMstObject());
+    //    $.post("/DemandBook/SaveBase", params, function (data) {
+    //        $("#RequirementId").val(data);
+    //        alert("保存成功！");
+    //    });
+    //}
+
+</script>

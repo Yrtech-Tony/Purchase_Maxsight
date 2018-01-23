@@ -1,0 +1,203 @@
+﻿@{
+    ViewBag.Title = "决算统计表2查询-业务";
+    Layout = "../FlowOrder/_FlowOrderLayout.cshtml";
+}
+<div class="count inline-block">
+    <form id="search-form" class="form">
+        <table>
+            <tr>
+                <td colspan="10" style="text-align:right">
+                    <button id="btnQuery" type="button" class="btn btn-primary" style="width:100px">查 询</button>
+                    <button id="btnExport" onclick="exportExcel()" type="button" class="btn btn-primary" style="width:100px" data-loading-text="正在导出...">导出Excel</button>
+
+                </td>
+            </tr>
+            <tr>
+                <td width="70">服务行业</td>
+                <td>
+                    <select id="ServiceTrade" name="ServiceTrade" class="form-control">
+                        <option value="Max">Max</option>
+                    </select>
+                </td>
+                <td width="80">确认单类型</td>
+                <td width="150">
+                    <select id="QuotationType" name="QuotationType" class="form-control">
+                        <option value="Biancheng">编程</option>
+                        <option value="Zhixing">执行</option>
+                        <option value="Fuhe">复核</option>
+                        <option value="Yanjiu">研究</option>
+                        <option value="Qita1">其他1</option>
+                        <option value="Qita2">其他2</option>
+                        <option value="Chezhan">车展</option>
+                        <option value="Zhichi">支持</option>
+                    </select>
+                </td>
+                <td width="60">期间</td>
+                <td width="200">
+                    <input id="StartDate" name="StartDate" class="form-control" onclick="WdatePicker()" />
+                </td>
+                <td width="20" style="text-align:center">至</td>
+                <td width="200">
+                    <input id="EndDate" name="EndDate" class="form-control" onclick="WdatePicker()" />
+                </td>
+                <td>
+                </td>
+            </tr>
+        </table>
+    </form>
+    <div style="position:relative">
+        <div id="search-result" class="table-responsive fix-table-div">
+            <table id="Juesuantongjiebiao-table" class="table table-bordered table-condensed table-hover">
+                <thead>
+                    <tr>
+                        <th width="150">执行方式</th>
+                        <th width="150" class="show-choice-column">执行分类</th>
+                        <th width="200">金额</th>
+                        <th width="200">样本量</th>
+                        <th width="200">均值</th>
+                    </tr>
+                </thead>
+                <tbody></tbody>
+            </table>
+        </div>
+    </div>
+    <div id="pagination" class="pull-right">
+    </div>
+</div>
+@section Scripts {
+    <script src="~/Content/My97DatePicker/WdatePicker.js"></script>
+    <script src="~/Scripts/custom/form-serialize.js"></script>
+    <script>
+        var showColumn = true;
+        $(function () {
+            $("#btnQuery").click(function () {
+                load();
+            })
+
+            $("#QuotationType").change(function () {
+                $("#search-result").clearFixLayout();
+                $("#Juesuantongjiebiao-table tbody").empty();
+                $("#pagination").empty();
+                if ($(this).val() == "Qita1" || $(this).val() == "Qita2") {
+                    $("#Juesuantongjiebiao-table tr th:eq(0)").text("提供服务");
+                    $("#Juesuantongjiebiao-table tr th:eq(1)").text("费用构成");                
+                } else {
+                    $("#Juesuantongjiebiao-table tr th:eq(0)").text("执行方式");
+                    $("#Juesuantongjiebiao-table tr th:eq(1)").text("执行分类");
+                }
+                
+                var showTypes = ["Qita1", "Fuhe"];
+                if (showTypes.indexOf($(this).val()) > -1) {
+                    showColumn = false;
+                    $(".show-choice-column").hide();
+                } else {
+                    showColumn = true;
+                    $(".show-choice-column").show();
+                }
+            });
+        })
+
+        function exportExcel() {
+            $("#btnExport").button("loading");
+            alert("正在导出...");
+
+            var params = $("#search-form").serializeJson();
+            if (params.StartDate == "") {
+                params.StartDate = "1900-01-01";
+            }
+            if (params.EndDate == "") {
+                params.EndDate = "2999-01-01";
+            }
+            $.post("/Juesuantongjiebiao/ExportYewucaigoubiao2", params, function (data) {
+                window.location.href = "/Juesuantongjiebiao/DownloadFile?fileName=" + data.ExportPath;
+            }).complete(function () {
+                $("#btnExport").button("reset");
+                closealert();
+            });
+        }
+
+        function load(pageNum) {
+            $("#btnQuery").button("loading");
+            $("#search-result").clearFixLayout();
+
+            var params = $("#search-form").serializeJson();
+            if (params.StartDate == "") {
+                params.StartDate = "1900-01-01";
+            }
+            if (params.EndDate == "") {
+                params.EndDate = "2999-01-01";
+            }
+            params = $.extend(params, { pageSize: 10, pageNum: pageNum ? pageNum : 1 });
+
+            $.post("/Juesuantongjiebiao/LoadYewucaigoubiao2", params, function (data) {
+                if (data && data.List) {
+                    $("#Juesuantongjiebiao-table tbody").empty();
+                    
+                    $.each(data.List, function (index, leftItem) {
+                        var tr = $("<tr>");
+
+                        tr.append($("<td></td>").html(leftItem.ExecuteMode));
+                        if (showColumn) {
+                            tr.append($("<td></td>").html(leftItem.ExcuteType));
+                        }
+                        tr.append($("<td></td>").html(parseFloat(leftItem.ExecuteModeSumAmt).toFixed(2)));
+                        tr.append($("<td></td>").html(parseFloat(leftItem.SettleCount)));
+                        tr.append($("<td></td>").html(parseFloat(leftItem.Execute_Avg).toFixed(2)));
+                        
+                        $("#Juesuantongjiebiao-table tbody").append(tr);
+                    })
+                    
+                    if (data.List.length > 0) {
+                        //增加合计
+                        if (showColumn) {
+                            calHeji(2, 2);
+                        } else {
+                            calHeji(1, 2);
+                        }
+                        $("#search-result").fixHeadColumn({ fixColumnIndex: 3 });
+                    }
+                    
+                    createPageNav({ $container: $("#pagination"), pageCount: data.PageCount, currentNum: data.CurPage, afterFun: load });
+                }
+            }).complete(function () { $("#btnQuery").button("reset"); });
+        };
+
+
+        //增加合计
+        function calHeji(thcount, dynamicCount) {
+            
+            //预算小计合计
+            var tr = $("<tr>");
+
+            var tdCount = thcount + dynamicCount+1;
+            var hejiArr = new Array(dynamicCount);
+            for (var i = 0; i < dynamicCount; i++) {
+                hejiArr[i] = 0;
+            }
+            $("#Juesuantongjiebiao-table tbody tr").each(function () {
+                var tds = $(this).find("td");
+                for (var i = 0; i < dynamicCount; i++) {
+                    var v = parseFloat(tds.eq(thcount + i).text());
+                    if (!isNaN(v)) {
+                        hejiArr[i] += v;
+                    }
+                }
+            })
+            for (var i = 0; i < tdCount; i++) {
+                var td = $("<td>");
+                if (i == 0) {
+                    tr.append($("<td><strong>合计<strong></td>"));
+                    continue;
+                }
+                for (var j = 0; j < dynamicCount; j++) {
+                    if (j + thcount == i) {
+                        td.html(hejiArr[j].toFixed(2));
+                    }
+                }
+                tr.append(td);
+            }
+
+            $("#Juesuantongjiebiao-table tbody").append(tr);
+        }
+    </script>
+}

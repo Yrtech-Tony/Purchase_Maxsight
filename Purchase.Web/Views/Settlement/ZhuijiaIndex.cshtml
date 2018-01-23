@@ -1,0 +1,107 @@
+﻿@{
+    ViewBag.Title = "预算外确认单-追加费用";
+    Layout = "~/Views/Shared/_PurchaseLayout.cshtml";
+}
+<div class="count inline-block">
+    <form id="search-form" class="form">
+        <table>
+            <tr>
+                <td colspan="11" style="text-align:right">
+                    <button id="btnQueryZhuijia" type="button" class="btn btn-primary" style="width:100px">查 询</button>
+                    <button id="btnExcelExport" type="button" class="btn btn-primary" style="width:100px" data-loading-text="正在导出...">导出Excel</button>
+                </td>
+            </tr>
+            <tr>
+                <td width="80">模块类型</td>
+                <td width="120">
+                    <select id="ModelType" name="ModelType" class="form-control"></select>
+                </td>
+                <td width="80">服务行业</td>
+                <td width="100">
+                    <select id="ServiceTrade" name="ServiceTrade" class="form-control"></select>
+                </td>
+                <td width="80">项目名称</td>
+                <td width="300">
+                    <input id="ProjectId" name="ProjectId" class="form-control" type="hidden" />
+                    <input id="ProjectName" name="ProjectName" class="form-control" disabled />
+                </td>
+                <td width="80">项目简称</td>
+                <td width="200">
+                    <input id="ProjectShortName" name="ProjectShortName" class="form-control" disabled />
+                </td>                
+                <td width="100">
+                    <a id="btnProjectSelect" class="btn btn-primary" style="width:100px">选择项目</a>
+                </td>
+            </tr>
+        </table>
+    </form>
+    
+    <div class="table-responsive" style="max-height:450px;overflow:auto">
+       @Html.Partial("_PartialZhuijia")
+    </div>
+</div>
+<div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-hidden="false">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
+                <h4 class="modal-title"></h4>
+            </div>
+            <div class="modal-body">
+            </div>
+        </div>
+    </div>
+</div>
+@section Scripts {
+    <script src="~/Scripts/custom/form-serialize.js"></script>
+    <script>
+        $(function () {
+            ServiceTradeBind();// 绑定服务行业
+            $("#btnQueryZhuijia").click(function () {
+                loadZhuijia();
+            })
+           
+            $("#btnProjectSelect").click(function () {
+                ProjectSelect();
+            })
+            $("#btnExcelExport").click(function () {
+                ExportExcel();
+            })
+        })
+
+        function ProjectSelect() {
+            $("#myModal .modal-body").empty();
+            $("#myModal").modal("show");
+            $("#myModal .modal-title").html("选择项目");
+            $("#myModal .modal-body").load("/DemandBook/ProjectSelect", { ModelType: $("#ModelType").val(), ProjectCode: "", ProjectName: "", ProjectShortName: "", ServiceTrade: $("#ServiceTrade").val() }, function () {
+
+            });
+        }
+        function ProjectSelectCallback(args) {
+            $("#ProjectName").val(args[1]);
+            $("#ProjectShortName").val(args[2]);
+            $("#ProjectId").val(args[3]);
+            $("#myModal").modal("hide");
+        }
+        function ExportExcel() {
+            $("#btnExcelExport").button("loading");
+            var params = $("#search-form").serializeJson();
+            $.post("/FlowOrder/FlowOrderExport", params, function (data) {
+                window.location.href = "/FlowOrder/DownloadFile?fileName=" + data.ExportPath;
+            }).complete(function () { $("#btnExcelExport").button("reset"); })
+        }
+        function ServiceTradeBind() {
+            var el = $("#ServiceTrade");
+            var modelType = $("#ModelType").val();
+            if (modelType.startsWith("其他")) {
+                el.append($("<option>").html("Trip").val("Trip"));
+                el.append($("<option>").html("Zebrac").val("Zebrac"));
+                el.append($("<option>").html("Star").val("Star"));
+            }
+            else {
+                el.append($("<option>").html("Max").val("Max"));
+            }
+            el.data("live-search", true).prop("title", "").selectpicker("refresh");
+        }
+    </script>
+}

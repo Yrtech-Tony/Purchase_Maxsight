@@ -1,0 +1,353 @@
+﻿@{
+    ViewBag.Title = "结算单审核";
+    Layout = "~/Views/Shared/_PurchaseLayout.cshtml";
+}
+<div class="count inline-block">
+    <div class="count inline-block">
+        <form id="search-form" class="form">
+            <input id="QuotationType_Hidden" name="QuotationType_Hidden" type="hidden" />
+            <table>
+                <tr>
+                    <td colspan="10" style="text-align:right">
+                        <button id="btnQuery" type="button" class="btn btn-primary" style="width:100px">查 询</button>
+                        <button id="btnAdd"  type="button" class="btn btn-primary" style="width:100px">新 增</button>
+                    </td>
+                </tr>
+                <tr>
+                    <td width="60">模块类型</td>
+                    <td width="120">
+                        <select id="ModelType" name="ModelType" class="form-control"></select>
+                    </td>
+                    <td width="60">服务行业</td>
+                    <td width="120">
+                        <select id="ServiceTrade" name="ServiceTrade" class="form-control"></select>
+                    </td>
+                    <td width="80">项目全称</td>
+                    <td width="340">
+                        <input id="ProjectName" name="ProjectName" class="form-control" readonly="readonly" />
+                        <input id="ProjectApplyStatusCode" name="ProjectApplyStatusCode" class="form-control" type="hidden" />
+                        <input id="ProjectUserChk" name="ProjectUserChk" class="form-control" type="hidden" />
+                    </td>
+                    <td width="60">项目简称</td>
+                    <td>
+                        <input id="ProjectShortName" name="ProjectShortName" class="form-control" readonly="readonly" />
+                    </td>
+                    <td style="display:none">
+                        <input id="ProjectId" name="ProjectId" class="form-control" />
+                        <input id="GroupId" name="GroupId" class="form-control" />
+                        <input id="ApplyId" name="ApplyId" class="form-control" />
+                        <input id="SeqNO" name="SeqNO" class="form-control" />
+                    </td>
+                    <td width="100">
+                        <button id="btnProjectSelect" type="button" class="btn btn-primary" style="width:100px">选择项目</button>
+                    </td>
+                </tr>
+            </table>
+        </form>
+
+        <table id="amt-table" style="width: 550px;">
+            <tr>
+                <td width="80"><strong>项目预算：</strong></td>
+                <td style="text-align:left" width="100"><span id="ProjectSumAmt"></span></td>
+                <td width="90"><strong>已提交金额：</strong></td>
+                <td style="text-align:left" width="100"><span id="CommitAmt"></span></td>
+                <td width="80"><strong>剩余金额：</strong></td>
+                <td style="text-align:left" width="100"><span id="LastAmt"></span></td>
+            </tr>
+        </table>
+        <table id="result-table" class="table table-bordered table-condensed">
+            <thead>
+                <tr>
+                    <th width="100">提交审核</th>
+                    <th width="80">删除</th>
+                    <th width="80">详细</th>
+                    <th>结算单组</th>                  
+                    <th>操作</th>
+                </tr>
+            </thead>
+            <tbody></tbody>
+        </table>
+
+        <div id="pagination" class="pull-right">
+            <ul id="pageUl"></ul>
+        </div>
+    </div>
+    <div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-hidden="false">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
+                    <h4 class="modal-title"></h4>
+                </div>
+                <div class="modal-body">
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal fade" id="applyModal" tabindex="-1" role="dialog" aria-hidden="false">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
+                    <h4 class="modal-title"></h4>
+                </div>
+                <div class="modal-body">
+                </div>
+            </div>
+        </div>
+    </div>
+
+    @section Scripts {
+        <script src="~/Scripts/custom/form-serialize.js"></script>
+        <script>
+            $(function () {
+                ServiceTradeBind();// 绑定服务行业
+                $("#btnQuery").click(function () {
+                    load();
+                })
+                $("#btnSave").click(function () {
+                    var jsonArr = [];
+                    $("#SettlementMst-table tbody tr").each(function (i, tr) {
+                        var form = $("<form>").append($(tr).clone());
+                        var obj = form.serializeJson();
+                        obj.SettleChk = $(this).find("#SettleChk").is(":checked")
+                        jsonArr.push(obj);
+                    });
+                    $.post("/Settlement/SaveSettlementMsts", {
+                        jsonArr: JSON.stringify(jsonArr),
+                        ProjectId: $("#ProjectId").val(),
+                        SupplierId: $("#SupplierId").val()
+                    }, function () {
+                        load();
+                        alert("保存成功！");
+                    })
+                })
+
+                $("#btnProjectSelect").click(function () {
+                    ProjectSelect();
+                })
+                $("#btnSupplierSelect").click(function () {
+                    SupplierSelect(1);
+                })
+                $("#btnAdd").click(function () {
+                    if (!CommitCheck()) {
+                        alert("正在审核中或者非本人添加的项目");
+                        return false;
+                    }
+                    openNewGroup();
+                })
+            })
+               
+            function openNewGroup(id, groupName) {
+                if (isEmpty($("#ProjectId").val())) {
+                    alert("请选择项目");
+                    return
+                }
+                debugger
+                $("#myModal").modal("show");
+                $("#myModal .modal-title").html("结算单组添加");
+                $("#myModal .modal-body").empty();
+                $("#myModal .modal-body").load("/Settlement/LoadPartial", { partialView: "_PartialEdit" }, function () {
+                    $("#SettlementGroupForm #ProjectId").val($("#search-form #ProjectId").val());
+                    $("#GroupId").val(id);
+                    $("#GroupName").val(groupName);
+                });
+            }
+            function addSettlement(item) {
+                $("#GroupId").val(item.GroupId);
+                $("#myModal").modal("show");
+                $("#myModal .modal-title").html("添加结算单");
+                $("#myModal .modal-body").empty();
+                $("#myModal .modal-body").load("/Settlement/LoadPartial", { partialView: "_PartialSettlementMstSelect" }, function () {
+                    SelectedGroup = item
+                });
+            }
+            function load() {
+                if ($("#ProjectId").val() == null || $("#ProjectId").val() == "") {
+                    alert("请选择项目");
+                    return false;
+                }
+                $("#btnQuery").button("loading");
+                var params = $("#search-form").serializeJson();
+                $.post("/Settlement/SettlementGroupSearch", params, function (data) {
+                    if (data && data.List) {
+                        $("#result-table tbody").empty();
+                        $.each(data.List, function (index, item) {
+                            $("#result-table tbody").append(bindSettlementGroupTr(item));
+                        })
+                    }
+                }).complete(function () { $("#btnQuery").button("reset"); });
+            };
+
+            function getProjectAmt() {
+                $.post("/Settlement/GetProjectAmt", { ProjectId: $("#ProjectId").val() }, function (data) {
+                    //项目金额
+                    if (data) {
+                        if (data.CommitAmt == null)
+                        {
+                            data.CommitAmt = "0";
+                        }
+                        if (data.YusuanAmt_Projects == null) {
+                            data.YusuanAmt_Projects = "0";
+                        }
+                        $("#ProjectSumAmt").text(parseFloat(data.YusuanAmt_Projects).toFixed(2));
+                        $("#CommitAmt").text(data.CommitAmt);
+                        var lastAmt = parseFloat(parseFloat(data.YusuanAmt_Projects) - parseFloat(data.CommitAmt)).toFixed(2)
+                        if (isNaN(lastAmt)) {
+                            lastAmt = "0";
+                        }
+                        $("#LastAmt").text(lastAmt);
+                        if (lastAmt < 0) {
+                            $("#amt-table span").css("color", "red");
+                        }
+                    }
+                })
+            }
+
+            function bindSettlementGroupTr(item) {
+                var tr = $("<tr>");
+                //var item = obj.SupplierMng
+                var applyLink = $("<a>");
+                if (isApplyCheck(item)) {
+                    applyLink.html("提交审核");
+                    applyLink.attr("style", "cursor: pointer;");
+                    applyLink.click(function () {
+                        apply(item.GroupId, item.ApplyId, item.SeqNO);
+                    })
+                }
+                tr.append($("<td></td>").append(applyLink));
+                //删除
+                var delLink = $("<a>");
+                tr.append($("<td></td>").append(delLink));
+                if (isDelCheck(item)) {
+                    delLink.html("删除");
+                    delLink.attr("style", "cursor: pointer;");
+                    delLink.click(function () {
+                        debugger
+                        delSettlementGroup(item.GroupId);
+                    })
+                }
+
+                var detailLink = $("<a>").html("详细");
+                detailLink.attr("style", "cursor: pointer;");
+                detailLink.click(function () {
+                    openNewGroup(item.GroupId, item.GroupName);
+                })
+                tr.append($("<td></td>").append(detailLink));               
+                tr.append($("<td></td>").html(item.GroupName));
+                
+                var addLink = $("<a>");
+                addLink.html("结算单添加/修改");
+                addLink.attr("style", "cursor: pointer;");
+                addLink.click(function () {
+                    addSettlement(item);
+                })
+                tr.append($("<td></td>").append(addLink));
+                return tr;
+            }
+
+            function isApplyCheck(item) {
+                return item.UserChk && (item.ApplyStatusCode == "" || item.ApplyStatusCode == "拒绝");
+            }
+            function isDelCheck(item) {
+                return item.UserChk && item.ApplyStatusCode == "";
+            }
+
+            //删除
+            function delSettlementGroup(GroupId) {
+                confirm("确定要删除此记录吗？", function () {
+                    debugger
+                    $.post("/Settlement/SettlementGroupDelete", { GroupId: GroupId }, function () {
+                        load();
+                    })
+                });
+            };
+
+            function ProjectSelect() {
+                $("#myModal .modal-body").empty();
+                $("#myModal").modal("show");
+                $("#myModal .modal-title").html("选择项目");
+                $("#myModal .modal-body").load("/DemandBook/ProjectSelect", { ModelType: $("#ModelType").val(), ProjectCode: "", ProjectName: "", ProjectShortName: "" }, function () {
+
+                });
+            }
+            function ProjectSelectCallback(args) {
+                $("#ProjectName").val(args[1]);
+                $("#ProjectShortName").val(args[2]);
+                $("#ProjectId").val(args[3]);
+                GetProjects();
+                getProjectAmt();
+                load();
+                $("#myModal").modal("hide");
+            }
+            function apply(GroupId, ApplyId, SeqNO) {
+                $.post("/Projects/RecheckProcessExistChk", { recheckType: "结算单" }, function (data) {
+                    if (data == 0) {
+                        alert("不在审核流程中，请联系管理人员添加");
+                        return false;
+                    }
+                    $("#GroupId").val(GroupId);
+                    $("#ApplyId").val(ApplyId);
+                    $("#SeqNO").val(SeqNO);
+
+                    $("#applyModal").modal("show");
+                    $("#applyModal .modal-title").html("选择审核人员");
+                    $("#applyModal .modal-body").load("/Settlement/RecheckUserSelect", {}, function () {
+
+                    });
+                })
+
+            }
+            function applyFinish() {
+                $("#applyModal").modal("hide");//关闭弹出窗口
+                load()//刷新表格
+            }
+
+            function GetProjects() {
+                $.get("/Projects/FindOne", { id: $("#ProjectId").val() }, function (obj) {
+                    $("#ProjectApplyStatusCode").val(obj.ApplyStatusCode);
+                    $("#ProjectUserChk").val(obj.UserChk);
+                })
+            }
+            function CommitCheck() {
+                var ApplyStatusCode = $("#ProjectApplyStatusCode").val();
+                var UserChk = $("#ProjectUserChk").val();
+                if (ApplyStatusCode == undefined) {
+                    ApplyStatusCode = "";
+                }
+                if (UserChk == undefined) {
+                    UserChk = "true";
+                }
+                if (UserChk == "true") {
+                    if (ApplyStatusCode != "") {
+                        if (ApplyStatusCode == "完成") {
+                            return true;
+                        }
+                        else {
+                            return false;
+                        }
+                    }
+                    else {
+                        return true;
+                    }
+                }
+                else {
+                    return false;
+                }
+            }
+            function ServiceTradeBind() {
+                var el = $("#ServiceTrade");
+                var modelType = $("#ModelType").val();
+                if (modelType.startsWith("其他")) {
+                    el.append($("<option>").html("Trip").val("Trip"));
+                    el.append($("<option>").html("Zebrac").val("Zebrac"));
+                    el.append($("<option>").html("Star").val("Star"));
+                }
+                else {
+                    el.append($("<option>").html("Max").val("Max"));
+                }
+                el.data("live-search", true).prop("title", "").selectpicker("refresh");
+            }
+        </script>
+    }

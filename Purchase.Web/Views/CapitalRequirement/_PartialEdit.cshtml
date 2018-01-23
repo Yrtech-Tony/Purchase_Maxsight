@@ -1,0 +1,74 @@
+﻿@using Purchase.Service.DTO
+@using Purchase.Web.Common
+@model CapitalRequiremenDto
+
+<div class="count2 inline-block" style="line-height:40px">
+    @using (Html.BeginForm("", "", FormMethod.Post, new { Id = "CapitalRequirementForm" }))
+    {
+        @Html.HiddenFor(m => m.CapitalRequirementId)
+        @Html.HiddenFor(m => m.ProjectId)
+    
+        <div class="form-horizontal">
+            <table>
+                <tr>
+                    <td colspan="2" style="text-align:right">
+                        <a id="btnSave" class="btn btn-primary" data-loading-text="提交中...">保 存</a>
+                    </td>
+                </tr>
+                <tr>
+                    <td width="150px">支出用途</td>
+                    @*<td width="350px">
+                            @Html.DropDownListFor(m => m.ExpendType, new List<SelectListItem> {
+                                new SelectListItem(){Text="",Value=""},
+                                new SelectListItem(){ Text="国峰丽英",Value="国峰丽英"},
+                                new SelectListItem(){ Text="代理费",Value="代理费"},
+                                new SelectListItem(){ Text="北京智美",Value="北京智美"},
+                                new SelectListItem(){ Text="石家庄智美",Value="石家庄智美"},
+                                new SelectListItem(){ Text="出发中心",Value="出发中心"},
+                                new SelectListItem(){ Text="石家庄晟煊",Value="石家庄晟煊"},
+                                new SelectListItem(){ Text="河北诺亚",Value="河北诺亚"}
+                           }, htmlAttributes: new { @class = "form-control" })
+                        </td>*@
+                    <td width="350px">
+                        @Html.DropDownListFor(m => m.ExpendType, SelectListTool.HiddenCodeList("应付流转单-支出用途"), htmlAttributes: new { @class = "form-control" })
+                    </td>
+
+                </tr>
+                @*<tr>
+                        <td>部门</td>
+                        <td>
+                            <select id="DepartmentCode" name="DepartmentCode" class="form-control"></select>
+                        </td>
+                    </tr>*@
+                <tr>
+                    <td>支出方式</td>
+                    <td>
+                        <select id="ExpendPattern" name="ExpendPattern" class="form-control">
+                            <option value=""></option>
+                            <option value="对公付款">对公付款</option>
+                            <option value="对公借款">对公借款</option>
+                            <option value="个人借款">个人借款</option>
+                            <option value="其他">其他</option>
+                        </select>
+                    </td>
+                </tr>
+            </table>
+        </div>
+    }
+</div>
+<script>
+    var department = ["", "采购部", "产品部", "研发部", "销售部", "IT部", "人力资源部", "财务部", "证券部", "渠道诊断-北京", "渠道诊断-广州", "渠道咨询-北京", "渠道咨询-广州", "服务个案-北京", "服务个案-广州", "满意度-北京", "满意度-广州", "销售-北京", "销售-上海", "销售-广州", "管理部", "个案运作-北京", "个案运作-上海", "个案运作-广州", "个案研究-上海"];
+    for (i in department) {
+        $("#CapitalRequirementForm #DepartmentCode").append($("<option>").html(department[i]).val(department[i]));
+    }
+    $("#btnSave").click(function () {
+        $("#btnSave").button('loading');
+
+        var params = $("#CapitalRequirementForm").serializeJson();
+        $.post("/CapitalRequirement/Save", params, function () {
+            $("#btnSave").button('reset');
+            load();
+            $("#CapitalRequirementModal").modal("hide");
+        })
+    })
+</script>

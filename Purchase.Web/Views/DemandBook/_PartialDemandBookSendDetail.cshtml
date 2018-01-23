@@ -1,0 +1,34 @@
+﻿@using Purchase.Service.DTO
+@model IEnumerable<RequirementEmailSendDto>
+
+<div class="count2">
+    <table id="select-table" class="table table-bordered table-condensed table-hover">
+        <thead>
+            <tr>
+                <th>需求书Id</th>
+                <th>供应商编码</th>
+                <th>供应商名称</th>
+                <th>供应商简称</th>
+                <th>发送日期</th>
+            </tr>
+        </thead>
+        <tbody>
+            @if (Model != null)
+            {
+                foreach (RequirementEmailSendDto item in Model)
+                {
+                    <tr>
+                        <td>@item.RequirementId</td>
+                        <td>@item.SupplierCode</td>
+                        <td>@item.SupplierName</td>
+                        <td>@item.SupplierShortName</td>
+                        <td>@item.InDateTime</td>
+                    </tr>
+                }
+            }
+        </tbody>
+    </table>
+</div>
+<script>
+   
+</script>

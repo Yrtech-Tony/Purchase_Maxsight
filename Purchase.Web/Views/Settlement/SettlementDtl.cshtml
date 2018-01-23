@@ -1,0 +1,651 @@
+﻿@{
+    ViewBag.Title = "结算单登记";
+    Layout = "~/Views/Shared/_PurchaseLayout.cshtml";
+}
+<style>
+    .settlement-add .table td{
+        white-space: normal;
+    }    
+</style>
+<div class="count inline-block">
+    <form id="search-form" class="form">
+        <input type="hidden" id="SettlementId" name="SettlementId">
+        <input id="SupplierId" name="SupplierId" class="form-control" type="hidden" />
+        <table>
+            <tr>
+                <td width="60">模块类型</td>
+                <td width="100">
+                    <select id="ModelType" name="ModelType" class="form-control"></select>
+                </td>
+                <td width="60">项目名称</td>
+                <td width="200">
+                    <input id="ProjectId" name="ProjectId" class="form-control" type="hidden" />
+                    <input id="ProjectName" name="ProjectName" class="form-control" disabled />
+                </td>
+                <td width="60">项目简称</td>
+                <td width="140">
+                    <input id="ProjectShortName" name="ProjectShortName" class="form-control" disabled />
+                    <input id="ProjectApplyStatusCode" name="ProjectApplyStatusCode" class="form-control" type="hidden" />
+                    <input id="ProjectUserChk" name="ProjectUserChk" class="form-control" type="hidden" />
+                    <input id="ProjectStep" name="ProjectStep" class="form-control" type="hidden" />
+                </td>
+                <td width="100">
+                    <a id="btnProjectSelect" class="btn btn-primary" style="width:100px">选择项目</a>
+                </td>
+                <td width="20"></td>
+                <td>
+                    <input id="QuotationGroupId" name="QuotationGroupId" class="form-control" type="hidden" />
+                    <input id="QuotationGroupName" name="QuotationGroupName" class="form-control" style="display: none; " readonly>
+                </td>
+                <td style="width: 120px;">
+                    <a id="btnQuotationGroupSelect" class="btn btn-primary" style="width: 120px;display:none;">选择结算单来源</a>
+                    <a id="btnQuotationGroupClear" class="btn btn-primary" style="width:120px;display:none">清除结算单来源</a>
+                </td>
+            </tr>
+        </table>
+    </form>
+    <div class="settlement-add" style="display:none">
+        <hr />
+        <table>
+            <tr>
+                <td width="60">供应商</td>
+                <td width="360">
+                    <input id="SupplierName" name="SupplierName" class="form-control" disabled>
+                </td>
+                <td width="100">
+                    <a id="btnSupplierSelect" class="btn btn-primary" style="width:100px">选择供应商</a>
+                </td>
+                <td style="text-align:right">
+                    @*<button id="btnQuery" type="button" class="btn btn-primary" style="width:100px">查 询</button>*@
+                    <button id="btnSave" type="button" class="btn btn-primary" style="width:100px">保 存</button>
+                </td>
+            </tr>
+        </table>
+        <br />
+        <table style="width:500px">
+            <tr>
+                <td width="80"><strong>执行周期：</strong></td>
+                <td style="text-align:left"><span id="ExecuteCycle"></span></td>
+                <td width="120"><strong>执行省份-城市：</strong></td>
+                <td style="text-align:left"><span id="zhixingchengshi"></span></td>
+            </tr>
+        </table>
+        <div>
+            <table id="SettlementDtl-table-1" class="table table-bordered table-condensed table-hover">
+                <thead>
+                    <tr>
+                        <th width="400px">费用内容</th>
+                        <th width="120px">单价</th>
+                        <th width="120px">数量</th>
+                        <th width="120px">合计</th>
+                        <th>备注</th>
+                    </tr>
+                </thead>
+                <tbody></tbody>
+            </table>
+            <h4 class="title">扣款说明</h4>
+            <table id="SettlementDtl-table-2" class="table table-bordered table-condensed table-hover">
+                <thead>
+                    <tr>
+                        <th width="400px">费用内容</th>
+                        <th width="120px">单价</th>
+                        <th width="120px">数量</th>
+                        <th width="120px">合计</th>
+                        <th>备注</th>
+                    </tr>
+                </thead>
+                <tbody></tbody>
+            </table>
+            <div>
+                <h4 class="title" style="float:left">追加说明</h4>
+                <div style="line-height:30px;float:right">
+                    <button id="btnAddZuijia" type="button" class="btn btn-default btn-xs" style="width:70px">追 加</button>
+                </div>
+            </div>
+            <table id="SettlementDtl-table-3" class="table table-bordered table-condensed table-hover">
+                <thead>
+                    <tr>
+                        <th width="400px">费用内容</th>
+                        <th width="120px">单价</th>
+                        <th width="120px">数量</th>
+                        <th width="120px">合计</th>
+                        <th>备注</th>
+                    </tr>
+                </thead>
+                <tbody></tbody>
+            </table>
+            <table id="SettlementDtl-table-4" class="table table-bordered table-condensed table-hover">
+                <tbody></tbody>
+            </table>
+            <div class="pull-right">
+                <h4 class="title" style="text-align:right">小计</h4>
+                <table id="heji-table" class="table table-bordered table-condensed table-hover">
+                    <thead>
+                        <tr>
+                            <th width="120px">执行小计</th>
+                            <th width="120px">扣款小计</th>
+                            <th width="120px">追加小计</th>
+                            <th width="120px">结算金额</th>
+                        </tr>
+                    </thead>
+                    <tbody></tbody>
+                </table>
+            </div>
+
+        </div>
+    </div>
+</div>
+<div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-hidden="false">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
+                <h4 class="modal-title"></h4>
+            </div>
+            <div class="modal-body">
+            </div>
+        </div>
+    </div>
+</div>
+<div class="modal fade" id="applyModal" tabindex="-1" role="dialog" aria-hidden="false">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
+                <h4 class="modal-title"></h4>
+            </div>
+            <div class="modal-body">
+            </div>
+        </div>
+    </div>
+</div>
+<div class="modal fade" id="quotationGroupModal" tabindex="-1" role="dialog" aria-hidden="false">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
+                <h4 class="modal-title"></h4>
+            </div>
+            <div class="modal-body">
+            </div>
+        </div>
+    </div>
+</div>
+@section Scripts {
+    <script src="~/Scripts/custom/form-serialize.js"></script>
+    <script>
+        var FlowOrderSum;
+        var SaveChk;
+        var shoudongZhuijiaSource;
+        function addShoudongZhuijiaTr(item) {
+            var tr = $("<tr>");
+            for (var i = 0; i < 5; i++) {
+                var td = $("<td></td>").append($("<input class='form-control'>"));
+                if (i == 0) {
+                    td.css("width", 400);
+                } else if (i == 4) {
+                    td.css("width", 344);
+                } else {
+                    td.css("width", 120);
+                }
+                if (i == 1) {
+                    td.find("input").attr("readonly", true);
+                }
+                tr.append(td);
+            }
+
+            $("#SettlementDtl-table-4 tbody").append(tr);
+            var inputs = tr.find("td input");
+            inputs.eq(2).change(function () {
+                calShoudongZhuijiaHeji(inputs.eq(2).val(), inputs.eq(3).val(), inputs.eq(1));
+            })
+            inputs.eq(3).change(function () {
+                calShoudongZhuijiaHeji(inputs.eq(2).val(), inputs.eq(3).val(), inputs.eq(1));
+                calaHeji();
+
+            })
+            if (item) {
+                inputs.eq(0).val(item.FeeContent);
+                inputs.eq(1).val(item.danjia);
+                inputs.eq(2).val(item.SettleCount);
+                inputs.eq(3).val(item.SettleAmt);
+                inputs.eq(4).val(item.Remark);               
+            }
+        }
+
+        function calShoudongZhuijiaHeji(shuliang, heji, danjiaInput) {
+            if (shuliang && heji) {
+                var danjia = parseFloat(heji) / parseFloat(shuliang);
+                $(danjiaInput).val(danjia.toFixed(2));
+            }
+            else {
+                $(danjiaInput).val("");
+            }
+        }
+        $(function () {
+            $("#btnQuery").click(function () {
+                load();
+            })
+            $("#btnAddZuijia").click(function () {
+                addShoudongZhuijiaTr();
+            });
+            $("#btnSave").click(function () {
+                // 判断项目是否为本人添加的项目
+                if (!CommitCheck()) {
+                    alert("正在审核中或者非本人添加的项目");
+                    return false;
+                }
+                if ($("#ProjectStep").val() == "竞标") {
+                    alert("此项目为竞标项目，不需要填写结算单");
+                    return false;
+                }
+
+                $("#btnSave").button("loading");
+                var saveDtls = function () {
+                    var jsonArr = [];
+                    $("#SettlementDtl-table-1 tbody tr,#SettlementDtl-table-2 tbody tr,#SettlementDtl-table-3 tbody tr").each(function (i, tr) {
+                        var form = $("<form>").append($(tr).clone());
+                        var obj = form.serializeJson();
+                        jsonArr.push(obj);
+                    });
+                    var shoudongArr = [];
+                    $("#SettlementDtl-table-4 tbody tr").each(function (i, tr) {
+                        var inputs = $(tr).find("td input");
+                        var item = {SettlementId:'0'};
+                        if (shoudongZhuijiaSource.length > i) {
+                            item = shoudongZhuijiaSource[i] 
+                        }
+                        item.FeeContent = inputs.eq(0).val();
+                        item.danjia = inputs.eq(1).val();
+                        item.SettleCount = inputs.eq(2).val();
+                        item.SettleAmt = inputs.eq(3).val();
+                        item.Remark = inputs.eq(4).val();
+                        shoudongArr.push(item);
+                    });
+                    // 判断项目是否为本人添加的项目
+                    if (jsonArr.length == 0) {
+                        alert("没有需要保存的数据");
+                        return false;
+                    }
+                    $.post("/Settlement/SaveSettlementDtls", {
+                        ProjectId: $("#ProjectId").val(),
+                        SupplierId: $("#SupplierId").val(),
+                        SettlementId: $("#SettlementId").val() == "" ? "0" : $("#SettlementId").val(),
+                        jsonArr: JSON.stringify(jsonArr),
+                        shoudongArr: JSON.stringify(shoudongArr)
+                    }, function () {
+                        load();
+                        alert("保存成功！");
+                    }).complete(function () { $("#btnSave").button("reset"); })
+                }
+
+                if (SaveChk != undefined) {
+                    if (!SaveChk) {
+                        alert("结算单正在审核中,不能保存");
+                        $("#btnSave").button("reset");
+                        return false;
+                    }
+                    saveDtls();
+                } else {
+                    $.post("/Settlement/LoadSettlementMsts", {
+                        ProjectId: $("#ProjectId").val(),
+                        SupplierId: $("#SupplierId").val()
+                    }, function (data) {
+                        if (data && data.List) {
+                            debugger
+                            if (data.List.length > 0) {
+                                CommitGroupApplyStatusCode = data.List[0].CommitGroupApplyStatusCode;// 结算单所在组的状态
+                                CommitGroupChk = data.List[0].CommitGroupChk;//false 是没有添加到组里面，true 是添加到组里面
+                                if (!CommitGroupChk)
+                                { SaveChk = true; }
+                                else
+                                {
+                                    if (CommitGroupApplyStatusCode == "完成" || CommitGroupApplyStatusCode == "拒绝") {
+                                        SaveChk = true;
+                                    }
+                                    else {
+                                        SaveChk = false;
+                                    }
+                                }
+                                if (!SaveChk) {
+                                    alert("结算单正在审核中,不能保存");
+                                    $("#btnSave").button("reset");
+                                    return false;
+                                }
+                            }
+
+                            saveDtls();
+                        }
+                    });
+                }
+
+            })
+
+            $("#btnProjectSelect").click(function () {
+                ProjectSelect();
+            })
+            $("#btnSupplierSelect").click(function () {
+                $.post("/Settlement/CheckProjectQuotationYusuan", {
+                    ProjectId: $("#ProjectId").val(),
+                    QuotationGroupId: $("#QuotationGroupId").val()
+                }, function (data) {
+                    if (data && data == true) {
+                        SupplierSelect(1);
+                    } else {
+                        alert("预算确认单未全部填写完毕，不能添加结算单");
+                    }
+                })
+            })
+
+            $("#btnQuotationGroupSelect").click(function () {
+                QuotationGroupSelect();
+            })
+            $("#btnQuotationGroupClear").click(function () {
+                confirm("你确认要清除结算单来源吗？", function () {
+                    QuotationGroupClear();
+                });
+            })
+        })
+
+        function load() {
+            if ($("#SupplierId").val() == "" || $("#ProjectId").val() == "") {
+                $(".settlement-add .table tbody").empty();
+                return;
+            }
+            SaveChk = undefined;
+            var params = $("#search-form").serializeJson();
+            $.post("/Settlement/LoadSettlementDtls", params, function (data) {
+                if (data && data.List) {
+                    $("#ExecuteCycle").text(data.MainObject.ExecuteCycle);
+                    $("#zhixingchengshi").text(data.MainObject.zhixingchengshi);
+                    $("#SettlementId").val(data.MainObject.SettlementId);
+                    FlowOrderSum = parseFloat(data.MainObject.FlowOrderSum) || 0;
+
+                    clearTables();
+                    $.each(data.List, function (index, item) {
+                        $("#SettlementDtl-table-" + item.SettlementType + " tbody").append(bindTr(index, item, item.SettlementType));
+                    })
+
+                    shoudongZhuijiaSource = data.ZuijiaShoudongList;
+                    $.each(data.ZuijiaShoudongList, function (index, item) {
+                        addShoudongZhuijiaTr(item);
+                    })
+
+                    calaHeji();
+                }
+            })
+        };
+
+        function clearTables() {
+            $("#SettlementDtl-table-1 tbody").empty();
+            $("#SettlementDtl-table-2 tbody").empty();
+            $("#SettlementDtl-table-3 tbody").empty();
+            $("#SettlementDtl-table-4 tbody").empty();
+            $("#heji-table tbody").empty();
+        }
+
+        function calaHeji() {
+            FlowOrderSum = FlowOrderSum || 0;
+            var sumAmt1 = 0;
+            $("#SettlementDtl-table-1 tbody tr").each(function () {
+                var amtStr = $(this).find("#SettleAmt").val();
+                if (amtStr && amtStr != "") {
+                    sumAmt1 += parseFloat(amtStr);
+                }
+            })
+            var sumAmt2 = 0;
+            $("#SettlementDtl-table-2 tbody tr").each(function () {
+                var amtStr = $(this).find("#SettleAmt").val();
+                if (amtStr && amtStr != "") {
+                    sumAmt2 += parseFloat(amtStr);
+                }
+            })
+            var sumAmt3 = 0;
+            $("#SettlementDtl-table-3 tbody tr").each(function () {
+                var amtStr = $(this).find("#SettleAmt").val();
+                if (amtStr && amtStr != "") {
+                    sumAmt3 += parseFloat(amtStr);
+                }
+            })
+            $("#SettlementDtl-table-4 tbody tr").each(function () {
+                var amtStr = $(this).find("input:eq(3)").val();
+                if (amtStr && amtStr != "") {
+                    sumAmt3 += parseFloat(amtStr);
+                }
+            })
+            var heji = sumAmt1 - sumAmt2 + sumAmt3;
+
+            var tr1 = $("<tr>");
+            tr1.append($("<td>").text(sumAmt1.toFixed(2)))
+                .append($("<td>").text(sumAmt2.toFixed(2)))
+                .append($("<td>").text(sumAmt3.toFixed(2)))
+                .append($("<td>").text(heji.toFixed(2)));
+            var tr2 = $("<tr>");
+            tr2.append($("<td>").text("首付款金额")).append($("<td>")).append($("<td>"));
+            tr2.append($("<td>").text(FlowOrderSum.toFixed(2)));
+            var tr3 = $("<tr>");
+            tr3.append($("<td>").text("尾款金额")).append($("<td>")).append($("<td>"));
+            tr3.append($("<td>").text((heji - FlowOrderSum).toFixed(2)));
+
+            $("#heji-table tbody").empty();
+            $("#heji-table tbody").append(tr1).append(tr2).append(tr3);
+
+        }
+
+        function bindTr(i, item, type) {
+            var tr = $("<tr>");
+
+            tr.append($("<td style='width:400px'></td>").html(item.FeeContent));
+            var danjiaInput = $("<input id='danjia' name='danjia' class='form-control'>").val(item.danjia);
+            var countInput = $("<input id='SettleCount' name='SettleCount' class='form-control'>").val(item.SettleCount);
+            var SettleAmtInput = $("<input id='SettleAmt' name='SettleAmt' class='form-control'>").val(item.SettleAmt);
+            if (type == "1") {
+                danjiaInput.prop("readonly", true);
+                SettleAmtInput.prop("readonly", true);
+                countInput.change(function () {
+                    SettleAmtInput.val(FloatMul($(this).val(), danjiaInput.val()).toFixed(2));
+
+                    var index = i % $("#SettlementDtl-table-2 tbody tr").length;
+                    $("#SettlementDtl-table-2 tbody tr").eq(index).find("#SettleCount").val($(this).val())
+                    $("#SettlementDtl-table-2 tbody tr").eq(index).find("#SettleAmt").change();
+                    $("#SettlementDtl-table-3 tbody tr").eq(index).find("#SettleCount").val($(this).val())
+                    $("#SettlementDtl-table-3 tbody tr").eq(index).find("#SettleAmt").change();
+
+                    calaHeji();
+                })
+            } else {
+                danjiaInput.prop("readonly", true);
+                countInput.prop("readonly", true);
+                SettleAmtInput.change(function () {
+                    var settleCount = $(this).parent().prev().children().eq(0).val();
+                    if ($(this).val() != '' && settleCount != "") {
+                        var SettleAmt = parseFloat($(this).val());
+                        danjiaInput.val((SettleAmt / settleCount).toFixed(2));
+                    }
+                    else {
+                        danjiaInput.val("");
+                    }
+                    calaHeji();
+                })
+            }
+            tr.append($("<td  style='width:120px'></td>").append(danjiaInput));
+            tr.append($("<td  style='width:120px'></td>").append(countInput));
+            tr.append($("<td  style='width:120px'></td>").append(SettleAmtInput));
+            var RemarkInput = $("<input id='Remark' name='Remark' class='form-control'>").val(item.Remark);
+            tr.append($("<td style='width:344px'></td>").append(RemarkInput));
+
+            var SettlementTypeHidden = $("<input type='hidden'id='SettlementType' name='SettlementType'>").val(item.SettlementType);
+            var settlementIdHidden = $("<input type='hidden'id='SettlementId' name='SettlementId'>").val(item.SettlementId);
+            var quotationIdHidden = $("<input type='hidden'id='Quotationid' name='Quotationid'>").val(item.Quotationid);
+            var settlementSeqNOHidden = $("<input type='hidden'id='settlementSeqNO' name='settlementSeqNO'>").val(item.settlementSeqNO);
+            var SeqNOHidden = $("<input type='hidden'id='SeqNO' name='SeqNO'>").val(item.SeqNO);
+            tr.append($("<td style='display:none'></td>")
+                .append(SettlementTypeHidden)
+                .append(SeqNOHidden)
+                .append(settlementIdHidden)
+                .append(quotationIdHidden)
+                .append(settlementSeqNOHidden));
+
+            return tr;
+        }
+
+        function QuotationGroupClear() {
+            $.post("/Settlement/ClearSettlementChk", { ProjectId: $("#ProjectId").val(), GroupId: $("#search-form #QuotationGroupId").val(), SettlementChk: false }, function () {
+                bindQuotationGroup({ Id: '0', QuotationGroupName: '' });
+
+                $(".settlement-add .table tbody").empty();
+                SupplierSelectCallback1({ SupplierId: "", SupplierName: "" })
+            })
+        }
+
+        function QuotationGroupSelect() {
+            if (isEmpty($("#ProjectId").val())) {
+                alert("请选择项目");
+                return
+            }
+            $(".modal .modal-body").empty();
+            $("#quotationGroupModal").modal("show");
+            $("#quotationGroupModal .modal-title").html("选择确认单组");
+            $("#quotationGroupModal .modal-body").load("/Settlement/QuotationGroupSelect", { ProjectId: $("#ProjectId").val() }, function () {
+            });
+        }
+        function GroupSelectCallback(args) {
+            $("#search-form #QuotationGroupName").val(args[0]);
+            $("#search-form #QuotationGroupId").val(args[1]);
+            $("#quotationGroupModal").modal("hide");
+            $.post("/QuotationGroup/SettlementUpdate", { ProjectId: $("#ProjectId").val(), Id: args[1], SettlementChk: true }, function () {
+                $("#btnQuotationGroupClear").show();
+                $("#btnQuotationGroupSelect").hide();
+                $(".settlement-add").show();
+            })
+        }
+        function bindQuotationGroup(group) {
+            $("#search-form #QuotationGroupName").val(group.QuotationGroupName);
+            $("#search-form #QuotationGroupId").val(group.Id);
+            $("#search-form #QuotationGroupName").show();
+
+            $("#SupplierId").val("");
+            $("#SupplierName").val("");
+            clearTables();
+            if (group.Id && group.Id != "0") {
+                $("#btnQuotationGroupClear").show();
+                $("#btnQuotationGroupSelect").hide();
+                $(".settlement-add").show();
+            } else {
+                $("#btnQuotationGroupSelect").show();
+                $("#btnQuotationGroupClear").hide();
+                $(".settlement-add").hide();
+            }
+        }
+        function ProjectSelect() {
+            $("#myModal .modal-body").empty();
+            $("#myModal").modal("show");
+            $("#myModal .modal-title").html("选择项目");
+            $("#myModal .modal-body").load("/DemandBook/ProjectSelect", { ModelType: $("#ModelType").val(), ProjectCode: "", ProjectName: "", ProjectShortName: "" }, function () {
+
+            });
+        }
+        function SupplierSelect(type) {
+            $("#myModal .modal-body").empty();
+            $("#myModal").modal("show");
+            $("#myModal .modal-title").html("选择供应商");
+            $("#myModal .modal-body").load("/Constract/SupplierMngSelect",
+                { SupplierCode: "", SupplierName: "", SupplierShortName: "", province: '', city: '' }, function () {
+                    $("#myModal .modal-body #Type").val(type)
+                });
+        }
+        function ProjectSelectCallback(args) {
+            $("#ProjectName").val(args[1]);
+            $("#ProjectShortName").val(args[2]);
+            $("#ProjectId").val(args[3]);
+            GetProjects();
+            $("#myModal").modal("hide");
+
+            $.post("/QuotationGroup/GetSettlementChk", {
+                ProjectId: $("#ProjectId").val(),
+                SettlementChk: true
+            }, function (data) {
+                var item = {};
+                if (data && data.Data) {
+                    item = data.Data;
+                }
+                bindQuotationGroup(item);
+            })
+        }
+        function SupplierSelectCallback1(args) {
+            $("#SupplierName").val(args.SupplierName);
+            $("#SupplierId").val(args.SupplierId);
+            $("#myModal").modal("hide");
+            load();
+        }
+
+        function apply(FlowOrderId, ApplyId, SeqNO) {
+            $.post("/Projects/RecheckProcessExistChk", { recheckType: "供应商" }, function (data) {
+                if (data == 0) {
+                    alert("不在审核流程中，请联系管理人员添加");
+                    return false;
+                }
+                $("#applyModal").modal("show");
+                $("#applyModal .modal-title").html("选择审核人员");
+                $("#applyModal .modal-body").load("/FlowOrder/RecheckUserSelect", {}, function () {
+                    debugger
+                    $(this).append($("<input id='FlowOrderId' type='hidden'>").val(FlowOrderId));
+                    $(this).append($("<input id='ApplyId' type='hidden'>").val(ApplyId));
+                    $(this).append($("<input id='SeqNO' type='hidden'>").val(SeqNO));
+                });
+            })
+
+        }
+        function payApply(FlowOrderId) {
+            $.post("/FlowOrder/ApplyPayUpdate", { id: FlowOrderId }, function (data) {
+                alert("申请完毕");
+                load();
+            })
+        }
+        function applyFinish() {
+            $("#applyModal").modal("hide");//关闭弹出窗口
+            load()//刷新表格
+        }
+
+        function FloatMul(arg1, arg2) {
+            var m = 0, s1 = arg1.toString(), s2 = arg2.toString();
+            try { m += s1.split(".")[1].length } catch (e) { }
+            try { m += s2.split(".")[1].length } catch (e) { }
+            return Number(s1.replace(".", "")) * Number(s2.replace(".", "")) / Math.pow(10, m);
+        }
+        function GetProjects() {
+            $.get("/Projects/FindOne", { id: $("#ProjectId").val() }, function (obj) {
+                debugger
+                $("#ProjectApplyStatusCode").val(obj.ApplyStatusCode);
+                $("#ProjectUserChk").val(obj.UserChk);
+                $("#ProjectStep").val(obj.Step);
+            })
+        }
+        function CommitCheck() {
+            var ApplyStatusCode = $("#ProjectApplyStatusCode").val();
+            var UserChk = $("#ProjectUserChk").val();
+            if (ApplyStatusCode == undefined) {
+                ApplyStatusCode = "";
+            }
+            if (UserChk == undefined) {
+                UserChk = "true";
+            }
+            if (UserChk == "true") {
+                if (ApplyStatusCode != "") {
+                    if (ApplyStatusCode == "完成") {
+                        return true;
+                    }
+                    else {
+                        return false;
+                    }
+                }
+                else {
+                    return false;
+                }
+            }
+            else {
+                return false;
+            }
+        }
+    </script>
+}

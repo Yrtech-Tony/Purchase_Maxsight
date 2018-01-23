@@ -1,0 +1,99 @@
+﻿@using Purchase.Service.DTO
+@model IEnumerable<RequiremetMstDto>
+
+<div class="count2 mt20">
+    <div class="table-responsive">
+        <table id="RecheckUserSelect-table" class="table table-bordered table-condensed table-hover">
+            <thead>
+                <tr>
+                    <th>删除</th>                  
+                    <th>需求书Id</th>
+                    <th>需求书组</th>
+                    <th>需求书类型</th>
+                    <th>项目编号</th>
+                    <th>项目名称</th>
+                    <th>项目简称</th>
+                    <th>省份</th>
+                    <th>城市</th>
+                    @if (ViewBag.ModelType == "业务")
+                    {
+                        <th id="Responsibilites">工作职责</th>
+                        <th id="ProjectType">项目类型</th>
+                        <th id="ExcuteMode">执行方式</th>
+                    }
+                    else
+                    {
+                    <th id="PurchaseType">采购分类</th>
+                        <th id="PurchaseMode">采购方式</th>
+
+                    }
+                    <th>提供服务</th>
+                    <th>品名</th>
+                    <th>样本量</th>
+                </tr>
+            </thead>
+            <tbody>
+                @if (Model != null)
+                {
+                    foreach (RequiremetMstDto item in Model)
+                    {
+                        <tr>
+                            <td><a href="javascript:deleteDemandBook('@item.RequirementId')">删除</a></td>
+                            <td><a href="javascript:openDemandBook('@item.RequirementType',@item.ProjectId,@item.SeqNO,@item.RequirementId,@item.GroupId)">@item.RequirementId</a></td>
+                            <td>@item.RequirementGroupName</td>
+                            <td>@item.RequirementName</td>
+                            <td>@item.ProjectCode</td>
+                            <td>@item.ProjectName</td>
+                            <td>@item.ProjectShortName</td>
+                            <td>@item.Province</td>
+                            <td>@item.City</td>
+                            @if (ViewBag.ModelType == "业务")
+                            {
+                                <td>@item.Responsibilites</td>
+                                <td>@item.ProjectType</td>
+                                <td>@item.ExcuteMode</td>
+                               
+                            }
+                            else
+                            {
+                                 <td>@item.PurchaseType</td>
+                                <td>@item.PurchaseMode</td>
+                            }
+
+                            <td>@item.SupplyService</td>
+                            <td>@item.ItemName</td>
+                            <td>@item.Count</td>
+                        </tr>
+                    }
+                }
+            </tbody>
+        </table>
+    </div>
+</div>
+<script>
+    function openDemandBook(DemandBookType, ProjectId, SeqNO, RequirementId, GroupId) {
+        var modeltypes = ["业务", "内部采购", "其他"];
+        var url = "/DemandBook/Create?DemandBookType=" + DemandBookType;
+        url += "&ProjectId=" + ProjectId;
+        url += "&SeqNO=" + SeqNO;
+        if (RequirementId != 0) {
+            url += "&RequirementId=" + RequirementId;
+        }
+        url += "&GroupId=" + GroupId;
+
+        window.open(url);
+    }
+    function deleteDemandBook(RequirementId)
+    {
+        confirm("确定要删除吗？", function () {
+            $.post("/DemandBook/RequirementDeleteById", {
+                RequirementIds: RequirementId,
+            }, function () {
+                // load();
+                debugger
+                GroupDtl($("#ProjectId").val(), $("#GroupId").val());
+                
+            });
+        });
+    }
+</script>

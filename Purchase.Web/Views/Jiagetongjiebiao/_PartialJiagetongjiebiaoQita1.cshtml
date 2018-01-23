@@ -1,0 +1,40 @@
+﻿
+
+<table id="Jiagetongjiebiao-table" class="table table-bordered table-condensed table-hover">
+    <thead>
+        <tr>	
+            <th>模块</th>
+            <th>
+                采购分类
+            </th>
+            <th>
+                采购方式
+            </th>
+            <th>
+                提供服务
+            </th>
+            <th>
+                品名
+            </th>
+            <th>
+                均价
+            </th>
+        </tr>
+    </thead>
+    <tbody></tbody>
+</table>
+
+<script>
+    function addJiagetongjibiaoTr(item) {
+        var tr = $("<tr>");
+        debugger
+        tr.append($("<td></td>").html(item.ModelType));
+        tr.append($("<td></td>").html(item.PurchaseType));
+        tr.append($("<td></td>").html(item.PurchaseMode));
+        tr.append($("<td></td>").html(item.SupplyService));
+        tr.append($("<td></td>").html(item.ItemName));
+        tr.append($("<td></td>").html(item.danjia_AVG));
+
+        return tr;
+    }
+</script>

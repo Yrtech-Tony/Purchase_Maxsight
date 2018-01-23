@@ -1,0 +1,120 @@
+﻿<div class="panel panel-default mt20">
+    <div class="panel-heading">
+        <strong style="line-height:35px;font-size:14px;">展车租赁</strong>
+        <button class="btn btn-primary btn pull-right clearfix" onclick="addDtl1()">添加</button>
+        <button class="btn btn-primary btn pull-right" style="margin-right:5px;" onclick="delDemandBookDtl('1')">删除</button>
+    </div>
+    <div class="panel-body">
+        <div class="table-responsive">
+            <table id="dtl1-table" class="table table-bordered table-condensed table-hover text-center">
+                <thead>
+                    <tr>
+                        <th width="50">选择</th>
+                        <th width="50">
+                            复制
+                        </th>
+                        <th width="50">
+                            详细
+                        </th>
+                        <th>
+                            序号
+                        </th>
+                        <th>
+                            分类
+                        </th>
+                        <th>
+                            类型/品牌
+                        </th>
+                        <th>
+                            规格/型号
+                        </th>
+                        <th>
+                            排量
+                        </th>
+                        <th>
+                            配置
+                        </th>
+                        <th>
+                            厂商指导价
+                        </th>
+                        <th>
+                            颜色
+                        </th>
+                        <th>
+                            数量/面积
+                        </th>
+                        <th>
+                            车辆类别
+                        </th>
+                        <th>
+                            车价范围
+                        </th>
+                        <th>
+                            使用时间
+                        </th>
+                        <th>
+                            其他说明
+                        </th>
+                    </tr>
+                </thead>
+                <tbody></tbody>
+            </table>
+        </div>
+        </div>
+</div>
+
+<script>
+    var detailView1 = 'Yunshuzuche/Detail/_PartialYunshuzucheDtl1';
+    var title1 = "展车租赁";
+    function addDtl1() {
+        if (!CommitCheck()) {
+            alert("正在审核中或者非本人添加的项目");
+            return false;
+        }
+        setModal(title1, detailView1);
+        $("#myModal").modal("show");
+    }
+
+    function loadYunshuzucheDtl1() {
+        $.post("/DemandBook/LoadYunshuzucheDtl1", { RequirementId: $("#RequirementId").val() }, function (data) {
+            if (data) {
+                $("#dtl1-table tbody").empty();
+                $.each(data, function (index, item) {
+                    var tr = $("<tr>");
+                    tr.append($("<td></td>").append($("<input type='checkbox'>")));
+                    var copyBtn = $("<a class='btn btn-primary btn2'>").html("复制");
+                    copyBtn.click(function () {
+                        item.SeqNO = 0;
+                        setModal(title1, detailView1, item);
+                        $("#myModal").modal("show");
+                    })
+                    tr.append($("<td></td>").append(copyBtn));
+                    var editBtn = $("<a class='btn btn-primary btn2'>").html("详细");
+                    editBtn.click(function () {
+                        setModal(title1, detailView1, item);
+                        $("#myModal").modal("show");
+                    })                   
+                    tr.append($("<td></td>").append(editBtn));
+                    tr.append($("<td></td>").html(item.SeqNO));
+                    tr.append($("<td></td>").html(item.feilei));//分类
+                    tr.append($("<td></td>").html(item.leixingpinpai));//类型品牌
+                    tr.append($("<td></td>").html(item.guigexinghao));//规格型号
+                    tr.append($("<td></td>").html(item.pailiang));//排量
+                    tr.append($("<td></td>").html(item.peizhi));//配置
+                    tr.append($("<td></td>").html(item.changshangzhidaojia));//厂商指导价
+                    tr.append($("<td></td>").html(item.yanse));//颜色
+                    tr.append($("<td></td>").html(item.shuliangmianji));//数量面积
+                    tr.append($("<td></td>").html(item.cheliangleibie));//车辆类别
+                    tr.append($("<td></td>").html(item.chejiafanwei));//车价范围
+                    tr.append($("<td></td>").html(item.shiyongshijian));//使用时间
+                    //tr.append($("<td></td>").html(item.qitashuoming1));//其他说明
+                    var qitashuoming1 = item.qitashuoming1 != null ? item.qitashuoming1.replace(/\n/g, '<br>') : "&nbsp;";
+                    tr.append($("<td style='text-align: left;'></td>").html(qitashuoming1));//其他说明
+
+
+                    $("#dtl1-table tbody").append(tr);
+                })
+            }
+        })
+    }
+</script>

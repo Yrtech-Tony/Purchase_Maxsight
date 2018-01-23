@@ -1,0 +1,262 @@
+﻿@model Purchase.DAL.Projects
+
+<div class="count2">
+    @using (Html.BeginForm("CopyProject", "Projects", FormMethod.Post, new { Id = "ProjectsForm" }))
+    {
+        @Html.Hidden("ModelType")
+        @Html.Hidden("CopyProjectId")
+        <div class="form-horizontal">
+            <table style="width: 100%;">
+                <tr>
+                    <td colspan="10" style="text-align:right">
+                        <a id="btnSave" class="btn btn-primary" data-loading-text="提交中...">保 存</a>
+                    </td>
+                </tr>
+            </table>
+            <table>
+                <tr>
+                    <td width="100">所属部门</td>
+                    <td width="180">
+                        <select id="DepartmentCode" name="DepartmentCode" class="form-control"></select>
+                    </td>
+                    <td width="100">阶段</td>
+                    <td width="180">
+                        <select id="Step" name="Step" class="form-control">
+                            <option value=""></option>
+                            <option value="报价">报价</option>
+                            <option value="竞标">竞标</option>
+                            <option value="支持">支持</option>
+                        </select>
+                    </td>
+                    <td width="100">所属年份</td>
+                    <td>
+                        <input id="Year" name="Year" class="form-control" />
+                    </td>
+                </tr>
+                <tr>
+
+                    <td>项目编号</td>
+                    <td>
+                        <input id="ProjectCode" name="ProjectCode" class="form-control" required="required" />
+                    </td>
+                    <td>项目名称</td>
+                    <td>
+                        <input id="ProjectName" name="ProjectName" class="form-control">
+                    </td>
+                    <td>项目简称</td>
+                    <td>
+                        <input id="ProjectShortName" name="ProjectShortName" class="form-control">
+                    </td>
+                </tr>
+                <tr>
+                    <td>项目开始时间</td>
+                    <td>
+                        <input id="StartDate" name="StartDate" onclick="WdatePicker()" class="form-control">
+                    </td>
+                    <td>项目结束时间</td>
+                    <td>
+                        <input id="EndDate" name="EndDate" onclick="WdatePicker()" class="form-control">
+                    </td>
+                    <td>状态</td>
+                    <td>
+                        <select id="Status" name="Status" class="form-control">
+                            <option value="正常">正常</option>
+                            <option value="关闭">关闭</option>
+                            <option value="终止">终止</option>
+                        </select>
+                    </td>
+                </tr>
+
+                <tr>
+                    <td>费用所属部门</td>
+                    <td>
+                        <select id="CostDepartment" name="CostDepartment" class="form-control"></select>
+                    </td>
+                    <td id="labServiceRegion">服务地区</td>
+                    <td id="tdServiceRegion" colspan="3">
+                        <select id="ServiceRegion" name="ServiceRegion" class="form-control">
+                            <option value=""></option>
+                            <option value="北京">北京</option>
+                            <option value="上海">上海</option>
+                            <option value="广州">广州</option>
+                        </select>
+                    </td>
+
+                    <td colspan="4" class="radio-group" id="excuteRadioGroup" style="font-size:14px;">
+                        <input id="excuteRadioGroup1_0" name="ExcuteType" type="radio" value="按全国执行" class="rido" checked>
+                        <label for="excuteRadioGroup1_0">按全国执行</label>
+                        <input id="excuteRadioGroup1_1" name="ExcuteType" type="radio" value="按省份执行" class="rido">
+                        <label for="excuteRadioGroup1_1">按省份执行</label>
+                        <input id="excuteRadioGroup1_2" name="ExcuteType" type="radio" value="按城市执行" class="rido">
+                        <label for="excuteRadioGroup1_2">按城市执行</label>
+                    </td>
+                </tr>
+                <tr>
+                    <td>服务行业</td>
+                    <td>
+                        <select id="ServiceTrade" name="ServiceTrade" class="form-control"></select>
+                    </td>
+                    <td>备注</td>
+                    <td colspan="3">
+                        <textarea id="Remark" name="Remark" class="form-control"></textarea>
+                    </td>
+                </tr>
+            </table>
+        </div>
+    }
+</div>
+
+<script src="~/Content/My97DatePicker/WdatePicker.js"></script>
+<script>
+    $(function () {
+        $("select").addClass("selectpicker").prop("title", "").data("live-search", true);
+
+        if ($("#ModelType").val() == "业务") {
+            //$("#internal").hide();
+            $("#ProjectsForm #labServiceRegion").hide();
+            $("#ProjectsForm #tdServiceRegion").hide();
+        }
+        else {
+            $("#ProjectsForm #excuteRadioGroup").hide();
+        }
+      
+        $("#ProjectsForm #btnSave").click(function () {
+            $("#ProjectsForm").submit(function () {
+                if (isEmpty($("#ProjectsForm #DepartmentCode").val())) {
+                    alert("部门必须填写内容");
+                    return false;
+                }
+                if (isEmpty($("#ProjectsForm #Step").val())) {
+                    alert("阶段必须填写内容");
+                    return false;
+                }
+                if (isEmpty($("#ProjectsForm #Year").val())) {
+                    alert("所属年份必须填写内容");
+                    return false;
+                }
+                if (isEmpty($("#ProjectsForm #ProjectCode").val())) {
+                    alert("项目编号必须填写内容");
+                    return false;
+                }
+                if (isEmpty($("#ProjectsForm #ProjectName").val())) {
+                    alert("项目名称必须填写内容");
+                    return false;
+                }
+                if (isEmpty($("#ProjectsForm #ProjectShortName").val())) {
+                    alert("项目简称必须填写内容");
+                    return false;
+                }
+                if (isEmpty($("#ProjectsForm #StartDate").val())) {
+                    alert("项目周期开始日期必须填写内容");
+                    return false;
+                }
+                if (isEmpty($("#ProjectsForm #EndDate").val())) {
+                    alert("项目周期结束日期必须填写内容");
+                    return false;
+                }
+                if ($("#ProjectsForm #StartDate").val() > $("#ProjectsForm #EndDate").val()) {
+                    alert("开始日期不能大于结束日期");
+                    return false;
+                }
+
+            }).submit();
+        })
+
+    })
+
+    function bindProject(ProjectId) {
+        DepartmentBind();
+        CostDepartmentBind();
+        ServiceTradeBind();// 绑定服务行业
+        $.post("/Projects/FindOne", { id: ProjectId }, function (data) {
+            // 绑定所属部门和费用所属部门
+            $("#ProjectsForm").setForm(data);
+            $("#CopyProjectId").val(ProjectId);
+            $(".selectpicker").selectpicker('refresh');
+        });
+    }
+
+    function isEmpty(value) {
+        if (value == "")
+            return true;
+        else
+            return false;
+    }
+
+    function changeSelectInput(el, combo, input, isDropdown) {
+        var newEl;
+        if (isDropdown) {
+            newEl = combo;
+        } else {
+            newEl = input;
+        }
+        var parent = el.parent();
+        parent.empty();
+        parent.append(newEl);
+
+        return newEl;
+    }
+    function DepartmentBind() {
+        // 根据模块类型显示所属部门
+        var el = $("#ProjectsForm #DepartmentCode");
+
+        var modelType = $("#ModelType").val();
+        if (modelType.startsWith("其他")) {
+            modelType = "其他";
+        }
+
+        $.ajax({
+            type: 'post',
+            url: "/Base/LoadChildHiddenCode",
+            data: { type: "立项-" + modelType + "-所属部门" },
+            async: false,
+            success: function (data) {
+                el.empty();
+                if (data && data.length > 0) {
+                    for (i in data) {
+                        el.append($("<option>").html(data[i]).val(data[i]));
+                    }
+                }
+                el.data("live-search", true).prop("title", "").selectpicker("refresh");
+            }
+        });
+
+    }
+    function CostDepartmentBind() {
+        var el = $("#ProjectsForm #CostDepartment");
+
+        var modelType = $("#ModelType").val();
+        if (modelType.startsWith("其他")) {
+            modelType = "其他";
+        }
+
+        $.ajax({
+            type: 'post',
+            url: "/Base/LoadChildHiddenCode",
+            data: { type: "立项-" + modelType + "-费用所属部门" },
+            async: false,
+            success: function (data) {
+                el.empty();
+                if (data && data.length > 0) {
+                    for (i in data) {
+                        el.append($("<option>").html(data[i]).val(data[i]));
+                    }
+                }
+                el.data("live-search", true).prop("title", "").selectpicker("refresh");
+            }
+        });
+    }
+    function ServiceTradeBind() {
+        var el = $("#ProjectsForm #ServiceTrade");
+        var modelType = $("#ModelType").val();
+        if (modelType.startsWith("其他")) {
+            el.append($("<option>").html("Trip").val("Trip"));
+            el.append($("<option>").html("Zebrac").val("Zebrac"));
+            el.append($("<option>").html("Star").val("Star"));
+        }
+        else {
+            el.append($("<option>").html("Max").val("Max"));
+        }
+        el.data("live-search", true).prop("title", "").selectpicker("refresh");
+    }
+</script>

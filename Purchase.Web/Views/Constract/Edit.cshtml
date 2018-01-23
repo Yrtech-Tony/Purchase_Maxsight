@@ -1,0 +1,397 @@
+﻿@model Purchase.Service.DTO.ConstractDto
+@{
+    ViewBag.Title = "合同信息编辑";
+    Layout = "~/Views/Shared/_ConstractLayout.cshtml";
+}
+<style>
+    #template-zhanwei-table th {
+        background-color: #337ab7;
+        color: #fff;
+        font-weight: 600;
+        text-align: left;
+    }
+
+    #template-zhanwei-table td + td {
+        text-align: left;
+    }
+
+    .panel-body .col-md-4, .panel-body .col-md-8 {
+        padding-left: 5px;
+        padding-right: 5px;
+        padding-bottom:5px;
+    }
+</style>
+<div class="count inline-block">
+    <h4>@ViewBag.Title</h4>
+    <hr />
+    @using (Html.BeginForm("Edit", "Constract", FormMethod.Post, new { Id = "ConstractForm", @class = "form-horizontal" }))
+    {
+        @Html.AntiForgeryToken()
+        @Html.ValidationSummary(false)
+        @Html.Hidden("Id", Model.ConstractId)
+        @Html.Hidden("QueryParams", (string)ViewBag.queryParams)
+
+        <table style="position: absolute;left: 0px;top: 53px; width:500px;">
+            <tr>
+                <td width="90">合同模板名称</td>
+                <td width="400">
+                    <input type="text" id="TemplateName" name="TemplateName" class="form-control" disabled>
+                </td>
+                <td></td>
+            </tr>
+        </table>
+
+        @Html.Partial("_PartialEdit", Model)
+
+        <div id="fix-content" class="panel panel-default">
+            <div class="panel-heading"><strong>固定内容</strong></div>
+            <div class="panel-body">
+                <div class="form-horizontal">
+                    <div class="col-md-4" style="display:none">
+                        <label class="col-md-4 control-label">执行区域</label>
+                        <div class="col-md-8"><input id="ExecuteRegion" name="ExecuteRegion" class="form-control" /></div>
+                    </div>
+                    <div class="col-md-4" style="display:none">
+                        <label class="col-md-4 control-label">复核比例</label>
+                        <div class="col-md-8"><input id="RecheckRate" name="RecheckRate" class="form-control" /></div>
+                    </div>
+                    <div class="col-md-4" style="display:none">
+                        <label class="col-md-4 control-label">平台名称</label>
+                        <div class="col-md-8"><input type="text" id="PlatformName" name="PlatformName" class="form-control"></div>
+                    </div>
+
+                    <div class="col-md-4" style="display:none">
+                        <label class="col-md-4 control-label">最终交付日期</label>
+                        <div class="col-md-8">
+                            <input id="LastFinishDate" name="LastFinishDate" class="form-control" onclick="WdatePicker()" />
+                        </div>
+                    </div>
+                    <div class="col-md-4" style="display:none">
+                        <label class="col-md-4 control-label">交货日期</label>
+                        <div class="col-md-8">
+                            <input id="DeliveryDate" name="DeliveryDate" class="form-control" onclick="WdatePicker()" />
+                        </div>
+                    </div>
+                    <div class="col-md-4" style="display:none">
+                        <label class="col-md-4 control-label">布展时间</label>
+                        <div class="col-md-8">
+                            <input type="text" id="buzhanshijian" name="buzhanshijian" class="form-control" onclick="WdatePicker()">
+                        </div>
+                    </div>
+
+                    <div class="col-md-4" style="display:none">
+                        <label class="col-md-4 control-label">撤展时间</label>
+                        <div class="col-md-8">
+                            <input id="chezhanshijian" name="chezhanshijian" class="form-control" onclick="WdatePicker()" />
+                        </div>
+                    </div>
+                    <div class="col-md-4" style="display:none">
+                        <label class="col-md-4 control-label">运输路线</label>
+                        <div class="col-md-8">
+                            <input id="yunshuluxian" name="yunshuluxian" class="form-control" />
+                        </div>
+                    </div>
+                    <div class="col-md-4" style="display:none">
+                        <label class="col-md-4 control-label">服务内容</label>
+                        <div class="col-md-8">
+                            <input type="text" id="fuwuneirong" name="fuwuneirong" class="form-control">
+                        </div>
+                    </div>
+                   
+                    <div class="col-md-4" style="display:none">
+                        <label class="col-md-4 control-label">协议有效时间</label>
+                        <div class="col-md-8">
+                            <input id="xieyiyouxiaoshijian" name="xieyiyouxiaoshijian" class="form-control" onclick="WdatePicker()" />
+                        </div>
+                    </div>
+                    <div class="col-md-4" style="display:none">
+                        <label class="col-md-4 control-label">展览展示委托内容</label>
+                        <div class="col-md-8">
+                            <input id="zhanshizhanlanweituoneirong" name="zhanshizhanlanweituoneirong" class="form-control" />
+                        </div>
+                    </div>
+                   
+                </div>              
+            </div>
+        </div>
+
+        <div class="panel panel-default">
+            <div class="panel-heading" style="line-height:30px;">
+                <strong>合同模板占位符管理</strong>
+                <div class="pull-right">
+                    <input type="button" class="btn btn-primary btn-sm" onclick="saveConstractDtlCommonText(this)" value="保存" data-loading-text="保存中...">
+                </div>
+            </div>
+            <div class="panel-body">
+                <table id="template-zhanwei-table" class="table table-bordered table-condensed">
+                    <thead>
+                        <tr>
+                            <td width="80">序号</td>
+                            <td>
+                                内容
+                            </td>
+                        </tr>
+                    </thead>
+                    <tbody></tbody>
+                </table>
+            </div>
+        </div>
+    }
+
+    <input id="ApplyStautCode" type="hidden" />
+    <input id="UserChk" type="hidden" />
+    <div id="table-constractDtl" class="panel panel-default">
+        <div class="panel-heading" style="line-height:30px;">
+            <strong>表格信息管理</strong>
+            <div class="pull-right">
+                <input id="addConstractDtlBtn" type="button" class="btn btn-primary btn-sm" style="margin-right:20px" onclick="addConstractDtl()" value="添加">
+                <input id="saveConstractDtlBtn" type="button" class="btn btn-primary btn-sm" onclick="saveConstractDtl()" value="保存">
+            </div>
+        </div>
+        <div class="panel-body">
+            <form id="constract-dtl-batch-form">
+                <table id="ConstractDtl" class="table table-bordered table-condensed text-center">
+                    <thead>
+                        <tr>
+                            <th>表ID</th>
+                            <th>列1</th>
+                            <th>列2</th>
+                            <th>列3</th>
+                            <th>列4</th>
+                            <th>列5</th>
+                            <th>列6</th>
+                            <th>列7</th>
+                            <th>列8</th>
+                            <th>列9</th>
+                            <th>列10</th>
+                            <th>删除</th>
+                        </tr>
+                    </thead>
+                    <tbody></tbody>
+                </table>
+            </form>
+        </div>
+    </div>
+
+    <div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-hidden="false">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
+                    <h4 class="modal-title"></h4>
+                </div>
+                <div class="modal-body">
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+@section Scripts {
+    <script>
+        $(function () {
+            $("#btnSave").attr("disabled", true);
+            $("#addConstractDtlBtn").attr("disabled", true);
+            $("#saveConstractDtlBtn").attr("disabled", true);
+            $.get("/Constract/FindOne", { id: $("#Id").val() }, function (obj) {
+                $("#ApplyStautCode").val(obj.ApplyStatusCode);
+                $("#UserChk").val(obj.UserChk);
+
+                $("#ConstractForm").setForm(obj);
+
+                if (obj.UserChk) {
+
+                    if (obj.ApplyStatusCode == "" || obj.ApplyStatusCode == "拒绝") {
+                        $("#btnSave").attr("disabled", false);
+                    }
+                    else {
+                        //if (obj.ApplyStatusCode == "完成") {
+                        //    $("#btnSave").attr("disabled", false);
+                        //}
+                        //else {
+                        //    $("#btnSave").attr("disabled", true);
+                        //}
+                        $("#btnSave").attr("disabled", true);
+                    }
+                }
+                else {
+                    $("#btnSave").attr("disabled", true);
+                }
+
+                $("#ProjectId").val();
+                loadConstractDtl();
+                loadConstractDtlCommonText();
+
+                loadConstractTemplateDtls();
+            })
+        })
+
+        function loadConstractTemplateDtls() {
+            $.post("/ConstractTemplate/GetConstractTemplateDtlsForFixContent", { Id: $("#TemplateId").val() }, function (data) {
+                if (data && data.List) {
+                    $.each(data.List, function (i, item) {
+                        $("#fix-content label").each(function (i, label) {
+                            if ($(label).text() == item.ContentType2) {
+                                $(label).parent().show();
+                            }
+                        })
+                    })
+                }
+            })
+        }
+
+        function loadConstractDtl() {
+            $.post("/Constract/ConstractDtlSearch", { ConstractId: $("#Id").val() }, function (data) {
+                $("#addConstractDtlBtn").attr("disabled", $("#btnSave").prop("disabled"));
+                $("#saveConstractDtlBtn").attr("disabled", $("#btnSave").prop("disabled"));
+                if (data) {
+                    $("#table-constractDtl .table tbody").empty();
+                    $.each(data, function (index, item) {
+                        var tr = addConstractDtl();
+                        if (tr) {
+                            tr.setForm(item);
+                            tr.find("#TableId").val(item.TableId);
+                        }
+                    })
+                }
+            })
+        }
+
+        var tableIds;
+        function addConstractDtl() {
+            var tr = $("<tr>");
+            var tableid = $("<select id='TableId' name='TableId' class='form-control'>");
+            if (tableIds) {
+                $.each(tableIds, function (index, item) {
+                    tableid.append($("<option>").val(item).html(item));
+                })
+            } else {
+                $.ajax({
+                    url: "/Constract/GetConstractTemplateTables",
+                    data: { TemplateId: $("#ConstractForm #TemplateId").val() },
+                    dataType: 'json',
+                    success: function (items) {
+                        if (items) {
+                            tableIds = items;
+                            $.each(items, function (index, item) {
+                                tableid.append($("<option>").val(item).html(item));
+                            })
+                        }
+                    },
+                    async: false,
+                    type: 'POST'
+                });
+            }
+            tr.append($("<td>").append(tableid));
+            for (var i = 0; i < 10; i++) {
+                var td = $("<td>");
+                td.append($("<input type='text' style='width:80px' class='form-control'>").attr("name", "Column" + (i + 1)));
+                tr.append(td);
+            }
+            var delA = $("<a>").html("删除");
+            delA.css("cursor", 'pointer');
+            delA.click(function () {
+                tr.remove();
+            });
+            tr.append($("<td>").append(delA));
+            if (tableIds && tableIds.length>0) {
+                $("#table-constractDtl .table tbody").append(tr);
+            } else {
+                alert("合同模板未定义表格，请修改模板");
+                return;
+            }
+           
+            return tr;
+        }
+
+        function saveConstractDtl() {
+            if ($("#constract-dtl-batch-form table  tbody tr").length == 0) {
+                alert("没有要保存的数据");
+                return;
+            }
+
+            var params = $("#constract-dtl-batch-form").serializeJson();
+            params.ConstractId = $("#Id").val();
+            $.post("/Constract/ConstractDtlSaveBatch", params, function () {
+                alert("保存成功！");
+            });
+        }
+
+        function loadConstractDtlCommonText() {
+            $.post("/Constract/LoadConstractDtlCommonText", { ConstractId: $("#Id").val(), ConstractTemplateId: $("#TemplateId").val() }, function (data) {
+                $("#template-zhanwei-table tbody").empty();
+                if (data) {
+                    $.each(data, function (i, item) {
+                        addZhanweiTr(i, item);
+                    });
+                }
+            });
+        }
+        function addZhanweiTr(i, item) {
+            var tr = $("<tr>");
+            tr.append($("<td>").html(i + 1));
+            var content = item.TemplateContent.replace(/\*/g,
+                    '<input type="text" style="width:80px; border:1px solid #ccc;height:25px;margin: 0 3px;"/>');
+
+            var contentTd = $("<td style='text-align:left;white-space: normal;line-height:30px;'>").html(content);
+            tr.append(contentTd);
+            if (item.ContentTxt != null && item.ContentTxt.length > 0) {
+                var contentTxt = item.ContentTxt || '';
+                var arr = contentTxt.split(',');
+                var inputArr = contentTd.find("input");
+                inputArr.each(function (i, inputEl) {
+                    $(inputEl).val(arr[i]);
+                })
+            }
+            tr.children().eq(0).append($("<input id='CommonTextId' name='CommonTextId' type='hidden'>").val(item.CommonTextId));
+            tr.children().eq(0).append($("<input id='SeqNO' name='SeqNO' type='hidden'>").val(item.SeqNO));
+            tr.children().eq(0).append($("<input id='TemplateContentOld' name='TemplateContent' type='hidden'>").val(item.TemplateContent));
+
+            $("#template-zhanwei-table tbody").append(tr);
+        }
+        function saveConstractDtlCommonText(el) {            
+            var trs = $("#template-zhanwei-table tbody tr");
+            var args = [];
+            if (trs.length == 0)
+            {
+                alert("没有要保存的数据");
+                return;
+            }
+
+            $(el).button("loading");
+            trs.each(function (i, tr) {
+                var item = {};
+                var content = "";
+                var contentTxtGen = $(tr).find("#TemplateContentOld").val();
+                $(tr).children().eq(1).find("input").each(function (i, inputEl) {
+                    content += $(inputEl).val() + ",";
+                    contentTxtGen = contentTxtGen.replace('*', $(inputEl).val());
+                })
+                if (content.length > 0) {
+                    content = content.substr(0, content.length - 1);
+                }
+
+                args.push({
+                    CommonTextId: $(tr).find("#CommonTextId").val(),
+                    ConstractTemplateId: $("#TemplateId").val(),
+                    ConstractId: $("#Id").val(),
+                    SeqNO: $(tr).find("#SeqNO").val(),
+                    TemplateContent: contentTxtGen,
+                    ContentTxt: content
+                });
+            })
+
+            $.post("/Constract/SaveConstractDtlCommonText", { jsonArr: JSON.stringify(args) }, function (data) {
+                if (data && data.length > 0) {
+                    if (data[0].CommonTextId == 0) {
+                        loadConstractDtlCommonText();
+                    }
+                }
+
+                alert("保存成功!");
+                $(el).button("reset");
+            });
+        }
+    </script>
+}
+
+

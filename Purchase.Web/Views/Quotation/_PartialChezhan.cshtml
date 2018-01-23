@@ -1,0 +1,188 @@
+﻿<table id="quotation-chezhan-table">
+    <tr>
+        <td width="80">执行省份</td>
+        <td>
+            <input id="zhixingshengfen" name="zhixingshengfen" class="form-control" />
+        </td>
+        <td width="80">执行城市</td>
+        <td>
+            <input id="zhixingchengshi" name="zhixingchengshi" class="form-control" />
+        </td>
+        <td width="70">项目</td>
+        <td width="130">
+            <input type="hidden" id="ProjectId" name="ProjectId" />
+            <input id="ProjectCode" name="ProjectCode" class="form-control" disabled />
+        </td>
+        <td width="130">
+            <input id="ProjectName" name="ProjectName" class="form-control" disabled />
+        </td>
+        <td width="130">
+            <input id="ProjectShortName" name="ProjectShortName" class="form-control" disabled />
+        </td>
+        <td>
+            <a id="btnProjectSelect" class="btn btn-primary" style="width:120px">选择项目</a>
+        </td>
+    </tr>
+    <tr>
+        <td width="80">需求书类型</td>
+        <td>
+            @Html.DropDownList("RequirementType", new List<SelectListItem> {
+                    new SelectListItem(){Text="",Value=""},
+                    new SelectListItem(){ Text="面访或电访",Value="Mianfangjidianfang"},
+                    new SelectListItem(){ Text="座谈会",Value="Zuotanhui"},
+                    new SelectListItem(){ Text="深访及日记留置",Value="Shenfangjirijiliuzhi"},
+                }, new { @class = "form-control" })
+        </td>
+        <td width="80">执行分类</td>
+        <td>
+            <select id="zhixingfenlei" name="zhixingfenlei" class="form-control">
+                <option value=""></option>
+            </select>
+        </td>
+        <td>供应商</td>
+        <td width="130">
+            <input id="SupplierId" name="SupplierId" type="hidden" />
+            <input id="SupplierCode" name="SupplierCode" class="form-control" disabled>
+        </td>
+        <td width="130"><input id="SupplierName" name="SupplierName" class="form-control" disabled></td>
+        <td width="130"><input id="SupplierShortName" name="SupplierShortName" class="form-control" disabled></td>
+        <td>
+            <a id="btnSupplierSelect" class="btn btn-primary" style="width:120px">选择供应商</a>
+        </td>
+    </tr>
+    <tr>
+        <td width="80">工作职责</td>
+        <td>
+            <select id="gongzuozhize" name="gongzuozhize" class="form-control">
+            </select>
+        </td>
+        <td width="80">用户分类</td>
+        <td>
+            <select id="yonghufenlei" name="yonghufenlei" class="form-control">
+                <option value=""></option>
+            </select>
+        </td>
+        <td width="80">客户分类</td>
+        <td>
+            <select id="kehufenlei" name="kehufenlei" class="form-control">
+                <option value=""></option>
+            </select>
+        </td>
+        <td width="80">现有或潜在</td>
+        <td>
+            <select id="xianyouhuoqianzai" name="xianyouhuoqianzai" class="form-control">
+                <option value=""></option>
+            </select>
+        </td>
+        <td></td>
+    </tr>
+    <tr>
+        <td width="80">核算单位</td>
+        <td>
+            <input id="hesuandanwei" name="hesuandanwei" class="form-control">
+        </td>
+        <td width="80">单价</td>
+        <td>
+            <input id="danjia" name="danjia" class="form-control" type="number">
+        </td>
+        <td width="80">数量</td>
+        <td>
+            <input id="shuliang" name="shuliang" class="form-control" type="number">
+        </td>
+        <td></td>
+        <td></td>
+        <td></td>
+    </tr>
+    <tr>
+        <td width="80">备注</td>
+        <td colspan="7">
+            <textarea id="beizhu" name="beizhu" class="form-control"></textarea>
+        </td>
+        <td></td>
+    </tr>
+</table>
+<script>
+    $(function () {
+        afterReady();
+    })
+
+    function afterReady() {
+        var zhixingfenlei1 = ["", "定点约访", "不定点约访", "定点拦截", "不定点拦截", "不限制", "电话满意度", "NPS", "个案电访", "电话回访", "数据清洗", "不限制", "不涉及"];
+        var zhixingfenlei2 = ["", "本地座谈会", "飞行座谈会", "混合座谈会", "不涉及", "不限制"];
+        var zhixingfenlei3 = ["", "本地座谈会", "异地座谈会", "混合座谈会", "日记", "日记&留置", "不涉及", "不限制"];
+        var gongzuozhize1 = ["", "邀约", " 拦截", "邀约&拦截", "访问", "邀约&访问", "邀约&拦截&访问", "不涉及", "不限制"];
+        var gongzuozhize2 = ["", "邀约", "组织（现场原始笔录+食品+现场组织）", "邀约&组织（现场原始笔录+食品+现场组织）", "不涉及", "不限制"];
+        var gongzuozhize3 = ["", "邀约", "邀约&笔录", "笔录", "邀约&笔录&陪访", "不涉及", "不限制"];
+        var kehufenlei1 = ["", "本品 ", " 竞品 ", " 不涉及 ", "不限制"];
+        var kehufenlei2 = ["", "本地座谈会", "飞行座谈会", "混合座谈会", "不涉及", "不限制"];
+        var kehufenlei3 = ["", "本地座谈会", "异地座谈会", "混合座谈会", "日记", "日记&留置", "不涉及", "不限制"];
+        var yonghufenlei1 = ["", "私人用户", "企业用户", "销售经理", "销售经理及以上级别", "服务经理", "服务经理及以上级别", "总经理", "专家", "非授权经销商", "媒体", "厂商", "不涉及", "不限制"];
+        var yonghufenlei2 = ["", "私人用户", "企业用户", "销售经理", "销售经理及以上级别", "服务经理", "服务经理及以上级别", "总经理", "专家", "非授权经销商", "媒体", "厂商", "不涉及", "不限制"];
+        var yonghufenlei3 = ["", "私人用户", "企业用户", "销售经理", "销售经理及以上级别", "服务经理", "服务经理及以上级别", "总经理", "专家", "非授权经销商", "媒体", "厂商", "不涉及", "不限制"];
+        var xianyouhuoqianzai1 = ["", "现有 ", "潜在", "潜在（增/换购）", "混合", "不涉及", "不限制"];
+        var xianyouhuoqianzai2 = ["", "现有", "潜在", "潜在（增/换购）", "均可", "不涉及", "不限制"];
+        var xianyouhuoqianzai3 = ["", "现有", "潜在", "潜在（增/换购）", "均可", "不涉及", "不限制"];
+
+        $("#quotation-chezhan-table #RequirementType").change(function () {
+            if ($(this).val() == "Mianfangjidianfang") {
+                zhixingfenlei(zhixingfenlei1);
+                gongzuozhize(gongzuozhize1);
+                kehufenlei(kehufenlei1);
+                yonghufenlei(yonghufenlei1);
+                xianyouhuoqianzai(xianyouhuoqianzai1);
+            } else if ($(this).val() == "Zuotanhui") {
+                zhixingfenlei(zhixingfenlei2);
+                gongzuozhize(gongzuozhize2);
+                kehufenlei(kehufenlei2);
+                yonghufenlei(yonghufenlei2);
+                xianyouhuoqianzai(xianyouhuoqianzai1);
+            } else if ($(this).val() == "Shenfangjirijiliuzhi") {
+                zhixingfenlei(zhixingfenlei3);
+                gongzuozhize(gongzuozhize3);
+                kehufenlei(kehufenlei3);
+                yonghufenlei(yonghufenlei3);
+                xianyouhuoqianzai(xianyouhuoqianzai3);
+            }
+        });
+    }
+
+    function zhixingfenlei(array) {
+        var el = $("#quotation-chezhan-table #zhixingfenlei");
+        el.empty();
+        for (i in array) {
+            el.append($("<option>").html(array[i]).val(array[i]));
+        }
+    }
+
+    function gongzuozhize(array) {
+        var el = $("#quotation-chezhan-table #gongzuozhize");
+        el.empty();
+        for (i in array) {
+            el.append($("<option>").html(array[i]).val(array[i]));
+        }
+    }
+
+    function kehufenlei(array) {
+        var el = $("#quotation-chezhan-table #kehufenlei");
+        el.empty();
+        for (i in array) {
+            el.append($("<option>").html(array[i]).val(array[i]));
+        }
+    }
+
+    function yonghufenlei(array) {
+        var el = $("#quotation-chezhan-table #yonghufenlei");
+        el.empty();
+        for (i in array) {
+            el.append($("<option>").html(array[i]).val(array[i]));
+        }
+    }
+
+    function xianyouhuoqianzai(array) {
+        var el = $("#quotation-chezhan-table #xianyouhuoqianzai");
+        el.empty();
+        for (i in array) {
+            el.append($("<option>").html(array[i]).val(array[i]));
+        }
+    }
+</script>

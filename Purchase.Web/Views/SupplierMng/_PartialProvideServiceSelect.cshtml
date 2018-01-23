@@ -1,0 +1,176 @@
+﻿@using Purchase.Web.Common
+@{
+    var data = (List<string>)ViewBag.Data;
+}
+
+<div class="count2">
+    <table>
+        <tr>
+            <td colspan="2" style="text-align:right">
+                <a id="btnCheckAll" class="btn btn-primary" style="width:100px">全选</a>
+                <a id="btnNotcheckAll" class="btn btn-primary" style="width:100px">反选</a>
+            </td>
+        </tr>
+        <tr>
+            <td style="text-align:right">
+                关键字：
+            </td>
+            <td>
+                <input id="ProvideServiceFilter" class="form-control" />
+            </td>
+        </tr>
+    </table>
+    <div class="table-responsive" style="max-height:550px;overflow:auto">
+        <table id="ProvideService-table" class="table table-bordered table-condensed table-hover">
+            <thead>
+                <tr>
+                    <th width="60">选择</th>
+                    <th width="129">提供服务</th>
+                    <th width="60">选择</th>
+                    <th width="129">提供服务</th>
+                    <th width="60">选择</th>
+                    <th width="131">提供服务</th>
+                </tr>
+            </thead>
+            <tbody>
+                @for (int i = 0; i < data.Count; i = i + 3)
+                {
+                    string item1 = data[i];
+                    string item2 = (i + 1) >= data.Count ? "" : data[i + 1];
+                    string item3 = (i + 2) >= data.Count ? "" : data[i + 2];
+
+                    <tr>
+                        <td width="60">@Html.CheckBox("ProvideService_" + i, new { value = item1 })</td>
+                        <td width="129"> @item1</td>
+                        <td width="60">
+                            @if (!string.IsNullOrEmpty(item2))
+                            {
+                                @Html.CheckBox("ProvideService_" + (i + 1), new { value = item2 })
+                            }
+
+                        </td>
+                        <td width="129">@item2</td>
+                        <td width="60">
+                            @if (!string.IsNullOrEmpty(item3))
+                            {
+                                @Html.CheckBox("ProvideService_" + (i + 2), new { value = item3 })
+                            }
+                        </td>
+                        <td width="130">@item3</td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+
+    <div class="mt20" style="text-align:right;">
+        <a id="btnSelect" class="btn btn-primary" style="width:100px;">选 择</a>
+    </div>
+</div>
+
+<script>
+    var selectedValues = [];
+    var dataArr = JSON.parse('@Json.Encode(data)'.replace(/&quot;/g, '"'));
+    Array.prototype.removeByValue = function (val) {
+        for (var i = 0; i < this.length; i++) {
+            if (this[i] == val) {
+                this.splice(i, 1);
+                break;
+            }
+        }
+    }
+
+
+    $(function () {
+        $("#ProvideService-table input[type=checkbox]").change(function () {
+            debugger
+            var value = $(this).val();
+            if ($(this).is(":checked")) {
+                if (selectedValues.indexOf(value) == -1) {
+                    selectedValues.push(value);
+                }
+            } else {
+                selectedValues.removeByValue(value);
+            }
+        })
+
+        $("#btnSelect").click(function () {
+            $("#ProvideService").val(selectedValues ? selectedValues.join(";") : "");
+            $("#myModal").modal("hide");
+        })
+
+
+        $("#btnCheckAll").click(function () {
+            $("#ProvideService-table input[type=checkbox]").prop("checked", true).change();
+        })
+        $("#btnNotcheckAll").click(function () {
+            $("#ProvideService-table input[type=checkbox]").prop("checked", false).change();
+        })
+        $("#ProvideServiceFilter").change(function () {
+            loadData();
+        })
+    })
+
+    function bindCheckboxChange() {
+        $("#ProvideService-table input[type=checkbox]").change(function () {
+            var value = $(this).val();
+            if ($(this).is(":checked")) {
+                if (selectedValues.indexOf(value) == -1) {
+                    selectedValues.push(value);
+                }
+            } else {
+                selectedValues.removeByValue(value);
+            }
+        })
+    }
+    function removeCheckboxChange() {
+        $("#ProvideService-table input[type=checkbox]").unbind();
+    }
+
+    function bindCheckbox(values) {
+        if (values) {
+            var vArray = values.split(";");
+            selectedValues = vArray;
+            bindSelectedValues();
+        }
+    }
+    function bindSelectedValues() {
+        $("#ProvideService-table input[type=checkbox]").each(function () {
+            for (var i = 0; i < selectedValues.length; i++) {
+                if ($(this).val() == selectedValues[i]) {
+                    $(this).prop("checked", true);
+                }
+            }
+        });
+    }
+    function loadData() {
+        removeCheckboxChange();
+        $("#ProvideService-table tbody").empty();
+        var tr = $("<tr>");
+        var filters = dataArr.filter(function (item) {
+            return item.indexOf($("#ProvideServiceFilter").val()) > -1;
+        });
+
+        var mol = filters.length % 3;
+        if (mol != 0) {
+            for (var i = 0; i < (3 - mol) ; i++) {
+                filters.push("");
+            }
+        }
+        $.each(filters, function (index, item) {
+            var td1 = $('<td width="60"></td>');
+            var td2 = $('<td width="129"></td>');
+            if (item && item.length > 0) {
+                td1.append($("<input type='checkbox' id='ProvideService_ " + index + "'>").val(item));
+                td2.html(item);
+            }
+            tr.append(td1).append(td2);
+            if ((index > 0 && (index + 1) % 3 == 0) || index == (filters.length - 1)) {
+                $("#ProvideService-table tbody").append(tr);
+                tr = $("<tr>");
+            }
+        });
+        bindSelectedValues();
+        bindCheckboxChange();
+    }
+</script>

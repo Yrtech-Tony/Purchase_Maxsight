@@ -1,0 +1,243 @@
+﻿@{
+    ViewBag.Title = "计提查询";
+    Layout = "../FlowOrder/_FlowOrderLayout.cshtml";
+}
+<div class="count inline-block">
+    <form id="search-form" class="form">
+        <table>
+            <tr>
+                <td colspan="11" style="text-align:right">
+                    <button id="btnQuery" type="button" class="btn btn-primary" style="width:100px">查 询</button>
+                    <a id="btnExport" onclick="exportExcel()" class="btn btn-primary" style="width:100px" data-loading-text="正在导出...">导出Excel</a>
+                </td>
+            </tr>
+            <tr>
+                <td width="60">服务行业</td>
+                <td width="100">
+                    <select id="ServiceTrade" name="ServiceTrade" class="form-control">
+                        <option value="Max">Max</option>
+                        <option value="Trip">Trip</option>
+                        <option value="Zebrac">Zebrac</option>
+                        <option value="Star">Star</option>
+                    </select>
+                </td>
+                <td width="60">项目名称</td>
+                <td width="150">
+                    <input id="ProjectId" name="ProjectId" class="form-control" type="hidden" />
+                    <input id="ProjectName" name="ProjectName" class="form-control" />
+                </td>
+                <td width="60">项目简称</td>
+                <td width="140">
+                    <input id="ProjectShortName" name="ProjectShortName" class="form-control" />
+                </td>
+                <td>
+                    <a id="btnProjectSelect" class="btn btn-primary" style="width:100px">选择项目</a>
+                </td>
+                <td></td>
+                <td width="90">供应商</td>
+                <td width="200">
+                    <input id="SupplierId" name="SupplierId" class="form-control" type="hidden" />
+                    <input id="SupplierName" name="SupplierName" class="form-control">
+                </td>
+                <td>
+                    <a id="btnSupplierSelect" class="btn btn-primary" style="width:100px">选择供应商</a>
+                </td>
+            </tr>
+        </table>
+    </form>
+    <div style="position:relative">
+        <div id="search-result" class="table-responsive  fix-table-div">
+            <table id="AccruedCharge-table" class="table table-bordered table-condensed table-hover">
+                <thead>
+                    <tr>
+                        <th style="min-width:50px;">详细</th>
+                        <th>成本费用类别</th>
+                        <th width="150">项目名称</th>
+                        <th width="100">项目简称</th>
+                        <th>项目编号</th>
+                        <th width="150">供应商名称</th>
+                        <th>执行周期</th>
+                        <th>计提金额</th>
+                        <th>预计付款月份</th>
+                        <th>已提交发票金额</th>
+                        <th>数据来源</th>
+                        <th width="100">所属部门</th>
+                    </tr>
+                </thead>
+                <tbody></tbody>
+            </table>
+        </div>
+    </div>
+
+    <div id="pagination" class="pull-right">
+        <ul id="pageUl"></ul>
+    </div>
+</div>
+<div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-hidden="false">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
+                <h4 class="modal-title"></h4>
+            </div>
+            <div class="modal-body">
+            </div>
+        </div>
+    </div>
+</div>
+<div class="modal fade" id="AccruedChargeModal" tabindex="-1" role="dialog" aria-hidden="false">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
+                <h4 class="modal-title">计提编辑</h4>
+            </div>
+            <div class="modal-body">
+                @Html.Partial("_PartialEdit", new Purchase.Service.DTO.AccruedChargesDto())
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script src="~/Scripts/custom/form-serialize.js"></script>
+    <script>
+        $(function () {
+            $("#btnQuery").click(function () {
+                load();
+            })
+
+            $("#btnProjectSelect").click(function () {
+                ProjectSelect();
+            })
+            $("#btnSupplierSelect").click(function () {
+                SupplierSelect(1);
+            })
+        })
+        //打开编辑窗体
+        function openEdit(obj) {
+            $("#AccruedChargeModal").modal("show");
+            var item = $(obj).data("item");
+            item.ProjectId = item.ProjectId || $("#search-form #ProjectId").val();
+            item.SupplierId = item.SupplierId || $("#search-form #SupplierId").val();
+            item.AccruedChargeId = item.AccruedChargeId || "0";          
+            $("#AccruedChargesForm").setForm(item);
+            $("#AccruedChargesForm select").addClass("selectpicker").prop("title", "").data("live-search", true);
+        }
+        //查询
+        function load(pageNum) {
+            $("#search-result").clearFixLayout();
+            var params = $("#search-form").serializeJson();
+            params = $.extend(params, { pageSize: 10, pageNum: pageNum ? pageNum : 1 });
+            $.post("/AccruedCharges/Load", params, function (data) {
+                if (data && data.List) {
+                    $("#AccruedCharge-table tbody").empty();
+                    $.each(data.List, function (index, item) {
+                        var tr = $("<tr>");
+                        var codeLink = $("<a onclick='openEdit(this)'>").html("详细").attr("data-item",JSON.stringify(item));
+                        codeLink.css("cursor", "pointer");
+                        tr.append($("<td></td>").append(codeLink));
+
+                        tr.append($("<td></td>").html(item.CostType));
+                        tr.append($("<td></td>").html(item.ProjectName));
+                        tr.append($("<td></td>").html(item.ProjectShortName));
+                        tr.append($("<td></td>").html(item.ProjectCode));
+                        tr.append($("<td></td>").html(item.SupplierName));
+                        tr.append($("<td></td>").html(item.ExecuteCycle));
+                        tr.append($("<td></td>").html(item.AccruedChargesAmt));
+                        tr.append($("<td></td>").html(item.PayMonth));
+                        tr.append($("<td></td>").html(item.FlowInvoceAmt));
+                        tr.append($("<td></td>").html(item.SourceChk));
+                        tr.append($("<td></td>").html(item.DepartmentCode));
+
+                        $("#AccruedCharge-table tbody").append(tr);
+                    })
+                    calHeji();
+                    if (data.List.length > 0) {
+                        $("#search-result").fixHeadColumn({ fixColumnIndex: 5 });
+                    }
+
+                    createPageNav({ $container: $("#pagination"), pageCount: data.PageCount, currentNum: data.CurPage, afterFun: load });
+                }
+            })
+        };
+        //增加合计
+        function calHeji() {
+            //预算小计合计
+            var tr = $("<tr>");
+            
+            var tdCount;
+            $("#AccruedCharge-table thead tr").each(function () {
+                tdCount = $(this).find("th").length-1;
+            })
+            var jitiHeji = 0;
+            var fapiaoHeji = 0;
+            $("#AccruedCharge-table tbody tr").each(function () {
+                var tds = $(this).find("td");
+                var jiti = parseFloat(tds.eq(7).text());
+                var fapiao = parseFloat(tds.eq(9).text());
+                if (!isNaN(jiti)) {
+                    jitiHeji += jiti;
+                }
+                if (!isNaN(fapiao)) {
+                    fapiaoHeji += fapiao;
+                }
+            })
+            for (var i = 0; i < tdCount; i++) {
+                var td = $("<td>");
+                if (i == 0) {
+                    tr.append($("<td><strong>合计<strong></td>"));
+                    continue;
+                }else if (i ==7) {
+                    td.html(parseFloat(jitiHeji).toFixed(2));
+                }else if (i == 9) {
+                    td.html(parseFloat(fapiaoHeji).toFixed(2));
+                }
+                tr.append(td);
+            }
+
+            $("#AccruedCharge-table tbody").append(tr);
+        }
+
+        function exportExcel() {
+            $("#btnExport").button("loading");
+
+            var params = $("#search-form").serializeJson();
+            $.post("/AccruedCharges/ExportAccruedCharges", params, function (data) {
+                window.location.href = "/AccruedCharges/DownloadFile?fileName=" + data.ExportPath;
+            }).complete(function () {
+                $("#btnExport").button("reset");
+                closealert();
+            });
+        }
+        function ProjectSelect() {
+            $("#myModal .modal-body").empty();
+            $("#myModal").modal("show");
+            $("#myModal .modal-title").html("选择项目");
+            $("#myModal .modal-body").load("/DemandBook/ProjectSelect", { ModelType: "", ProjectCode: "", ProjectName: "", ProjectShortName: "" }, function () {
+
+            });
+        }
+        function SupplierSelect(type) {
+            $("#myModal .modal-body").empty();
+            $("#myModal").modal("show");
+            $("#myModal .modal-title").html("选择供应商");
+            $("#myModal .modal-body").load("/Constract/SupplierMngSelect",
+                { SupplierCode: "", SupplierName: "", SupplierShortName: "", province: '', city: '' }, function () {
+                    $("#myModal .modal-body #Type").val(type)
+                });
+        }
+        function ProjectSelectCallback(args) {
+            $("#ProjectName").val(args[1]);
+            $("#ProjectShortName").val(args[2]);
+            $("#ProjectId").val(args[3]);
+            $("#myModal").modal("hide");
+        }
+        function SupplierSelectCallback1(args) {
+            $("#SupplierName").val(args.SupplierName);
+            $("#SupplierId").val(args.SupplierId);
+            $("#myModal").modal("hide");
+        }
+
+    </script>
+}

@@ -1,0 +1,91 @@
+﻿@{
+    var data = Purchase.Web.Common.SelectListTool.HiddenCodeList("供应商-禁用服务").Where(x => x.Text != "").Select(x => x.Value).ToArray();
+    //new string[] { "无", "明检", "暗访", "盘库", "价格调查", "面访", "电访", "座谈会", "深访", "日记留置", "网络调研", "管控", "车辆展评会", "编码", "复核", "编程及编辑", "数据分析", "报告制作", "主持人", "场地", "布展", "运输", "租车", "供应商差旅", "有形商品采购", "服务采购", "技术采购", "工程发包" };
+}
+<div class="count2">
+    <table>
+        <tr>
+            <td colspan="2" style="text-align:right">
+                <a id="btnCheckAll" class="btn btn-primary" style="width:100px">全选</a>
+                <a id="btnNotcheckAll" class="btn btn-primary" style="width:100px">反选</a>
+            </td>
+        </tr>
+    </table>
+    <div class="table-responsive" style="max-height:550px;overflow:auto">
+        <table id="NotServiceType-table" class="table table-bordered table-condensed table-hover">
+            <thead>
+                <tr>
+                    <th width="60">选择</th>
+                    <th width="130">禁用服务类型</th>
+                    <th width="60">选择</th>
+                    <th width="130">禁用服务类型</th>
+                    <th width="60">选择</th>
+                    <th width="130">禁用服务类型</th>
+                </tr>
+            </thead>
+            <tbody>
+                @for (int i = 0; i < data.Length; i = i + 3)
+                {
+                    string item1 = data[i];
+                    string item2 = (i + 1) >= data.Length ? "" : data[i + 1];
+                    string item3 = (i + 2) >= data.Length ? "" : data[i + 2];
+
+                    <tr>
+                        <td width="60">@Html.CheckBox("NoteServiceType_" + i)</td>
+                        <td width="130">@item1</td>
+                        <td width="60">
+                            @if (!string.IsNullOrEmpty(item2))
+                            {
+                                @Html.CheckBox("NoteServiceType_" + (i + 1))
+                            }
+                        </td>
+                        <td width="130">@item2</td>
+                        <td width="60">
+                            @if (!string.IsNullOrEmpty(item3))
+                            {
+                                @Html.CheckBox("NoteServiceType_" + (i + 2))
+                            }
+                        </td>
+                        <td width="130">@item3</td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+    <div class="mt20" style="text-align:right;">
+        <a id="btnSelect" class="btn btn-primary" style="width:100px;">选 择</a>
+    </div>
+</div>
+
+<script>
+    $("#btnCheckAll").click(function () {
+        $("#NotServiceType-table input[type=checkbox]").prop("checked", true);
+    })
+    $("#btnNotcheckAll").click(function () {
+        $("#NotServiceType-table input[type=checkbox]").prop("checked", false);
+    })
+
+    var dataArr = JSON.parse('@Json.Encode(data)'.replace(/&quot;/g, '"'));
+    $("#btnSelect").click(function () {
+        var lstString = '';
+        var checkbox = $("#NotServiceType-table input[type=checkbox]:checked");
+        $.each(checkbox, function () {
+            lstString += $(this).parent().next().html() + ";";
+        });
+        if (lstString.length > 0) {
+            lstString = lstString.substr(0, lstString.length - 1);
+        }
+        $("#NotServiceType").val(lstString);
+        $("#myModal").modal("hide");
+    })
+
+    function bindCheckbox(values) {
+        if (values) {
+            var vArray = values.split(";");
+            for (i in vArray) {
+                var index = dataArr.indexOf(vArray[i].trim());
+                $("#NoteServiceType_" + index).prop("checked", true);
+            }
+        }        
+    }
+</script>

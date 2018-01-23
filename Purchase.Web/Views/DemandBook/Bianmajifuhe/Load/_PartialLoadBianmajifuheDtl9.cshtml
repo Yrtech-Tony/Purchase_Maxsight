@@ -1,0 +1,91 @@
+﻿<div class="panel panel-default mt20">
+    <div class="panel-heading">
+        <strong style="line-height:35px;font-size:14px;">录入要求</strong>
+        <button class="btn btn-primary btn pull-right clearfix" onclick="addDtl9()">添加</button>
+        <button class="btn btn-primary btn pull-right" style="margin-right:5px;" onclick="delDemandBookDtl('9')">删除</button>
+    </div>
+    <div class="panel-body">
+        <div class="table-responsive">
+            <table id="dtl9-table" class="table table-bordered table-condensed table-hover text-center">
+                <thead>
+                    <tr>
+                        <th width="50">选择</th>
+                        <th width="50">
+                            复制
+                        </th>
+                        <th width="50">
+                            详细
+                        </th>
+                        <th>
+                            序号
+                        </th>
+                        <th>
+                            样本录入
+                        </th>
+                        <th>
+                            样本录入样本量或比例
+                        </th>
+                        <th>
+                            录入管理
+                        </th>
+                        <th>
+                            录入管理样本量或比例
+                        </th>
+                       
+                        <th>
+                            其他说明
+                        </th>
+                    </tr>
+                </thead>
+                <tbody></tbody>
+            </table>
+        </div>
+    </div>
+</div>
+<script>
+    var detailView9 = 'Bianmajifuhe/Detail/_PartialBianmajifuheDtl9';
+    var title9 = "录入要求";
+    function addDtl9() {
+        if (!CommitCheck()) {
+            alert("正在审核中或者非本人添加的项目");
+            return false;
+        }
+        setModal(title9, detailView9);
+        $("#myModal").modal("show");
+    }
+
+    function loadBianmajifuheDtl9() {
+        $.post("/DemandBook/LoadBianmajifuheDtl9", { RequirementId: $("#RequirementId").val() }, function (data) {
+            if (data) {
+                $("#dtl9-table tbody").empty();
+                $.each(data, function (index, item) {
+                    var tr = $("<tr>");
+
+                    tr.append($("<td></td>").append($("<input type='checkbox'>")));
+                    var copyBtn = $("<a class='btn btn-primary btn2'>").html("复制");
+                    copyBtn.click(function () {
+                        item.SeqNO = 0;
+                        setModal(title9, detailView9, item);
+                        $("#myModal").modal("show");
+                    })
+                    tr.append($("<td></td>").append(copyBtn));
+                    var editBtn = $("<a class='btn btn-primary btn2'>").html("详细");
+                    editBtn.click(function () {
+                        setModal(title9, detailView9, item);
+                        $("#myModal").modal("show");
+                    })
+                    tr.append($("<td></td>").append(editBtn));
+                    tr.append($("<td></td>").html(item.SeqNO));
+                    tr.append($("<td></td>").html(item.yangbenluru));
+                    tr.append($("<td></td>").html(item.yangbenluruyangbenlianghuobili));
+                    tr.append($("<td></td>").html(item.luruguanli));
+                    tr.append($("<td></td>").html(item.luruguanlyangbenlianghuobili));
+                    var qitashuoming9 = item.qitashuoming9 != null ? item.qitashuoming9.replace(/\n/g, '<br>') : "&nbsp;";
+                    tr.append($("<td style='text-align: left;'></td>").html(qitashuoming9));//其他说明
+
+                    $("#dtl9-table tbody").append(tr);
+                })
+            }
+        })
+    }
+</script>

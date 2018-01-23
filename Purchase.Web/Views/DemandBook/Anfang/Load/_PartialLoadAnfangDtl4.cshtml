@@ -1,0 +1,212 @@
+﻿<div class="panel panel-default mt20">
+    <div class="panel-heading">
+        <strong style="line-height:35px;font-size:14px;">配额要求</strong>
+        <button class="btn btn-primary btn pull-right clearfix" onclick="addDtl4()">添加</button>
+        <button class="btn btn-primary btn pull-right" style="margin-right:5px;" onclick="delDemandBookPeiE('4')">删除</button> 
+    </div>
+    <div class="panel-body">
+        <div class="table-responsive">
+            <table id="dtl4-table" class="table table-bordered table-condensed table-hover text-center">
+                <thead>
+                    <tr>
+                        <th width="50">选择</th>
+                        <th width="50">
+                            复制
+                        </th>
+                        <th width="50">
+                            详细
+                        </th>
+                        <th>
+                            序号
+                        </th>
+                        <th>
+                            执行分类
+                        </th>
+                        <th>
+                            客户分类
+                        </th>
+                        <th>
+                            品牌分类
+                        </th>
+                        <th>
+                            进店方式分类
+                        </th>
+                        <th>
+                            开车进店
+                        </th>
+                        <th>
+                            进店方式比例
+                        </th>
+                       
+                        <th>
+                            车辆类别
+                        </th>
+                        <th>
+                            车价范围
+                        </th>
+                        <th>
+                            车型级别
+                        </th>
+                        <th>
+                            样本量
+                        </th>
+                        <th>
+                            进店规避要求
+                        </th>
+                        <th>
+                            二次进店
+                        </th>
+                        <th>
+                            二次进店比例
+                        </th>
+                        <th>
+                            报酬金额
+                        </th>
+                        <th>
+                            名单来源
+                        </th>
+                        <th>
+                            其他说明
+                        </th>
+                    </tr>
+                </thead>
+                <tbody></tbody>
+            </table>
+        </div>
+        </div>
+    <input id="SeqNOForLocalCopy" name="SeqNOForLocalCopy" type="hidden">
+</div>
+<script>
+    var detailView4 = 'Anfang/Detail/_PartialAnfangDtl4';
+    var title4="配额要求";
+    function addDtl4() {
+        if (!CommitCheck()) {
+            alert("正在审核中或者非本人添加的项目");
+            return false;
+        }
+        $("#SeqNOForLocalCopy").val("0");
+        setModal(title4, detailView4, undefined, true);
+        $("#myModal").modal("show");
+    }
+    function SavePeie() {
+        if (!CommitCheck()) {
+            alert("正在审核中或者非本人添加的项目");
+            return false;
+        }
+        var peieshuliang = 0;
+        $("#dtl4-table tbody tr").each(function (i, tr) {
+            if (sourceData[i].SampleCount)
+                peieshuliang = parseFloat(FloatAdd(parseFloat(sourceData[i].SampleCount), parseFloat(peieshuliang))).toFixed(2);
+        })
+        if (parseFloat(peieshuliang) != parseFloat($("#Count").val())) {
+            debugger
+            alert("配额样本量和立项样本量不同");
+            return false;
+        }
+        if (sourceData) {
+            $.post("/DemandBook/SaveAnfangDtl4List", {
+                jsonArr: JSON.stringify(sourceData),
+                RequirementId: $("#RequirementId").val(),
+                ProjectId: $("#ProjectId").val(),
+                CitySeqNO: $("#CitySeqNo").val(),
+                RequirementGroupId: $("#GroupId").val(),
+                RequirementType: $("#RequirementType").val()
+            }, function (data) {
+                alert("保存成功！");
+                loadAnfangDtl4()
+            })
+        }
+    }
+    function loadpage() {
+        $("#dtl4-table tbody").empty();
+        $.each(sourceData, function (index, item) {
+            for (pro in item) {
+                if ($.isArray(item[pro])) {
+                    item[pro] = item[pro].join('&');
+                }
+            }
+            var tr = $("<tr>");
+
+            tr.append($("<td></td>").append($("<input type='checkbox'>")));
+            var copyBtn = $("<a class='btn btn-primary btn2'>").html("复制");
+            copyBtn.click(function () {
+                debugger
+                $("#SeqNOForLocalCopy").val("0");
+                setModal(title4, detailView4, item);
+                $("#myModal").modal("show");
+
+            })
+            tr.append($("<td></td>").append(copyBtn));
+            var editBtn = $("<a class='btn btn-primary btn2'>").html("详细");
+            editBtn.click(function () {
+                $("#SeqNOForLocalCopy").val(item.SeqNO);
+                setModal(title4, detailView4, item);
+                $("#myModal").modal("show");
+            })
+            tr.append($("<td></td>").append(editBtn));
+            tr.append($("<td></td>").html(item.SeqNO));
+            tr.append($("<td></td>").html(item.ExecuteType));
+            tr.append($("<td></td>").html(item.CustomerType));
+            tr.append($("<td></td>").html(item.BrandType));
+            tr.append($("<td></td>").html(item.IntoShopType));
+            tr.append($("<td></td>").html(item.CarChk));
+            tr.append($("<td></td>").html(item.IntoShopTypeRate));
+            tr.append($("<td></td>").html(item.CarType));
+            tr.append($("<td></td>").html(item.CarPriceRange));
+            tr.append($("<td></td>").html(item.CarLevel));
+            tr.append($("<td></td>").html(item.SampleCount));
+            tr.append($("<td></td>").html(item.Avoid));
+            tr.append($("<td></td>").html(item.IntoShopAgain));
+            tr.append($("<td></td>").html(item.IntoShopAgainRate))
+            tr.append($("<td></td>").html(item.Compensation));
+            tr.append($("<td></td>").html(item.ListSource));
+            var RemarkDtl4 = item.RemarkDtl4 != null ? item.RemarkDtl4.replace(/\n/g, '<br>') : "&nbsp;";
+            tr.append($("<td style='text-align: left;'></td>").html(RemarkDtl4));//其他说明
+
+
+            $("#dtl4-table tbody").append(tr);
+        })
+    }
+    function loadAnfangDtl4() {
+        $.post("/DemandBook/LoadAnfangDtl4", { RequirementId: $("#RequirementId").val() }, function (data) {
+            if (data) {
+                sourceData = data;
+                loadpage();
+               
+                //$("#dtl4-table tbody").empty();
+                //$.each(data, function (index, item) {
+                //    var tr = $("<tr>");
+                //    var copyBtn = $("<a class='btn btn-primary btn2'>").html("复制");
+                //    copyBtn.click(function () {
+                //        item.SeqNO = 0;
+                //        setModal(title4, detailView4, item, true);
+                //        $("#myModal").modal("show");
+                //    })
+                //    tr.append($("<td></td>").append(copyBtn));
+                //    var editBtn = $("<a class='btn btn-primary btn2'>").html("详细");
+                //    editBtn.click(function () {
+                //        setModal(title4, detailView4, item);
+                //        $("#myModal").modal("show");
+                //    })
+                //    tr.append($("<td></td>").append(editBtn));
+                //    tr.append($("<td></td>").html(item.SeqNO));
+                //    tr.append($("<td></td>").html(item.ExecuteType));
+                //    tr.append($("<td></td>").html(item.CustomerType));
+                //    tr.append($("<td></td>").html(item.BrandType));
+                //    tr.append($("<td></td>").html(item.IntoShopType));
+                //    tr.append($("<td></td>").html(item.CarChk));  
+                //    tr.append($("<td></td>").html(item.IntoShopTypeRate));
+                //    tr.append($("<td></td>").html(item.CarType));
+                //    tr.append($("<td></td>").html(item.CarPriceRange));
+                //    tr.append($("<td></td>").html(item.CarLevel));
+                //    tr.append($("<td></td>").html(item.SampleCount));
+                   
+                //    tr.append($("<td></td>").html(item.Compensation));
+                //    tr.append($("<td></td>").html(item.RemarkDtl4));
+
+                //    $("#dtl4-table tbody").append(tr);
+                //})
+            }
+        })
+    }
+</script>

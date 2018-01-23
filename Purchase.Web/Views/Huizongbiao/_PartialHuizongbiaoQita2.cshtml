@@ -1,0 +1,139 @@
+﻿
+
+<table id="huizongbiao-table-Qita2" class="table table-bordered table-condensed table-hover">
+    <thead>
+        <tr>	
+            <th>年份 </th>
+            <th>
+                模块
+            </th>
+            <th>
+                服务地区
+            </th>
+            <th>
+                需求部门
+            </th>
+            <th>
+                费用所属部门
+            </th>
+            <th>
+                供应商名称
+            </th>
+            <th>
+                项目名称
+            </th>
+            <th>
+                项目编号
+            </th>
+            <th>
+                采购分类
+            </th>
+            <th>
+                采购方式
+            </th>
+            <th>
+                提供服务
+            </th>
+            <th>
+                费用构成
+            </th>
+            <th>
+                品名
+            </th>
+            <th>
+                品牌
+            </th>
+            <th>
+                规格
+            </th>
+            <th>
+                型号
+            </th>
+            <th>
+                配置
+            </th>
+            <th>
+                售后服务内容
+            </th>
+            <th>
+                售后服务期
+            </th>
+            <th>
+                质保期
+            </th>
+            <th>
+                下单日期
+            </th>
+            <th>
+                交货日期
+            </th>
+            <th>
+                验收日期
+            </th>
+            <th>
+                单价
+            </th>
+            <th>
+                数量
+            </th>
+            <th>
+                金额
+            </th>
+            <th width="200">
+                备注
+            </th>
+            @*<th>
+                供应商评分类别
+            </th>
+            <th>
+                供应商评分
+            </th>*@
+        </tr>
+    </thead>
+    <tbody></tbody>
+</table>
+
+<script>
+    function addHuizongbiaoTr_Qita2(item) {
+        var tr = $("<tr>");
+        addHiddenField(tr, item);
+
+        tr.append($("<td></td>").html(item.Year));
+        tr.append($("<td></td>").html(item.ModelType));
+        tr.append($("<td></td>").html(item.ServiceRegion));
+        tr.append($("<td></td>").html(item.DepartmentCode));
+        tr.append($("<td></td>").html(item.CostDepartment));
+        tr.append($("<td></td>").html(item.SupplierName));
+        tr.append($("<td></td>").html(item.ProjectName));
+        tr.append($("<td></td>").html(item.ProjectCode));
+
+        tr.append($("<td></td>").html(item.PurchaseType));
+        tr.append($("<td></td>").html(item.PurchaseMode));        
+        tr.append($("<td></td>").html(item.SupplyService));
+        tr.append($("<td></td>").html(item.CostStruct));
+        tr.append($("<td></td>").html(item.ItemName));
+        tr.append($("<td></td>").html(item.Brand));
+        tr.append($("<td></td>").html(item.Specification));
+        tr.append($("<td></td>").html(item.Model));
+        tr.append($("<td></td>").html(item.Configuration));
+        tr.append($("<td></td>").html(item.AfterSaleContent));
+        tr.append($("<td></td>").html(item.AfterSalePeriod));
+        tr.append($("<td></td>").html(item.Warranty));
+        //tr.append($("<td></td>").html(item.StaffLevel));
+        tr.append($("<td></td>").html(item.OrderDate));
+        tr.append($("<td></td>").html(item.DeliveryDate));
+        tr.append($("<td></td>").html(item.AcceptanceDate));
+        
+        tr.append($("<td></td>").html(item.danjia));
+        tr.append($("<td></td>").html(item.shuliang));
+        tr.append($("<td></td>").html(item.heji));
+
+        var remark = $("<input name='Remark' class='form-control' style='width:150px'>").val(item.Remark);
+        tr.append($("<td></td>").append(remark));
+
+        //tr.append($("<td></td>").html(""));
+        //tr.append($("<td></td>").html(""));
+
+        $("#huizongbiao-table-Qita2 tbody").append(tr);
+    }
+</script>

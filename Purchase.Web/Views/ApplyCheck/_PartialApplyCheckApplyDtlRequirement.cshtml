@@ -1,0 +1,82 @@
+﻿@using Purchase.Service.DTO
+@model IEnumerable<RequiremetMstDto>
+
+<table style="width:100%;">
+    <tr>
+        <td colspan="10" style="text-align:right">
+            <a class="btn btn-primary" href="javascript:showAttachList(@ViewBag.ApplyId)">查看附件</a>
+        </td>
+    </tr>
+</table>
+<div class="count2">
+    <div style="position:relative">
+        <div id="search-result" class="table-responsive" style="max-height:550px;overflow-y:auto;">
+            <table id="RecheckUserSelect-table" class="table table-bordered table-condensed table-hover">
+                <thead>
+                    <tr>
+                        <th>申请编号</th>
+                        <th>需求书Id</th>
+                        <th>需求书类型</th>
+                        <th>项目编号</th>
+                        <th>项目名称</th>
+                        <th>项目简称</th>
+                        <th>省份</th>
+                        <th>城市</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @if (Model != null)
+                    {
+                        foreach (RequiremetMstDto item in Model)
+                        {
+                            <tr>
+                                <td>@item.ApplyId</td>
+                                <td><a href="javascript:openDemandBook('@item.RequirementType',@item.ProjectId,@item.SeqNO,@item.RequirementGroupId,@item.RequirementId)">@item.RequirementId</a></td>
+                                <td>@item.RequirementName</td>
+                                <td>@item.ProjectCode</td>
+                                <td>@item.ProjectName</td>
+                                <td>@item.ProjectShortName</td>
+                                <td>@item.Province</td>
+                                <td>@item.City</td>
+                            </tr>
+                        }
+                    }
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+<script src="~/Scripts/custom/bs.modal.expend.js"></script>
+<script>
+    function openDemandBook(DemandBookType, ProjectId, SeqNO, RequirementGroupId, RequirementId) {
+        //var url = "/DemandBook/Create?DemandBookType=" + DemandBookType;
+        //url += "&ProjectId=" + ProjectId;
+        //url += "&SeqNO=" + SeqNO;
+        //url += "&GroupId=" + GroupId;
+        //if (RequirementId != 0) {
+        //    url += "&RequirementId=" + RequirementId;
+        //}
+
+        var modeltypes = ["业务", "内部采购", "其他"];
+        debugger
+        var url = "/DemandBook/Create?DemandBookType=" + DemandBookType;
+        url += "&ProjectId=" + ProjectId;
+        url += "&SeqNO=" + SeqNO;
+        url += "&GroupId=" + RequirementGroupId;
+        if (RequirementId != 0) {
+            url += "&RequirementId=" + RequirementId;
+        }
+
+        window.open(url);
+    }
+    
+    function showAttachList(ApplyId) {
+        var bsWindow = createBSWindow({
+            title: "附件"
+        });
+        $(".modal-body", bsWindow).load("/ApplyCheck/AttachShow", { applyId: ApplyId }, function () {
+
+        });
+    }
+</script>

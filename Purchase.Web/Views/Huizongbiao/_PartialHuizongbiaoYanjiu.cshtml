@@ -1,0 +1,118 @@
+﻿
+
+<table id="huizongbiao-table-Yanjiu" class="table table-bordered table-condensed table-hover">
+    <thead>
+        <tr>	
+            <th>
+                供应商名称
+            </th>
+            <th>
+                项目名称
+            </th>
+            <th>
+                项目简称
+            </th>
+            <th>
+                项目经理
+            </th>
+            <th>
+                执行省份
+            </th>
+            <th>
+                执行城市
+            </th>
+            <th>
+                执行周期
+            </th>
+            <th>
+                项目类型
+            </th>
+            <th>
+                执行方式
+            </th>
+            <th>
+                工作分类
+            </th>
+            <th>
+                工作内容
+            </th>
+            <th>
+                人员岗位
+            </th>
+            <th>
+                类型/品牌
+            </th>
+            <th>
+                规格/要求
+            </th>
+            <th>
+                质量标准
+            </th>
+            <th>
+                其他说明
+            </th>            
+            <th>
+                核算单位
+            </th>
+            <th>
+                单价
+            </th>
+            <th>
+                数量
+            </th>
+            <th>
+                合计
+            </th>
+            <th width="200">
+                备注
+            </th>
+            @*<th>
+                供应商评分类别
+            </th>
+            <th>
+                供应商评分
+            </th>*@
+        </tr>
+    </thead>
+    <tbody></tbody>
+</table>
+
+<script>
+    function addHuizongbiaoTr_Yanjiu(item) {
+        var tr = $("<tr>");
+        addHiddenField(tr, item);
+
+        tr.append($("<td></td>").html(item.SupplierName));
+        tr.append($("<td></td>").html(item.ProjectName));
+        tr.append($("<td></td>").html(item.ProjectShortName));
+        tr.append($("<td></td>").html(item.xiangmujingli));//项目经理？
+
+        tr.append($("<td></td>").html(item.zhixingshengfen));
+        tr.append($("<td></td>").html(item.zhixingchengshi));
+
+        tr.append($("<td></td>").html(item.ExecuteCycle));
+        tr.append($("<td></td>").html(item.ProjectType));
+
+        tr.append($("<td></td>").html(item.ExcuteMode));
+        tr.append($("<td></td>").html(item.gongzuofenlei));
+        tr.append($("<td></td>").html(item.gongzuoneirong));
+        tr.append($("<td></td>").html(item.renyuangangwei));
+        tr.append($("<td></td>").html(item.leixingpinpai));
+        tr.append($("<td></td>").html(item.guigeyaoqiu));
+        tr.append($("<td></td>").html(item.zhiliangbiaozhun));
+        tr.append($("<td></td>").html(item.qitashuoming));
+        
+        tr.append($("<td></td>").html(item.hesuandanwei));
+        tr.append($("<td></td>").html(item.danjia));
+        tr.append($("<td></td>").html(item.shuliang));
+        tr.append($("<td></td>").html(item.heji));
+
+        var remark = $("<input name='Remark' class='form-control' style='width:150px'>").val(item.Remark);
+        tr.append($("<td></td>").append(remark));
+
+        //tr.append($("<td></td>").html(""));
+        //tr.append($("<td></td>").html(""));
+
+        $("#huizongbiao-table-Yanjiu tbody").append(tr);
+    }
+</script>

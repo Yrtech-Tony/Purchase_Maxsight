@@ -1,0 +1,117 @@
+﻿<table id="quotation-table" class="table table-bordered table-condensed table-hover">
+    <thead>
+        <tr>
+            <th>
+                供应商名称
+            </th>
+            <th>
+                服务行业
+            </th>
+            <th>
+                执行省份
+            </th>
+            <th>
+                执行城市
+            </th>
+            <th>
+                复核要求
+            </th>
+            <th>
+                样本编辑
+            </th>
+            <th>
+                电话咨询
+            </th>
+            <th>
+                电话回访
+            </th>
+            <th>
+                编码类型
+            </th>
+            <th>
+                辅助用品
+            </th>
+            <th>
+                问卷编程
+            </th>
+            <th>
+                核算单位
+            </th>
+            <th>
+                参考价格
+            </th>
+            <th>
+                预算单价
+            </th>
+            <th>
+                预算数量
+            </th>
+            <th>
+                预算小计
+            </th>
+            <th>
+                单价
+            </th>
+            <th>
+                数量
+            </th>
+            <th>
+                小计
+            </th>
+            <th>
+                备注
+            </th>
+        </tr>
+    </thead>
+    <tbody></tbody>
+</table>
+
+<script>
+    $(function () {
+    })
+
+    function addQuotationTr_Fuhe(item) {
+        var tr = $("<tr>");
+        tr.append($("<td></td>").html(item.SupplierName));
+        tr.append($("<td></td>").html(item.ServiceTrade));
+        tr.append($("<td></td>").html(item.zhixingshengfen));
+        tr.append($("<td></td>").html(item.zhixingchengshi));
+        tr.append($("<td></td>").html(item.fuheyaoqiu));
+        tr.append($("<td></td>").html(item.yanbenbianji));
+        tr.append($("<td></td>").html(item.dianhuazixun));
+        tr.append($("<td></td>").html(item.dianhuahuifang));
+        tr.append($("<td></td>").html(item.bianmaleixing));
+        tr.append($("<td></td>").html(item.fuzhuyongpin));
+        tr.append($("<td></td>").html(item.wenjuanbiancheng));
+        tr.append($("<td></td>").html(item.hesuandanwei));
+        tr.append($("<td></td>").html(item.cankaojiage));
+        //预算单价
+        var $ysdjInput = $("<input id='yusuandanjia_new'  class='form-control' style='width:60px'>").val(item.yusuandanjia_new);
+        ysdjOrysslBlur($ysdjInput, item);
+        tr.append($("<td class='input-td'></td>").append($ysdjInput));
+        //预算数量
+        var $ysslInput = $("<input id='yusuanshuliang' class='form-control' style='width:60px'>").val(item.yusuanshuliang);
+        ysdjOrysslBlur($ysslInput, item);
+        tr.append($("<td class='input-td'></td>").append($ysslInput));
+        //预算小计
+        var yusuanxiaoji = 0;
+         if (item.yusuandanjia_new && item.yusuanshuliang) {
+            yusuanxiaoji = parseFloat(item.yusuandanjia_new) * parseFloat(item.yusuanshuliang);
+        }
+        tr.append($("<td></td>").append($("<font id='yusuanxiaoji'></font >").text(yusuanxiaoji.toFixed(2))));
+
+        //单价 数量
+        tr.append($("<td></td>").html(item.danjia));
+        tr.append($("<td></td>").html(item.shuliang));
+        //小计
+        var xiaoji = 0;
+        if (item.danjia && !isEmptyOrNull(item.shuliang)) {
+            xiaoji = parseFloat(item.danjia) * parseFloat(item.shuliang);
+        }
+        tr.append($("<td></td>").text(xiaoji.toFixed(2)));
+
+        tr.append($("<td style='text-align:left'></td>").html(item.beizhu));
+
+        return tr;;
+    }
+</script>

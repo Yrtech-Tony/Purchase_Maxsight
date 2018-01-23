@@ -1,0 +1,257 @@
+﻿@{
+    ViewBag.Title = "确认单供应商查询";
+    Layout = "~/Views/Shared/_PurchaseLayout.cshtml";
+}
+<div class="count inline-block">
+    <input id="QuotationType_Hidden" name="QuotationType_Hidden" type="hidden" />
+    
+    <form id="search-form" class="form">
+        <table>
+            <tr>
+                <td colspan="7" style="text-align:right">
+                    <button id="btnQuery" type="button" class="btn btn-primary" style="width:100px">查 询</button>
+                    @*<button id="btnAdd" onclick="openNew()" type="button" class="btn btn-primary" style="width:100px">新 增</button>*@
+                </td>
+            </tr>
+            <tr>
+                <td width="70">模块类型</td>
+                <td>
+                    <select id="ModelType" name="ModelType" class="form-control"></select>
+                </td>
+                <td width="100">项目</td>
+                <td width="200">
+                    <input id="ProjectCode" name="ProjectCode" class="form-control"  />
+                </td>
+                <td width="200">
+                    <input id="ProjectName" name="ProjectName" class="form-control" />
+                </td>
+                <td width="200">
+                    <input id="ProjectShortName" name="ProjectShortName" class="form-control" />
+                </td>
+                <td width="100">
+                    <a id="btnProjectSelect" class="btn btn-primary" style="width:100px">选择项目</a>
+                </td>
+            </tr>
+            <tr>
+                <td>确认单类型</td>
+                <td>
+                    <select id="QuotationType" name="QuotationType" class="form-control">
+                        <option value="">全部</option>
+                        <option value="Biancheng">编程</option>
+                        <option value="Zhixing">执行</option>
+                        <option value="Fuhe">复核</option>
+                        <option value="Yanjiu">研究</option>
+                        <option value="Qita1">其他1</option>
+                        <option value="Qita2">其他2</option>
+                    </select>
+                </td>
+                <td>供应商</td>
+                <td>
+                    <input id="SupplierCode" name="SupplierCode" class="form-control">
+                </td>
+                <td>
+                    <input id="SupplierName" name="SupplierName" class="form-control" >
+                </td>
+                <td>
+                    <input id="SupplierShortName" name="SupplierShortName" class="form-control" >
+                </td>
+                <td>
+                    <a id="btnSupplierSelect" class="btn btn-primary" style="width:100px">选择供应商</a>
+                </td>
+            </tr>
+        </table>
+    </form>
+
+    <div id="search-result">
+        <table id="quotationforsupplier-table" class="table table-bordered table-condensed table-hover mt20">
+            <thead>
+                <tr>
+                    <th>
+                        供应商编码
+                    </th>
+                    <th>
+                        供应商名称
+                    </th>
+                    <th>
+                        确认单详细
+                    </th>
+                    <th>
+                        备注
+                    </th>
+                    <th>
+                        选中与否
+                    </th>   
+                    <th>
+                        确认单状态
+                    </th>                 
+                    <th>
+                        登记人
+                    </th>
+                    <th>
+                        登记日期
+                    </th>
+                </tr>
+            </thead>
+            <tbody></tbody>
+        </table>
+    </div>
+    
+</div>
+<div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-hidden="false">
+    <div class="modal-dialog  modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
+                <h4 class="modal-title"></h4>
+            </div>
+            <div class="modal-body">
+            </div>
+        </div>
+    </div>
+</div>
+<div class="modal fade" id="quotation-detail" tabindex="-1" role="dialog" aria-hidden="false">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
+                <h4 class="modal-title"></h4>
+            </div>
+            <div class="modal-body">
+                <div style="position:relative">
+                    <div id="detail-result" class="table-responsive"></div>
+                </div>                
+            </div>
+        </div>
+    </div>
+</div>
+@section Scripts {
+    <script src="~/Scripts/custom/form-serialize.js"></script>
+    <script src="~/Scripts/custom/province_city.js"></script>
+    <script>
+        var ModelType ,QuotationType;
+        $(function () {
+            //获取QuotationType
+            QuotationType = '@ViewBag.QuotationType';
+            if (QuotationType != "") {
+                $("#QuotationType").val(QuotationType);
+            }
+            $("#btnQuery").click(function () {
+                load();
+            })
+
+            $("#btnProjectSelect").click(function () {
+                ProjectSelect();
+            })
+            $("#btnSupplierSelect").click(function () {
+                SupplierSelect(1);
+            })
+        })
+
+        function load(pageNum) {
+            //if ($("#ProjectCode").val() == "") {
+            //    alert("必须选择项目！")
+            //    return;
+            //}
+            var type = $("#QuotationType").val();
+            var params = $("#search-form").serializeJson();
+            params = $.extend(params, { pageSize: 20, pageNum: pageNum ? pageNum : 1, QuotationType: type });
+            $.post("/Quotation/LoadQuotationForSupplier", params, function (data) {
+                if (data && data.List) {
+                    $("#quotationforsupplier-table tbody").empty();
+                    $.each(data.List, function (index, item) {
+                        var tr = $("<tr>");
+                       
+                        tr.append($("<td></td>").html(item.SupplierCode));
+                        tr.append($("<td></td>").html(item.SupplierName));
+                        var detailLink = $("<a>").html("确认单详细");
+                        detailLink.attr("style", "cursor:pointer");
+                        detailLink.click(function () {
+                            openDetailList(item.QuotationId, item.QuotationType, item.SupplierName);
+                        })
+                        tr.append($("<td></td>").append(detailLink));
+
+                        tr.append($("<td></td>").html(item.Remark));
+                        tr.append($("<td></td>").html(item.SelectChk ? '是' : '否'));
+                        tr.append($("<td></td>").html(item.Status));                        
+                        tr.append($("<td></td>").html(item.InUserId));
+                        tr.append($("<td></td>").html(item.InDateTime));
+
+                        $("#quotationforsupplier-table tbody").append(tr);
+                    })
+
+                   createPageNav({ $container: $("#pagination"), pageCount: data.PageCount, currentNum: data.CurPage, afterFun: load });
+                }
+            })
+        }
+
+        function ProjectSelect() {
+            $("#myModal .modal-body").empty();
+            $("#myModal").modal("show");
+            $("#myModal .modal-title").html("选择项目");
+            $("#myModal .modal-body").load("/DemandBook/ProjectSelect", {ModelType:$("#ModelType").val(), ProjectCode: "", ProjectName: "", ProjectShortName: "" }, function () {
+                //$(this).append($("<input id='SupplierMngId' type='hidden'>").val(id));
+            });
+        }
+        function SupplierSelect(type) {
+            $("#myModal .modal-body").empty();
+            $("#myModal").modal("show");
+            $("#myModal .modal-title").html("选择供应商");
+            $("#myModal .modal-body").load("/Constract/SupplierMngSelect",
+                { SupplierCode: "", SupplierName: "", SupplierShortName: "", province: '', city: '' }, function () {
+                    $("#myModal .modal-body #Type").val(type)
+                });
+        }
+        function ProjectSelectCallback(args) {
+            $("#ProjectCode").val(args[0]);
+            $("#ProjectName").val(args[1]);
+            $("#ProjectShortName").val(args[2]);
+            $("#myModal").modal("hide");
+        }
+        function SupplierSelectCallback1(args) {
+            $("#SupplierCode").val(args.SupplierCode);
+            $("#SupplierName").val(args.SupplierName);
+            $("#SupplierShortName").val(args.SupplierShortName);
+            $("#myModal").modal("hide");
+        }
+
+        function openDetailList(QuotationId, type, SupplierName) {
+            $("#quotation-detail .modal-body #detail-result").empty();
+            $("#quotation-detail").modal("show");
+            $("#quotation-detail .modal-title").html("确认单详细");
+            $("#QuotationType_Hidden").val(type);
+            var view = "_PartialLoad" + type;
+            $("#quotation-detail .modal-body #detail-result").load("/Quotation/LoadPartial", { partialView: view }
+            , function () {
+                loadByQuotationId(QuotationId, type, SupplierName);
+            });
+        }
+        function openNew(QuotationId, SeqNo) {
+            var modelType = getQueryString("ModelType");
+            if (modelType == "") {
+                modelType = ModelType;
+            }
+            var url = '/Quotation/Create?';
+            if (QuotationId && SeqNo) {
+                url += 'Id=' + QuotationId + "&";
+                url += 'SeqNo=' + SeqNo + "&";
+            }
+            url += 'ModelType=' + modelType;
+            url += '&QuotationType=' + $("#QuotationType_Hidden").val();
+            window.open(url);
+            //window.location.href = url;
+        }
+
+        function loadByQuotationId(QuotationId, type, SupplierName) {
+            $.post("/Quotation/LoadDetailByQuotationId" , { QuotationId: QuotationId,QuotationType:type }, function (data) {
+                if (data) {
+                    $("#quotation-table tbody").empty();
+                    $.each(data, function (index, item) {
+                        item.SupplierName = SupplierName;
+                        item.QuotationType = type;
+                        addQuotationTr(item);
+                    })
+                }
+            })
+        }
+    </script>
+}

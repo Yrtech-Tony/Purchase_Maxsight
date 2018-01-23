@@ -1,0 +1,955 @@
+﻿@model Purchase.Service.DTO.SupplierDto
+
+<div class="form-horizontal">
+    <input id="SupplierNameOld" type="hidden" />
+    <input id="BussinessPngChk" type="hidden" />
+    <input id="TaxRegistPngChk" type="hidden" />
+    <input id="OraCodePngChk" type="hidden" />
+    <table>
+        <tr>
+            <td colspan="10" style="text-align:right">
+                <a id="btnSave" class="btn btn-primary" data-loading-text="提交中..." style="display:none">保 存</a>
+            </td>
+        </tr>
+    </table>
+    <div class="panel panel-default">
+        <div class="panel-heading"><strong>供应商登记表信息</strong></div>
+        <div class="panel-body">
+            <table>
+                <tr>
+                    <td>服务行业 <font color="red">*</font></td>
+                    @*<td>
+                            <input type="text" id="ServiceTrade" name="ServiceTrade" class="form-control">
+                        </td>*@
+                    <td>
+                        <select id="ServiceTrade" name="ServiceTrade" class="form-control">
+                            <option value=""></option>
+                            <option value="Max">Max</option>
+                            <option value="Trip">Trip</option>
+                            <option value="Zebrac">Zebrac</option>
+                            <option value="Star">Star</option>
+                        </select>
+                    </td>
+                    <td>供应商类别 <font color="red">*</font></td>
+                    <td width="170px">
+                        <select id="SupplierType" name="SupplierType" class="form-control">
+                            <option value=""></option>
+                            <option value="业务采购">业务采购</option>
+                            <option value="内部采购">内部采购</option>
+                            <option value="其他">其他</option>
+                        </select>
+                    </td>
+                    <td>合作模式 <font color="red">*</font></td>
+                    <td width="180px">
+                        <select id="CooperationState" name="CooperationState" class="form-control">
+                            <option value=""></option>
+                            <option value="年度合作">年度合作</option>
+                            <option value="分次合作">分次合作</option>
+                            <option value="暂不合作">暂不合作</option>
+                            <option value="不合作">不合作</option>
+                        </select>
+                    </td>
+                    <td>供应商分类 <font color="red">*</font></td>
+                    <td>
+                        <select id="SupplierType1" name="SupplierType1" class="form-control">
+                            <option value=""></option>
+                            <option value="垄断供应商">垄断供应商</option>
+                            <option value="核心供应商">核心供应商</option>
+                            <option value="基础供应商">基础供应商</option>
+                            <option value="销售供应商">销售供应商</option>
+                            <option value="客户供应商">客户供应商</option>
+                            <option value="其他供应商">其他供应商</option>
+                        </select>
+                    </td>
+                </tr>
+                <tr>
+                    <td>采购方式 <font color="red">*</font></td>
+                    <td>
+                        <select id="PurchaseType" name="PurchaseType" class="form-control">
+                            <option value=""></option>
+                            <option value="集中采购">集中采购</option>
+                            <option value="分散采购">分散采购</option>
+                            <option value="其他采购">其他采购</option>
+                        </select>
+                    </td>
+
+                    <td>付款周期 <font color="red">*</font></td>
+                    <td>
+                        <select id="PayCycle" name="PayCycle" class="form-control">
+                            <option value=""></option>
+                            <option value="常规周期">常规周期</option>
+                            <option value="特殊周期">特殊周期</option>
+                        </select>
+                    </td>
+                    <td>推荐部门 <font color="red">*</font></td>
+                    <td>
+                        @*<input type="text" id="RecommendDepartment" name="RecommendDepartment" class="form-control">*@
+                        <select id="RecommendDepartment" name="RecommendDepartment" class="form-control">
+                            <option value=""></option>
+                        </select>
+                    </td>
+                    <td>供应商编码</td>
+                    <td><input type="text" id="SupplierCode" name="SupplierCode" class="form-control" readonly="readonly"></td>
+                </tr>
+                <tr>
+                    <td>禁用服务类型 <font color="red">*</font></td>
+                    <td>
+                        <input type="text" id="NotServiceType" name="NotServiceType" class="form-control" readonly="readonly">
+                    </td>
+                    <td><button id="btnNotServiceType" type="button" class="btn btn-primary" style="width:50px">选择</button></td>
+
+                </tr>
+            </table>
+        </div>
+    </div>
+    <div class="panel panel-default mt20">
+        <div class="panel-heading"><strong>供应商基本信息</strong></div>
+        <div class="panel-body">
+            <table>
+                <tr>
+                    <td>供应商名称 <font color="red">*</font></td>
+                    <td><input type="text" id="SupplierName" name="SupplierName" class="form-control" maxlength="50"></td>
+                    <td>供应商简称 <font color="red">*</font></td>
+                    <td><input type="text" id="SupplierShortName" name="SupplierShortName" class="form-control" maxlength="50"></td>
+                    <td>省份 <font color="red">*</font></td>
+                    <td width="160">
+                        <select id="Province" name="Province" class="form-control"></select>
+                    </td>
+                    <td>城市 <font color="red">*</font></td>
+                    <td width="160">
+                        <select id="City" name="City" class="form-control"></select>
+                    </td>
+                </tr>
+                <tr>
+                    <td>地址 <font color="red">*</font></td>
+                    <td><input type="text" id="Address" name="Address" class="form-control" maxlength="500"></td>
+                    <td>邮编 <font color="red">*</font></td>
+                    <td><input type="text" id="PostCode" name="PostCode" class="form-control"></td>
+                    <td>公司电话 <font color="red">*</font></td>
+                    <td><input type="text" id="CompanyTelCode" name="CompanyTelCode" class="form-control" maxlength="50"></td>
+                    <td>传真</td>
+                    <td><input type="text" id="CompanyFaxCode" name="CompanyFaxCode" class="form-control" maxlength="50"></td>
+                </tr>
+                <tr>
+                    <td>分公司所在城市 <font color="red">*</font></td>
+                    <td><input type="text" id="BranchCompanyAddress" name="BranchCompanyAddress" class="form-control" maxlength="500"></td>
+                    <td>提供服务 <font color="red">*</font></td>
+
+                    <td><input type="text" id="ProvideService" name="ProvideService" class="form-control" readonly="readonly" maxlength="500"></td>
+                    <td><button id="btnProvideService" type="button" class="btn btn-primary" style="width:50px">选择</button></td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                </tr>
+            </table>
+        </div>
+    </div>
+    <div class="panel panel-default mt20">
+        <div class="panel-heading"><strong>联系人信息 - 法人</strong></div>
+        <div class="panel-body">
+            <table>
+                <tr>
+                    <td>姓名 <font color="red">*</font></td>
+                    <td width="90"><input type="text" id="CorporateName" name="CorporateName" class="form-control" maxlength="50"></td>
+                    <td>职务</td>
+                    <td width="110"><input type="text" id="CorporatePosition" name="CorporatePosition" class="form-control" maxlength="50"></td>
+                    <td>手机</td>
+                    <td width="120"><input type="text" id="CorporateTel" name="CorporateTel" class="form-control" maxlength="50"></td>
+                    <td>固定电话</td>
+                    <td><input type="text" id="CorporateFixTel" name="CorporateFixTel" class="form-control" maxlength="50"></td>
+                    <td>邮箱</td>
+                    <td><input type="text" id="CorporateEmail" name="CorporateEmail" class="form-control" maxlength="500"></td>
+                </tr>
+            </table>
+        </div>
+    </div>
+    <div class="panel panel-default mt20">
+        <div class="panel-heading"><strong>联系人信息 - 主要业务联系人</strong></div>
+        <div class="panel-body">
+            <table>
+                <tr>
+                    <td>姓名 <font color="red">*</font></td>
+                    <td width="90"><input type="text" id="BussinessMainName" name="BussinessMainName" class="form-control" maxlength="50"></td>
+                    <td>职务</td>
+                    <td width="110"><input type="text" id="BussinessMainPosition" name="BussinessMainPosition" class="form-control" maxlength="50"></td>
+                    <td>手机 <font color="red">*</font></td>
+                    <td width="120"><input type="text" id="BussinessMainTel" name="BussinessMainTel" class="form-control" maxlength="50"></td>
+                    <td>固定电话</td>
+                    <td><input type="text" id="BussinessMainFixTel" name="BussinessMainFixTel" class="form-control" maxlength="50"></td>
+                    <td>邮箱 <font color="red">*</font></td>
+                    <td><input type="text" id="BussinessMainEmail" name="BussinessMainEmail" class="form-control" maxlength="500"></td>
+                </tr>
+            </table>
+        </div>
+    </div>
+    <div class="panel panel-default mt20">
+        <div class="panel-heading"><strong>联系人信息 - 次要业务联系人</strong></div>
+        <div class="panel-body">
+            <table>
+                <tr>
+                    <td>姓名 <font color="red">*</font></td>
+                    <td width="90"><input type="text" id="BussinessSecondName" name="BussinessSecondName" class="form-control" maxlength="50"></td>
+                    <td>职务</td>
+                    <td width="110"><input type="text" id="BussinessSecondPosition" name="BussinessSecondPosition" class="form-control" maxlength="50"></td>
+                    <td>手机 <font color="red">*</font></td>
+                    <td width="120"><input type="text" id="BussinessSecondTel" name="BussinessSecondTel" class="form-control" maxlength="50"></td>
+                    <td>固定电话 </td>
+                    <td><input type="text" id="BussinessSecondFixTel" name="BussinessSecondFixTel" class="form-control" maxlength="50"></td>
+                    <td>邮箱 <font color="red">*</font></td>
+                    <td><input type="text" id="BussinessSecondEmail" name="BussinessSecondEmail" class="form-control" maxlength="500"></td>
+                </tr>
+            </table>
+        </div>
+    </div>
+    <div class="panel panel-default mt20">
+        <div class="panel-heading"><strong>工商信息</strong></div>
+        <div class="panel-body">
+            <table>
+                <tr>
+                    <td>证件类型 <font color="red">*</font></td>
+                    <td width="350">
+                        <select id="IDType" name="IDType" class="form-control">
+                            <option value="营业执照注册号">营业执照注册号</option>
+                            <option value="统一社会信用代码">统一社会信用代码</option>
+                        </select>
+                    </td>
+                    <td colspan="2"><input type="text" id="IDNumber" name="IDNumber" class="form-control" maxlength="50"></td>
+                    <td>注册资本<font color="red">*</font></td>
+                    <td><input type="text" id="RegisterAmt" name="RegisterAmt" class="form-control" maxlength="50"></td>
+                    <td width="15">万</td>
+                </tr>
+                <tr>
+                    <td>营业期限 <font color="red">*</font></td>
+                    <td>
+                        <input type="text" id="OperationStartDate" name="OperationStartDate" class="form-control" onclick="WdatePicker()" style="width:138px;float:left">
+                        <span style="padding:5px;margin:0;float:left"> - </span>
+                        <input type="text" id="OperationEndDate" name="OperationEndDate" class="form-control" onclick="WdatePicker()" style="width:137px;float:left">
+                        <input type="checkbox" id="OperationEndDateChk" style="float: left; padding: 5px; margin: 0; margin-left: 5px; ">
+                        <span style="margin: 0; float: left;  padding-top: 5px; padding-left: 3px;margin-top: 6px;">永久</span>
+                     </td>
+                    <td>税务登记号</td>
+                    <td>
+                        <input type="text" id="TaxRegistrationNo" name="TaxRegistrationNo" class="form-control" maxlength="100">
+                    </td>
+                    <td>增值税税率 <font color="red">*</font></td>
+                    <td width="140"><input type="text" id="VATRate" name="VATRate" class="form-control"></td>
+                    <td width="15">%</td>
+                </tr>
+            </table>
+        </div>
+    </div>
+    <div class="panel panel-default mt20">
+        <div class="panel-heading"><strong>银行信息</strong></div>
+        <div class="panel-body">
+            <table>
+                <tr>
+                    <td width="70">开户户名 <font color="red">*</font></td>
+                    <td width="240"><input type="text" id="AccountName" name="AccountName" class="form-control" maxlength="50"></td>
+                    <td width="80">开户行全称 <font color="red">*</font></td>
+                    <td><input type="text" id="AccountBankFullName" name="AccountBankFullName" class="form-control" maxlength="100"></td>
+                </tr>
+                <tr>
+                    <td>银行账号 <font color="red">*</font></td>
+                    <td><input type="text" id="AccountBankNo" name="AccountBankNo" class="form-control" maxlength="100"></td>
+                    <td>开户行地址 <font color="red">*</font></td>
+                    <td><input type="text" id="AccountBankAddress" name="AccountBankAddress" class="form-control" maxlength="500"></td>
+                </tr>
+            </table>
+        </div>
+    </div>
+    <div class="panel panel-default mt20">
+        <div class="panel-heading"><strong>资质上传</strong></div>
+        <div class="panel-body">
+            <table id="qualification-table">
+                <tr>
+                    <td width="120">营业执照 <font color="red">*</font></td>
+                    <td width="300">
+                        <div style="float:left">
+                            <a class='att_el'></a>
+                            <a class='att_del'>删除</a>
+                            <input type="hidden" name="AttachPngs" />
+                        </div>
+                        <a id="filePicker1" class="btn btn-primary btn-sm pull-right filePicker">选择图片</a>
+                    </td>
+                    <td width="120">税务登记证 <font color="red" style="display:none">*</font></td>
+                    <td width="300">
+                        <div style="float:left">
+                            <a class='att_el'></a>
+                            <a class='att_del'>删除</a>
+                            <input type="hidden" name="AttachPngs" />
+                        </div>
+                        <a id="filePicker2" class="btn btn-primary btn-sm pull-right filePicker">选择图片</a>
+                    </td>
+                </tr>
+                <tr>
+                    <td>组织机构代码证 <font color="red" style="display:none">*</font></td>
+                    <td>
+                        <div style="float:left">
+                            <a class='att_el'></a>
+                            <a class='att_del'>删除</a>
+                            <input type="hidden" name="AttachPngs" />
+                        </div>
+                        <a id="filePicker3" class="btn btn-primary btn-sm pull-right filePicker">选择图片</a>
+                    </td>
+                    <td>一般纳税人批件</td>
+                    <td>
+                        <div style="float:left">
+                            <a class='att_el'></a>
+                            <a class='att_del'>删除</a>
+                            <input type="hidden" name="AttachPngs" />
+                        </div>
+                        <a id="filePicker4" class="btn btn-primary btn-sm pull-right filePicker">选择图片</a>
+                    </td>
+                </tr>
+                <tr>
+                    <td>其他1</td>
+                    <td>
+                        <div style="float:left">
+                            <a class='att_el'></a>
+                            <a class='att_del'>删除</a>
+                            <input type="hidden" name="AttachPngs" />
+                        </div>
+                        <a id="filePicker5" class="btn btn-primary btn-sm pull-right filePicker">选择图片</a>
+                    </td>
+                    <td>其他2</td>
+                    <td>
+                        <div style="float:left">
+                            <a class='att_el'></a>
+                            <a class='att_del'>删除</a>
+                            <input type="hidden" name="AttachPngs" />
+                        </div>
+                        <a id="filePicker6" class="btn btn-primary btn-sm pull-right filePicker">选择图片</a>
+                    </td>
+                </tr>
+            </table>
+        </div>
+    </div>
+    <div>
+        <textarea id="Remark" name="Remark" class="form-control" rows="3" maxlength="1000"></textarea>
+    </div>
+</div>
+<div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-hidden="false">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
+                <h4 class="modal-title"></h4>
+            </div>
+            <div class="modal-body">
+            </div>
+        </div>
+    </div>
+</div>
+<link href="/Scripts/upload/webuploader.css" rel="stylesheet" />
+<script src="/Scripts/upload/webuploader.nolog.js"></script>
+<style>
+    .filePicker {
+        color: white !important;
+        height: 30px;
+    }
+
+    .att_el {
+        line-height: 26px;
+        cursor: pointer;
+    }
+
+    .att_del {
+        display: none;
+        padding-left: 10px;
+        color: #337ab7 !important;
+        cursor: pointer;
+    }
+</style>
+<script>
+    $(function () {
+        for (var i = 1; i <= 6; i++) {
+            createUploader({
+                url: '/SupplierMng/SaveAttachPng',
+                el: '#filePicker' + i
+            });
+        }
+        $("#btnNotServiceType").click(function () {
+            $("#myModal").modal("show");
+            $("#myModal .modal-title").html("选择禁用服务类型");
+            $("#myModal .modal-body").empty();
+            $("#myModal .modal-body").load("/SupplierMng/LoadPartial", { partialView: '_PartialNotServiceTypeSelect' }, function () {
+                bindCheckbox($("#NotServiceType").val());
+            });
+        })
+        $("#btnProvideService").click(function () {
+            $("#myModal").modal("show");
+            $("#myModal .modal-title").html("选择提供服务");
+            $("#myModal .modal-body").empty();
+            
+            $("#myModal .modal-body").load("/SupplierMng/LoadSuppplierService", { serviceTrade: $("#ServiceTrade").val(), supplierType: $("#SupplierType").val(), departmentCode: $("#RecommendDepartment").val() }, function () {
+                bindCheckbox($("#ProvideService").val());
+            });
+            //$("#myModal .modal-body").load("/SupplierMng/LoadPartial", { partialView: '_PartialProvideServiceSelect' }, function () {
+            //    bindCheckbox($("#ProvideService").val());
+            //});
+        })
+
+        $(".btn-check").click(function () {
+            $(this).button('loading');//禁用按钮并显示提交中
+            //$(this).button('reset');//重置按钮
+        });
+        $("#btnSave").click(function () {
+            var supplierNameOld = $("#SupplierNameOld").val();
+            var supplierName = $("#SupplierName").val();
+
+            if (supplierNameOld != supplierName) {
+                $.post("/SupplierMng/SupplierSearchByName", { supplierName: $("#SupplierName").val(), serviceTrade:$("#ServiceTrade").val()}, function (data) {
+                    if (data.List.length > 0) {
+                        alert("供应商名称已经存在");
+                        return false;
+                    }
+                    Save();
+                })
+            }
+            else {
+                Save();
+            }
+
+        })
+
+        //营业期限是永久的逻辑
+        $("#OperationEndDateChk").change(function () {
+            if ($(this).is(":checked")) {
+                $(this).prev().val("").prop("readonly", true);
+            } else {
+                $(this).prev().prop("readonly", false);
+            }
+        })
+        $("#ServiceTrade").change(function () {
+            RecommendDepartmentBind();
+        })
+    })
+    var createUploader = function (config) {
+        
+        var uploader = WebUploader.create({
+            // swf文件路径
+            swf: '/Scripts/upload/Uploader.swf',
+            // 文件接收服务端。
+            server: config.url,
+            // 选择文件的按钮。可选。
+            // 内部根据当前运行是创建，可能是input元素，也可能是flash.
+            pick: config.el,
+            auto: true
+        });
+        // 文件上传成功，给item添加成功class, 用样式标记上传成功。
+        uploader.on('uploadSuccess', function (file, retData) {
+            
+            bindPng(config.el, retData);
+        });
+
+    }
+    function bindPng(pick, retData) {
+        var hidden = $(pick).prev().find('input[name=AttachPngs]');
+        hidden.val(retData.fileName);
+        var link = $(pick).prev().find(".att_el");
+        link.html(retData.fileName.substr(retData.fileName.indexOf('_') + 1));
+        link.click(function () {
+            openPng(retData.fileName);
+        })
+        var delLink = $(pick).prev().find(".att_del");
+        delLink.click(function () {
+            hidden.val('');
+            link.html('');
+            $(this).hide();
+        });
+        if (retData.fileName && retData.fileName != '') {
+            delLink.show();
+        }
+    }
+    function Save() {
+        $("#SupplierMngForm").submit(function () {            
+            if (isEmpty($("#ServiceTrade").val())) {
+                alert("服务行业必须填写内容");
+                return false;
+            }
+            if (isEmpty($("#SupplierType").val())) {
+                alert("供应商类别必须填写内容");
+                return false;
+            }
+            if (isEmpty($("#CooperationState").val())) {
+                alert("合作模式必须填写内容");
+                return false;
+            }
+            if (isEmpty($("#SupplierType1").val())) {
+                alert("供应商分类必须填写内容");
+                return false;
+            }
+            if (isEmpty($("#PurchaseType").val())) {
+                alert("采购方式必须填写内容");
+                return false;
+            }
+            if (isEmpty($("#PayCycle").val())) {
+                alert("付款周期必须填写内容");
+                return false;
+            }
+            if (isEmpty($("#RecommendDepartment").val())) {
+                alert("推荐部门必须填写内容");
+                return false;
+            }
+            if (isEmpty($("#NotServiceType").val())) {
+                alert("禁用服务类型必须填写内容");
+                return false;
+            }
+            if (isEmpty($("#SupplierName").val())) {
+                alert("供应商名称必须填写内容");
+                return false;
+            }
+            if (isEmpty($("#SupplierShortName").val())) {
+                alert("供应商简称必须填写内容");
+                return false;
+            }
+            if (isEmpty($("#Province").val())) {
+                alert("省份必须填写内容");
+                return false;
+            }
+            if (isEmpty($("#City").val())) {
+                alert("城市必须填写内容");
+                return false;
+            }
+            if (isEmpty($("#Address").val())) {
+                alert("供应商地址必须填写内容");
+                return false;
+            }
+            if (isEmpty($("#PostCode").val())) {
+                alert("供应商邮编必须填写内容");
+                return false;
+            }
+            if (isEmpty($("#CompanyTelCode").val())) {
+                alert("公司电话必须填写内容");
+                return false;
+            }
+            if (isEmpty($("#CompanyFaxCode").val())) {
+                alert("传真必须填写内容");
+                return false;
+            }
+            //if (isEmpty($("#BranchCompanyAddress").val())) {
+            //    alert("分公司所在地址必须填写内容");
+            //    return false;
+            //}
+            if (isEmpty($("#ProvideService").val())) {
+                alert("提供服务必须填写内容");
+                return false;
+            }
+            if (isEmpty($("#CorporateName").val())) {
+                alert("法人姓名必须填写内容");
+                return false;
+            }
+            if (isEmpty($("#CorporatePosition").val())
+                && ($("#SupplierType1").val().indexOf("其他") >= 0 || $("#SupplierType1").val().indexOf("核心") >= 0
+                || $("#SupplierType1").val().indexOf("基础") >= 0 || $("#SupplierType1").val().indexOf("销售") >= 0
+                || $("#SupplierType1").val().indexOf("客户") >= 0)) {
+                alert("供应商分类为其他,核心,基础，销售,客户时法人职务必须填写内容");
+                return false;
+            }
+            if (isEmpty($("#CorporateTel").val())
+                && ($("#SupplierType1").val().indexOf("其他") >= 0 || $("#SupplierType1").val().indexOf("核心") >= 0
+                || $("#SupplierType1").val().indexOf("基础") >= 0 || $("#SupplierType1").val().indexOf("销售") >= 0
+                || $("#SupplierType1").val().indexOf("客户") >= 0)) {
+                alert("供应商分类为其他,核心,基础，销售,客户时法人手机必须填写内容");
+                return false;
+            }
+            if (isEmpty($("#CorporateFixTel").val())
+                 && ($("#SupplierType1").val().indexOf("其他") >= 0 || $("#SupplierType1").val().indexOf("核心") >= 0
+                || $("#SupplierType1").val().indexOf("基础") >= 0 || $("#SupplierType1").val().indexOf("销售") >= 0
+                || $("#SupplierType1").val().indexOf("客户") >= 0)) {
+                alert("供应商分类为其他,核心,基础，销售,客户时法人固定电话必须填写内容");
+                return false;
+            }
+            if (isEmpty($("#CorporatePosition").val())
+                && ($("#SupplierType1").val().indexOf("其他") >= 0 || $("#SupplierType1").val().indexOf("核心") >= 0)) {
+                alert("供应商分类为其他或核心时法人职务必须填写内容");
+                return false;
+            }
+            if (isEmpty($("#BussinessMainName").val())) {
+                alert("主要业务联系人姓名必须填写内容");
+                return false;
+            }
+            if (isEmpty($("#BussinessMainTel").val())) {
+                alert("主要业务联系人手机必须填写内容");
+                return false;
+            }
+            if (isEmpty($("#BussinessMainEmail").val())) {
+                alert("主要业务联系人邮箱必须填写内容");
+                return false;
+            }
+            if (isEmpty($("#BussinessMainPosition").val())
+              && ($("#SupplierType1").val().indexOf("其他") >= 0 || $("#SupplierType1").val().indexOf("核心") >= 0
+                || $("#SupplierType1").val().indexOf("基础") >= 0 || $("#SupplierType1").val().indexOf("销售") >= 0
+                || $("#SupplierType1").val().indexOf("客户") >= 0)) {
+                alert("供应商分类为其他,核心,基础，销售,客户时主要联系人的职务必须填写内容");
+                return false;
+            }
+            if (isEmpty($("#BussinessMainFixTel").val())
+             && ($("#SupplierType1").val().indexOf("其他") >= 0 || $("#SupplierType1").val().indexOf("核心") >= 0
+                || $("#SupplierType1").val().indexOf("基础") >= 0 || $("#SupplierType1").val().indexOf("销售") >= 0
+                || $("#SupplierType1").val().indexOf("客户") >= 0)) {
+                alert("供应商分类为其他,核心,基础，销售,客户时法人固定电话必须填写内容");
+                return false;
+            }
+            if (isEmpty($("#BussinessMainNameEmail").val())
+                && ($("#SupplierType1").val().indexOf("其他") >= 0 || $("#SupplierType1").val().indexOf("核心") >= 0
+                || $("#SupplierType1").val().indexOf("基础") >= 0 || $("#SupplierType1").val().indexOf("销售") >= 0
+                || $("#SupplierType1").val().indexOf("客户") >= 0)) {
+                alert("供应商分类为其他,核心,基础，销售,客户时法人邮箱必须填写内容");
+                return false;
+            }
+            if (isEmpty($("#BussinessSecondName").val())) {
+                alert("次要业务联系人姓名必须填写内容");
+                return false;
+            }
+            if (isEmpty($("#BussinessSecondTel").val())) {
+                alert("次要业务联系人手机必须填写内容");
+                return false;
+            }
+            if (isEmpty($("#BussinessSecondEmail").val())) {
+                alert("次要业务联系人邮箱必须填写内容");
+                return false;
+            }
+            if (isEmpty($("#BussinessPosition").val())
+                 && ($("#SupplierType1").val().indexOf("其他") >= 0 || $("#SupplierType1").val().indexOf("核心") >= 0
+                || $("#SupplierType1").val().indexOf("基础") >= 0 || $("#SupplierType1").val().indexOf("销售") >= 0
+                || $("#SupplierType1").val().indexOf("客户") >= 0)) {
+                alert("供应商分类为其他,核心,基础，销售,客户时次要业务联系人职务必须填写内容");
+                return false;
+            }
+            if (isEmpty($("#BussinessSecondFixTel").val())
+                 && ($("#SupplierType1").val().indexOf("其他") >= 0 || $("#SupplierType1").val().indexOf("核心") >= 0
+                || $("#SupplierType1").val().indexOf("基础") >= 0 || $("#SupplierType1").val().indexOf("销售") >= 0
+                || $("#SupplierType1").val().indexOf("客户") >= 0)) {
+                alert("供应商分类为其他,核心,基础，销售,客户时次要业务联系人固定电话必须填写内容");
+                return false;
+            }
+
+            if (!$("#OperationEndDateChk").is(":checked") && $("#OperationEndDate").val() == "") {
+                alert("营业期限不为永久时需填写结束日期");
+                return false;
+            }
+            if (isEmpty($("#IDNumber").val())) {
+                alert("证件号码必须填写内容");
+                return false;
+            }
+            if (isEmpty($("#RegisterAmt").val())) {
+                alert("注册资本必须填写内容");
+                return false;
+            }
+            if ($("#TaxRegistrationNo").val() == "营业执照注册号") {
+                alert("证件类型为营业执照注册号时,税务登记号必须填写内容");
+                return false;
+            }
+            if (isEmpty($("#VATRate").val())) {
+                alert("增值税率必须填写内容");
+                return false;
+            }
+            if (isEmpty($("#AccountName").val())) {
+                alert("开户户名必须填写内容");
+                return false;
+            }
+            if (isEmpty($("#AccountBankFullName").val())) {
+                alert("开户行全称必须填写内容");
+                return false;
+            }
+            if (isEmpty($("#AccountBankNo").val())) {
+                alert("银行账号必须填写内容");
+                return false;
+            }
+            if (isEmpty($("#AccountBankAddress").val())) {
+                alert("开户行地址必须填写内容");
+                return false;
+            }
+            if (!isPostCode($("#PostCode").val())) {
+                alert("供应商基本信息邮编格式不正确");
+                return false;
+            }
+            //if (!isFixTel($("#CompanyTelCode").val())) {
+            //    alert("供应商基本信息公司电话格式不正确");
+            //    return false;
+            //}
+            if (!isEmpty($("#CompanyTelCode").val())&&$("#CompanyTelCode").val()!="无") {
+                var CorporateEmail = $("#CompanyTelCode").val();
+                var CorporateEmailList = CorporateEmail.replace(/；/g, ';').split(";");
+                for (var i = 0; i < CorporateEmailList.length; i++) {
+                    if (!isFixTel(CorporateEmailList[i]) && !isTelNumber(CorporateEmailList[i])) {
+                        alert("供应商基本信息公司电话格式不正确");
+                        return false;
+                    }
+                }
+            }
+            if (!isEmpty($("#CompanyFaxCode").val()) && $("#CompanyFaxCode").val() != "无") {
+                var CorporateEmail = $("#CompanyFaxCode").val();
+                var CorporateEmailList = CorporateEmail.replace(/；/g, ';').split(";");
+                for (var i = 0; i < CorporateEmailList.length; i++) {
+                    if (!isFixTel(CorporateEmailList[i])) {
+                        alert("供应商基本信息公司传真格式不正确");
+                        return false;
+                    }
+                }
+            }
+            //if (!isFixTel($("#CompanyFaxCode").val())) {
+            //    alert("供应商基本信息公司传真格式不正确");
+            //    return false;
+            //}
+            //if (!isTelNumber($("#CorporateTel").val()) && !isEmpty($("#CorporateTel").val())) {
+            //    alert("法人手机号码格式不正确");
+            //    return false;
+            //}
+            if (!isEmpty($("#CorporateTel").val()) && $("#CorporateTel").val() != "无") {
+                var CorporateEmail = $("#CorporateTel").val();
+                var CorporateEmailList = CorporateEmail.replace(/；/g, ';').split(";");
+                for (var i = 0; i < CorporateEmailList.length; i++) {
+                    if (!isTelNumber(CorporateEmailList[i])) {
+                        alert("法人手机号码格式不正确");
+                        return false;
+                    }
+                }
+            }
+            //if (!isFixTel($("#CorporateFixTel").val()) && !isEmpty($("#CorporateFixTel").val())) {
+            //    alert("法人固话格式不正确");
+            //    return false;
+            //}
+            if (!isEmpty($("#CorporateFixTel").val()) && $("#CorporateFixTel").val()!="无") {
+                var CorporateEmail = $("#CorporateFixTel").val();
+                var CorporateEmailList = CorporateEmail.replace(/；/g, ';').split(";");
+                for (var i = 0; i < CorporateEmailList.length; i++) {
+                    if (!isFixTel(CorporateEmailList[i]) && !isTelNumber(CorporateEmailList[i])) {
+                        alert("法人固话格式不正确");
+                        return false;
+                    }
+                }
+            }
+            if (!isEmpty($("#CorporateEmail").val()) && $("#CorporateEmail").val() != "无") {
+                var CorporateEmail = $("#CorporateEmail").val();
+                var CorporateEmailList = CorporateEmail.replace(/；/g, ';').split(";");
+                for (var i = 0; i < CorporateEmailList.length; i++) {
+                    if (!isEmail(CorporateEmailList[i])) {
+                        alert("法人邮箱格式不正确");
+                        return false;
+                    }
+                }
+            }
+            //if (!isEmail($("#CorporateEmail").val()) && !isEmpty($("#CorporateEmail").val())) {
+            //    alert("法人邮箱格式不正确");
+            //    return false;
+            //}
+            //if (!isTelNumber($("#BussinessMainTel").val())) {
+            //    alert("主要业务联系人手机号码格式不正确");
+            //    return false;
+            //}
+            if (!isEmpty($("#BussinessMainTel").val())) {
+                var BussinessMainEmail = $("#BussinessMainTel").val();
+                var BussinessMainEmailList = BussinessMainEmail.replace(/；/g, ';').split(";");
+                for (var i = 0; i < BussinessMainEmailList.length; i++) {
+                    if (!isTelNumber(BussinessMainEmailList[i])) {
+                        alert("主要业务联系人手机号码格式不正确");
+                        return false;
+                    }
+                }
+            }
+            if (!isEmpty($("#BussinessMainFixTel").val()) && $("#BussinessMainFixTel").val()!="无") {
+                var BussinessMainEmail = $("#BussinessMainFixTel").val();
+                var BussinessMainEmailList = BussinessMainEmail.replace(/；/g, ';').split(";");
+                for (var i = 0; i < BussinessMainEmailList.length; i++) {
+                    if (!isFixTel(BussinessMainEmailList[i])&&!isTelNumber(BussinessMainEmailList[i])) {
+                        alert("主要业务联系人固话格式不正确");
+                        return false;
+                    }
+                }
+            }
+            if (!isEmpty($("#BussinessMainEmail").val())) {
+                var BussinessMainEmail = $("#BussinessMainEmail").val();
+                var BussinessMainEmailList = BussinessMainEmail.replace(/；/g, ';').split(";");
+                for (var i = 0; i < BussinessMainEmailList.length; i++) {
+                    if (!isEmail(BussinessMainEmailList[i])) {
+                        alert("主要业务联系人邮箱格式不正确");
+                        return false;
+                    }
+                }
+            }
+            //if (!isEmail($("#BussinessMainEmail").val())) {
+            //    alert("主要业务联系人邮箱格式不正确");
+            //    return false;
+            //}
+            //if (!isTelNumber($("#BussinessSecondTel").val())) {
+            //    alert("次要业务联系人手机号码格式不正确");
+            //    return false;
+            //}
+            if (!isEmpty($("#BussinessSecondTel").val())) {
+                var BussinessSecondEmail = $("#BussinessSecondTel").val();
+                var BussinessSecondEmaillList = BussinessSecondEmail.replace(/；/g, ';').split(";");
+                for (var i = 0; i < BussinessSecondEmaillList.length; i++) {
+                    if (!isTelNumber(BussinessSecondEmaillList[i])) {
+                        alert("次要业务联系人手机号码格式不正确");
+                        return false;
+                    }
+                }
+            }
+            //if (!isFixTel($("#BussinessSecondFixTel").val()) && !isEmpty($("#BussinessSecondFixTel").val())) {
+            //    alert("次要业务联系人固话格式不正确");
+            //    return false;
+            //}
+            if (!isEmpty($("#BussinessSecondFixTel").val()) && $("#BussinessSecondFixTel").val()!="无") {
+                var BussinessSecondEmail = $("#BussinessSecondFixTel").val();
+                var BussinessSecondEmaillList = BussinessSecondEmail.replace(/；/g, ';').split(";");
+                for (var i = 0; i < BussinessSecondEmaillList.length; i++) {
+                    if (!isFixTel(BussinessSecondEmaillList[i]) && !isTelNumber(BussinessSecondEmaillList[i])) {
+                        alert("次要业务联系人固话格式不正确");
+                        return false;
+                    }
+                }
+            }
+            if (!isEmpty($("#BussinessSecondEmail").val()) && $("#BussinessSecondEmail").val() != "无") {
+                var BussinessSecondEmail = $("#BussinessSecondEmail").val();
+                var BussinessSecondEmaillList = BussinessSecondEmail.replace(/；/g, ';').split(";");
+                for (var i = 0; i < BussinessSecondEmaillList.length; i++) {
+                    if (!isEmail(BussinessSecondEmaillList[i])) {
+                        alert("次要业务联系人邮箱格式不正确");
+                        return false;
+                    }
+                }
+            }
+            var BussinessPngChk = $("#qualification-table [name=AttachPngs]").eq(0).val() != '';
+            var TaxRegistPngChk = $("#qualification-table [name=AttachPngs]").eq(1).val() != '';
+            var OraCodePngChk = $("#qualification-table [name=AttachPngs]").eq(2).val() != '';
+            if (!BussinessPngChk) {
+                alert("营业执照未上传");
+                return false;
+            }
+            if ($("#TaxRegistrationNo").val() == "营业执照注册号" && !TaxRegistPngChk) {
+                alert("税务登记证未上传");
+                return false;
+            }
+            if ($("#TaxRegistrationNo").val() == "营业执照注册号" && !OraCodePngChk) {
+                alert("组织结构代码证未上传");
+                return false;
+            }
+            //if (!isEmail($("#BussinessSecondEmail").val())) {
+            //    alert("次要业务联系人邮箱格式不正确");
+            //    return false;
+            //}            
+        }).submit();
+    }
+    function isEmpty(value) {
+        if (value == "")
+            return true;
+        else
+            return false;
+    }
+    function isEmail(email) {
+        var filter = /^([a-zA-Z0-9_\.\-])+\@@(([a-zA-Z0-9\-])+\.)+([a-zA-Z0-9]{2,4})+$/;
+        if (filter.test(email))
+            return true;
+        else {
+            return false;
+        }
+    }
+    function isFixTel(tel) {
+        var filter = /^(\d{5}|(\d{5})-(\d{1,2})|(\d{4}|\d{3})-(\d{7,8})|(\d{4}|\d{3})-(\d{7,8})-(\d{5}|\d{4}|\d{3}|\d{2}|\d{1}))$/;
+        if (filter.test(tel) || isTelNumber(tel))
+            return true;
+        else {
+            return false;
+        }
+    }
+
+    function isTelNumber(telNumber) {
+        var re = /^1\d{10}$/;
+        if (re.test(telNumber)) {
+            return true;
+        } else {
+            return false;
+        }
+    }
+    function isName(name) {
+        if (/^[a-zA-z\u4E00-\u9FA5]*$/.test(name)) {
+            return true;
+        } else {
+            return false;
+        }
+    }
+    function isPostCode(postCode) {
+        if (/^\d{6}$/.test(postCode)) {
+            return true;
+        } else {
+            return false;
+        }
+
+    }
+    function openPng(fileName) {
+        $("#png-preview").empty();
+        var src = "/SupplierMng/GetPng?fileName=" + fileName;
+        // $("#png-preview").append($("<img>").attr("src", src));
+        $("#myModal").modal("show");
+        $("#myModal .modal-title").html("图片预览");
+        $("#myModal .modal-body").empty();
+        $("#myModal .modal-body").append($("<img style='width:540px;'>").attr("src", src));
+    }
+    function RecommendDepartmentBind() {
+        var el = $("#RecommendDepartment");
+        $.ajax({
+            type: 'post',
+            url: "/Base/LoadChildHiddenCode",
+            data: { type: "供应商-" + $("#ServiceTrade").val() + "-推荐部门" },
+            async: false,
+            success: function (data) {
+                el.empty();
+                if (data && data.length > 0) {
+                    for (i in data) {
+                        el.append($("<option>").html(data[i]).val(data[i]));
+                    }
+                }
+                el.data("live-search", true).prop("title", "").selectpicker("refresh");
+            }
+        });
+    }
+    //function RecommendDepartmentBind()
+    //{
+    //    var max = ["", "采购部", "IT部", "人力资源部", "财务部", "证券部", "渠道诊断-北京", "渠道诊断-广州", "渠道咨询-北京", "渠道咨询-广州", "服务个案-北京", "服务个案-广州", "满意度-北京", "满意度-广州", "销售-北京", "销售-上海", "销售-广州", "管理部", "个案运作-北京", "个案运作-上海", "个案运作-广州", "个案研究-上海", "个案研究-北京", "个案研究-广州", "渠道与服务广州研究部"];
+    //    var zebrac = ["", "采购部", "IT部", "人力资源部", "产品部", "研发部", "个案研究-广州", "满意度-北京"];
+    //    var trip = ["", "采购部", "销售部", "人力资源部"];
+    //    var star = ["", "采购部", "销售部", "人力资源部"]
+
+    //    var el = $("#RecommendDepartment");
+    //    var combo = $("<select id='RecommendDepartment' name='RecommendDepartment' class = 'form-control'> ");
+    //    var input = $("<input id='RecommendDepartment' name='RecommendDepartment' class = 'form-control'> ");
+        
+    //    if ($("#ServiceTrade").val() == "Max") {
+    //        el = changeSelectInput(el, combo, input, true);
+    //        for (i in max) {
+    //            el.append($("<option>").html(max[i]).val(max[i]));
+    //        }
+    //    } else if ($("#ServiceTrade").val() == "Zebrac") {
+    //        el = changeSelectInput(el, combo, input, true);
+    //        for (i in zebrac) {
+    //            el.append($("<option>").html(zebrac[i]).val(zebrac[i]));
+    //        }
+    //    } else if ($("#ServiceTrade").val() == "Trip") {
+    //        el = changeSelectInput(el, combo, input, true);
+    //        for (i in trip) {
+    //            el.append($("<option>").html(trip[i]).val(trip[i]));
+    //        }
+    //    } else if ($("#ServiceTrade").val() == "Star") {
+    //        el = changeSelectInput(el, combo, input, true);
+    //        for (i in star) {
+    //            el.append($("<option>").html(star[i]).val(star[i]));
+    //        }
+    //    }
+    //    $("#RecommendDepartment").data("live-search", true).prop("title", "").selectpicker("refresh");
+    //}
+    function changeSelectInput(el, combo, input, isDropdown) {
+        var newEl;
+        if (isDropdown) {
+            newEl = combo;
+        } else {
+            newEl = input;
+        }
+        var parent = el.parent();
+        parent.empty();
+        parent.append(newEl);
+
+        return newEl;
+    }
+</script>

@@ -1,0 +1,111 @@
+﻿<div class="panel panel-default mt20">
+    <div class="panel-heading">
+        <strong style="line-height:35px;font-size:14px;">展车运输</strong>
+        <button class="btn btn-primary btn pull-right clearfix" onclick="addDtl2()">添加</button>
+        <button class="btn btn-primary btn pull-right" style="margin-right:5px;" onclick="delDemandBookDtl('2')">删除</button>
+    </div>
+    <div class="panel-body">
+        <div class="table-responsive">
+            <table id="dtl2-table" class="table table-bordered table-condensed table-hover text-center" >
+                <thead>
+                    <tr>
+                        <th width="50">选择</th>
+                        <th width="50">
+                            复制
+                        </th>
+                        <th width="50">
+                            详细
+                        </th>
+                        <th>
+                            序号
+                        </th>
+                        <th>
+                            分类
+                        </th>
+                        <th>
+                            类型/品牌
+                        </th>
+                        <th>
+                            规格/型号
+                        </th>
+                        <th>
+                            接车日期/还车日期
+                        </th>
+                        <th>
+                            装卸要求
+                        </th>
+                        <th>
+                            装卸次数
+                        </th>
+                        <th>
+                            运输路线
+                        </th>
+                        <th>
+                            数量/面积
+                        </th>
+                        <th>
+                            使用时间
+                        </th>
+                        <th>
+                            其他说明
+                        </th>
+                    </tr>
+                </thead>
+                <tbody></tbody>
+            </table>
+        </div>        
+    </div>
+</div>
+<script>
+    var detailView2 = 'Yunshuzuche/Detail/_PartialYunshuzucheDtl2';
+    var title2="展车运输";
+    function addDtl2() {
+        if (!CommitCheck()) {
+            alert("正在审核中或者非本人添加的项目");
+            return false;
+        }
+        setModal(title2, detailView2,undefined,true);
+        $("#myModal").modal("show");
+    }
+
+    function loadYunshuzucheDtl2() {
+        $.post("/DemandBook/LoadYunshuzucheDtl2", { RequirementId: $("#RequirementId").val() }, function (data) {
+            if (data) {
+                $("#dtl2-table tbody").empty();
+                $.each(data, function (index, item) {
+                    var tr = $("<tr>");
+                    tr.append($("<td></td>").append($("<input type='checkbox'>")));
+                    var copyBtn = $("<a class='btn btn-primary btn2'>").html("复制");
+                    copyBtn.click(function () {
+                        item.SeqNO = 0;
+                        setModal(title2, detailView2, item, true);
+                        $("#myModal").modal("show");
+                    })
+                    tr.append($("<td></td>").append(copyBtn));
+                    var editBtn = $("<a class='btn btn-primary btn2'>").html("详细");
+                    editBtn.click(function () {
+                        setModal(title2, detailView2, item);
+                        $("#myModal").modal("show");
+                    })
+                    tr.append($("<td></td>").append(editBtn));
+                    tr.append($("<td></td>").html(item.SeqNO));
+                    tr.append($("<td></td>").html(item.fenlei));//分类
+                    tr.append($("<td></td>").html(item.leixingpinpai));//类型品牌
+                    tr.append($("<td></td>").html(item.guigexinghao));//规格型号
+                    tr.append($("<td></td>").html(item.jiecheriqihuancheriqi));//接车日期还车日期
+                    tr.append($("<td></td>").html(item.zhuangxieyaoqiu));//装卸要求
+                    tr.append($("<td></td>").html(item.zhuangxiecishu));//装卸次数
+                    tr.append($("<td></td>").html(item.yunshuluxian));//运输路线
+                    tr.append($("<td></td>").html(item.shuliangmianji));//数量面积
+                    tr.append($("<td></td>").html(item.shiyongshijian));//使用时间
+                    //tr.append($("<td></td>").html(item.qitashuoming2));//其他说明
+                    var qitashuoming2 = item.qitashuoming2 != null ? item.qitashuoming2.replace(/\n/g, '<br>') : "&nbsp;";
+                    tr.append($("<td style='text-align: left;'></td>").html(qitashuoming2));//其他说明
+
+
+                    $("#dtl2-table tbody").append(tr);
+                })
+            }
+        })
+    }
+</script>
